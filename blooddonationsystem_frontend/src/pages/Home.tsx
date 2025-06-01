@@ -14,21 +14,14 @@ import afterDonationImg from './images/procedure/after_donation.png';
 
 import bloodTypeImg from './images/BloodType/BloodType.png';
 
+import Header from '../layouts/header-footer/Header'; 
+import Footer from '../layouts/header-footer/Footer'; 
+
 function Home() {
   useEffect(() => {
-    const loginBtn = document.getElementById('loginBtn');
-    const testBtn = document.getElementById('testBtn');
     const newsletterSubmit = document.getElementById('newsletterSubmit');
 
-    loginBtn?.addEventListener('click', () => {
-      alert('Redirecting to login page...');
-    });
-
-    testBtn?.addEventListener('click', () => {
-      alert('Redirecting to registration form...');
-    });
-
-    newsletterSubmit?.addEventListener('click', () => {
+    const handleNewsletterSubmit = () => {
       const emailInput = document.getElementById('newsletterEmail') as HTMLInputElement;
       const email = emailInput?.value;
       if (!email.trim()) {
@@ -36,28 +29,19 @@ function Home() {
       } else {
         alert(`Subscribed successfully with email: ${email}`);
       }
-    });
+    };
 
-    // Cleanup để tránh memory leaks
+    newsletterSubmit?.addEventListener('click', handleNewsletterSubmit);
+
+    // Cleanup
     return () => {
-      loginBtn?.removeEventListener('click', () => { });
-      testBtn?.removeEventListener('click', () => { });
-      newsletterSubmit?.removeEventListener('click', () => { });
+      newsletterSubmit?.removeEventListener('click', handleNewsletterSubmit);
     };
   }, []);
 
   return (
     <div>
-      <header className="header">
-        <div className="logo">🩸</div>
-        <nav className="nav-links">
-          <a href="#">Trang chủ</a>
-          <a href="#">Liên hệ</a>
-          <a href="#">Ngân hàng máu</a>
-          <a href="#">Đăng kí ngay</a>
-        </nav>
-        <button className="btn-login" id="loginBtn">Đăng nhập</button>
-      </header>
+      <Header />
 
       <br />
       <div className="hero">
@@ -90,6 +74,7 @@ function Home() {
             </div>
           ))}
         </div>
+
         <h2>Quy trình</h2>
         <div className="process-steps">
           {[
@@ -114,31 +99,7 @@ function Home() {
         </div>
       </section>
 
-      <footer className="footer">
-        <div className="footer-container">
-          <div className="footer-left">
-            <div className="logo">🩸</div>
-            <h4>Liên hệ</h4>
-            <p>Địa chỉ: Lô E2a-7, Đường D1 Khu Công nghệ cao...</p>
-            <p>Email: blooddonationsystemk1819@hospital.com.vn</p>
-            <p>Số điện thoại: 0938787570</p>
-          </div>
-          <div className="footer-right">
-            <h4>Khác</h4>
-            <p><a href="#">Trang chủ</a></p>
-            <p><a href="#">Tin tức</a></p>
-            <p><a href="#">Về chúng tôi</a></p>
-          </div>
-        </div>
-        <div className="footer-bottom">
-          <p>Terms & Conditions &nbsp; | &nbsp; Privacy Policy</p>
-          <div className="social-icons">
-            <a href="#"><i className="fab fa-facebook-f"></i></a>
-            <a href="#"><i className="fab fa-twitter"></i></a>
-            <a href="#"><i className="fab fa-instagram"></i></a>
-          </div>
-        </div>
-      </footer>
+      <Footer />
     </div>
   );
 }

@@ -2,19 +2,13 @@ import React from "react";
 import "./components/Login.css";
 import loginImage from "./images/Banner/login_img.jpeg";
 
+import Header from '../layouts/header-footer/Header'; 
+import Footer from '../layouts/header-footer/Footer'; 
+
 const Login: React.FC = () => {
   return (
     <div>
-      <header className="header">
-        <div className="logo">🩸</div>
-        <nav className="nav-links">
-          <a href="#">Trang chủ</a>
-          <a href="#">Liên hệ</a>
-          <a href="#">Ngân hàng máu</a>
-          <a href="#">Đăng kí ngay</a>
-        </nav>
-        <button className="btn-login" id="loginBtn">Đăng nhập</button>
-      </header>
+      <Header />
 
       {/* Main Login Form */}
       <main className="login-container">
@@ -32,10 +26,8 @@ const Login: React.FC = () => {
         </div>
       </main>
 
-      {/* Footer */}
-      <footer>
-        <p>© 2025 BloodHero. All rights reserved.</p>
-      </footer>
+      <Footer />
+
     </div>
   );
 };
