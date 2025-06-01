@@ -2,13 +2,16 @@ import React from "react";
 import "./components/Login.css";
 import loginImage from "./images/Banner/login_img.jpeg";
 
-import Header from '../layouts/header-footer/Header'; 
-import Footer from '../layouts/header-footer/Footer'; 
+import Header from '../layouts/header-footer/Header';
+import Footer from '../layouts/header-footer/Footer';
 
 const Login: React.FC = () => {
   return (
     <div>
       <Header />
+
+
+
       {/* Main Login Form */}
       <main className="login-container">
         <div className="poster">

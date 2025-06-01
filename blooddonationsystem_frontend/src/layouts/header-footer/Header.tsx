@@ -27,8 +27,14 @@ const Header: React.FC = () => {
         Đăng nhập
       </button>
 
+      <button className="btn-login" id="loginBtn" onClick={handleLoginClick}>
+        Đăng nhập
+      </button>
+
+
     </header>
   );
 };
 
 export default Header;
+
