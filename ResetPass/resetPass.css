@@ -1,0 +1,142 @@
+/* Reset */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: 'Poppins', sans-serif;
+}
+
+html, body {
+  height: 100vh;
+  overflow: hidden; /* Ngăn kéo trang xuống */
+  background: #fff;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Navbar */
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 30px;
+  background-color: white;
+  border-bottom: 1px solid #eee;
+  flex-shrink: 0;
+}
+
+/* Logo */
+.logo img {
+  height: 70px;
+}
+
+/* Nav links */
+.nav-links {
+  list-style: none;
+  display: flex;
+  gap: 100px;
+  margin: 0;
+  padding: 0;
+}
+
+.nav-links a {
+  text-decoration: none;
+  color: #000;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+/* Login button */
+.login-btn {
+  background-color: #FF204E;
+  color: white;
+  padding: 10px 20px;
+  border-radius: 6px;
+  font-weight: bold;
+  text-decoration: none;
+}
+
+/* Main content */
+main {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+  overflow: hidden; /* Ngăn cuộn trong main */
+  max-height: calc(100vh - 80px - 50px); /* Trừ header & footer */
+}
+
+/* Form */
+.form-container {
+  background: #fff;
+  padding: 40px;
+  box-shadow: 0 0 10px rgba(0,0,0,0.05);
+  border-radius: 10px;
+  text-align: center;
+  max-width: 400px;
+  width: 100%;
+}
+
+.form-container h2 {
+  margin-bottom: 10px;
+  font-size: 22px;
+}
+
+.form-container p {
+  margin-bottom: 20px;
+  font-size: 14px;
+  color: #333;
+}
+
+/* Code input */
+.code-inputs {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.code-inputs input {
+  width: 40px;
+  height: 40px;
+  text-align: center;
+  font-size: 18px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+/* Gửi lại mã */
+.resend {
+  display: block;
+  margin-bottom: 20px;
+  font-size: 14px;
+  text-decoration: none;
+  color: #000;
+}
+
+/* Xác nhận button */
+.confirm-btn {
+  background-color: #00224D;
+  color: white;
+  padding: 10px 30px;
+  border: none;
+  border-radius: 4px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+/* Footer */
+footer {
+  background-color: #A0153E;
+  color: white;
+  text-align: center;
+  padding: 0;
+  height: 40px; /* Cố định chiều cao */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  flex-shrink: 0;
+}
+

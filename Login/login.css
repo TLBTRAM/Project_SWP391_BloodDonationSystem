@@ -1,0 +1,147 @@
+/* Reset cơ bản */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Poppins', sans-serif;
+}
+
+body {
+  background: #fff;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  overflow: hidden; /* Ngăn cuộn trang */
+}
+
+/* Navbar tổng thể */
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 30px;
+  background-color: white;
+  border-bottom: 1px solid #eee;
+  flex-shrink: 0;
+}
+
+/* Logo */
+.logo img {
+  height: 70px;
+}
+
+/* Nav phần giữa */
+.nav-center {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+}
+
+/* Danh sách liên kết */
+.nav-links {
+  list-style: none;
+  display: flex;
+  gap: 100px;
+  margin: 0;
+  padding: 0;
+}
+
+.nav-links a {
+  text-decoration: none;
+  color: #000;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+/* Nút đăng nhập bên phải */
+.login-btn {
+  background-color: #FF204E;
+  color: white;
+  padding: 10px 20px;
+  border-radius: 6px;
+  font-weight: bold;
+  text-decoration: none;
+}
+
+/* Main layout */
+.login-container {
+  flex: 1;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  gap: 60px;
+  max-height: calc(100vh - 120px); /* Giới hạn chiều cao */
+  background-color: #fff;
+  flex-wrap: wrap;
+  overflow: hidden;
+}
+
+/* Poster image */
+.poster img {
+  max-width: 400px;
+  max-height: 500px; /* Giới hạn chiều cao */
+  height: auto;
+  border-radius: 8px;
+  object-fit: cover;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* Login form */
+.login-form {
+  max-width: 360px;
+  width: 100%;
+}
+
+.login-form h2 {
+  margin-bottom: 24px;
+  font-size: 24px;
+  font-weight: bold;
+}
+
+.login-form input {
+  width: 100%;
+  padding: 12px 14px;
+  margin-bottom: 16px;
+  border: none;
+  border-bottom: 1px solid #ccc;
+  outline: none;
+  font-size: 15px;
+}
+
+.login-form button {
+  width: 100%;
+  padding: 12px;
+  background-color: #00224D;
+  color: white;
+  font-weight: bold;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 15px;
+}
+
+.login-form .forgot {
+  display: block;
+  margin-top: 10px;
+  text-align: right;
+  color: #FF204E;
+  text-decoration: none;
+  font-size: 14px;
+}
+
+/* Footer */
+footer {
+  background-color: #A0153E;
+  color: white;
+  text-align: center;
+  padding: 0;
+  height: 40px; /* Cố định chiều cao */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  flex-shrink: 0;
+}
+
+
