@@ -1,0 +1,105 @@
+/* ResetPassemail.css */
+
+.reset-page {
+    min-height: 100vh;
+    background: #f9f9f9;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding-top: 80px;
+    position: relative;
+}
+
+.reset-container {
+    background: #ffffff;
+    padding: 60px 50px;
+    /* tăng padding */
+    border-radius: 24px;
+    box-shadow: 0 24px 48px rgba(0, 0, 0, 0.15);
+    width: 100%;
+    max-width: 600px;
+    /* tăng chiều rộng tối đa */
+    text-align: center;
+    transition: all 0.3s ease;
+}
+
+.reset-container:hover {
+    box-shadow: 0 24px 48px rgba(0, 0, 0, 0.15);
+}
+
+.reset-title {
+    font-size: 28px;
+    font-weight: 700;
+    color: #222;
+    margin-bottom: 10px;
+}
+
+.reset-subtitle {
+    color: #666;
+    font-size: 15px;
+    margin-bottom: 30px;
+}
+
+.reset-form {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+}
+
+.reset-form label {
+    text-align: left;
+    font-size: 14px;
+    color: #333;
+    font-weight: 500;
+}
+
+.reset-input {
+    padding: 12px 14px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 14px;
+    transition: all 0.3s ease;
+    background-color: #fafafa;
+}
+
+.reset-input:focus {
+    border-color: #f50057;
+    background-color: #fff;
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(245, 0, 87, 0.15);
+}
+
+.reset-button {
+    background-color: #f50057;
+    color: white;
+    border: none;
+    padding: 12px;
+    font-size: 15px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: background-color 0.3s, transform 0.2s;
+}
+
+.reset-button:hover {
+    background-color: #c51162;
+    transform: translateY(-2px);
+}
+
+.reset-button:active {
+    transform: scale(0.98);
+}
+
+.reset-footer {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    background-color: #990f3d;
+    color: white;
+    text-align: center;
+    padding: 14px 0;
+    font-size: 13px;
+    font-weight: 400;
+    letter-spacing: 0.5px;
+}
