@@ -96,29 +96,38 @@ body {
   height: 90px;
 }
 
-.submit-btn {
-  background-color: #00214d;
-  color: white;
-  padding: 12px 25px;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  font-size: 1.05em;
-  font-weight: 600;
-  transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
-  margin-top: 25px;
-  align-self: flex-end;
-  box-shadow: 0 4px 8px rgba(0, 33, 77, 0.2);
+.form-footer {
   display: flex;
-  gap: 8px;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 20px;
 }
 
-.submit-btn i {
-  font-size: 1.1em;
+.login-text {
+  text-decoration: none;
+  font-size: 16px;
+  color: #FF204E;
+  margin-top: 12px;
 }
 
-.submit-btn:hover {
-  background-color: #003366;
-  transform: translateY(-2px);
-  box-shadow: 0 6px 12px rgba(0, 33, 77, 0.3);
+.submit-btn {
+  width: 100%;
+  padding: 12px;
+  background-color: #00224D;
+  color: white;
+  font-weight: bold;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+  margin-top: 20px;
+}
+
+
+/* Hiển thị dòng báo lỗi màu đỏ */
+.error-text {
+  color: red;
+  font-size: 13px;
+  margin-top: 4px;
+  margin-left: 4px;
 }
