@@ -21,9 +21,8 @@ const ResetPassemail: React.FC = () => {
     <div className="reset-page">
       <div className="reset-container">
         <h2 className="reset-title">Khôi phục mật khẩu</h2>
-        <p className="reset-subtitle">Nhập Email của bạn</p>
+        <p className="reset-subtitle">Vui lòng nhập email của bạn để có mã xác nhận</p>
         <form className="reset-form">
-          <label htmlFor="email">Email</label>
           <input
             type="email"
             id="email"
