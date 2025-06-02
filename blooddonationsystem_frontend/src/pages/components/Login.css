@@ -12,6 +12,7 @@
 
     /* Main layout */
     .login-container {
+      margin-top: 80px; /* hoặc padding-top nếu cần */
       flex: 1;
       display: flex;
       flex-direction: row;

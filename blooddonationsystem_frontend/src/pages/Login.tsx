@@ -9,9 +9,6 @@ const Login: React.FC = () => {
   return (
     <div>
       <Header />
-
-
-
       {/* Main Login Form */}
       <main className="login-container">
         <div className="poster">
