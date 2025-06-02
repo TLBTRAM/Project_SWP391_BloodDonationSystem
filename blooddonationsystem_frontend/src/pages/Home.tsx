@@ -14,8 +14,8 @@ import afterDonationImg from './images/procedure/after_donation.png';
 
 import bloodTypeImg from './images/BloodType/BloodType.png';
 
-import Header from '../layouts/header-footer/Header'; 
-import Footer from '../layouts/header-footer/Footer'; 
+import Header from '../layouts/header-footer/Header';
+import Footer from '../layouts/header-footer/Footer';
 
 function Home() {
   useEffect(() => {
@@ -93,13 +93,14 @@ function Home() {
         </div>
 
         <br />
-        <h2>Nhóm máu</h2>
+        <h2 id="bloodtype">Nhóm máu</h2>
         <div className="blood-table-container">
           <img src={bloodTypeImg} alt="Blood Types" />
         </div>
       </section>
-
-      <Footer />
+      <footer id="contact">
+        {<Footer />}
+      </footer>
     </div>
   );
 }

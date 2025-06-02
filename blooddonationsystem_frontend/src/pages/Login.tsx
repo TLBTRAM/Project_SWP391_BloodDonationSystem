@@ -24,9 +24,9 @@ const Login: React.FC = () => {
           </form>
         </div>
       </main>
-
-      <Footer />
-
+      <footer id="contact">
+        {<Footer />}
+      </footer>
     </div>
   );
 };

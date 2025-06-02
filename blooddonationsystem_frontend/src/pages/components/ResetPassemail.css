@@ -8,12 +8,11 @@
 
 .reset-page {
     min-height: 100vh;
-    background: #f9f9f9;
+    background: #ffffff; 
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    padding-top: 80px;
     position: relative;
 }
 

@@ -19,8 +19,8 @@ const Header: React.FC = () => {
 
       <nav className="nav-links">
         <Link to="/">Trang chủ</Link>
-        <Link to="/contact">Liên hệ</Link>
-        <Link to="/blood-bank">Ngân hàng máu</Link>
+        <a href="#contact">Liên hệ</a>
+        <a href="#bloodtype">Nhóm máu</a>
         <Link to="/register">Đăng kí ngay</Link>
       </nav>
       <button className="btn-login" id="loginBtn" onClick={handleLoginClick}>
