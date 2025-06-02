@@ -7,7 +7,7 @@
 }
 
 .reset-page {
-    min-height: 100vh;
+    min-height: 90vh;
     background: #ffffff; 
     display: flex;
     flex-direction: column;
@@ -70,14 +70,13 @@
 }
 
 .reset-input:focus {
-    border-color: #f50057;
+    border-color: #FF204E;
     background-color: #fff;
     outline: none;
-    box-shadow: 0 0 0 3px rgba(245, 0, 87, 0.15);
 }
 
 .reset-button {
-    background-color: #f50057;
+    background-color: #FF204E;
     color: white;
     border: none;
     padding: 12px;
@@ -89,7 +88,6 @@
 }
 
 .reset-button:hover {
-    background-color: #c51162;
     transform: translateY(-2px);
 }
 

@@ -1,0 +1,123 @@
+/* Reset */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: 'Poppins', sans-serif;
+}
+
+html, body {
+  height: 100vh;
+  background: #fff;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Main content */
+main {
+  min-height: 90vh;
+  background: #ffffff;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+}
+
+/* Form */
+.form-container {
+  background: #ffffff;
+  padding: 60px 50px;
+  border-radius: 24px;
+  box-shadow: 0 24px 48px rgba(0, 0, 0, 0.15);
+  width: 100%;
+  max-width: 450px;
+  text-align: center;
+  transition: all 0.3s ease;
+}
+
+.form-container:hover {
+  box-shadow: 0 24px 48px rgba(0, 0, 0, 0.15);
+}
+
+.form-container h2 {
+  margin-bottom: 10px;
+  font-size: 28px;
+  font-weight: 700;
+  color: #222;
+}
+
+.form-container p {
+  margin-bottom: 30px;
+  font-size: 15px;
+  color: #666;
+}
+
+/* Code input */
+.code-inputs {
+  display: flex;
+  justify-content: center;
+  gap: 18px;
+  margin-bottom: 10px;
+}
+
+.code-inputs input {
+  width: 50px;
+  height: 50px;
+  text-align: center;
+  font-size: 18px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  background-color: #fafafa;
+  transition: all 0.3s ease;
+}
+
+.code-inputs input:focus {
+  border-color: #FF204E;
+  background-color: #fff;
+  outline: none;
+}
+
+/* Gửi lại mã */
+.resend {
+  display: block;
+  margin-bottom: 20px;
+  font-size: 14px;
+  text-decoration: none;
+  color: #000;
+  font-weight: 500;
+  transition: color 0.3s ease;
+}
+
+.resend:hover {
+  color: #FF204E;
+}
+
+.resend.disabled {
+  color: #888;
+  cursor: default;
+  pointer-events: none;
+  text-decoration: none;
+}
+
+
+/* Xác nhận button */
+.confirm-btn {
+  background-color: #FF204E;
+  color: white;
+  padding: 12px;
+  border: none;
+  border-radius: 8px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.3s, transform 0.2s;
+}
+
+.confirm-btn:hover {
+  transform: translateY(-2px);
+}
+
+.confirm-btn:active {
+  transform: scale(0.98);
+}
