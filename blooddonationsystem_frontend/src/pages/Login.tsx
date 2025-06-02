@@ -1,6 +1,7 @@
 import React from "react";
 import "./components/Login.css";
 import loginImage from "./images/Banner/login_img.jpeg";
+import { Link } from 'react-router-dom';
 
 import Header from '../layouts/header-footer/Header';
 import Footer from '../layouts/header-footer/Footer';
@@ -23,7 +24,7 @@ const Login: React.FC = () => {
             <input type="text" placeholder="Email hoặc số điện thoại" required />
             <input type="password" placeholder="Mật khẩu" required />
             <button type="submit">Đăng nhập</button>
-            <a href="#" className="forgot">Quên mật khẩu ?</a>
+            <Link to="/forgot" className="forgot">Quên mật khẩu ?</Link>
           </form>
         </div>
       </main>

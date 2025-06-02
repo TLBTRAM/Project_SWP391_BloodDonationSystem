@@ -9,7 +9,9 @@ function App() {
 			<Routes>
 				<Route path="/" element={<HomePage />} />
 				<Route path="/login" element={<LoginPage />} />
-				<Route path="/fogot" element={<Reset1Page />} />
+				<Route path="/forgot" element={<Reset1Page />} />
+
+				
 			</Routes>
 		</BrowserRouter>
 	);

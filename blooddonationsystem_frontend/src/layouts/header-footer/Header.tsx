@@ -23,14 +23,10 @@ const Header: React.FC = () => {
         <Link to="/blood-bank">Ngân hàng máu</Link>
         <Link to="/register">Đăng kí ngay</Link>
       </nav>
-      <button className="btn-login" id="loginBtn" onClick={handleLoginClick}>
-        Đăng nhập
-      </button>
 
       <button className="btn-login" id="loginBtn" onClick={handleLoginClick}>
         Đăng nhập
       </button>
-
 
     </header>
   );
