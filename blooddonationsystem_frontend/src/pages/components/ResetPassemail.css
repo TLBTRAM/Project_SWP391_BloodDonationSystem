@@ -1,0 +1,97 @@
+/* ResetPassemail.css */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Poppins', sans-serif;
+}
+
+.reset-page {
+    min-height: 90vh;
+    background: #ffffff; 
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+}
+
+.reset-container {
+    background: #ffffff;
+    padding: 60px 50px;
+    /* tăng padding */
+    border-radius: 24px;
+    box-shadow: 0 24px 48px rgba(0, 0, 0, 0.15);
+    width: 100%;
+    max-width: 600px;
+    /* tăng chiều rộng tối đa */
+    text-align: center;
+    transition: all 0.3s ease;
+}
+
+.reset-container:hover {
+    box-shadow: 0 24px 48px rgba(0, 0, 0, 0.15);
+}
+
+.reset-title {
+    font-size: 28px;
+    font-family: 'Poppins', sans-serif;
+    font-weight: 700;
+    color: #333333;
+    margin-bottom: 10px;
+}
+
+.reset-subtitle {
+    color: #666;
+    font-size: 15px;
+    margin-bottom: 30px;
+}
+
+.reset-form {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+}
+
+.reset-form label {
+    text-align: left;
+    font-size: 14px;
+    color: #333333;
+    font-weight: 500;
+}
+
+.reset-input {
+    padding: 12px 14px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 14px;
+    transition: all 0.3s ease;
+    background-color: #fafafa;
+}
+
+.reset-input:focus {
+    border-color: #FF204E;
+    background-color: #fff;
+    outline: none;
+}
+
+.reset-button {
+    background-color: #FF204E;
+    color: white;
+    border: none;
+    padding: 12px;
+    font-size: 15px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: background-color 0.3s, transform 0.2s;
+}
+
+.reset-button:hover {
+    transform: translateY(-2px);
+}
+
+.reset-button:active {
+    transform: scale(0.98);
+}
+
