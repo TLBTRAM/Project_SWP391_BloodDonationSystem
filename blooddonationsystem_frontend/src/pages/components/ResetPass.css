@@ -93,11 +93,11 @@ main {
   width: 100%; 
 }
 
-.confirm-btn:hover {
+.confirm-btn-1:hover {
   transform: translateY(-2px);
 }
 
-.confirm-btn:active {
+.confirm-btn-1:active {
   transform: scale(0.98);
 }
 

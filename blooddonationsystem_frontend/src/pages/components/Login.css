@@ -17,46 +17,42 @@
       flex-direction: row;
       justify-content: center;
       align-items: center;
-      gap: 60px;
+      gap: 150px;
       background-color: #fff;
       flex-wrap: wrap;
       overflow: hidden;
-      padding: 100px 0;
     }
 
     /* Poster image */
     .poster img {
-      max-width: 500px;
-      max-height: 600px;
-      /* Giới hạn chiều cao */
-      height: auto;
+      max-width: 380px;
+      max-height: 465px;
       border-radius: 8px;
       object-fit: cover;
       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-      margin-right: 40px;
     }
 
     /* Login form */
     .login-form {
-      max-width: 360px;
+      max-width: 500px;
+      max-height: 600px;
       width: 100%;
-      margin-left: 40px;
     }
 
     .login-form h2 {
-      margin-bottom: 24px;
-      font-size: 24px;
+      margin-bottom: 30px;
+      font-size: 35px;
       font-weight: bold;
     }
 
     .login-form input {
       width: 100%;
       padding: 12px 14px;
-      margin-bottom: 16px;
+      margin-bottom: 14px;
       border: none;
       border-bottom: 1px solid #ccc;
       outline: none;
-      font-size: 15px;
+      font-size: 16px;
     }
 
     .login-form button {
@@ -68,7 +64,8 @@
       border: none;
       border-radius: 4px;
       cursor: pointer;
-      font-size: 15px;
+      font-size: 16px;
+      margin-top: 20px;
     }
 
     .login-form .forgot {
@@ -77,7 +74,7 @@
       text-align: right;
       color: #FF204E;
       text-decoration: none;
-      font-size: 14px;
+      font-size: 16px;
 
     }
 
