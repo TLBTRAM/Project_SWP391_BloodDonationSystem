@@ -13,10 +13,9 @@ const Header: React.FC = () => {
 
   return (
     <header className="header">
-      <div className="logo">
+      <Link to="/" className="logo">
         <img src={logoBlood} alt="Logo" className="logo-img" />
-      </div>
-
+      </Link>
       <nav className="nav-links">
         <Link to="/">Trang chủ</Link>
         <a href="#contact">Liên hệ</a>
@@ -26,10 +25,8 @@ const Header: React.FC = () => {
       <button className="btn-login" id="loginBtn" onClick={handleLoginClick}>
         Đăng nhập
       </button>
-
     </header>
   );
 };
-
 export default Header;
 

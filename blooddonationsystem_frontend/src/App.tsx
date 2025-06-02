@@ -10,6 +10,8 @@ function App() {
 				<Route path="/" element={<HomePage />} />
 				<Route path="/login" element={<LoginPage />} />
 				<Route path="/forgot" element={<Reset1Page />} />
+
+				
 			</Routes>
 		</BrowserRouter>
 	);

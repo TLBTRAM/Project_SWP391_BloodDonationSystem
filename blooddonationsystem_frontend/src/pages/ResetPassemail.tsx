@@ -1,5 +1,6 @@
 import React from "react";
 import './components/ResetPassemail.css';
+import { Link } from 'react-router-dom';
 
 import Header from '../layouts/header-footer/Header'; 
 import Footer from '../layouts/header-footer/Footer'; 
@@ -27,6 +28,7 @@ const ResetPassemail: React.FC = () => {
         </form>
       </div>
       </div>
+
       <Footer />
     </div>
   );
