@@ -10,7 +10,7 @@ import rohanImg from './images/User/Rohan.png';
 import calendarImg from './images/procedure/Calendar.png';
 import healthCheckImg from './images/procedure/Health_check.png';
 import donationImg from './images/procedure/Donation.png';
-import afterDonationImg from './images/procedure/after_donation.png';
+import afterDonationImg from './images/procedure/After_donation.png';
 
 import bloodTypeImg from './images/BloodType/BloodType.png';
 
