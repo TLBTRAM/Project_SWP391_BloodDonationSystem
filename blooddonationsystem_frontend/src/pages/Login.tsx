@@ -10,6 +10,7 @@ const Login: React.FC = () => {
   return (
     <div>
       <Header />
+    
       {/* Main Login Form */}
       <main className="login-container">
         <div className="poster">
@@ -26,6 +27,7 @@ const Login: React.FC = () => {
         </div>
       </main>
       <footer id="contact">
+        
         {<Footer />}
       </footer>
     </div>

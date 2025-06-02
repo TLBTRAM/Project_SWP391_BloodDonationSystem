@@ -12,7 +12,6 @@
 
     /* Main layout */
     .login-container {
-      margin-top: 80px; /* hoặc padding-top nếu cần */
       flex: 1;
       display: flex;
       flex-direction: row;
@@ -22,24 +21,26 @@
       background-color: #fff;
       flex-wrap: wrap;
       overflow: hidden;
-      padding: 50px 0;
+      padding: 100px 0;
     }
 
     /* Poster image */
     .poster img {
-      max-width: 400px;
-      max-height: 500px;
+      max-width: 500px;
+      max-height: 600px;
       /* Giới hạn chiều cao */
       height: auto;
       border-radius: 8px;
       object-fit: cover;
       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      margin-right: 40px;
     }
 
     /* Login form */
     .login-form {
       max-width: 360px;
       width: 100%;
+      margin-left: 40px;
     }
 
     .login-form h2 {
