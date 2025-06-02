@@ -1,6 +1,6 @@
 .footer {
-  background-color: #A0153E;
-  color: #ffffff;
+  background-color: #5D0E41;
+  color: #fff;
   padding: 50px 60px 30px;
   font-family: 'Segoe UI', sans-serif;
 }
@@ -11,7 +11,7 @@
   align-items: flex-start;
   flex-wrap: wrap;
   gap: 60px; /* Khoảng cách rộng rãi giữa các cột */
-  border-bottom: 1px solid #a64d79;
+  border-bottom: 1px solid #ffffff;
   padding-bottom: 30px;
 }
 
