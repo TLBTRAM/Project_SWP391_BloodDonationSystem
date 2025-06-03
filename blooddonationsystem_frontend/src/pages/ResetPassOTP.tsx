@@ -100,11 +100,7 @@ const ResetPassword: React.FC = () => {
               />
             ))}
           </div>
-        <a
-            href="#"
-            className={`resend ${canResend ? '' : 'disabled'}`}
-            onClick={handleResendClick}
-            >
+        <a href="#" className={`resend ${canResend ? '' : 'disabled'}`} onClick={handleResendClick}>
             {canResend ? 'Gửi lại mã' : `Gửi lại mã (${timer}s)`}
         </a>
 
