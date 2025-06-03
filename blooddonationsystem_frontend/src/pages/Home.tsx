@@ -93,9 +93,14 @@ function Home() {
         </div>
 
         <br />
+
         <h2 id="bloodtype">Nhóm máu</h2>
-        <div className="blood-table-container">
-          <img src={bloodTypeImg} alt="Blood Types" />
+        <div className="blood-section">
+          <div className="blood-table-container">
+            <img src={bloodTypeImg} alt="Blood Types" />
+          </div>
+
+          
         </div>
       </section>
       <footer id="contact">
