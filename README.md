@@ -1,6 +1,6 @@
 # Project_SWP391_BloodDonationSystem
 
-TEAM 6 - SE1841 - SWP391
+TEAM 6 - SE1841
 
 Instructor: 	Nguyễn Thị Cẩm Hương
 
