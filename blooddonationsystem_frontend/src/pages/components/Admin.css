@@ -1,6 +1,60 @@
+/* RESET & FONT */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Poppins', sans-serif;
+}
+
+/* ===== ADMIN HEADER ===== */
+.admin-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 10%;
+  background: #fff;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  position: relative;
+  z-index: 10;
+}
+
+/* Logo */
+.admin-logo {
+  display: flex;
+  align-items: center;
+}
+
+.admin-logo .logo-img {
+  height: 70px;
+}
+
+/* Greeting */
+.admin-greeting {
+  font-size: 18px;
+  font-weight: 500;
+  color: #333;
+  white-space: nowrap;
+}
+
+/* Logout button */
+.admin-logout-btn {
+  background-color: #FF204E;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 6px;
+  font-weight: bold;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.admin-logout-btn:hover {
+  background-color: #d91b41;
+}
+
+
 .admin-container {
   padding: 20px;
-  font-family: Arial, sans-serif;
   max-width: 1000px;
   margin: auto;
 }

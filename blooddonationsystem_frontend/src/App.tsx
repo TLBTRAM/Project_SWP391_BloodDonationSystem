@@ -5,8 +5,8 @@ import LoginPage from "./pages/Login";
 import Reset1Page from "./pages/ResetPassemail";
 import Reset2Page from "./pages/ResetPassOTP";
 import Reset3Page from "./pages/ResetPass";
-import DonorPage  from "./pages/Dashboarddonor1";
 
+import DonorPage  from "./pages/Dashboarddonor1";
 import AdminPage from "./pages/Admin";
 
 function App() {
@@ -19,8 +19,8 @@ function App() {
 				<Route path="/forgot" element={<Reset1Page />} />
 				<Route path="/forgot2" element={<Reset2Page />} />
 				<Route path="/forgot3" element={<Reset3Page />} />
+				
 				<Route path="/donor1" element={<DonorPage  />} />
-
 				<Route path="/admin" element={<AdminPage />} />
 				
 			</Routes>

@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import './components/Admin.css';
+import { Link } from 'react-router-dom';
 
-import logoBlood from './logo_blood.png';
+import logoBlood from './images/Logo/logo_blood.png';
 
 interface Account {
   id: number;
@@ -17,6 +18,13 @@ const initialAccounts: Account[] = [
   { id: 4, name: 'Phạm Văn D', email: 'd@example.com', role: 'Người dùng' },
   { id: 5, name: 'Hoàng Thị E', email: 'e@example.com', role: 'Nhân viên y tế' },
 ];
+
+const adminName = 'Admin'; // bạn có thể lấy từ props, state, hoặc context nếu cần
+
+const handleLogout = () => {
+  // Xử lý đăng xuất tại đây
+  alert('Đăng xuất thành công!');
+};
 
 const Admin: React.FC = () => {
   const [accounts, setAccounts] = useState<Account[]>(initialAccounts);
@@ -42,27 +50,39 @@ const Admin: React.FC = () => {
   };
 
   return (
+  <>
+    <header className="admin-header">
+      <div className="admin-logo">
+        <Link to="/">
+          <img src={logoBlood} alt="Logo" className="logo-img" />
+        </Link>
+      </div>
+      <div className="admin-greeting">Xin chào, {adminName}!</div>
+      <button className="admin-logout-btn" onClick={handleLogout}>
+        Đăng xuất
+      </button>
+    </header>
+
     <div className="admin-container">
       <h1>Quản lý tài khoản</h1>
 
       <div className="role-summary">
         <div className="summary-box">
-            <div className="summary-icon">👤</div>
-            <div className="summary-role">Người dùng</div>
-            <div className="summary-count">{roleCounts['Người dùng']}</div>
+          <div className="summary-icon">👤</div>
+          <div className="summary-role">Người dùng</div>
+          <div className="summary-count">{roleCounts['Người dùng']}</div>
         </div>
         <div className="summary-box">
-            <div className="summary-icon">🩺</div>
-            <div className="summary-role">Nhân viên y tế</div>
-            <div className="summary-count">{roleCounts['Nhân viên y tế']}</div>
+          <div className="summary-icon">🩺</div>
+          <div className="summary-role">Nhân viên y tế</div>
+          <div className="summary-count">{roleCounts['Nhân viên y tế']}</div>
         </div>
         <div className="summary-box">
-            <div className="summary-icon">🩸</div>
-            <div className="summary-role">Quản lý kho máu</div>
-            <div className="summary-count">{roleCounts['Quản lý kho máu']}</div>
+          <div className="summary-icon">🩸</div>
+          <div className="summary-role">Quản lý kho máu</div>
+          <div className="summary-count">{roleCounts['Quản lý kho máu']}</div>
         </div>
       </div>
-
 
       <div className="admin-controls">
         <input
@@ -111,7 +131,8 @@ const Admin: React.FC = () => {
         </tbody>
       </table>
     </div>
-  );
+  </>
+);
 };
 
 export default Admin;
