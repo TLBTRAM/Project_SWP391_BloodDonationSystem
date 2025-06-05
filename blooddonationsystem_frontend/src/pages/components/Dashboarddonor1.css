@@ -1,0 +1,153 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Poppins', sans-serif;
+}
+
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 10%;
+  background: #fff;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+header {
+  position: relative;
+  z-index: 10;
+}
+
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  background: #f6f6f6;
+}
+
+.navbar {
+  background: #fff;
+  display: flex;
+  justify-content: space-between;
+  padding: 15px 30px;
+  align-items: center;
+  border-bottom: 1px solid #ddd;
+}
+
+.nav-links {
+  display: flex;
+  list-style: none;
+  gap: 20px;
+}
+
+.nav-links a {
+  text-decoration: none;
+  color: #333;
+  font-weight: 500;
+}
+
+.nav-icons {
+  display: flex;
+  gap: 15px;
+  align-items: center;
+}
+
+.avatar {
+  width: 35px;
+  height: 35px;
+  border-radius: 50%;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 30px auto;
+  padding: 20px;
+}
+
+.profile-card {
+  background: #fff;
+  border-radius: 12px;
+  justify-content: space-between;
+  padding: 30px;
+  display: flex;
+  gap: 360px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
+}
+
+.information {
+  max-width: 500px;
+  width: 220px;
+}
+
+.left-section {
+  width: 220px;
+  text-align: center;
+}
+
+.profile-img {
+  width: 100px;
+  border-radius: 50%;
+}
+
+.edit-btn {
+  margin-top: 10px;
+  background: #002b5b;
+  color: #fff;
+  padding: 8px 16px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.info-section {
+  flex-grow: 1;
+}
+
+.info-section h3 {
+  margin-bottom: 15px;
+}
+
+.info-section table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.info-section td {
+  padding: 6px 12px;
+  border-bottom: 1px solid #eee;
+}
+
+.right-section {
+  width: 280px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.donation-history table,
+.calendar table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.donation-history th,
+.donation-history td,
+.calendar th,
+.calendar td {
+  text-align: center;
+  padding: 8px;
+}
+
+.donation-history th {
+  background: #eee;
+}
+
+.calendar td {
+  border: 1px solid #ddd;
+}
+
+.calendar .active {
+  background: #002b5b;
+  color: white;
+  border-radius: 6px;
+}

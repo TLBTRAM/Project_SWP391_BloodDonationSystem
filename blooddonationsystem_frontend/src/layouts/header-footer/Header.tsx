@@ -19,7 +19,8 @@ const Header: React.FC = () => {
       <nav className="nav-links">
         <Link to="/">Trang chủ</Link>
         <a href="#contact">Liên hệ</a>
-        <a href="#bloodtype">Nhóm máu</a>
+        <a href="#info">Thông tin</a>
+        <Link to="/doingu">Đội ngũ nhân viên y tế</Link>
         <Link to="/register">Đăng kí ngay</Link>
       </nav>
       <button className="btn-login" id="loginBtn" onClick={handleLoginClick}>
