@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import './components/Admin.css';
 import { Link } from 'react-router-dom';
-
+import { useNavigate } from 'react-router-dom';
 import logoBlood from './images/Logo/logo_blood.png';
 
 interface Account {
@@ -57,11 +57,14 @@ const Admin: React.FC = () => {
           <img src={logoBlood} alt="Logo" className="logo-img" />
         </Link>
       </div>
-      <div className="admin-greeting">Xin chào, {adminName}!</div>
+      <div className="admin-greeting">
+        Xin chào, <span className="admin-name">{adminName}</span>
+      </div>
       <button className="admin-logout-btn" onClick={handleLogout}>
         Đăng xuất
       </button>
     </header>
+
 
     <div className="admin-container">
       <h1>Quản lý tài khoản</h1>
