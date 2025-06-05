@@ -6,6 +6,8 @@ import Reset1Page from "./pages/ResetPassemail";
 import Reset2Page from "./pages/ResetPassOTP";
 import Reset3Page from "./pages/ResetPass";
 
+import AdminPage from "./pages/Admin";
+
 function App() {
 	return (
 		<BrowserRouter>
@@ -17,6 +19,7 @@ function App() {
 				<Route path="/forgot2" element={<Reset2Page />} />
 				<Route path="/forgot3" element={<Reset3Page />} />
 
+				<Route path="/admin" element={<AdminPage />} />
 				
 			</Routes>
 		</BrowserRouter>
