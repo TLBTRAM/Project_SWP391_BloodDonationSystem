@@ -50,11 +50,13 @@ const Dashboarddonor1: React.FC = () => {
       <div className="container">
         <div className="profile-card">
           {/* Left Section */}
-          <div className ="infomation">
+          <div className="information">
             <div className="left-section">
               <img className="profile-img" src={dinoyRajKImg} alt="User" />
-              <h2>Dinoy Raj K</h2>
-              <button className="edit-btn">Edit Profile</button>
+              <div className="name-and-button">
+                <h2>Dinoy Raj K</h2>
+                <button className="edit-btn">Edit Profile</button>
+              </div>
             </div>
 
             {/* Info Section */}
