@@ -1,0 +1,181 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Poppins', sans-serif;
+}
+
+body {
+  background: #f6f6f6;
+  font-family: Arial, sans-serif;
+}
+
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 10%;
+  background: #fff;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  position: relative;
+  z-index: 10;
+}
+
+.navbar {
+  background: #fff;
+  display: flex;
+  justify-content: space-between;
+  padding: 15px 30px;
+  align-items: center;
+  border-bottom: 1px solid #ddd;
+}
+
+.nav-links {
+  display: flex;
+  list-style: none;
+  gap: 20px;
+}
+
+.nav-links a {
+  text-decoration: none;
+  color: #333;
+  font-weight: 500;
+}
+
+.nav-icons {
+  display: flex;
+  gap: 15px;
+  align-items: center;
+}
+
+.avatar {
+  width: 35px;
+  height: 35px;
+  border-radius: 50%;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0px auto;
+  padding: 20px;
+}
+
+.profile-card {
+  background: #fff;
+  border-radius: 12px;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  padding: 30px;
+  gap: 40px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
+}
+
+/* Left Side - User Info */
+.information {
+  flex: 1;
+  min-width: 300px;
+}
+
+.left-section {
+  margin-bottom: 20px;
+}
+
+.profile-img {
+  width: 120px;
+  height: 120px;
+  object-fit: cover;
+  border-radius: 50%;
+  margin-bottom: 10px;
+}
+
+.edit-btn {
+  background: #002b5b;
+  color: #fff;
+  padding: 8px 20px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background 0.3s;
+}
+
+.edit-btn:hover {
+  background: #004080;
+}
+
+.info-section h3 {
+  margin-bottom: 15px;
+  font-size: 20px;
+  color: #222;
+}
+
+.info-section table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.info-section td {
+  padding: 8px 10px;
+  border-bottom: 1px solid #eee;
+  vertical-align: top;
+  font-size: 15px;
+  color: #333;
+}
+
+/* Right Side - History and Calendar */
+.right-section {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+}
+
+.donation-history h3,
+.calendar h3 {
+  margin-bottom: 10px;
+  font-size: 20px;
+  color: #222;
+}
+
+.donation-history table,
+.calendar table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.donation-history th,
+.donation-history td,
+.calendar th,
+.calendar td {
+  text-align: center;
+  padding: 10px;
+  font-size: 14px;
+}
+
+.donation-history th {
+  background: #f0f0f0;
+  color: #000;
+}
+
+.donation-history td {
+  color: #444;
+}
+
+.calendar {
+  border: 1px solid #ddd;
+  padding: 15px;
+  border-radius: 10px;
+  background: #fafafa;
+}
+
+.calendar td {
+  border: 1px solid #ddd;
+  cursor: pointer;
+}
+
+.calendar .active {
+  background: #002b5b;
+  color: white;
+  border-radius: 6px;
+}

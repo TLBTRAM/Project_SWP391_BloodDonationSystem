@@ -9,15 +9,16 @@ const Footer = () => {
           <div className="footer-left">
             <div className="logo">🩸</div>
             <h4>Liên hệ</h4>
-            <p>Địa chỉ: Lô E2a-7, Đường D1 Khu Công nghệ cao,Long Thạnh Mỹ, Thủ Đức, Hồ Chí Minh</p>
+            <p>Trung tâm hiến máu</p>
+            <p>Địa chỉ: Lô E2a-7, Đường D1 Khu Công nghệ cao, Long Thạnh Mỹ, Thủ Đức, Hồ Chí Minh</p>
             <p>Email: blooddonationsystem_K1819@hospital.com.vn</p>
             <p>Số điện thoại: (+84) 987654321</p>
           </div>
           <div className="footer-right">
             <h4>Khác</h4>
             <p><a href="#">Trang chủ</a></p>
-            <p><a href="#">Tin tức</a></p>
-            <p><a href="#">Về chúng tôi</a></p>
+            <p><a href="#info">Tin tức</a></p>
+            <p><a href="#aboutus">Về chúng tôi</a></p>
           </div>
         </div>
         <div className="footer-bottom">

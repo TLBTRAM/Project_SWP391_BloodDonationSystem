@@ -1,0 +1,25 @@
+.calendar {
+  border: 1px solid #ddd;
+  padding: 10px;
+  border-radius: 10px;
+  width: fit-content;
+}
+
+.calendar table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.calendar th,
+.calendar td {
+  padding: 8px;
+  text-align: center;
+  width: 30px;
+  height: 30px;
+}
+
+.calendar td.active {
+  background-color: #f44336;
+  color: white;
+  border-radius: 50%;
+}

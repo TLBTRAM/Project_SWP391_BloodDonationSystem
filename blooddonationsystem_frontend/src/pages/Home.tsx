@@ -53,7 +53,7 @@ function Home() {
       </div>
 
       <section className="section">
-        <div className="mission">
+        <div id="aboutus" className="mission">
           <h2>Trách nhiệm của chúng tôi</h2>
           <p>Chúng tôi cam kết xây dựng một cầu nối vững chắc giữa người hiến máu và những người đang cần máu gấp...</p>
           <p>Sứ mệnh của chúng tôi là tạo ra một nền tảng minh bạch, thuận tiện và an toàn...</p>
@@ -94,7 +94,7 @@ function Home() {
 
         <br />
 
-        <h2 id="bloodtype">Nhóm máu</h2>
+        <h2 id="info">Thông tin</h2>
         <div className="blood-section">
           <div className="blood-table-container">
             <img src={bloodTypeImg} alt="Blood Types" />
