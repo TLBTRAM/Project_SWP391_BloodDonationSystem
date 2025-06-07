@@ -6,8 +6,16 @@
     }
 
     body {
+      background-color: #fff !important;
+    }
+
+    section,
+    .mission,
+    .blog,
+    .hero,
+    .process,
+    .about-us {
       background-color: #fff;
-      color: #333;
     }
 
 
@@ -32,7 +40,6 @@
       width: 100%;
       height: auto;
       object-fit: cover;
-      /* đảm bảo ảnh phủ kínkín*/
       display: block;
     }
 
@@ -43,7 +50,7 @@
       padding: 30px;
       border-radius: 20px;
       color: black;
-      text-shadow: 1px 1px 2px #f9f9f9;
+      text-shadow: 1px 1px 2px #fff;
       box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.1);
       max-width: 320px;
       font-size: 24px;
@@ -83,7 +90,7 @@
     }
 
     .mission {
-      background: #f9f9f9;
+      background: #fff;
       padding: 40px;
       border-radius: 10px;
       margin-bottom: 60px;
@@ -114,9 +121,9 @@
     }
 
     .card {
-      width: 300px;   
+      width: 300px;
       font-size: 1.1rem;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
       margin: 10px;
       background: #fff;
       padding: 20px;
@@ -191,14 +198,64 @@
       font-weight: 500;
     }
 
-    .blood-table-container {
+    .blood-section {
+      text-align: left;
       display: flex;
       justify-content: center;
-      margin-top: 20px;
     }
 
-    .blood-table-container img{
-      width: 1000px; 
-      height: 850px;
-    } 
+    .blood-info {
+      padding: 40px 20px;
+      background-color: #f5f5f5;
+    }
 
+    .blood-info h2 {
+      font-size: 28px;
+      font-weight: bold;
+      margin-bottom: 20px;
+      color: #1e3a8a;
+    }
+
+    .blood-section {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+
+    .icon {
+      width: 50px;
+      /* nhỏ hơn mặc định 24px */
+      height: 50px;
+      object-fit: contain;
+      vertical-align: middle;
+    }
+
+    .left-column,
+    .right-column {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .info-box {
+      display: flex;
+      align-items: center;
+      /* canh giữa theo chiều dọc */
+      gap: 10px;
+      /* khoảng cách giữa hình và chữ */
+      background-color: white;
+      padding: 16px;
+      border-radius: 10px;
+      font-size: 16px;
+      font-weight: 500;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+      transition: transform 0.2s ease;
+    }
+
+    .info-box:hover {
+      transform: translateY(-2px);
+    }
+
+    .tall-box {
+      min-height: 100px;
+    }

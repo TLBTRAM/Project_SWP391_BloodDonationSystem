@@ -4,6 +4,7 @@ import Calendar from './Calendar';
 import { Link, useNavigate } from 'react-router-dom';
 import logoBlood from './images/Logo/logo_blood.png';
 import dinoyRajKImg from './images/User/DinoyRajK.png';
+import Header from '../layouts/header-footer/Header';
 
 const Dashboarddonor1: React.FC = () => {
   const navigate = useNavigate();
@@ -32,19 +33,7 @@ const Dashboarddonor1: React.FC = () => {
 
   return (
     <div>
-      <header className="header">
-        <Link to="/" className="logo">
-          <img src={logoBlood} alt="Logo" className="logo-img" />
-        </Link>
-        <nav className="nav-links">
-          <Link to="/">Trang chủ</Link>
-          <a href="#contact">Liên hệ</a>
-          <a href="#info">Thông tin</a>
-          <Link to="/schedule">Đăng kí lịch khám</Link>
-          <Link to="/schedule">Đăng kí lịch khám</Link>
-          <img className="avatar" src={dinoyRajKImg} alt="avatar" />
-        </nav>
-      </header>
+      <Header/>
 
       {/* Profile Container */}
       <div className="container">
@@ -55,6 +44,7 @@ const Dashboarddonor1: React.FC = () => {
               <img className="profile-img" src={dinoyRajKImg} alt="User" />
               <div className="name-and-button">
                 <h2>Dinoy Raj K</h2>
+                <br/>
                 <button className="edit-btn">Edit Profile</button>
               </div>
             </div>

@@ -21,5 +21,4 @@
 .calendar td.active {
   background-color: #f44336;
   color: white;
-  border-radius: 50%;
 }

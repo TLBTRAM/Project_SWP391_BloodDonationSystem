@@ -12,32 +12,13 @@ import healthCheckImg from './images/procedure/Health_check.png';
 import donationImg from './images/procedure/Donation.png';
 import afterDonationImg from './images/procedure/After_donation.png';
 
-import bloodTypeImg from './images/BloodType/BloodType.png';
+import attentionImg from './images/info/attention_icon.png';
 
 import Header from '../layouts/header-footer/Header';
 import Footer from '../layouts/header-footer/Footer';
 
 function Home() {
-  useEffect(() => {
-    const newsletterSubmit = document.getElementById('newsletterSubmit');
 
-    const handleNewsletterSubmit = () => {
-      const emailInput = document.getElementById('newsletterEmail') as HTMLInputElement;
-      const email = emailInput?.value;
-      if (!email.trim()) {
-        alert('Please enter your email.');
-      } else {
-        alert(`Subscribed successfully with email: ${email}`);
-      }
-    };
-
-    newsletterSubmit?.addEventListener('click', handleNewsletterSubmit);
-
-    // Cleanup
-    return () => {
-      newsletterSubmit?.removeEventListener('click', handleNewsletterSubmit);
-    };
-  }, []);
 
   return (
     <div>
@@ -55,9 +36,9 @@ function Home() {
       <section className="section">
         <div id="aboutus" className="mission">
           <h2>Trách nhiệm của chúng tôi</h2>
-          <p>Chúng tôi cam kết xây dựng một cầu nối vững chắc giữa người hiến máu và những người đang cần máu gấp...</p>
-          <p>Sứ mệnh của chúng tôi là tạo ra một nền tảng minh bạch, thuận tiện và an toàn...</p>
-          <p>Cùng với cộng đồng và các chuyên gia y tế, chúng tôi nỗ lực xây dựng một xã hội nhân ái...</p>
+          <p>Chúng tôi cam kết xây dựng một cầu nối vững chắc giữa người hiến máu và những người đang cần máu gấp, góp phần cứu sống hàng nghìn sinh mạng mỗi ngày.</p>
+          <p>Sứ mệnh của chúng tôi là tạo ra một nền tảng minh bạch, thuận tiện và an toàn, thúc đẩy hiến máu tự nguyện, hỗ trợ các trường hợp khẩn cấp và đảm bảo nguồn cung máu ổn định cho cộng đồng.</p>
+          <p>Cùng với cộng đồng và các chuyên gia y tế, chúng tôi nỗ lực xây dựng một xã hội giàu lòng nhân ái, nơi mỗi giọt máu sẻ chia sẽ mang đến hy vọng và sự chữa lành.</p>
         </div>
 
         <h2>Blog</h2>
@@ -96,11 +77,22 @@ function Home() {
 
         <h2 id="info">Thông tin</h2>
         <div className="blood-section">
-          <div className="blood-table-container">
-            <img src={bloodTypeImg} alt="Blood Types" />
+          <div className="left-column">
+            <div className="info-box">📰 Tin tức</div>
+            <div className="info-box">❓ Hỏi đáp</div>
+            <div className="info-box">
+              <img src={attentionImg} alt="Lưu ý khi hiến máu" className="icon" />
+            Các lưu ý khi hiến máu</div>
+            <div className="info-box">
+            <img src={bloodTypeImg} alt="Nhóm máu" className="icon" />
+            Nhóm máu
           </div>
-
-          
+          </div>
+          <div className="right-column">
+            <div className="info-box tall-box">📋 Tiêu chuẩn tham gia hiến máu</div>
+            <div className="info-box tall-box">💡 Những lời khuyên trước và sau khi hiến máu</div>
+            <div className="info-box">🩸 Ngân hàng máu</div>
+          </div>
         </div>
       </section>
       <footer id="contact">

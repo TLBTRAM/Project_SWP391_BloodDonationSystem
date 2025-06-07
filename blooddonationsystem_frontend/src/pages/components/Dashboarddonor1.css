@@ -51,6 +51,7 @@ header {
 .avatar {
   width: 35px;
   height: 35px;
+  gap: 15px;
   border-radius: 50%;
 }
 
@@ -75,9 +76,14 @@ header {
 .information {
   flex: 1;
   min-width: 300px;
+  gap: 50px;
+
 }
 
 .left-section {
+  display: flex;
+  align-items: center;
+  gap: 150px;
   margin-bottom: 20px;
 }
 
@@ -98,6 +104,7 @@ header {
   cursor: pointer;
   font-weight: 500;
   transition: background 0.3s;
+  margin-top: 8px;
 }
 
 .edit-btn:hover {
@@ -140,8 +147,10 @@ header {
 
 .donation-history table,
 .calendar table {
-  width: 100%;
+  width: 70%;
+  border: 1px solid #ddd;
   border-collapse: collapse;
+
 }
 
 .donation-history th,
