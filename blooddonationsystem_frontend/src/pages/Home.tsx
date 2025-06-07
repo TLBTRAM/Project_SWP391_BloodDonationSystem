@@ -12,7 +12,13 @@ import healthCheckImg from './images/procedure/Health_check.png';
 import donationImg from './images/procedure/Donation.png';
 import afterDonationImg from './images/procedure/After_donation.png';
 
+import newImg from './images/info/new_icon.png';
+import askImg from './images/info/ask_icon.png';
 import attentionImg from './images/info/attention_icon.png';
+import bloodTypesImg from './images/info/bloodTypes_icon.png';
+import joinImg from './images/info/join_icon.png';
+import advisedImg from './images/info/advise_icon.png';
+import bloodBankImg from './images/info/bloodBank_icon.png';
 
 import Header from '../layouts/header-footer/Header';
 import Footer from '../layouts/header-footer/Footer';
@@ -78,20 +84,35 @@ function Home() {
         <h2 id="info">Thông tin</h2>
         <div className="blood-section">
           <div className="left-column">
-            <div className="info-box">📰 Tin tức</div>
-            <div className="info-box">❓ Hỏi đáp</div>
+            <div className="info-box">
+              <img src={newImg} alt="Tin tức" className="icon" />
+              Tin tức
+            </div>
+            <div className="info-box">
+              <img src={askImg} alt="Hỏi đáp" className="icon" />
+              Hỏi đáp
+            </div>
             <div className="info-box">
               <img src={attentionImg} alt="Lưu ý khi hiến máu" className="icon" />
-            Các lưu ý khi hiến máu</div>
+              Các lưu ý khi hiến máu</div>
             <div className="info-box">
-            <img src={bloodTypeImg} alt="Nhóm máu" className="icon" />
-            Nhóm máu
-          </div>
+              <img src={bloodTypesImg} alt="Nhóm máu" className="icon" />
+              Nhóm máu
+            </div>
           </div>
           <div className="right-column">
-            <div className="info-box tall-box">📋 Tiêu chuẩn tham gia hiến máu</div>
-            <div className="info-box tall-box">💡 Những lời khuyên trước và sau khi hiến máu</div>
-            <div className="info-box">🩸 Ngân hàng máu</div>
+            <div className="info-box">
+              <img src={joinImg} alt="Tiêu chuẩn" className="icon" />
+              Tiêu chuẩn tham gia hiến máu
+            </div>
+            <div className="info-box">
+              <img src={advisedImg} alt="advised" className="icon" />
+              Những lời khuyên trước và sau khi hiến máu
+            </div>
+            <div className="info-box">
+              <img src={bloodBankImg} alt="Ngân hàng máu" className="icon" />
+              Ngân hàng máu
+            </div>
           </div>
         </div>
       </section>
