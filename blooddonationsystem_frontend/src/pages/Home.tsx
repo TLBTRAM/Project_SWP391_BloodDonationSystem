@@ -105,7 +105,7 @@ function Home() {
             </div>
           </div>
           <div className="right-column">
-            <div className="info-box">
+            <div className="info-box" onClick={() => navigate("/standard")}>
               <img src={joinImg} alt="Tiêu chuẩn" className="icon" />
               Tiêu chuẩn tham gia hiến máu
             </div>
