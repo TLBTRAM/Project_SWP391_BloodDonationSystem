@@ -1,64 +1,94 @@
+/* Vùng chứa tổng thể */
 .timeline-container {
-  max-width: 700px;
-  margin: 0 auto;
+  max-width: 800px;
+  margin: 3rem auto;
   padding: 2rem;
+  background-color: #ffffff;
+  border-radius: 16px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
   font-family: 'Segoe UI', sans-serif;
-  background-color: #fff5f5;
-  border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
+/* Tiêu đề */
 .timeline-title {
   text-align: center;
-  font-size: 1.8rem;
-  color: #d32f2f;
+  font-size: 2rem;
+  font-weight: 700;
+  color: #b71c1c;
   margin-bottom: 2rem;
+  position: relative;
 }
 
+.timeline-title::after {
+  content: "";
+  width: 80px;
+  height: 4px;
+  background-color: #b71c1c;
+  display: block;
+  margin: 0.5rem auto 0;
+  border-radius: 2px;
+}
+
+/* Timeline tổng */
 .timeline {
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
+  gap: 2rem;
   position: relative;
+  padding-left: 40px;
 }
 
+/* Dòng nối dọc timeline */
+.timeline::before {
+  content: "";
+  position: absolute;
+  left: 32px;
+  top: 0;
+  bottom: 0;
+  width: 4px;
+  background: #f44336;
+  border-radius: 2px;
+}
+
+/* Một bước */
 .timeline-step {
   display: flex;
   align-items: flex-start;
-}
-
-.timeline-marker {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  margin-right: 1rem;
   position: relative;
 }
 
-.circle {
-  width: 28px;
-  height: 28px;
-  border-radius: 50%;
-  background-color: #d32f2f;
-  color: white;
-  font-weight: bold;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+/* Marker hình ảnh */
+.timeline-marker {
+  position: relative;
+  z-index: 2;
+  margin-right: 1rem;
+  flex-shrink: 0;
 }
 
-.line {
-  width: 2px;
-  flex-grow: 1;
-  background-color: #d32f2f;
-  margin-top: 4px;
-}
-
-.timeline-content {
+.timeline-icon {
+  width: 48px;
+  height: 48px;
+  object-fit: contain;
   background-color: #fff;
-  padding: 0.8rem 1rem;
+  padding: 6px;
+  border-radius: 50%;
+  box-shadow: 0 0 0 4px #fff, 0 2px 8px rgba(0, 0, 0, 0.1);
+  border: 2px solid #f44336;
+}
+
+/* Nội dung */
+.timeline-content {
+  background-color: #fafafa;
+  padding: 1rem 1.5rem;
+  border-left: 4px solid #f44336;
   border-radius: 8px;
-  box-shadow: 0 2px 6px rgba(211, 47, 47, 0.2);
   font-size: 1rem;
+  line-height: 1.6;
   color: #333;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+  transition: background-color 0.3s ease;
+}
+
+.timeline-content:hover {
+  background-color: #fff3f3;
 }

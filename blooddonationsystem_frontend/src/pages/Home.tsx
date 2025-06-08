@@ -98,8 +98,9 @@ function Home() {
             </div>
             <div className="info-box">
               <img src={attentionImg} alt="Lưu ý khi hiến máu" className="icon" />
-              Các lưu ý khi hiến máu</div>
-            <div className="info-box">
+              Các hoạt động hiến máu nhân đạo
+            </div>
+            <div className="info-box" onClick={() => navigate("/bloodtype")}>
               <img src={bloodTypesImg} alt="Nhóm máu" className="icon" />
               Nhóm máu
             </div>
@@ -109,7 +110,7 @@ function Home() {
               <img src={joinImg} alt="Tiêu chuẩn" className="icon" />
               Tiêu chuẩn tham gia hiến máu
             </div>
-            <div className="info-box">
+            <div className="info-box" onClick={() => navigate("/advise")}>
               <img src={advisedImg} alt="advised" className="icon" />
               Những lời khuyên trước và sau khi hiến máu
             </div>

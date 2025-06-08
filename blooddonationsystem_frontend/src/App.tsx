@@ -3,7 +3,10 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 import HomePage from "./pages/Home";
 import NewsPage from "./pages/News";
 import FAQsPage from "./pages/FAQs";
+import ActPage from "./pages/Activities";
+import TypePage from "./pages/BloodTypes";
 import JoinPage from "./pages/Standard";
+import AdvisePage from "./pages/Advise";
 
 import RegisterPage from "./pages/Register";
 import LoginPage from "./pages/Login";
@@ -11,30 +14,33 @@ import Reset1Page from "./pages/ResetPassemail";
 import Reset2Page from "./pages/ResetPassOTP";
 import Reset3Page from "./pages/ResetPass";
 
-import DonorPage  from "./pages/Dashboarddonor1";
+import DonorPage from "./pages/Dashboarddonor1";
 import AdminPage from "./pages/Admin";
 
 function App() {
 	return (
-		<BrowserRouter>	
+		<BrowserRouter>
 			<Routes>
 				<Route path="/" element={<HomePage />} />
 				<Route path="/news" element={<NewsPage />} />
 				<Route path="/faqs" element={<FAQsPage />} />
+				<Route path="/act" element={<ActPage />} />
+				<Route path="/bloodtype" element={<TypePage />} />
 				<Route path="/standard" element={<JoinPage />} />
+				<Route path="/advise" element={<AdvisePage />} />
 
 				<Route path="/register" element={<RegisterPage />} />
 				<Route path="/login" element={<LoginPage />} />
 				<Route path="/forgot" element={<Reset1Page />} />
 				<Route path="/forgot2" element={<Reset2Page />} />
 				<Route path="/forgot3" element={<Reset3Page />} />
-				
 
-				<Route path="/donor1" element={<DonorPage  />} />
+
+				<Route path="/donor1" element={<DonorPage />} />
 				<Route path="/admin" element={<AdminPage />} />
 
 
-				
+
 			</Routes>
 		</BrowserRouter>
 	);
