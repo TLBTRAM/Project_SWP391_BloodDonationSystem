@@ -90,12 +90,13 @@
     }
 
     .mission {
-      background: #fff;
+      background: #ffff;
       padding: 40px;
       border-radius: 10px;
       margin-bottom: 60px;
       font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
       color: #333;
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25); 
     }
 
     .mission h2 {
@@ -224,7 +225,6 @@
 
     .icon {
       width: 50px;
-      /* nhỏ hơn mặc định 24px */
       height: 50px;
       object-fit: contain;
       vertical-align: middle;
@@ -240,14 +240,13 @@
     .info-box {
       display: flex;
       align-items: center;
-      /* canh giữa theo chiều dọc */
       gap: 10px;
-      /* khoảng cách giữa hình và chữ */
       background-color: white;
       padding: 16px;
       border-radius: 10px;
-      font-size: 16px;
-      font-weight: 500;
+      font-size: 18px;
+      font-weight: 600;
+      color: #000;
       box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
       transition: transform 0.2s ease;
     }

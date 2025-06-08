@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 
 import './components/Home.css';
 import bannerImg from './images/Banner/Banner.png';
+import { useNavigate } from 'react-router-dom';
 
 import aaravImg from './images/User/Aarav.png';
 import dinoyRajKImg from './images/User/DinoyRajK.png';
@@ -24,7 +25,7 @@ import Header from '../layouts/header-footer/Header';
 import Footer from '../layouts/header-footer/Footer';
 
 function Home() {
-
+  const navigate = useNavigate();
 
   return (
     <div>
@@ -34,7 +35,10 @@ function Home() {
       <div className="hero">
         <div className="hero-content">
           <h1>Hiến máu vì<br />cộng đồng</h1>
-          <button className="btn" id="testBtn">Khám sàng lọc</button>
+          <button className="btn" id="testBtn" onClick={() => navigate("/register")}>
+            Khám sàng lọc
+          </button>
+
         </div>
         <img src={bannerImg} alt="Donate Blood" />
       </div>
@@ -84,11 +88,11 @@ function Home() {
         <h2 id="info">Thông tin</h2>
         <div className="blood-section">
           <div className="left-column">
-            <div className="info-box">
+            <div className="info-box" onClick={() => navigate("/news")}>
               <img src={newImg} alt="Tin tức" className="icon" />
               Tin tức
             </div>
-            <div className="info-box">
+            <div className="info-box" onClick={() => navigate("/faqs")}>
               <img src={askImg} alt="Hỏi đáp" className="icon" />
               Hỏi đáp
             </div>
