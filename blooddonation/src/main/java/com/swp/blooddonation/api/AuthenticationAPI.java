@@ -1,5 +1,6 @@
 package com.swp.blooddonation.api;
 
+import com.swp.blooddonation.dto.AccountResponse;
 import com.swp.blooddonation.entity.Account;
 import com.swp.blooddonation.model.LoginRequest;
 import com.swp.blooddonation.model.ResetPasswordRequest;
@@ -27,7 +28,7 @@ public class AuthenticationAPI {
 
     @PostMapping("/login")
     public ResponseEntity login(@Valid @RequestBody LoginRequest loginRequest) {
-         Account account = authenticationService.login(loginRequest);
+         AccountResponse account = authenticationService.login(loginRequest);
         return ResponseEntity.ok(account);
     }
 

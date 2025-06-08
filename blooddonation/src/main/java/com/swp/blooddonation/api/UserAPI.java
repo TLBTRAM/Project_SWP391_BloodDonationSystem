@@ -1,6 +1,5 @@
 package com.swp.blooddonation.api;
 
-import com.swp.blooddonation.entity.User;
 import com.swp.blooddonation.repository.AuthenticationReponsitory;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;

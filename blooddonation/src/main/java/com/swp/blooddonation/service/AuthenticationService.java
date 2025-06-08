@@ -1,5 +1,6 @@
 package com.swp.blooddonation.service;
 
+import com.swp.blooddonation.dto.AccountResponse;
 import com.swp.blooddonation.entity.Account;
 import com.swp.blooddonation.entity.VerificationCode;
 import com.swp.blooddonation.exception.exceptions.AuthenticationException;
@@ -10,6 +11,7 @@ import com.swp.blooddonation.repository.AuthenticationReponsitory;
 import com.swp.blooddonation.repository.VerificationCodeRepository;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -31,6 +33,12 @@ public class AuthenticationService implements UserDetailsService {
     PasswordEncoder passwordEncoder;
 
     @Autowired
+    ModelMapper modelMapper;
+
+    @Autowired
+    TokenService tokenService;
+
+    @Autowired
     @Lazy
     AuthenticationManager authenticationManager;
 
@@ -44,7 +52,7 @@ public class AuthenticationService implements UserDetailsService {
     }
 
 
-    public Account login(LoginRequest loginRequest){
+    public AccountResponse login(LoginRequest loginRequest){
         try {
             authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
                     loginRequest.getEmail(),
@@ -54,7 +62,12 @@ public class AuthenticationService implements UserDetailsService {
             System.out.println("Thông tin dằng nhập không chính xác");
             throw new AuthenticationException("invalid...");
         }
-        return authenticationReponsitory.findAccountByEmail(loginRequest.getEmail());
+
+        Account account = authenticationReponsitory.findAccountByEmail(loginRequest.getEmail());
+        AccountResponse accountResponse = modelMapper.map(account, AccountResponse.class);
+        String token = tokenService.generateToken(account);
+        accountResponse.setToken(token);
+        return accountResponse;
     }
 
 
