@@ -1,6 +1,7 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 
 import HomePage from "./pages/Home";
+import TeamPage from "./pages/Team";
 
 //Các trang thông tin 
 import NewsPage from "./pages/News";
@@ -29,6 +30,9 @@ function App() {
 		<BrowserRouter>
 			<Routes>
 				<Route path="/" element={<HomePage />} />
+				<Route path="/team" element={<TeamPage />} />
+
+				{/* Các trang thông tin */}
 				<Route path="/news" element={<NewsPage />} />
 				<Route path="/faqs" element={<FAQsPage />} />
 				<Route path="/act" element={<ActPage />} />
@@ -36,13 +40,14 @@ function App() {
 				<Route path="/standard" element={<JoinPage />} />
 				<Route path="/advise" element={<AdvisePage />} />
 
+				{/* Đăng ký, đăng nhập, reset mật khẩu */}
 				<Route path="/register" element={<RegisterPage />} />
 				<Route path="/login" element={<LoginPage />} />
 				<Route path="/forgot" element={<Reset1Page />} />
 				<Route path="/forgot2" element={<Reset2Page />} />
 				<Route path="/forgot3" element={<Reset3Page />} />
 
-
+				{/* Tài khoản người dùng và quản trị viên */}
 				<Route path="/donor1" element={<DonorPage />} />
 				<Route path="/edit" element={<EditPage />} />
 				<Route path="/admin" element={<AdminPage />} />

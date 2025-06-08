@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 
 import './components/Home.css';
-import bannerImg from './images/Banner/Banner.png';
+import bannerImg from './images/Banner/Banner1.png';
 import { useNavigate } from 'react-router-dom';
 
 import aaravImg from './images/User/Aarav.png';
@@ -30,18 +30,15 @@ function Home() {
   return (
     <div>
       <Header />
-
-      <br />
-      <div className="hero">
-        <div className="hero-content">
-          <h1>Hiến máu vì<br />cộng đồng</h1>
-          <button className="btn" id="testBtn" onClick={() => navigate("/register")}>
-            Khám sàng lọc
-          </button>
-
+      <section className="banner-section">
+        <img src={bannerImg} alt="Hiến máu" className="banner-img" />
+        <div className="banner-overlay" />
+        <div className="banner-content">
+          <h3>HIẾN MÁU</h3>
+          <h1>VÌ CỘNG ĐỒNG</h1>
+          <button className="book-btn">KHÁM SÀNG LỌC</button>
         </div>
-        <img src={bannerImg} alt="Donate Blood" />
-      </div>
+      </section>
 
       <section className="section">
         <div id="aboutus" className="mission">
@@ -52,16 +49,49 @@ function Home() {
         </div>
 
         <h2>Blog</h2>
-        <div className="blog">
+        <div className="blog-grid">
           {[
-            { name: 'Aarav', image: aaravImg },
-            { name: 'Dinoy Raj K', image: dinoyRajKImg },
-            { name: 'Rohan', image: rohanImg },
-          ].map((person, index) => (
-            <div className="card" key={index}>
-              <img src={person.image} alt={person.name} />
-              <h4>{person.name}</h4>
-              <p>Mình là một người chưa biết gì về hoạt động hiến máu cả</p>
+            {
+              name: 'Aarav',
+              image: aaravImg,
+              avatar: aaravImg,
+              title: 'Hiến máu – Điều nhỏ, nghĩa lớn',
+              likes: 57,
+              comments: 6,
+              views: 138,
+            },
+            {
+              name: 'Dinoy Raj K',
+              image: dinoyRajKImg,
+              avatar: dinoyRajKImg,
+              title: 'Lần đầu đi hiến máu: Cảm xúc và trải nghiệm',
+              likes: 72,
+              comments: 4,
+              views: 190,
+            },
+            {
+              name: 'Rohan',
+              image: rohanImg,
+              avatar: rohanImg,
+              title: 'Giọt máu cứu người – Hành trình nhân ái',
+              likes: 102,
+              comments: 12,
+              views: 320,
+            },
+          ].map((blog, index) => (
+            <div className="blog-card" key={index}>
+              <img className="blog-img" src={blog.image} alt={blog.name} />
+              <div className="avatar-container">
+                <img className="avatar" src={blog.avatar} alt={blog.name} />
+              </div>
+              <div className="blog-body">
+                <h4 className="blog-title">{blog.title}</h4>
+                <div className="blog-footer">
+                  <span>❤️ {blog.likes}</span>
+                  <span>💬 {blog.comments}</span>
+                  <span>👁️ {blog.views}</span>
+                </div>
+              </div>
             </div>
           ))}
         </div>

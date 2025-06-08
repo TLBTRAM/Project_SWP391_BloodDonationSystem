@@ -26,58 +26,82 @@
       font-weight: 600;
     }
 
-
-    .hero {
+    .banner-section {
       position: relative;
       width: 100%;
-      max-width: 1000px;
-      margin: auto;
+      height: 100vh;
       overflow: hidden;
-      border-radius: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     }
 
-    .hero img {
-      width: 100%;
-      height: auto;
-      object-fit: cover;
-      display: block;
-    }
-
-    .hero-content {
+    .banner-img {
       position: absolute;
-      top: 30%;
-      left: 00%;
-      padding: 30px;
-      border-radius: 20px;
-      color: black;
-      text-shadow: 1px 1px 2px #fff;
-      box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.1);
-      max-width: 320px;
-      font-size: 24px;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      z-index: 1;
     }
 
-    .hero-content h1 {
-      font-size: 28px;
-      margin-bottom: 15px;
-      line-height: 1.3;
-      font-weight: bold;
+    .banner-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(to bottom right, rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.4));
+      z-index: 2;
     }
 
-    .btn {
-      background-color: black;
+    .banner-content {
+      position: relative;
+      z-index: 3;
+      text-align: center;
       color: white;
-      padding: 15px 25px;
-      border: none;
-      font-weight: bold;
-      font-size: 16px;
+      padding: 40px;
       border-radius: 12px;
-      cursor: pointer;
-      transition: background 0.3s;
     }
 
-    .btn:hover {
-      background-color: #444;
+    .banner-content h3 {
+      font-size: 28px;
+      font-weight: 400;
+      margin-bottom: 8px;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      color: #ffdddd;
     }
+
+    .banner-content h1 {
+      font-size: 56px;
+      font-weight: bold;
+      margin-bottom: 24px;
+      color: #B71C1C;
+      text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.5);
+    }
+
+    .book-btn {
+      background-color: #e60000;
+      color: #fff;
+      padding: 14px 32px;
+      border: none;
+      font-size: 18px;
+      border-radius: 10px;
+      cursor: pointer;
+      font-weight: 600;
+      box-shadow: 0 8px 24px rgba(230, 0, 0, 0.4);
+      transition: all 0.3s ease;
+    }
+
+    .book-btn:hover {
+      background-color: #c40000;
+      transform: translateY(-2px);
+      box-shadow: 0 12px 30px rgba(230, 0, 0, 0.5);
+    }
+
 
     .section {
       padding: 60px 10%;
@@ -96,7 +120,7 @@
       margin-bottom: 60px;
       font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
       color: #333;
-      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25); 
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
     }
 
     .mission h2 {
@@ -113,29 +137,83 @@
       margin-bottom: 12px;
     }
 
-    .blog {
-      text-align: left;
+    h2 {
+      text-align: center;
+      font-size: 36px;
+      font-weight: bold;
+      margin: 50px 0 30px;
+      color: #b30000;
+      text-transform: uppercase;
+    }
+
+    .blog-grid {
       display: flex;
+      flex-wrap: wrap;
       justify-content: center;
-      gap: 20px;
-      margin-bottom: 60px;
+      gap: 30px;
+      padding: 0 20px 60px;
     }
 
-    .card {
+    .blog-card {
       width: 300px;
-      font-size: 1.1rem;
-      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-      margin: 10px;
       background: #fff;
-      padding: 20px;
       border-radius: 12px;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+      overflow: hidden;
+      position: relative;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
     }
 
-    .card img {
+    .blog-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 16px 32px rgba(0, 0, 0, 0.15);
+    }
+
+    .blog-img {
+      width: 100%;
+      height: 180px;
+      object-fit: cover;
+      display: block;
+    }
+
+    .avatar-container {
+      position: absolute;
+      top: 150px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 64px;
+      height: 64px;
+      border: 4px solid #fff;
       border-radius: 50%;
-      width: 40px;
-      height: 40px;
-      margin-bottom: 10px;
+      background: #fff;
+      z-index: 2;
+    }
+
+    .avatar {
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      object-fit: cover;
+    }
+
+    .blog-body {
+      padding: 50px 20px 20px;
+      text-align: center;
+    }
+
+    .blog-title {
+      font-size: 16px;
+      font-weight: 600;
+      color: #333;
+      margin-bottom: 15px;
+    }
+
+    .blog-footer {
+      display: flex;
+      justify-content: space-between;
+      color: #888;
+      font-size: 14px;
+      padding: 0 10px;
     }
 
     .steps {
