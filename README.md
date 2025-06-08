@@ -1,13 +1,18 @@
 # Project_SWP391_BloodDonationSystem
-
-TEAM 6 - SE1841
+Class: SE1841
 
 Instructor: 	Nguyễn Thị Cẩm Hương
 
+TEAM 6 
+
 SE183058 - Thái Lâm Bảo Trâm - Team Leader 
+
 SE183023 - Nguyễn Thị Thảo Hiền
+
 SE181797 - Hồ Văn Tuấn
+
 SE192036 - Trần Huỳnh Bảo Minh
+
 SE192096 - Nguyễn Tô Trung	Kiên
 
 Blood Donation Support Software for a Medical Facility:
