@@ -1,6 +1,7 @@
 package com.swp.blooddonation.service;
 
 import com.swp.blooddonation.dto.AccountResponse;
+import com.swp.blooddonation.dto.EmailDetail;
 import com.swp.blooddonation.entity.Account;
 import com.swp.blooddonation.entity.VerificationCode;
 import com.swp.blooddonation.exception.exceptions.AuthenticationException;
@@ -42,12 +43,22 @@ public class AuthenticationService implements UserDetailsService {
     @Lazy
     AuthenticationManager authenticationManager;
 
+    @Autowired
+    EmailService emailService;
+
     public Account register (@Valid Account account){
         if (authenticationReponsitory.existsByEmail(account.getEmail())) {
             throw new RuntimeException("Email đã được sử dụng!");
         }
         account.setPassword(passwordEncoder.encode((account.getPassword())));
         Account newAccount = authenticationReponsitory.save(account);
+
+        // send email
+        EmailDetail emailDetail = new EmailDetail();
+        emailDetail.setMailRecipient(account.email);
+        emailDetail.setSubject("Welcome to Blood Donation Website");
+        emailService.sendMail(emailDetail);
+
         return newAccount;
     }
 
@@ -93,9 +104,6 @@ public class AuthenticationService implements UserDetailsService {
 
     @Autowired
     VerificationCodeRepository verificationCodeRepository;
-
-    @Autowired
-    EmailService emailService;
 
     public void sendResetCode(String email) {
         Account account = authenticationReponsitory.findAccountByEmail(email);
