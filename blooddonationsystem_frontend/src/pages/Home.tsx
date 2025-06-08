@@ -96,7 +96,7 @@ function Home() {
               <img src={askImg} alt="Hỏi đáp" className="icon" />
               Hỏi đáp
             </div>
-            <div className="info-box">
+            <div className="info-box" onClick={() => navigate("/act")}>
               <img src={attentionImg} alt="Lưu ý khi hiến máu" className="icon" />
               Các hoạt động hiến máu nhân đạo
             </div>

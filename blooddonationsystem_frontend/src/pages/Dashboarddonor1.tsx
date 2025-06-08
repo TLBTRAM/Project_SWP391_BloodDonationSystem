@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import './components/Dashboarddonor1.css';
 import Calendar from './Calendar';
 import { Link, useNavigate } from 'react-router-dom';
-import logoBlood from './images/Logo/logo_blood.png';
 import dinoyRajKImg from './images/User/DinoyRajK.png';
 import Header from '../layouts/header-footer/Header';
 
@@ -33,7 +32,7 @@ const Dashboarddonor1: React.FC = () => {
 
   return (
     <div>
-      <Header/>
+      <Header />
 
       {/* Profile Container */}
       <div className="container">
@@ -42,10 +41,12 @@ const Dashboarddonor1: React.FC = () => {
           <div className="information">
             <div className="left-section">
               <img className="profile-img" src={dinoyRajKImg} alt="User" />
-              <div className="name-and-button">
+              <div className="name-role-edit">
                 <h2>Dinoy Raj K</h2>
-                <br/>
-                <button className="edit-btn">Edit Profile</button>
+                <div className="right-actions">
+                  <span className="user-role-badge">Người dùng</span>
+                  <button className="edit-btn" onClick={() => navigate("/edit")} >Edit Profile</button>
+                </div>
               </div>
             </div>
 

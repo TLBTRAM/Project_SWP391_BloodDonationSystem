@@ -6,165 +6,160 @@
 }
 
 body {
-  background: #f6f6f6;
-  font-family: Arial, sans-serif;
-}
-
-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 20px 10%;
-  background: #fff;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  position: relative;
-  z-index: 10;
-}
-
-.navbar {
-  background: #fff;
-  display: flex;
-  justify-content: space-between;
-  padding: 15px 30px;
-  align-items: center;
-  border-bottom: 1px solid #ddd;
-}
-
-.nav-links {
-  display: flex;
-  list-style: none;
-  gap: 20px;
-}
-
-.nav-links a {
-  text-decoration: none;
+  background-color: #f9f9fb;
   color: #333;
-  font-weight: 500;
-}
-
-.nav-icons {
-  display: flex;
-  gap: 15px;
-  align-items: center;
-}
-
-.avatar {
-  width: 35px;
-  height: 35px;
-  gap: 15px;
-  border-radius: 50%;
+  font-size: 16px;
+  line-height: 1.6;
 }
 
 .container {
   max-width: 1200px;
-  margin: 0px auto;
-  padding: 20px;
+  margin: 40px auto;
+  padding: 0 20px;
 }
 
 .profile-card {
-  background: #fff;
-  border-radius: 12px;
   display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  padding: 30px;
+  flex-direction: row;
   gap: 40px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+  padding: 40px;
+  transition: all 0.3s ease;
 }
 
-/* Left Side - User Info */
+/* Left Section */
 .information {
   flex: 1;
-  min-width: 300px;
-  gap: 50px;
-
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
 }
 
 .left-section {
   display: flex;
   align-items: center;
-  gap: 150px;
-  margin-bottom: 20px;
+  gap: 40px;
 }
 
 .profile-img {
-  width: 120px;
-  height: 120px;
-  object-fit: cover;
+  width: 130px;
+  height: 130px;
   border-radius: 50%;
-  margin-bottom: 10px;
+  object-fit: cover;
+  border: 4px solid #002b5b;
+}
+
+.name-with-role {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.user-role-badge {
+  padding: 6px 14px;
+  font-size: 0.85rem;
+  background-color: #e3f2fd;
+  color: #0d47a1;
+  border-radius: 20px;
+  font-weight: 500;
+  border: 1px solid #90caf9;
+  white-space: nowrap;
+}
+
+.name-and-button {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.name-and-button h2 {
+  font-size: 24px;
+  font-weight: 700;
+  color: #002b5b;
 }
 
 .edit-btn {
   background: #002b5b;
   color: #fff;
-  padding: 8px 20px;
   border: none;
+  padding: 8px 20px;
   border-radius: 8px;
-  cursor: pointer;
+  font-size: 14px;
   font-weight: 500;
-  transition: background 0.3s;
-  margin-top: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.right-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
 }
 
 .edit-btn:hover {
-  background: #004080;
+  background: #014aad;
 }
 
 .info-section h3 {
-  margin-bottom: 15px;
   font-size: 20px;
-  color: #222;
+  font-weight: 600;
+  margin-bottom: 12px;
+  color: #444;
 }
 
 .info-section table {
   width: 100%;
-  border-collapse: collapse;
+  border-spacing: 0 10px;
 }
 
 .info-section td {
-  padding: 8px 10px;
-  border-bottom: 1px solid #eee;
-  vertical-align: top;
+  padding: 10px;
   font-size: 15px;
-  color: #333;
+  color: #555;
+  background: #f7f8fa;
+  border-radius: 6px;
 }
 
-/* Right Side - History and Calendar */
+/* Right Section */
 .right-section {
   flex: 1;
   display: flex;
   flex-direction: column;
-  gap: 30px;
+  gap: 24px;
 }
 
-.donation-history h3,
-.calendar h3 {
-  margin-bottom: 10px;
+.donation-history h4 {
   font-size: 20px;
-  color: #222;
+  font-weight: 600;
+  color: #002b5b;
+  margin-bottom: 12px;
 }
 
-.donation-history table,
-.calendar table {
-  width: 70%;
-  border: 1px solid #ddd;
+.donation-history table {
+  width: 100%;
   border-collapse: collapse;
-
+  background: #fff;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
 }
 
 .donation-history th,
-.donation-history td,
-.calendar th,
-.calendar td {
+.donation-history td {
   text-align: center;
-  padding: 10px;
-  font-size: 14px;
+  padding: 14px 12px;
+  border-bottom: 1px solid #eee;
 }
 
 .donation-history th {
-  background: #f0f0f0;
-  color: #000;
+  background-color: #f0f2f5;
+  color: #333;
+  font-weight: 600;
 }
 
 .donation-history td {
@@ -172,19 +167,46 @@ header {
 }
 
 .calendar {
-  border: 1px solid #ddd;
-  padding: 15px;
-  border-radius: 10px;
-  background: #fafafa;
+  padding: 20px;
+  background: #f7f9fc;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
 }
 
-.calendar td {
+.calendar table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: center;
+}
+
+.calendar td,
+.calendar th {
+  padding: 12px;
   border: 1px solid #ddd;
+  border-radius: 6px;
   cursor: pointer;
 }
 
 .calendar .active {
-  background: #002b5b;
+  background-color: #002b5b;
   color: white;
-  border-radius: 6px;
+  font-weight: 600;
+  border-radius: 8px;
+}
+
+@media (max-width: 768px) {
+  .profile-card {
+    flex-direction: column;
+  }
+
+  .left-section {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 20px;
+  }
+
+  .donation-history table,
+  .calendar table {
+    font-size: 13px;
+  }
 }

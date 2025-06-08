@@ -24,10 +24,15 @@ const Login: React.FC = () => {
       localStorage.setItem('userName', username);
 
       // Điều hướng về trang tài khoản hoặc trang chủ
-      navigate('/account'); // bạn đổi đường dẫn phù hợp
+      navigate('/admin'); // bạn đổi đường dẫn phù hợp
+    } else if (username === 'user' && password === '123') {
+      localStorage.setItem('isLoggedIn', 'true');
+      localStorage.setItem('userName', username);
+      navigate('/donor1'); // bạn đổi đường dẫn phù hợp
     } else {
       alert('Tên đăng nhập hoặc mật khẩu không đúng!');
     }
+    
   };
 
   return (
