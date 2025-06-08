@@ -2,6 +2,7 @@ package com.swp.blooddonation.api;
 
 import com.swp.blooddonation.entity.User;
 import com.swp.blooddonation.repository.AuthenticationReponsitory;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -11,6 +12,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/user")
+@SecurityRequirement(name = "api")
 @CrossOrigin("*")
 
 public class UserAPI {

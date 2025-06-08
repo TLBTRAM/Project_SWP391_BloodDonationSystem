@@ -25,7 +25,6 @@ public class AuthenticationAPI {
     }
 
 
-
     @PostMapping("/login")
     public ResponseEntity login(@Valid @RequestBody LoginRequest loginRequest) {
          User user = authenticationService.login(loginRequest);
