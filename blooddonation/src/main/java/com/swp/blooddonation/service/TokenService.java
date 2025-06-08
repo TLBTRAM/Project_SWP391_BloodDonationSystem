@@ -1,5 +1,5 @@
 package com.swp.blooddonation.service;
-import com.swp.blooddonation.entity.User;
+import com.swp.blooddonation.entity.Account;
 import com.swp.blooddonation.repository.AuthenticationReponsitory;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
@@ -25,12 +25,12 @@ public class TokenService {
         return Keys.hmacShaKeyFor(keyBytes);
     }
 
-    public String generateToken(User user) {
+    public String generateToken(Account account) {
         String token =
                 // create object of JWT
                 Jwts.builder().
                         //subject of token
-                                subject(user.getEmail()).
+                                subject(account.getEmail()).
                         // time Create Token
                                 issuedAt(new Date(System.currentTimeMillis()))
                         // Time exprire of Token
@@ -51,9 +51,9 @@ public class TokenService {
     }
 
     // get userName form CLAIM
-    public User extractUser (String token){
+    public Account extractAccount (String token){
         String email = extractClaim(token,Claims::getSubject);
-        return authenticationReponsitory.findUserByEmail(email);
+        return authenticationReponsitory.findAccountByEmail(email);
     }
 
 

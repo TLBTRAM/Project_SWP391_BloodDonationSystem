@@ -1,6 +1,6 @@
 package com.swp.blooddonation.service;
 
-import com.swp.blooddonation.entity.User;
+import com.swp.blooddonation.entity.Account;
 import com.swp.blooddonation.entity.VerificationCode;
 import com.swp.blooddonation.exception.exceptions.AuthenticationException;
 import com.swp.blooddonation.exception.exceptions.ResetPasswordException;
@@ -9,6 +9,7 @@ import com.swp.blooddonation.model.ResetPasswordRequest;
 import com.swp.blooddonation.repository.AuthenticationReponsitory;
 import com.swp.blooddonation.repository.VerificationCodeRepository;
 import jakarta.transaction.Transactional;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -33,17 +34,17 @@ public class AuthenticationService implements UserDetailsService {
     @Lazy
     AuthenticationManager authenticationManager;
 
-    public User register (User user){
-        if (authenticationReponsitory.existsByEmail(user.getEmail())) {
+    public Account register (@Valid Account account){
+        if (authenticationReponsitory.existsByEmail(account.getEmail())) {
             throw new RuntimeException("Email đã được sử dụng!");
         }
-        user.setPassword(passwordEncoder.encode((user.getPassword())));
-        User newUser = authenticationReponsitory.save(user);
-        return newUser;
+        account.setPassword(passwordEncoder.encode((account.getPassword())));
+        Account newAccount = authenticationReponsitory.save(account);
+        return newAccount;
     }
 
 
-    public User login(LoginRequest loginRequest){
+    public Account login(LoginRequest loginRequest){
         try {
             authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
                     loginRequest.getEmail(),
@@ -53,7 +54,7 @@ public class AuthenticationService implements UserDetailsService {
             System.out.println("Thông tin dằng nhập không chính xác");
             throw new AuthenticationException("invalid...");
         }
-        return authenticationReponsitory.findUserByEmail(loginRequest.getEmail());
+        return authenticationReponsitory.findAccountByEmail(loginRequest.getEmail());
     }
 
 
@@ -74,7 +75,7 @@ public class AuthenticationService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        return authenticationReponsitory.findUserByEmail(email);
+        return authenticationReponsitory.findAccountByEmail(email);
     }
 
     @Autowired
@@ -84,8 +85,8 @@ public class AuthenticationService implements UserDetailsService {
     EmailService emailService;
 
     public void sendResetCode(String email) {
-        User user = authenticationReponsitory.findUserByEmail(email);
-        if (user == null) throw new RuntimeException("Email không tồn tại");
+        Account account = authenticationReponsitory.findAccountByEmail(email);
+        if (account == null) throw new RuntimeException("Email không tồn tại");
         // Xóa mã cũ (nếu có)
         verificationCodeRepository.deleteByEmail(email);
         String code = String.format("%06d", new java.util.Random().nextInt(999999));
@@ -103,11 +104,11 @@ public class AuthenticationService implements UserDetailsService {
         if (!vc.getCode().equals(resetPasswordRequest.getCode())) throw new ResetPasswordException("Mã không chính xác");
         if (vc.getExpiresAt().isBefore(LocalDateTime.now())) throw new ResetPasswordException("Mã đã hết hạn");
 
-        User user = authenticationReponsitory.findUserByEmail(resetPasswordRequest.getEmail());
-        if (user == null) throw new ResetPasswordException("Người dùng không tồn tại");
+        Account account = authenticationReponsitory.findAccountByEmail(resetPasswordRequest.getEmail());
+        if (account == null) throw new ResetPasswordException("Người dùng không tồn tại");
 
-        user.setPassword(passwordEncoder.encode(resetPasswordRequest.getNewPassword()));
-        authenticationReponsitory.save(user);
+        account.setPassword(passwordEncoder.encode(resetPasswordRequest.getNewPassword()));
+        authenticationReponsitory.save(account);
         verificationCodeRepository.deleteByEmail(resetPasswordRequest.getEmail());
     }
 }

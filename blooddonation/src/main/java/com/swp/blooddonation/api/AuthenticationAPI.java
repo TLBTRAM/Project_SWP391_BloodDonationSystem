@@ -1,6 +1,6 @@
 package com.swp.blooddonation.api;
 
-import com.swp.blooddonation.entity.User;
+import com.swp.blooddonation.entity.Account;
 import com.swp.blooddonation.model.LoginRequest;
 import com.swp.blooddonation.model.ResetPasswordRequest;
 import com.swp.blooddonation.service.AuthenticationService;
@@ -18,17 +18,17 @@ public class AuthenticationAPI {
     AuthenticationService authenticationService;
 
     @PostMapping("/register")
-    public ResponseEntity register(@Valid @RequestBody User user){
+    public ResponseEntity register(@Valid @RequestBody Account account){
         // nhờ thằng AuthenticationService => tạo dùm account
-        User newUser = authenticationService.register(user);
-        return  ResponseEntity.ok(newUser);
+        Account newAccount = authenticationService.register(account);
+        return  ResponseEntity.ok(newAccount);
     }
 
 
     @PostMapping("/login")
     public ResponseEntity login(@Valid @RequestBody LoginRequest loginRequest) {
-         User user = authenticationService.login(loginRequest);
-        return ResponseEntity.ok(user);
+         Account account = authenticationService.login(loginRequest);
+        return ResponseEntity.ok(account);
     }
 
     @PostMapping("/send-reset-code")
