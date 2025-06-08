@@ -4,6 +4,12 @@ TEAM 6 - SE1841
 
 Instructor: 	Nguyễn Thị Cẩm Hương
 
+SE183058 - Thái Lâm Bảo Trâm - Team Leader 
+SE183023 - Nguyễn Thị Thảo Hiền
+SE181797 - Hồ Văn Tuấn
+SE192036 - Trần Huỳnh Bảo Minh
+SE192096 - Nguyễn Tô Trung	Kiên
+
 Blood Donation Support Software for a Medical Facility:
 - Homepage: Introduces the medical facility, provides documents about different blood types, shares blog posts and experiences, etc.
 - User Registration: Allows users to register their blood type and specify the time when they are available to donate blood.
