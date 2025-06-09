@@ -1,212 +1,274 @@
 * {
+  box-sizing: border-box;
   margin: 0;
   padding: 0;
-  box-sizing: border-box;
-  font-family: 'Poppins', sans-serif;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
+/* BODY */
 body {
-  background-color: #f9f9fb;
-  color: #333;
-  font-size: 16px;
-  line-height: 1.6;
+  background: #f0f4ff;
+  color: #1e293b;
 }
 
-.container {
-  max-width: 1200px;
-  margin: 40px auto;
-  padding: 0 20px;
-}
-
-.profile-card {
-  display: flex;
-  flex-direction: row;
-  gap: 40px;
-  background: #fff;
-  border-radius: 16px;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
-  padding: 40px;
-  transition: all 0.3s ease;
-}
-
-/* Left Section */
-.information {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  gap: 24px;
-}
-
-.left-section {
-  display: flex;
-  align-items: center;
-  gap: 40px;
-}
-
-.profile-img {
-  width: 130px;
-  height: 130px;
-  border-radius: 50%;
-  object-fit: cover;
-  border: 4px solid #002b5b;
-}
-
-.name-with-role {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.user-role-badge {
-  padding: 6px 14px;
-  font-size: 0.85rem;
-  background-color: #e3f2fd;
-  color: #0d47a1;
-  border-radius: 20px;
-  font-weight: 500;
-  border: 1px solid #90caf9;
-  white-space: nowrap;
-}
-
-.name-and-button {
+/* HEADER */
+.header {
+  background: rgba(255, 255, 255, 0.6);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid #cbd5e1;
+  padding: 16px 40px;
   display: flex;
   justify-content: space-between;
   align-items: center;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.logo-img {
+  height: 48px;
+}
+
+.nav-links a {
+  margin-left: 24px;
+  color: #334155;
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.3s;
+}
+
+.nav-links a:hover {
+  color: #2563eb;
+}
+
+.user-info {
+  position: relative;
+  cursor: pointer;
+}
+
+.avatar {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  border: 2px solid #2563eb;
+}
+
+/* DROPDOWN */
+.dropdown-menu {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  background-color: white;
+  border-radius: 4px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+  z-index: 999;
+  min-width: 150px;
+  padding: 8px 0;
+}
+
+.dropdown-item {
+  display: block;
   width: 100%;
-  flex-wrap: wrap;
+  padding: 8px 16px;
+  background: none;
+  border: none;
+  text-align: left;
+  cursor: pointer;
+}
+
+.dropdown-item:hover {
+  background-color: #eee;
+}
+/* CONTAINER */
+.container {
+  max-width: 1280px;
+  margin: 40px auto;
+  padding: 0 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+
+/* PROFILE CARD */
+.profile-card {
+  display: flex;
+  background: rgba(255, 255, 255, 0.55);
+  backdrop-filter: blur(20px);
+  border-radius: 24px;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.08);
+  padding: 40px;
+  gap: 32px;
+}
+
+/* LEFT SECTION */
+.left-section {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   gap: 16px;
 }
 
-.name-and-button h2 {
-  font-size: 24px;
+.profile-img {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 4px solid #2563eb;
+}
+
+.name-role-edit h2 {
+  font-size: 26px;
+  color: #b91c1c;
   font-weight: 700;
-  color: #002b5b;
+  text-align: center;
+}
+
+.user-role-badge,
+.edit-btn {
+  padding: 6px 14px;
+  border-radius: 6px;
+  font-weight: 500;
+  transition: all 0.3s;
+  margin: 4px;
+}
+
+.user-role-badge {
+  background: linear-gradient(135deg, #b87333, #a3562d);
+  color: white;
+  padding: 6px 16px;
+  border-radius: 9999px;
+  /* pill shape */
+  font-weight: 600;
+  font-size: 14px;
+  letter-spacing: 0.5px;
+  box-shadow: 0 2px 6px rgba(30, 64, 175, 0.3);
+  border: 1px solid #1e3a8a;
 }
 
 .edit-btn {
-  background: #002b5b;
-  color: #fff;
+  background: #2563eb;
+  color: white;
   border: none;
-  padding: 8px 20px;
-  border-radius: 8px;
-  font-size: 14px;
-  font-weight: 500;
   cursor: pointer;
-  transition: background-color 0.3s ease;
-}
-
-.right-actions {
-  display: flex;
-  align-items: center;
-  gap: 12px;
 }
 
 .edit-btn:hover {
-  background: #014aad;
+  background: #1d4ed8;
+}
+
+/* INFO SECTION */
+.info-section {
+  margin-top: 32px;
+  width: 100%;
 }
 
 .info-section h3 {
   font-size: 20px;
-  font-weight: 600;
-  margin-bottom: 12px;
-  color: #444;
+  margin-bottom: 16px;
 }
 
 .info-section table {
   width: 100%;
-  border-spacing: 0 10px;
+  border-collapse: collapse;
+  background-color: white;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
 }
 
 .info-section td {
-  padding: 10px;
-  font-size: 15px;
-  color: #555;
-  background: #f7f8fa;
-  border-radius: 6px;
+  padding: 14px 16px;
+  border-bottom: 1px solid #e2e8f0;
 }
 
-/* Right Section */
+.info-section tr:nth-child(even) {
+  background: #f8fafc;
+}
+
+/* RIGHT SECTION */
 .right-section {
-  flex: 1;
+  flex: 1.2;
   display: flex;
   flex-direction: column;
   gap: 24px;
 }
 
+/* DONATION HISTORY */
+.donation-history {
+  background: rgba(255, 255, 255, 0.8);
+  border-radius: 16px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.06);
+  padding: 24px;
+  margin: 0 auto;
+  max-width: 620px;
+}
+
 .donation-history h4 {
-  font-size: 20px;
-  font-weight: 600;
-  color: #002b5b;
-  margin-bottom: 12px;
+  font-size: 18px;
+  margin-bottom: 16px;
 }
 
 .donation-history table {
   width: 100%;
   border-collapse: collapse;
-  background: #fff;
-  border-radius: 8px;
-  overflow: hidden;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
 }
 
 .donation-history th,
 .donation-history td {
-  text-align: center;
-  padding: 14px 12px;
-  border-bottom: 1px solid #eee;
+  padding: 12px;
+  text-align: left;
+  border-bottom: 1px solid #e2e8f0;
 }
 
-.donation-history th {
-  background-color: #f0f2f5;
-  color: #333;
-  font-weight: 600;
+.donation-history tr:nth-child(even) {
+  background: #f9fafb;
 }
 
-.donation-history td {
-  color: #444;
+/* CALENDAR + APPOINTMENT */
+.calendar-registration {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+  align-items: stretch;
 }
 
 .calendar {
-  padding: 20px;
-  background: #f7f9fc;
-  border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  min-width: 280px;
+  border: 1px solid #e2e8f0;
+  border-radius: 16px;
+  padding: 16px;
+  background: white;
 }
 
-.calendar table {
-  width: 100%;
-  border-collapse: collapse;
+.register-appointment {
+  flex-basis: 200px;
+  background: linear-gradient(to bottom right, #fef3c7, #facc15);
+  border-radius: 16px;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
   text-align: center;
 }
 
-.calendar td,
-.calendar th {
+.register-appointment h4 {
+  font-size: 18px;
+  color: #1f2937;
+  margin-bottom: 16px;
+}
+
+.register-btn {
   padding: 12px;
-  border: 1px solid #ddd;
-  border-radius: 6px;
-  cursor: pointer;
-}
-
-.calendar .active {
-  background-color: #002b5b;
+  background: #ef4444;
   color: white;
-  font-weight: 600;
-  border-radius: 8px;
+  font-weight: bold;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: background 0.3s;
 }
 
-@media (max-width: 768px) {
-  .profile-card {
-    flex-direction: column;
-  }
-
-  .left-section {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 20px;
-  }
-
-  .donation-history table,
-  .calendar table {
-    font-size: 13px;
-  }
+.register-btn:hover {
+  background: #dc2626;
 }
