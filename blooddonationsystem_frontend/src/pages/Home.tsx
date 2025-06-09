@@ -36,7 +36,7 @@ function Home() {
         <div className="banner-content">
           <h3>HIẾN MÁU</h3>
           <h1>VÌ CỘNG ĐỒNG</h1>
-          <button className="book-btn">KHÁM SÀNG LỌC</button>
+          <button className="book-btn" onClick={() => navigate("/register")}>KHÁM SÀNG LỌC</button>
         </div>
       </section>
 

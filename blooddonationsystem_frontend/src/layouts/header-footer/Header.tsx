@@ -28,7 +28,7 @@ const Header: React.FC = () => {
         <Link to="/">Trang chủ</Link>
         <a href="#contact">Liên hệ</a>
         <a href="#info">Thông tin</a>
-        <Link to="/doingu">Đội ngũ nhân viên y tế</Link>
+        <Link to="/team">Đội ngũ nhân viên y tế</Link>
         {!user && <Link to="/register">Đăng kí ngay</Link>}
       </nav>
 
