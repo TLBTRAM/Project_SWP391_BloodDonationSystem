@@ -1,9 +1,13 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 
+// Component scroll to top
+import ScrollToTop from "./ScrollToTop";
+
+// Trang chính
 import HomePage from "./pages/Home";
 import TeamPage from "./pages/Team";
 
-//Các trang thông tin 
+// Các trang thông tin
 import NewsPage from "./pages/News";
 import FAQsPage from "./pages/FAQs";
 import ActPage from "./pages/Activities";
@@ -11,24 +15,24 @@ import TypePage from "./pages/BloodTypes";
 import JoinPage from "./pages/Standard";
 import AdvisePage from "./pages/Advise";
 
-//đăng ký , đăng nhập , reset mật khẩu 
+// Đăng ký, đăng nhập, reset mật khẩu
 import RegisterPage from "./pages/Register";
 import LoginPage from "./pages/Login";
 import Reset1Page from "./pages/ResetPassemail";
 import Reset2Page from "./pages/ResetPassOTP";
 import Reset3Page from "./pages/ResetPass";
 
-//tài khoản người dùng và quản trị viên 
+// Tài khoản người dùng và quản trị viên
 import DonorPage from "./pages/Dashboarddonor1";
 import EditPage from "./pages/Edit";
-
-
 import AdminPage from "./pages/Admin";
 
 function App() {
 	return (
 		<BrowserRouter>
+			<ScrollToTop />
 			<Routes>
+				{/* Trang chính */}
 				<Route path="/" element={<HomePage />} />
 				<Route path="/team" element={<TeamPage />} />
 
@@ -51,16 +55,9 @@ function App() {
 				<Route path="/donor1" element={<DonorPage />} />
 				<Route path="/edit" element={<EditPage />} />
 				<Route path="/admin" element={<AdminPage />} />
-
-
-
 			</Routes>
 		</BrowserRouter>
 	);
 }
 
 export default App;
-
-
-
-

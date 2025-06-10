@@ -5,7 +5,10 @@ import Team2Img from './images/info/Team2.png';
 import Team3Img from './images/info/Team3.png';
 import Team4Img from './images/info/Team4.png';
 import Team5Img from './images/info/Team5.png';
+
 import Header from '../layouts/header-footer/Header';
+import Footer from '../layouts/header-footer/Footer';
+
 const Team = () => {
     return (
         <div>
@@ -41,6 +44,7 @@ const Team = () => {
                 </div>
             </section>
 
+        <Footer />
         </div>
     );
 };

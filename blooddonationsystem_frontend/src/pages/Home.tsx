@@ -151,6 +151,7 @@ function Home() {
           </div>
         </div>
       </section>
+      
       <footer id="contact">
         {<Footer />}
       </footer>

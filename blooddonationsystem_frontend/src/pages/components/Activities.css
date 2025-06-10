@@ -1,6 +1,14 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Poppins', sans-serif;
+}
+
 /* Container chính */
 .anh-carousel-container {
-  padding: 2rem;
+  padding-top: 30px;
+  padding-bottom: 60px;
   background-color: #fefefe;
   max-width: 100%;
   overflow: hidden;
@@ -28,7 +36,7 @@
 /* Carousel chính - dùng để cuộn */
 .anh-carousel {
   display: flex;
-  overflow: hidden; /* ẩn scroll */
+  overflow: hidden;
   position: relative;
 }
 
@@ -36,8 +44,10 @@
 .anh-carousel-content {
   display: flex;
   gap: 1.5rem;
+  padding-left: 1.5rem; /* ✅ tránh cắt slide đầu */
   animation: auto-scroll 60s linear infinite;
   width: max-content;
+  box-sizing: border-box;
 }
 
 /* Slide từng khung */
@@ -47,13 +57,18 @@
   height: 100%;
   flex: 0 0 auto;
   scroll-snap-align: start;
-  background-color: white;
+  background-color: #f5f5f5;
   border-radius: 1rem;
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
   overflow: hidden;
   transition: transform 0.3s ease;
   display: flex;
   flex-direction: column;
+  box-sizing: border-box;
+}
+
+/* Slide cuối tránh sát lề phải */
+.anh-carousel-content > .anh-slide:last-child {
+  margin-right: 1.5rem;
 }
 
 .anh-slide:hover {
@@ -115,12 +130,4 @@
 /* Hover để dừng cuộn */
 .anh-carousel:hover .anh-carousel-content {
   animation-play-state: paused;
-}
-
-/* Responsive mobile */
-@media (max-width: 768px) {
-  .anh-slide {
-    min-width: 85%;
-    max-width: 85%;
-  }
 }
