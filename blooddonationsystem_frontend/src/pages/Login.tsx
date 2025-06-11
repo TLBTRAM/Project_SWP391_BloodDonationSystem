@@ -28,7 +28,7 @@ const Login: React.FC = () => {
     } else if (username === 'user' && password === '123') {
       localStorage.setItem('isLoggedIn', 'true');
       localStorage.setItem('userName', username);
-      navigate('/donor1'); // bạn đổi đường dẫn phù hợp
+      navigate('/user'); // bạn đổi đường dẫn phù hợp
     } else {
       alert('Tên đăng nhập hoặc mật khẩu không đúng!');
     }

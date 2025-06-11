@@ -241,6 +241,13 @@ body {
   background: white;
 }
 
+.calendar-image {
+  max-width: 120px; /* hoặc 100%, tùy nhu cầu */
+  height: auto;
+  margin: 12px auto;
+  display: block;
+}
+
 .register-appointment {
   flex-basis: 200px;
   background: linear-gradient(to bottom right, #fef3c7, #facc15);
