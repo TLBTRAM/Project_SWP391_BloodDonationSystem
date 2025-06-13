@@ -1,0 +1,200 @@
+:root {
+  --primary: #0a2540;
+  --secondary: #f43f5e;
+  --bg: #f8fafd;
+  --text: #1e293b;
+  --card-bg: #ffffff;
+  --shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
+  --radius: 16px;
+}
+
+body {
+  background: var(--bg);
+  font-family: 'Segoe UI', sans-serif;
+  color: var(--text);
+}
+
+.staff-dashboard {
+  padding: 40px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* PROFILE CARD */
+.staff-profile {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: var(--card-bg);
+  padding: 30px;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  margin-bottom: 30px;
+}
+
+.profile-info {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.staff-avatar {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid #e2e8f0;
+}
+
+.profile-text h2 {
+  font-size: 24px;
+  font-weight: 700;
+  margin: 0;
+}
+
+.name-role {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+
+.name-role h2 {
+  font-size: 24px;
+  font-weight: 600;
+  color: #0a2540;
+  margin: 0;
+}
+
+.role-tag {
+  background-color: #f43f5e;
+  color: white;
+  padding: 4px 10px;
+  border-radius: 9999px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+
+.profile-text p {
+  margin: 4px 0;
+  font-size: 14px;
+  color: #475569;
+}
+
+.edit-button {
+  background: var(--primary);
+  color: white;
+  padding: 10px 18px;
+  border: none;
+  border-radius: 12px;
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.edit-button:hover {
+  background: #163e65;
+}
+
+/* CONTENT LAYOUT */
+.staff-content {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr;
+  gap: 20px;
+}
+
+/* APPOINTMENT */
+.appointment-list {
+  flex: 1;
+  background: white;
+  padding: 24px;
+  border-radius: 16px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+}
+
+.appointment-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.appointment-header h3 {
+  font-size: 1.5rem;
+  color: #0a2540;
+  margin: 0;
+  font-weight: 600;
+}
+
+.appointment-header input[type="date"] {
+  font-size: 1rem;
+  padding: 8px 12px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  background: #f9f9f9;
+  color: #333;
+}
+
+ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+li {
+  background: #f8fafc;
+  padding: 16px;
+  margin-bottom: 12px;
+  border-radius: 12px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+  font-size: 1.1rem;
+  color: #1f2937;
+}
+
+.status-button {
+  padding: 6px 12px;
+  border: none;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.status-done {
+  background-color: #22c55e;
+  color: white;
+}
+
+.status-pending {
+  background-color: #facc15;
+  color: #1e293b;
+}
+
+
+/* DATE PICKER & CALENDAR */
+.date-picker-section,
+.calendar-section {
+  background: white;
+  padding: 24px;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.date-picker-section input[type="date"] {
+  font-size: 16px;
+  padding: 10px 14px;
+  border: 1px solid #cbd5e1;
+  border-radius: 10px;
+  width: 100%;
+  text-align: center;
+  color: var(--text);
+}

@@ -25,6 +25,7 @@ import Reset3Page from "./pages/ResetPass";
 // Tài khoản người dùng và quản trị viên
 import UserPage from "./pages/User";
 import EditPage from "./pages/Edit";
+import MedPage from "./pages/MedicalStaff";
 import AdminPage from "./pages/Admin";
 
 // Tài khoản người quản lí kho máu
@@ -57,6 +58,7 @@ function App() {
 				{/* Tài khoản người dùng và quản trị viên */}
 				<Route path="/user" element={<UserPage />} />
 				<Route path="/edit" element={<EditPage />} />
+				<Route path="/med" element={<MedPage />} />
 				<Route path="/admin" element={<AdminPage />} />
 
 				{/* Tài khoản người quản lí kho máu */}
