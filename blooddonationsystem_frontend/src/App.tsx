@@ -23,7 +23,7 @@ import Reset2Page from "./pages/ResetPassOTP";
 import Reset3Page from "./pages/ResetPass";
 
 // Tài khoản người dùng và quản trị viên
-import DonorPage from "./pages/Dashboarddonor1";
+import UserPage from "./pages/User";
 import EditPage from "./pages/Edit";
 import AdminPage from "./pages/Admin";
 
@@ -55,7 +55,7 @@ function App() {
 				<Route path="/forgot3" element={<Reset3Page />} />
 
 				{/* Tài khoản người dùng và quản trị viên */}
-				<Route path="/donor1" element={<DonorPage />} />
+				<Route path="/user" element={<UserPage />} />
 				<Route path="/edit" element={<EditPage />} />
 				<Route path="/admin" element={<AdminPage />} />
 

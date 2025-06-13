@@ -57,3 +57,22 @@
 .save-btn:hover {
   background-color: #014aad;
 }
+
+.back-btn {
+  margin-top: 12px;
+  padding: 10px 20px;
+  background-color: #f0c28b; /* Màu đồng nhẹ */
+  color: #4a2d0b;            /* Màu chữ nâu đồng */
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.back-btn:hover {
+  background-color: #e6b573; /* Màu đồng đậm hơn khi hover */
+  transform: translateY(-2px);
+}

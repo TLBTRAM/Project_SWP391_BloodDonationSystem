@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import './components/Edit.css';
+import { useNavigate } from 'react-router-dom';
 
 interface UserInfo {
   name: string;
@@ -9,6 +10,9 @@ interface UserInfo {
 }
 
 const Edit: React.FC = () => {
+
+  const navigate = useNavigate();
+
   // Giả sử lấy dữ liệu user từ API hoặc context, mình hardcode tạm
   const [userInfo, setUserInfo] = useState<UserInfo>({
     name: 'Dinoy Raj K',
@@ -78,6 +82,7 @@ const Edit: React.FC = () => {
         />
 
         <button type="submit" className="save-btn">Lưu thay đổi</button>
+        <button type="button" className="back-btn" onClick={() => navigate('/user')}>Quay trở lại</button>
       </form>
     </div>
   );

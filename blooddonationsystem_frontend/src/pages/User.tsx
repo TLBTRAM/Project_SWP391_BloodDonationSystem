@@ -1,15 +1,16 @@
 import React, { useState, useEffect, useRef } from 'react';
-import './components/Dashboarddonor1.css';
+import './components/User.css';
 import Calendar from './Calendar';
 import { Link, useNavigate } from 'react-router-dom';
 import dinoyRajKImg from './images/User/DinoyRajK.png';
 import logoBlood from './images/Logo/logo_blood.png';
+import calendar from './images/User/Calendar.png';
 const user = {
-  name: 'Người dùng',
+  name: 'User',
   avatarUrl: '' // hoặc link tới avatar
 };
 
-const Dashboarddonor1 = () => {
+const User = () => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const navigate = useNavigate();
   const userInfoRef = useRef<HTMLDivElement>(null);
@@ -85,7 +86,7 @@ const Dashboarddonor1 = () => {
           {/* Left Section */}
           <div className="information">
             <div className="left-section">
-              <img className="profile-img" src={dinoyRajKImg} alt="User" />
+              <img className="profile-img" src={dinoyRajKImg} alt="user" />
               <div className="name-role-edit">
                 <h2>Dinoy Raj K</h2>
                 <div className="right-actions">
@@ -137,6 +138,7 @@ const Dashboarddonor1 = () => {
               </div>
               <div className="register-appointment">
                 <h4>Đăng ký lịch khám</h4>
+                <img src={calendar} alt="Đặt lịch hiến máu" className="calendar-image"/>
                 <button className="register-btn" onClick={() => navigate('/register-appointment')}>
                   Đặt lịch khám
                 </button>
@@ -149,4 +151,4 @@ const Dashboarddonor1 = () => {
   );
 };
 
-export default Dashboarddonor1;
+export default User;
