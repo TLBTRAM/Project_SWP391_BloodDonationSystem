@@ -27,6 +27,9 @@ import DonorPage from "./pages/Dashboarddonor1";
 import EditPage from "./pages/Edit";
 import AdminPage from "./pages/Admin";
 
+// Tài khoản người quản lí kho máu
+import ManagerPage from "./pages/Manager";
+
 function App() {
 	return (
 		<BrowserRouter>
@@ -55,6 +58,11 @@ function App() {
 				<Route path="/donor1" element={<DonorPage />} />
 				<Route path="/edit" element={<EditPage />} />
 				<Route path="/admin" element={<AdminPage />} />
+
+				{/* Tài khoản người quản lí kho máu */}
+				<Route path="/manager" element={<ManagerPage />} />
+
+
 			</Routes>
 		</BrowserRouter>
 	);

@@ -22,13 +22,18 @@ const Login: React.FC = () => {
       // Lưu trạng thái đăng nhập vào localStorage
       localStorage.setItem('isLoggedIn', 'true');
       localStorage.setItem('userName', username);
+      navigate('/admin');   // Điều hướng về trang tài khoản hoặc trang chủ 
 
-      // Điều hướng về trang tài khoản hoặc trang chủ
-      navigate('/admin'); // bạn đổi đường dẫn phù hợp
     } else if (username === 'user' && password === '123') {
       localStorage.setItem('isLoggedIn', 'true');
       localStorage.setItem('userName', username);
-      navigate('/donor1'); // bạn đổi đường dẫn phù hợp
+      navigate('/donor1');
+
+    } else if (username === 'manager' && password === '123') {
+      localStorage.setItem('isLoggedIn', 'true');
+      localStorage.setItem('userName', username);
+      navigate('/manager');
+
     } else {
       alert('Tên đăng nhập hoặc mật khẩu không đúng!');
     }

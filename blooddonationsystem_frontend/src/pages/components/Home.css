@@ -18,7 +18,6 @@
       background-color: #fff;
     }
 
-
     nav a {
       margin: 0 15px;
       text-decoration: none;
@@ -127,7 +126,6 @@
       text-align: left;
       font-size: 28px;
       font-weight: bold;
-      margin-bottom: 20px;
     }
 
     .mission p {
@@ -144,6 +142,11 @@
       margin: 50px 0 30px;
       color: #b30000;
       text-transform: uppercase;
+    }
+
+    .mission h2 {
+      margin: 0;
+      margin-bottom: 20px;
     }
 
     .blog-grid {
