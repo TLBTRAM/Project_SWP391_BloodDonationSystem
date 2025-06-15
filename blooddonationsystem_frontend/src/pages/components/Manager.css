@@ -139,3 +139,58 @@ h2 {
 .blood-table button:nth-child(2) {
   background-color: #dc3545;
 }
+
+.manager-layout {
+  display: flex;
+}
+
+/* Sidebar trái */
+.manager-layout {
+  display: flex;
+}
+
+/* Sidebar trái đẹp hơn */
+.sidebar {
+  width: 240px;
+  background: linear-gradient(135deg, #FF204E, #FF5F6D);
+  color: white;
+  padding: 30px 20px;
+  min-height: 100vh;
+  box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.sidebar-title {
+  font-size: 20px;
+  font-weight: bold;
+  margin-bottom: 30px;
+  text-align: center;
+}
+
+.sidebar-menu {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.sidebar-menu li {
+  margin-bottom: 18px;
+}
+
+.sidebar-menu a {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: white;
+  text-decoration: none;
+  font-size: 16px;
+  font-weight: 500;
+  padding: 10px 12px;
+  border-radius: 8px;
+  transition: background 0.25s ease;
+}
+
+.sidebar-menu a:hover {
+  background-color: rgba(255, 255, 255, 0.2);
+  text-decoration: none;
+  cursor: pointer;
+}

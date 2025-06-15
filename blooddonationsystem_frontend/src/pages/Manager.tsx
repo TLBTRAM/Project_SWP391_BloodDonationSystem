@@ -94,6 +94,20 @@ const Manager = () => {
     );
   };
 
+  const Sidebar = () => (
+  <div className="sidebar">
+    <h3 className="sidebar-title">🩸 Quản lý kho máu</h3>
+    <ul className="sidebar-menu">
+      <li><Link to="#"><span>🏠</span> Trang chính</Link></li>
+      <li><Link to="#"><span>➕</span> Nhập máu</Link></li>
+      <li><Link to="#"><span>➖</span> Xuất máu</Link></li>
+      <li><Link to="#"><span>🧪</span> Kiểm tra kho</Link></li>
+      <li><Link to="#"><span>📊</span> Thống kê</Link></li>
+    </ul>
+  </div>
+);
+
+
   return (
     <>
       <header className="manager-header">
@@ -110,73 +124,77 @@ const Manager = () => {
         </button>
       </header>
 
-      <div className="manager-container">
-        <h2>Quản lý kho máu</h2>
+      <div className="manager-layout">
+        <Sidebar />
 
-        <input
-          type="text"
-          placeholder="Tìm kiếm theo nhóm máu, ngày..."
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          className="search-box"
-        />
+        <div className="manager-container">
+          <h2>Quản lý kho máu</h2>
 
-        <div className="blood-form">
-          <h3>Nhập đơn vị máu mới</h3>
           <input
             type="text"
-            placeholder="Nhóm máu (A/B/AB/O)"
-            value={newUnit.group}
-            onChange={(e) => setNewUnit({ ...newUnit, group: e.target.value })}
+            placeholder="Tìm kiếm theo nhóm máu, ngày..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            className="search-box"
           />
-          <input
-            type="number"
-            placeholder="Số lượng"
-            value={newUnit.quantity}
-            onChange={(e) => setNewUnit({ ...newUnit, quantity: Number(e.target.value) })}
-          />
-          <input
-            type="text"
-            placeholder="Ngày nhập (dd-mm-yyyy)"
-            value={newUnit.entryDate}
-            onChange={(e) => setNewUnit({ ...newUnit, entryDate: autoFormatDate(e.target.value) })}
-            inputMode="numeric"
-          />
-          <input
-            type="text"
-            placeholder="Hạn sử dụng (dd-mm-yyyy)"
-            value={newUnit.expiryDate}
-            onChange={(e) => setNewUnit({ ...newUnit, expiryDate: autoFormatDate(e.target.value) })}
-            inputMode="numeric"
-          />
-          <button onClick={handleAddUnit}>Thêm đơn vị máu</button>
-        </div>
 
-        <table className="blood-table">
-          <thead>
-            <tr>
-              <th>Nhóm máu</th>
-              <th>Số lượng</th>
-              <th>Ngày nhập</th>
-              <th>Hạn sử dụng</th>
-              <th>Cập nhật</th>
-            </tr>
-          </thead>
-          <tbody>
-            {filteredUnits.map(unit => (
-              <tr key={unit.id} className={isExpired(unit.expiryDate) ? 'expired' : ''}>
-                <td>{unit.group}</td>
-                <td>{unit.quantity}</td>
-                <td>{unit.entryDate}</td>
-                <td>{unit.expiryDate}</td>
-                <td>
-                  <button onClick={() => updateQuantity(unit.id, 1)}>+</button>
-                  <button onClick={() => updateQuantity(unit.id, -1)}>-</button>
-                </td>
+          <div className="blood-form">
+            <h3>Nhập đơn vị máu mới</h3>
+            <input
+              type="text"
+              placeholder="Nhóm máu (A/B/AB/O)"
+              value={newUnit.group}
+              onChange={(e) => setNewUnit({ ...newUnit, group: e.target.value })}
+            />
+            <input
+              type="number"
+              placeholder="Số lượng"
+              value={newUnit.quantity}
+              onChange={(e) => setNewUnit({ ...newUnit, quantity: Number(e.target.value) })}
+            />
+            <input
+              type="text"
+              placeholder="Ngày nhập (dd-mm-yyyy)"
+              value={newUnit.entryDate}
+              onChange={(e) => setNewUnit({ ...newUnit, entryDate: autoFormatDate(e.target.value) })}
+              inputMode="numeric"
+            />
+            <input
+              type="text"
+              placeholder="Hạn sử dụng (dd-mm-yyyy)"
+              value={newUnit.expiryDate}
+              onChange={(e) => setNewUnit({ ...newUnit, expiryDate: autoFormatDate(e.target.value) })}
+              inputMode="numeric"
+            />
+            <button onClick={handleAddUnit}>Thêm đơn vị máu</button>
+          </div>
+
+          <table className="blood-table">
+            <thead>
+              <tr>
+                <th>Nhóm máu</th>
+                <th>Số lượng</th>
+                <th>Ngày nhập</th>
+                <th>Hạn sử dụng</th>
+                <th>Cập nhật</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {filteredUnits.map(unit => (
+                <tr key={unit.id} className={isExpired(unit.expiryDate) ? 'expired' : ''}>
+                  <td>{unit.group}</td>
+                  <td>{unit.quantity}</td>
+                  <td>{unit.entryDate}</td>
+                  <td>{unit.expiryDate}</td>
+                  <td>
+                    <button onClick={() => updateQuantity(unit.id, 1)}>+</button>
+                    <button onClick={() => updateQuantity(unit.id, -1)}>-</button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </div>
     </>
   );
