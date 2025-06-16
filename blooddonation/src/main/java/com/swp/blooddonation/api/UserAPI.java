@@ -1,5 +1,7 @@
 package com.swp.blooddonation.api;
 
+
+import com.swp.blooddonation.entity.Account;
 import com.swp.blooddonation.repository.AuthenticationReponsitory;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
@@ -25,9 +27,9 @@ public class UserAPI {
 //    }
 
     @GetMapping
-    public ResponseEntity<List<User>> getListUser(){
-        System.out.println("List of user:");
-        List<User> users = authenticationReponsitory.findAll();
-        return ResponseEntity.ok(users);
+    public ResponseEntity<List<Account>> getListUser() {
+        System.out.println("List of accounts:");
+        List<Account> accounts = authenticationReponsitory.findAll();
+        return ResponseEntity.ok(accounts);
     }
 }
