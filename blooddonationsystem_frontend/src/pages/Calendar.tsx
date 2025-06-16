@@ -1,7 +1,7 @@
 import React from 'react';
 import './components/Calendar.css';
 
-const daysOfWeek = ['Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa', 'Su'];
+const daysOfWeek = ['Th 2', 'Th 3', 'Th 4', 'Th 5', 'Th 6', 'Th 7', 'CN'];
 
 const Calendar: React.FC = () => {
   const today = new Date();
@@ -39,11 +39,11 @@ const Calendar: React.FC = () => {
     rows.push(<tr key={`week-${week}`}>{cols}</tr>);
   }
 
-  const monthName = today.toLocaleString('default', { month: 'long' });
+  const monthName = today.toLocaleString('vi-VN', { month: 'long' });
 
   return (
     <div className="calendar">
-      <h4>{`${monthName} ${year}`}</h4>
+      <h4>{`${monthName.charAt(0).toUpperCase() + monthName.slice(1)} ${year}`}</h4>
       <table>
         <thead>
           <tr>

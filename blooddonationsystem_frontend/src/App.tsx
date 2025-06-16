@@ -25,6 +25,8 @@ import Reset3Page from "./pages/ResetPass";
 // Tài khoản người dùng và quản trị viên
 import UserPage from "./pages/User";
 import EditPage from "./pages/Edit";
+import BookingPage from "./pages/Booking";
+
 import MedPage from "./pages/MedicalStaff";
 import AdminPage from "./pages/Admin";
 
@@ -58,6 +60,7 @@ function App() {
 				{/* Tài khoản người dùng và quản trị viên */}
 				<Route path="/user" element={<UserPage />} />
 				<Route path="/edit" element={<EditPage />} />
+				<Route path="/booking" element={<BookingPage />} />
 				<Route path="/med" element={<MedPage />} />
 				<Route path="/admin" element={<AdminPage />} />
 

@@ -28,13 +28,13 @@ const MedicalStaff = () => {
                 <div>
                     <div className="name-role">
                         <h2>Grace Wilson</h2>
-                        <span className="role-tag">Medical staff</span>
+                        <span className="role-tag">Nhân viên y tế</span>
                     </div>
                     <p>Email: hoclambacsi@gmail.com</p>
                     <p>Phone: 0912 345 678</p>
                     <p>Company: FPT Medicare</p>
                 </div>
-                <button className="edit-button">Edit Profile</button>
+                <button className="edit-button">Chỉnh sửa hồ sơ</button>
             </div>
 
             <div className="staff-content">
