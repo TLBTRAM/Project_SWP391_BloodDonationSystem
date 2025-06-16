@@ -6,5 +6,5 @@ import lombok.Data;
 public class EmailDetail {
     private String mailRecipient;
     private String subject;
-
+    private String name;
 }

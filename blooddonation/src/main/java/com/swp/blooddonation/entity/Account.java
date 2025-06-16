@@ -12,8 +12,10 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
@@ -38,9 +40,10 @@ public class Account implements UserDetails {
     @Size(min = 6, message = "Password must be at leat 6 characters!")
     public String password;
 
-    public String fullname;
+    public String fullName;
 
-    public Date createAt;
+    public Date YoB;
+    public LocalDateTime createAt;
 
     @Enumerated(EnumType.STRING)
     public Gender gender;
@@ -48,9 +51,14 @@ public class Account implements UserDetails {
     @Enumerated(EnumType.STRING)
     public Role role;
 
+    private boolean enabled;
+
+    private String address;
+
     @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of();
+  public Collection<? extends GrantedAuthority> getAuthorities() {
+//        return List.of();
+        return List.of(new SimpleGrantedAuthority("ROLE_" + role.name()));
     }
     @Override
     public String getPassword() {
@@ -59,7 +67,7 @@ public class Account implements UserDetails {
 
     @Override
     public String getUsername() {
-        return this.phone;
+        return this.email;
     }
 
     @Override
@@ -79,6 +87,6 @@ public class Account implements UserDetails {
 
     @Override
     public boolean isEnabled() {
-        return true;
+        return this.enabled;
     }
 }

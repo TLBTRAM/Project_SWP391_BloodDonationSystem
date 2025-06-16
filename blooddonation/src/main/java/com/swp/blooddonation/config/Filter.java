@@ -34,10 +34,10 @@ public class Filter extends OncePerRequestFilter {
     TokenService tokenService;
 
     private final List<String> PUBLIC_API = List.of(
-            "POST:/api/register",
-            "POST:/api/login",
-            "POST:/api/send-reset-code",
-            "POST:/api/reset-password"
+            "POST:/api/auth/register",
+            "POST:/api/auth/login",
+            "POST:/api/auth/send-reset-code",
+            "POST:/api/auth/reset-password"
     );
 
     public boolean isPublicAPI(String uri, String method) {
