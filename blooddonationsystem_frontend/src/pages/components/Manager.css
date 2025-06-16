@@ -40,13 +40,13 @@
   padding: 15px 30px;
   background-color: #ffffff;
   margin: 0;
-  border-radius: 0;           /* bỏ border-radius */
-  box-shadow: none;          /* bỏ box-shadow */
+  border-radius: 0;
+  box-shadow: none;
   transition: background 0.2s ease;
 }
 
 .sidebar-menu li:hover {
-  background: #f0f0f0;
+  background: #f5f5f5;
 }
 
 .sidebar-menu li.active {
@@ -60,10 +60,14 @@
 .menu-item {
   font-size: 16px;
   font-weight: 500;
-  text-decoration: none;
   color: #000000;
+  text-decoration: none;
   display: block;
   width: 100%;
+  background: none;
+  border: none;
+  text-align: left;
+  cursor: pointer;
 }
 
 /* ===== HEADER ===== */
@@ -78,7 +82,6 @@
   z-index: 10;
 }
 
-/* Logo */
 .manager-logo {
   display: flex;
   align-items: center;
@@ -88,7 +91,6 @@
   height: 70px;
 }
 
-/* Greeting */
 .manager-greeting {
   font-size: 26px;
   font-weight: 600;
@@ -102,7 +104,6 @@
   text-shadow: 2px 2px 6px rgba(255, 32, 78, 0.4);
 }
 
-/* Logout button */
 .manager-logout-btn {
   background-color: #FF204E;
   color: white;
@@ -110,7 +111,6 @@
   border: none;
   border-radius: 6px;
   font-weight: bold;
-  text-decoration: none;
   cursor: pointer;
   transition: background 0.2s ease;
 }
@@ -123,62 +123,93 @@
 .manager-container {
   flex: 1;
   padding: 40px;
-  background-color: #f0f2f5;
+  background-color: #f8f9fb;
   min-height: 100vh;
 }
 
 h2 {
   text-align: center;
-  color: #00224D;
-  margin-bottom: 30px;
+  color: #333333;
+  margin-bottom: 50px;
 }
 
-/* ===== SEARCH ===== */
-.search-box {
-  width: 100%;
-  padding: 12px;
-  margin-bottom: 25px;
-  border-radius: 8px;
+
+/* ===== SEARCH BOX - FILTER-CONTAINER ===== */
+.search-box,
+.filter-container input,
+.filter-container select {
+  padding: 12px 14px;
   border: 1px solid #ccc;
+  border-radius: 8px;
   font-size: 15px;
+  background-color: #ffffff;
+  transition: border-color 0.2s ease;
+  width: 100%;
+
 }
 
-/* ===== FORM ===== */
-.blood-form {
-  background: #ffffff;
-  padding: 20px;
+.search-box:focus,
+.filter-container input:focus,
+.filter-container select:focus {
+  border-color: #FF204E;
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(255, 32, 78, 0.1);
+}
+
+.filter-container {
+  display: flex;
+  flex-wrap: nowrap;
+  gap: 15px;
   margin-bottom: 30px;
-  border-radius: 12px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
+  align-items: center;
+  justify-content: center;
+  width: 100%;
 }
 
-.blood-form h3 {
-  margin-bottom: 15px;
-  color: #00224D;
+.filter-container select {
+  flex: 1;
+  max-width: 300px;
 }
 
-.blood-form input {
-  margin: 8px 10px 12px 0;
-  padding: 10px;
+.search-filter-wrapper {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+
+
+
+/* ===== FORM SECTION ===== */
+.manager-container input[type="text"],
+.manager-container input[type="number"] {
+  display: block;
+  width: 100%;
+  max-width: 400px;
+  margin: 10px auto;
+  padding: 10px 14px;
   border: 1px solid #bbb;
   border-radius: 8px;
-  width: 180px;
-  font-size: 14px;
+  font-size: 15px;
+  background: #ffffff;
 }
 
-.blood-form button {
-  padding: 10px 16px;
+.manager-container button {
+  display: block;
+  margin: 20px auto 0;
+  padding: 10px 20px;
   background-color: #004080;
-  color: white;
+  color: #ffffff;
   border: none;
   border-radius: 8px;
   font-weight: 500;
-  font-size: 14px;
+  font-size: 15px;
   cursor: pointer;
   transition: background 0.2s;
 }
 
-.blood-form button:hover {
+.manager-container button:hover {
   background-color: #003366;
 }
 
@@ -190,6 +221,7 @@ h2 {
   border-radius: 8px;
   overflow: hidden;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.03);
+  margin-top: 50px;
 }
 
 .blood-table th,
@@ -211,24 +243,21 @@ h2 {
   background-color: #ffffff;
 }
 
-.blood-table .expired {
-  background-color: #ffe0e0 !important;
-  font-weight: normal;
+.blood-table tr.expired td {
+  background-color: #fff0f0 !important;
 }
 
-.blood-table .nearly-expired {
-  background-color: #fffacc !important;
-  font-weight: normal;
+.blood-table tr.nearly-expired td {
+  background-color: #fffbe6 !important;
 }
 
 .blood-table td div {
   margin-top: 4px;
   font-size: 13px;
   font-weight: 500;
-  color: #000000;
 }
 
-/* ===== BUTTONS IN TABLE ===== */
+/* ===== ACTION BUTTONS IN TABLE ===== */
 .blood-table button {
   padding: 6px 12px;
   margin: 0 4px;
@@ -244,6 +273,69 @@ h2 {
   background-color: #28a745;
 }
 
+.blood-table button:first-child:hover {
+  background-color: #218838;
+}
+
 .blood-table button:last-child {
   background-color: #dc3545;
 }
+
+.blood-table button:last-child:hover {
+  background-color: #c82333;
+}
+
+/* ===== EXPIRY LABELS ===== */
+.expiry-label {
+  font-size: 13px;
+  font-weight: 500;
+  margin-top: 4px;
+}
+
+.expiry-label.expired {
+  color: #b30000;
+}
+
+.expiry-label.warning {
+  color: #665c00;
+}
+
+/* ===== STATUS BADGES ===== */
+.status-badge {
+  display: inline-block;
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 600;
+  text-align: center;
+  white-space: nowrap;
+}
+
+/* Còn hạn */
+.status-ok {
+  background-color: #d0fdd6;
+  color: #057a32;
+}
+
+/* Gần hết hạn */
+.status-warning {
+  background-color: #fff6b3;
+  color: #a68400;
+}
+
+/* Hết hạn */
+.status-expired {
+  background-color: #ffbdbd;
+  color: #c30000;
+}
+
+/* ===== DÒNG TRONG BẢNG - MÀU TƯƠI ===== */
+.blood-table tr.expired td {
+  background-color: #ffe2e2 !important;
+}
+
+.blood-table tr.nearly-expired td {
+  background-color: #fffbd1 !important;
+}
+
+
