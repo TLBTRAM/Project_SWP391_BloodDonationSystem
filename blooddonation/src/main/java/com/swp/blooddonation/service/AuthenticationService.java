@@ -1,13 +1,11 @@
 package com.swp.blooddonation.service;
 
-import com.swp.blooddonation.dto.AccountResponse;
-import com.swp.blooddonation.dto.EmailDetail;
+import com.swp.blooddonation.dto.*;
 import com.swp.blooddonation.entity.Account;
 import com.swp.blooddonation.entity.VerificationCode;
+import com.swp.blooddonation.enums.Role;
 import com.swp.blooddonation.exception.exceptions.AuthenticationException;
 import com.swp.blooddonation.exception.exceptions.ResetPasswordException;
-import com.swp.blooddonation.model.LoginRequest;
-import com.swp.blooddonation.model.ResetPasswordRequest;
 import com.swp.blooddonation.repository.AuthenticationReponsitory;
 import com.swp.blooddonation.repository.VerificationCodeRepository;
 import jakarta.transaction.Transactional;
@@ -46,21 +44,71 @@ public class AuthenticationService implements UserDetailsService {
     @Autowired
     EmailService emailService;
 
-    public Account register (@Valid Account account){
-        if (authenticationReponsitory.existsByEmail(account.getEmail())) {
+    public RegisterResponse register(@Valid RegisRequest regisRequest) {
+        if (authenticationReponsitory.existsByEmail(regisRequest.getEmail())) {
             throw new RuntimeException("Email đã được sử dụng!");
         }
-        account.setPassword(passwordEncoder.encode((account.getPassword())));
-        Account newAccount = authenticationReponsitory.save(account);
 
-        // send email
+        // Mã hoá mật khẩu
+        regisRequest.setPassword(passwordEncoder.encode(regisRequest.getPassword()));
+
+        // Map từ RegisRequest sang Account
+        Account account = modelMapper.map(regisRequest, Account.class);
+        account.setCreateAt(LocalDateTime.now());
+        account.setEnabled(true);
+        account.setRole(Role.Donor);
+
+        // Lưu vào DB
+        Account savedAccount = authenticationReponsitory.save(account);
+
+        // Gửi email
         EmailDetail emailDetail = new EmailDetail();
-        emailDetail.setMailRecipient(account.email);
+        emailDetail.setMailRecipient(savedAccount.getEmail());
         emailDetail.setSubject("Welcome to Blood Donation Website");
-        emailService.sendMail(emailDetail);
+        emailService.sendMailRegister(emailDetail);
 
-        return newAccount;
+        // Map từ Account sang RegisterResponse
+        RegisterResponse registerResponse = modelMapper.map(savedAccount, RegisterResponse.class);
+
+        return registerResponse;
     }
+
+
+
+//    public RegisterResponse register(@Valid RegisRequest regisRequest) {
+//        if (authenticationReponsitory.existsByEmail(regisRequest.getEmail())) {
+//            throw new RuntimeException("Email đã được sử dụng!");
+//        }
+//
+//        regisRequest.setPassword(passwordEncoder.encode(regisRequest.getPassword()));
+//
+//        Account account = new Account();
+//        BeanUtils.copyProperties(regisRequest, account);
+//
+//        account.setCreateAt(LocalDateTime.now());
+//        account.setEnabled(true);
+//        account.setRole(Role.DONOR);
+//
+//        Account savedAccount = authenticationReponsitory.save(account);
+//
+//        EmailDetail emailDetail = new EmailDetail();
+//        emailDetail.setMailRecipient(savedAccount.getEmail());
+//        emailDetail.setSubject("Welcome to Blood Donation Website");
+//        emailService.sendMailRegister(emailDetail);
+//
+//        return new RegisterResponse(
+//                savedAccount.getId(),
+//                savedAccount.getEmail(),
+//                savedAccount.getPhone(),
+//                savedAccount.getFullName(),
+//                savedAccount.getCreateAt(),
+//                savedAccount.getGender(),
+//                savedAccount.getRole(),
+//                savedAccount.isEnabled()
+//        );
+//    }
+
+
 
 
     public AccountResponse login(LoginRequest loginRequest){
@@ -68,9 +116,12 @@ public class AuthenticationService implements UserDetailsService {
             authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
                     loginRequest.getEmail(),
                     loginRequest.getPassword()
+
             ));
+            System.out.println("Thông tin dằng nhập chính xác");
         }catch (Exception e){
             System.out.println("Thông tin dằng nhập không chính xác");
+            e.printStackTrace();
             throw new AuthenticationException("invalid...");
         }
 
@@ -99,8 +150,13 @@ public class AuthenticationService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        return authenticationReponsitory.findAccountByEmail(email);
+        Account account = authenticationReponsitory.findAccountByEmail(email);
+        if (account == null) {
+            throw new UsernameNotFoundException("User not found with email: " + email);
+        }
+        return account;
     }
+
 
     @Autowired
     VerificationCodeRepository verificationCodeRepository;
@@ -114,7 +170,7 @@ public class AuthenticationService implements UserDetailsService {
         VerificationCode vc = new VerificationCode(email, code, LocalDateTime.now().plusMinutes(10));
         verificationCodeRepository.save(vc);
 
-        emailService.sendEmail(email, "Mã xác minh đặt lại mật khẩu", "Mã xác minh của bạn là: " + code);
+        emailService.sendEmailCode(email, "Mã xác minh đặt lại mật khẩu", "Mã xác minh của bạn là: " + code);
     }
 
     @Transactional

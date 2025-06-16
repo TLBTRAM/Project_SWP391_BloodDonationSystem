@@ -20,7 +20,7 @@ public class EmailService {
     @Autowired
     private JavaMailSender javaMailSender;
 
-    public void sendEmail(String to, String subject, String content) {
+    public void sendEmailCode(String to, String subject, String content) {
         SimpleMailMessage message = new SimpleMailMessage();
         message.setTo(to);
         message.setSubject(subject);
@@ -28,13 +28,13 @@ public class EmailService {
         javaMailSender.send(message);
     }
 
-    public void sendMail(EmailDetail emailDetail){
+    public void sendMailRegister(EmailDetail emailDetail){
 
         try{
 
             Context context = new Context();
 
-            context.setVariable("name", "Gia Bao");
+            context.setVariable("name", emailDetail.getName());
             context.setVariable("button", "Test");
             context.setVariable("link", "test");
 
