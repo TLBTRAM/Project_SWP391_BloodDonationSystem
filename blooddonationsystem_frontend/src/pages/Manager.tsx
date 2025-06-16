@@ -144,16 +144,24 @@ const Manager: React.FC = () => {
           <div>
             <div className="sidebar-title">Quản lý hệ thống</div>
             <ul className="sidebar-menu">
-              <li>
+              <li className="active">
                 <a href="#" className="menu-item">
-                  <span className="menu-icon">🏠</span>
-                  <span>Trang chủ</span>
+                  Trang chủ
                 </a>
               </li>
               <li>
                 <a href="#" className="menu-item">
-                  <span className="menu-icon">🩸</span>
-                  <span>Kho máu</span>
+                  Thêm máu
+                </a>
+              </li>
+              <li>
+                <a href="#" className="menu-item">
+                  Thống kê kho máu
+                </a>
+              </li>
+              <li>
+                <a href="#" className="menu-item">
+                  Quản lý yêu cầu cần máu
                 </a>
               </li>
             </ul>
