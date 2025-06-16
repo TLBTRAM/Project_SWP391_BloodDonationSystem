@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
-import './components/Manager.css';
-import logoBlood from './images/Logo/logo_blood.png';
+import React, { useState } from "react";
+import { Link } from "react-router-dom"; // ✅ Thêm Link
+import "./components/Manager.css";
+import logoBlood from "./images/Logo/logo_blood.png";
 
 interface BloodUnit {
   id: number;
@@ -12,104 +12,118 @@ interface BloodUnit {
 }
 
 const initialData: BloodUnit[] = [
-  { id: 1, group: 'A', quantity: 10, entryDate: '01-06-2025', expiryDate: '01-07-2025' },
-  { id: 2, group: 'O', quantity: 5, entryDate: '10-06-2025', expiryDate: '10-07-2025' },
+  {
+    id: 1,
+    group: "A",
+    quantity: 10,
+    entryDate: "01-06-2025",
+    expiryDate: "10-06-2025",
+  },
+  {
+    id: 2,
+    group: "B",
+    quantity: 5,
+    entryDate: "08-06-2025",
+    expiryDate: "18-06-2025",
+  },
+  {
+    id: 3,
+    group: "O",
+    quantity: 8,
+    entryDate: "01-06-2025",
+    expiryDate: "30-06-2025",
+  },
 ];
 
-const Manager = () => {
+const Manager: React.FC = () => {
   const [bloodUnits, setBloodUnits] = useState<BloodUnit[]>(initialData);
-  const [search, setSearch] = useState('');
-  const [newUnit, setNewUnit] = useState({ group: '', quantity: 0, entryDate: '', expiryDate: '' });
-  const managerName = 'Quản lý';
+  const [searchTerm, setSearchTerm] = useState("");
+  const [formData, setFormData] = useState({
+    group: "",
+    quantity: "",
+    entryDate: "",
+    expiryDate: "",
+  });
 
+  const managerName = "Quản lí của kho máu"; // ✅ Tạm thay thế biến tên
   const handleLogout = () => {
-    alert('Đăng xuất');
+    alert("Đăng xuất thành công!");
+    // Thêm logic đăng xuất nếu có
   };
 
-  const autoFormatDate = (value: string): string => {
-    const raw = value.replace(/[^\d]/g, '');
-    let result = '';
-
-    for (let i = 0; i < raw.length && i < 8; i++) {
-      result += raw[i];
-      if ((i === 1 || i === 3) && i < raw.length - 1) {
-        result += '-';
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    if (name === "entryDate" || name === "expiryDate") {
+      let formatted = value.replace(/\D/g, "").slice(0, 8);
+      if (formatted.length >= 5) {
+        formatted = `${formatted.slice(0, 2)}-${formatted.slice(
+          2,
+          4
+        )}-${formatted.slice(4, 8)}`;
+      } else if (formatted.length >= 3) {
+        formatted = `${formatted.slice(0, 2)}-${formatted.slice(2, 4)}`;
       }
+      setFormData((prev) => ({ ...prev, [name]: formatted }));
+    } else {
+      setFormData((prev) => ({ ...prev, [name]: value }));
     }
-
-    return result;
   };
 
-  const isValidDate = (value: string): boolean => {
-    const match = value.match(/^(\d{2})-(\d{2})-(\d{4})$/);
-    if (!match) return false;
-    const [_, dd, mm, yyyy] = match;
-    const year = Number(yyyy);
-    const date = new Date(year, Number(mm) - 1, Number(dd));
-    return (
-      date.getFullYear() === year &&
-      date.getMonth() === Number(mm) - 1 &&
-      date.getDate() === Number(dd)
-    );
+  const addBloodUnit = () => {
+    const quantity = parseInt(formData.quantity);
+    if (
+      !formData.group ||
+      isNaN(quantity) ||
+      !formData.entryDate ||
+      !formData.expiryDate
+    )
+      return;
+    const newUnit: BloodUnit = {
+      id: Date.now(),
+      group: formData.group.toUpperCase(),
+      quantity,
+      entryDate: formData.entryDate,
+      expiryDate: formData.expiryDate,
+    };
+    setBloodUnits([...bloodUnits, newUnit]);
+    setFormData({ group: "", quantity: "", entryDate: "", expiryDate: "" });
   };
 
-  const parseDate = (value: string): Date => {
-    const [dd, mm, yyyy] = value.split('-').map(Number);
-    return new Date(yyyy, mm - 1, dd);
+  const deleteUnit = (id: number) => {
+    setBloodUnits(bloodUnits.filter((unit) => unit.id !== id));
   };
 
-  const isExpired = (expiryDate: string): boolean => {
-    return parseDate(expiryDate) < new Date();
+  const getRowClass = (expiryDate: string) => {
+    const [day, month, year] = expiryDate.split("-").map(Number);
+    if (!day || !month || !year) return "";
+    const expiry = new Date(year, month - 1, day);
+    const today = new Date();
+    const diffTime = expiry.getTime() - today.getTime();
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    if (diffDays < 0) return "expired";
+    if (diffDays <= 7) return "nearly-expired";
+    return "";
   };
 
-  const filteredUnits = bloodUnits.filter(unit =>
-    unit.group.toUpperCase().includes(search.toUpperCase()) ||
-    unit.entryDate.includes(search) ||
-    unit.expiryDate.includes(search)
+  const getExpiryLabel = (expiryDate: string) => {
+    const [day, month, year] = expiryDate.split("-").map(Number);
+    if (!day || !month || !year) return "";
+    const expiry = new Date(year, month - 1, day);
+    const today = new Date();
+    const diffTime = expiry.getTime() - today.getTime();
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    if (diffDays < 0) return "❌ Đã hết hạn";
+    if (diffDays <= 7) return "⚠ Sắp hết hạn";
+    return "";
+  };
+
+  const filteredUnits = bloodUnits.filter((unit) =>
+    unit.group.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  const handleAddUnit = () => {
-    if (!isValidDate(newUnit.entryDate) || !isValidDate(newUnit.expiryDate)) {
-      alert('Vui lòng nhập đúng định dạng dd-mm-yyyy');
-      return;
-    }
-
-    const newEntry: BloodUnit = {
-      id: Date.now(),
-      group: newUnit.group.toUpperCase(),
-      quantity: Number(newUnit.quantity),
-      entryDate: newUnit.entryDate,
-      expiryDate: newUnit.expiryDate,
-    };
-
-    setBloodUnits([...bloodUnits, newEntry]);
-    setNewUnit({ group: '', quantity: 0, entryDate: '', expiryDate: '' });
-  };
-
-  const updateQuantity = (id: number, delta: number) => {
-    setBloodUnits(prev =>
-      prev.map(unit =>
-        unit.id === id ? { ...unit, quantity: Math.max(0, unit.quantity + delta) } : unit
-      )
-    );
-  };
-
-  const Sidebar = () => (
-  <div className="sidebar">
-    <h3 className="sidebar-title">🩸 Quản lý kho máu</h3>
-    <ul className="sidebar-menu">
-      <li><Link to="#"><span>🏠</span> Trang chính</Link></li>
-      <li><Link to="#"><span>➕</span> Nhập máu</Link></li>
-      <li><Link to="#"><span>➖</span> Xuất máu</Link></li>
-      <li><Link to="#"><span>🧪</span> Kiểm tra kho</Link></li>
-      <li><Link to="#"><span>📊</span> Thống kê</Link></li>
-    </ul>
-  </div>
-);
-
-
   return (
-    <>
+    <div>
+      {/* Header */}
       <header className="manager-header">
         <div className="manager-logo">
           <Link to="/">
@@ -124,79 +138,124 @@ const Manager = () => {
         </button>
       </header>
 
+      {/* Layout */}
       <div className="manager-layout">
-        <Sidebar />
+        <div className="sidebar">
+          <div>
+            <div className="sidebar-title">Quản lý hệ thống</div>
+            <ul className="sidebar-menu">
+              <li>
+                <a href="#" className="menu-item">
+                  <span className="menu-icon">🏠</span>
+                  <span>Trang chủ</span>
+                </a>
+              </li>
+              <li>
+                <a href="#" className="menu-item">
+                  <span className="menu-icon">🩸</span>
+                  <span>Kho máu</span>
+                </a>
+              </li>
+            </ul>
+          </div>
+        </div>
 
         <div className="manager-container">
           <h2>Quản lý kho máu</h2>
 
           <input
             type="text"
-            placeholder="Tìm kiếm theo nhóm máu, ngày..."
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
             className="search-box"
+            placeholder="Tìm nhóm máu..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
           />
 
           <div className="blood-form">
-            <h3>Nhập đơn vị máu mới</h3>
+            <h3>Thêm đơn vị máu mới</h3>
             <input
               type="text"
-              placeholder="Nhóm máu (A/B/AB/O)"
-              value={newUnit.group}
-              onChange={(e) => setNewUnit({ ...newUnit, group: e.target.value })}
+              name="group"
+              placeholder="Nhóm máu (A, B, AB, O)"
+              value={formData.group}
+              onChange={handleInputChange}
             />
             <input
               type="number"
-              placeholder="Số lượng"
-              value={newUnit.quantity}
-              onChange={(e) => setNewUnit({ ...newUnit, quantity: Number(e.target.value) })}
+              name="quantity"
+              placeholder="Số lượng (đơn vị)"
+              value={formData.quantity}
+              onChange={handleInputChange}
             />
             <input
               type="text"
+              name="entryDate"
               placeholder="Ngày nhập (dd-mm-yyyy)"
-              value={newUnit.entryDate}
-              onChange={(e) => setNewUnit({ ...newUnit, entryDate: autoFormatDate(e.target.value) })}
-              inputMode="numeric"
+              value={formData.entryDate}
+              onChange={handleInputChange}
             />
             <input
               type="text"
+              name="expiryDate"
               placeholder="Hạn sử dụng (dd-mm-yyyy)"
-              value={newUnit.expiryDate}
-              onChange={(e) => setNewUnit({ ...newUnit, expiryDate: autoFormatDate(e.target.value) })}
-              inputMode="numeric"
+              value={formData.expiryDate}
+              onChange={handleInputChange}
             />
-            <button onClick={handleAddUnit}>Thêm đơn vị máu</button>
+            <button onClick={addBloodUnit}>Thêm</button>
           </div>
 
           <table className="blood-table">
             <thead>
               <tr>
+                <th>STT</th>
                 <th>Nhóm máu</th>
                 <th>Số lượng</th>
                 <th>Ngày nhập</th>
                 <th>Hạn sử dụng</th>
-                <th>Cập nhật</th>
+                <th>Hành động</th>
               </tr>
             </thead>
             <tbody>
-              {filteredUnits.map(unit => (
-                <tr key={unit.id} className={isExpired(unit.expiryDate) ? 'expired' : ''}>
-                  <td>{unit.group}</td>
-                  <td>{unit.quantity}</td>
-                  <td>{unit.entryDate}</td>
-                  <td>{unit.expiryDate}</td>
-                  <td>
-                    <button onClick={() => updateQuantity(unit.id, 1)}>+</button>
-                    <button onClick={() => updateQuantity(unit.id, -1)}>-</button>
-                  </td>
+              {filteredUnits.length === 0 ? (
+                <tr>
+                  <td colSpan={6}>Không có dữ liệu</td>
                 </tr>
-              ))}
+              ) : (
+                filteredUnits.map((unit, index) => (
+                  <tr key={unit.id} className={getRowClass(unit.expiryDate)}>
+                    <td>{index + 1}</td>
+                    <td>{unit.group}</td>
+                    <td>{unit.quantity}</td>
+                    <td>{unit.entryDate}</td>
+                    <td>
+                      {unit.expiryDate}
+                      {getExpiryLabel(unit.expiryDate) && (
+                        <div
+                          style={{
+                            fontSize: "13px",
+                            fontWeight: 500,
+                            marginTop: "4px",
+                            color:
+                              getRowClass(unit.expiryDate) === "expired"
+                                ? "#b30000"
+                                : "#665c00",
+                          }}
+                        >
+                          {getExpiryLabel(unit.expiryDate)}
+                        </div>
+                      )}
+                    </td>
+                    <td>
+                      <button onClick={() => deleteUnit(unit.id)}>Xoá</button>
+                    </td>
+                  </tr>
+                ))
+              )}
             </tbody>
           </table>
         </div>
       </div>
-    </>
+    </div>
   );
 };
 
