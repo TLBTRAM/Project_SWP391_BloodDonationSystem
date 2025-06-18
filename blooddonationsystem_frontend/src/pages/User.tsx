@@ -139,7 +139,7 @@ const User = () => {
               <div className="register-appointment">
                 <h4>Đăng ký lịch khám</h4>
                 <img src={calendar} alt="Đặt lịch hiến máu" className="calendar-image"/>
-                <button className="register-btn" onClick={() => navigate('/register-appointment')}>
+                <button className="register-btn" onClick={() => navigate('/booking')}>
                   Đặt lịch khám
                 </button>
               </div>

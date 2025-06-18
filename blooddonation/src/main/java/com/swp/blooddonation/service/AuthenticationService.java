@@ -118,9 +118,9 @@ public class AuthenticationService implements UserDetailsService {
                     loginRequest.getPassword()
 
             ));
-            System.out.println("Thông tin dằng nhập chính xác");
+            System.out.println("Thông tin đăng nhập chính xác");
         }catch (Exception e){
-            System.out.println("Thông tin dằng nhập không chính xác");
+            System.out.println("Thông tin đăng nhập không chính xác");
             e.printStackTrace();
             throw new AuthenticationException("invalid...");
         }
