@@ -1,281 +1,298 @@
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-  font-family: 'Poppins', sans-serif;
+:root {
+  --primary-color: #e53935;
+  --secondary-color: #43a047;
+  --bg-color: #f4f6f8;
+  --text-dark: #263238;
+  --text-light: #607d8b;
+  --card-bg: #ffffff;
+  --border-radius: 16px;
+  --shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
 }
 
-/* BODY */
 body {
-  background: #f0f4ff;
-  color: #1e293b;
+  margin: 0;
+  font-family: 'Poppins', sans-serif;
+  background-color: var(--bg-color);
+  color: var(--text-dark);
+  overflow-x: hidden;
 }
 
-/* HEADER */
-.header {
-  background: rgba(255, 255, 255, 0.6);
-  backdrop-filter: blur(10px);
-  border-bottom: 1px solid #cbd5e1;
-  padding: 16px 40px;
+.user-dashboard {
+  min-height: 100vh;
+  overflow-y: auto;
+  background-color: var(--bg-color);
+}
+
+.user-header {
+  background-color: var(--card-bg);
   display: flex;
   justify-content: space-between;
   align-items: center;
+  padding: 1rem 2rem;
+  box-shadow: var(--shadow);
+  border-radius: 0 0 var(--border-radius) var(--border-radius);
   position: sticky;
   top: 0;
-  z-index: 10;
+  z-index: 100;
 }
 
-.logo-img {
-  height: 48px;
+.logo-area {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none;
+  font-weight: bold;
+  color: var(--primary-color);
+  font-size: 1.5rem;
+}
+
+.logo-area img {
+  height: 40px;
 }
 
 .nav-links a {
-  margin-left: 24px;
-  color: #334155;
+  margin: 0 1.2rem;
   text-decoration: none;
   font-weight: 500;
-  transition: color 0.3s;
+  color: var(--text-dark);
+  transition: color 0.2s ease-in-out;
 }
 
 .nav-links a:hover {
-   color: #FF204E;
+  color: var(--primary-color);
 }
 
-.user-info {
+.user-menu {
   position: relative;
   cursor: pointer;
 }
 
 .avatar {
-  width: 42px;
-  height: 42px;
+  width: 44px;
+  height: 44px;
   border-radius: 50%;
-  border: 2px solid #2563eb;
+  border: 2px solid var(--primary-color);
+  object-fit: cover;
 }
 
-/* DROPDOWN */
-.dropdown-menu {
+.dropdown {
   position: absolute;
-  top: 100%;
+  top: 55px;
   right: 0;
-  background-color: white;
-  border-radius: 4px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
-  z-index: 999;
-  min-width: 150px;
-  padding: 8px 0;
+  background: var(--card-bg);
+  border-radius: var(--border-radius);
+  box-shadow: var(--shadow);
+  overflow: hidden;
+  animation: fadeIn 0.2s ease-out;
 }
 
-.dropdown-item {
-  display: block;
-  width: 100%;
-  padding: 8px 16px;
+.dropdown button {
   background: none;
   border: none;
-  text-align: left;
-  cursor: pointer;
-}
-
-.dropdown-item:hover {
-  background-color: #eee;
-}
-/* CONTAINER */
-.container {
-  max-width: 1280px;
-  margin: 40px auto;
-  padding: 0 10px;
-  display: flex;
-  flex-direction: column;
-  gap: 32px;
-}
-
-/* PROFILE CARD */
-.profile-card {
-  display: flex;
-  background: rgba(255, 255, 255, 0.55);
-  backdrop-filter: blur(20px);
-  border-radius: 24px;
-  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.08);
-  padding: 40px;
-  gap: 32px;
-}
-
-/* LEFT SECTION */
-.left-section {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 16px;
-}
-
-.profile-img {
-  width: 120px;
-  height: 120px;
-  border-radius: 50%;
-  object-fit: cover;
-  border: 4px solid #2563eb;
-}
-
-.name-role-edit h2 {
-  font-size: 26px;
-  color: #b91c1c;
-  font-weight: 700;
-  text-align: center;
-}
-
-.user-role-badge,
-.edit-btn {
-  padding: 6px 14px;
-  border-radius: 6px;
-  font-weight: 500;
-  transition: all 0.3s;
-  margin: 4px;
-}
-
-.user-role-badge {
-  background: linear-gradient(135deg, #b87333, #a3562d);
-  color: white;
-  padding: 6px 16px;
-  border-radius: 9999px;
-  /* pill shape */
-  font-weight: 600;
-  font-size: 14px;
-  letter-spacing: 0.5px;
-  box-shadow: 0 2px 6px rgba(30, 64, 175, 0.3);
-  border: 1px solid #1e3a8a;
-}
-
-.edit-btn {
-  background: #2563eb;
-  color: white;
-  border: none;
-  cursor: pointer;
-}
-
-.edit-btn:hover {
-  background: #1d4ed8;
-}
-
-/* INFO SECTION */
-.info-section {
-  margin-top: 32px;
+  padding: 0.8rem 1.5rem;
   width: 100%;
+  text-align: left;
+  font-weight: 500;
+  cursor: pointer;
+  color: var(--text-dark);
+  transition: background 0.2s;
 }
 
-.info-section h3 {
-  font-size: 20px;
-  margin-bottom: 16px;
+.dropdown button:hover {
+  background-color: #f0f0f0;
 }
 
-.info-section table {
+.dashboard-content {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2rem;
+  padding: 2rem;
+  max-width: 1200px;
+  margin: auto;
+}
+
+.left-panel,
+.right-panel {
+  flex: 1;
+  min-width: 320px;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.user-card,
+.user-info,
+.donation-history,
+.calendar-booking {
+  background-color: var(--card-bg);
+  border-radius: var(--border-radius);
+  box-shadow: var(--shadow);
+  padding: 1.5rem;
+}
+
+.user-actions {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin-top: 1rem;
+  flex-wrap: wrap;
+}
+
+.user-role {
+  background-color: #fbe9e7;
+  color: var(--primary-color);
+  padding: 0.4rem 1rem;
+  border-radius: 50px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  box-shadow: 0 2px 6px rgba(229, 57, 53, 0.15);
+  transition: all 0.2s ease-in-out;
+}
+
+.user-role:hover {
+  background-color: #ffccbc;
+}
+
+.edit-profile-btn {
+  background-color: var(--primary-color);
+  color: white;
+  padding: 0.5rem 1.2rem;
+  border: none;
+  border-radius: 12px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  cursor: pointer;
+  box-shadow: 0 3px 12px rgba(229, 57, 53, 0.25);
+  transition: background-color 0.2s ease;
+}
+
+.edit-profile-btn:hover {
+  background-color: #c62828;
+}
+
+.user-card img {
+  width: 150px;
+  border-radius: 0%;
+  margin-bottom: 1rem;
+  border: 3px solid var(--primary-color);
+    display: block;
+      margin-left: auto;
+  margin-right: auto;
+}
+
+
+.user-info h3 {
+  margin-bottom: 1rem;
+}
+
+.user-info table {
   width: 100%;
   border-collapse: collapse;
-  background-color: white;
-  border-radius: 12px;
-  overflow: hidden;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
 }
 
-.info-section td {
-  padding: 14px 16px;
-  border-bottom: 1px solid #e2e8f0;
+.user-info td {
+  padding: 0.5rem 0;
+  color: var(--text-light);
 }
 
-.info-section tr:nth-child(even) {
-  background: #f8fafc;
-}
-
-/* RIGHT SECTION */
-.right-section {
-  flex: 1.2;
-  display: flex;
-  flex-direction: column;
-  gap: 24px;
-}
-
-/* DONATION HISTORY */
-.donation-history {
-  background: rgba(255, 255, 255, 0.8);
-  border-radius: 16px;
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.06);
-  padding: 24px;
-  margin: 0 auto;
-  max-width: 620px;
+.user-info td:first-child {
+  font-weight: 600;
+  width: 40%;
+  color: var(--text-dark);
 }
 
 .donation-history h4 {
-  font-size: 18px;
-  margin-bottom: 16px;
+  margin-bottom: 1rem;
 }
 
 .donation-history table {
   width: 100%;
   border-collapse: collapse;
+  font-size: 0.95rem;
 }
 
 .donation-history th,
 .donation-history td {
-  padding: 12px;
+  padding: 0.75rem 0;
+  border-bottom: 1px solid #eee;
   text-align: left;
-  border-bottom: 1px solid #e2e8f0;
 }
 
-.donation-history tr:nth-child(even) {
-  background: #f9fafb;
+.booking-section {
+  background: linear-gradient(to right, #ffffff, #f9f9f9);
+  border-radius: 20px;
+  padding: 1.8rem 2rem;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+  transition: transform 0.3s ease;
+  width: 22%;
+  box-sizing: border-box;
 }
 
-/* CALENDAR + APPOINTMENT */
-.calendar-registration {
+.booking-content {
   display: flex;
-  gap: 16px;
+  align-items: center;
   flex-wrap: wrap;
-  align-items: stretch;
+  /* Cho nội dung tự xuống dòng nếu hẹp */
+  gap: 1.5rem;
 }
 
-.calendar {
-  min-width: 280px;
-  border: 1px solid #e2e8f0;
-  border-radius: 16px;
-  padding: 16px;
-  background: white;
+.calendar-icon {
+  width: 80px;
+  height: 80px;
+  flex-shrink: 0;
 }
 
-.calendar-image {
-  max-width: 120px; /* hoặc 100%, tùy nhu cầu */
-  height: auto;
-  margin: 12px auto;
-  display: block;
+.text-area {
+  flex: 1;
+  min-width: 200px;
 }
 
-.register-appointment {
-  flex-basis: 200px;
-  background: linear-gradient(to bottom right, #fef3c7, #facc15);
-  border-radius: 16px;
-  padding: 24px;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  text-align: center;
+.text-area h4 {
+  font-size: 1.3rem;
+  color: var(--text-dark);
+  margin-bottom: 0.2rem;
 }
 
-.register-appointment h4 {
-  font-size: 18px;
-  color: #1f2937;
-  margin-bottom: 16px;
+.text-area p {
+  color: var(--text-light);
+  font-size: 0.95rem;
+  margin-bottom: 1rem;
+  white-space: normal;
+  /* Cho phép xuống dòng */
 }
 
-.register-btn {
-  padding: 12px;
-  background: #ef4444;
-  color: white;
-  font-weight: bold;
+.text-area button {
+  background-color: var(--secondary-color);
+  color: #fff;
   border: none;
   border-radius: 10px;
+  padding: 0.6rem 1.4rem;
+  font-size: 1rem;
+  font-weight: 600;
   cursor: pointer;
-  transition: background 0.3s;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  box-shadow: 0 4px 12px rgba(67, 160, 71, 0.2);
+  transition: background-color 0.2s ease-in-out;
 }
 
-.register-btn:hover {
-  background: #dc2626;
+.text-area button:hover {
+  background-color: #2e7d32;
+}
+
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
