@@ -23,29 +23,24 @@ function Login() {
         body: JSON.stringify({ email, password }),
       });
 
-      const data = await res.json(); // ✅ chỉ đọc 1 lần ở đây
-
       if (!res.ok) {
-        console.error("Lỗi đăng nhập:", data.message || "Thông tin không hợp lệ");
-        alert(data.message || "Thông tin đăng nhập không chính xác");
-        
+        // Đọc message nếu có
+        const errorText = await res.text(); // Không dùng res.json() ở đây
+        console.error("Lỗi đăng nhập:", errorText);
+        alert("Thông tin đăng nhập không chính xác");
         return;
       }
 
-      // ✅ Nếu không lỗi thì đăng nhập thành công
+      const data = await res.json(); // ✅ nếu ok thì mới đọc JSON
       console.log("Đăng nhập thành công:", data);
       alert("Đăng nhập thành công");
 
-      // ✅ Lưu token vào localStorage ở đây
       localStorage.setItem("token", data.token);
-      navigate("/user"); // ✅ Điều hướng đến trang người dùng sau khi đăng nhập
-
-      // ✅ (Tùy chọn) Điều hướng sang trang chính sau khi đăng nhập
-      // navigate("/dashboard"); // Nếu có dùng useNavigate()
+      navigate("/user");
 
     } catch (error) {
       console.error("Lỗi kết nối tới server:", error);
-      alert("Lỗi kết nối tới server");
+      alert("Không thể kết nối tới server");
     }
   };
 

@@ -75,43 +75,19 @@ public class AuthenticationService implements UserDetailsService {
 
 
 
-//    public RegisterResponse register(@Valid RegisRequest regisRequest) {
-//        if (authenticationReponsitory.existsByEmail(regisRequest.getEmail())) {
-//            throw new RuntimeException("Email đã được sử dụng!");
-//        }
-//
-//        regisRequest.setPassword(passwordEncoder.encode(regisRequest.getPassword()));
-//
-//        Account account = new Account();
-//        BeanUtils.copyProperties(regisRequest, account);
-//
-//        account.setCreateAt(LocalDateTime.now());
-//        account.setEnabled(true);
-//        account.setRole(Role.DONOR);
-//
-//        Account savedAccount = authenticationReponsitory.save(account);
-//
-//        EmailDetail emailDetail = new EmailDetail();
-//        emailDetail.setMailRecipient(savedAccount.getEmail());
-//        emailDetail.setSubject("Welcome to Blood Donation Website");
-//        emailService.sendMailRegister(emailDetail);
-//
-//        return new RegisterResponse(
-//                savedAccount.getId(),
-//                savedAccount.getEmail(),
-//                savedAccount.getPhone(),
-//                savedAccount.getFullName(),
-//                savedAccount.getCreateAt(),
-//                savedAccount.getGender(),
-//                savedAccount.getRole(),
-//                savedAccount.isEnabled()
-//        );
-//    }
-
-
-
-
     public AccountResponse login(LoginRequest loginRequest){
+        Account acc = authenticationReponsitory.findAccountByEmail(loginRequest.getEmail());
+        if (acc == null) {
+            throw new AuthenticationException("Email không tồn tại");
+        }
+
+        // ✅ In kiểm tra nhanh tại đây
+        System.out.println("=== DEBUG PASSWORD MATCHING ===");
+        System.out.println("Raw password: " + loginRequest.getPassword());
+        System.out.println("Encoded in DB: " + acc.getPassword());
+        System.out.println("Password match? " + passwordEncoder.matches(loginRequest.getPassword(), acc.getPassword()));
+        System.out.println("================================");
+
         try {
             authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
                     loginRequest.getEmail(),
@@ -124,6 +100,7 @@ public class AuthenticationService implements UserDetailsService {
             e.printStackTrace();
             throw new AuthenticationException("invalid...");
         }
+
 
         Account account = authenticationReponsitory.findAccountByEmail(loginRequest.getEmail());
         AccountResponse accountResponse = modelMapper.map(account, AccountResponse.class);

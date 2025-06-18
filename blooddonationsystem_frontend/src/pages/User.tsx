@@ -5,6 +5,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import dinoyRajKImg from './images/User/DinoyRajK.png';
 import logoBlood from './images/Logo/logo_blood.png';
 import calendar from './images/User/Calendar.png';
+
 const user = {
   name: 'User',
   avatarUrl: '' // hoặc link tới avatar
