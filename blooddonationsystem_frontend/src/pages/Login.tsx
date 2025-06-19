@@ -36,8 +36,19 @@ function Login() {
       alert("Đăng nhập thành công");
 
       localStorage.setItem("token", data.token);
-      navigate("/user");
-
+      // 🚀 Điều hướng theo role
+      switch (data.role) {
+        case "ADMIN":
+          navigate("/admin/dashboard");
+          break;
+        case "STAFF":
+          navigate("/medical");
+          break;
+        case "USER":
+        default:
+          navigate("/user");
+          break;
+      }
     } catch (error) {
       console.error("Lỗi kết nối tới server:", error);
       alert("Không thể kết nối tới server");
