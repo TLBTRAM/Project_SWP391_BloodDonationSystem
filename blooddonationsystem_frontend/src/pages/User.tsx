@@ -3,11 +3,11 @@ import { Link, useNavigate } from 'react-router-dom';
 import Calendar from './Calendar';
 import './components/User.css';
 
-import dinoyRajKImg from './images/User/DinoyRajK.png';
+import avatarImg from './images/User/Avatar.png';
 import logoBlood from './images/Logo/logo_blood.png';
 import calendarIcon from './images/User/Calendar.png';
 
-interface UserData  {
+interface UserData {
   id: number;
   fullName: string;
   email: string;
@@ -19,8 +19,9 @@ interface UserData  {
 }
 
 const User = () => {
+
   const [dropdownOpen, setDropdownOpen] = useState(false);
-  const [user, setUser] = useState<UserData | null>(null); 
+  const [user, setUser] = useState<UserData | null>(null);
   const userInfoRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
 
@@ -43,26 +44,22 @@ const User = () => {
 
   useEffect(() => {
     const userData = localStorage.getItem("user");
-    
+
+
+
     if (userData) {
       setUser(JSON.parse(userData));
     }
-  }, []);
 
+  }, []);
   return (
     <div className="user-dashboard">
-      <header className="user-header">
-        <Link to="/" className="logo-area">
-          <img src={logoBlood} alt="Logo" />
-        </Link>
-        <nav className="nav-links">
-          <Link to="/">Trang chủ</Link>
-          <a href="#findblood">Tra cứu máu</a>
-          <a href="#support">Hỗ trợ</a>
-          <Link to="/team">Nhân viên y tế</Link>
-        </nav>
-        <div className="user-menu" ref={userInfoRef} onClick={toggleDropdown}>
-          <img src={dinoyRajKImg} alt="Avatar" className="avatar" />
+      <div className="user-topbar">
+        <div className="user-avatar-status" ref={userInfoRef} onClick={toggleDropdown}>
+          <img src={avatarImg} alt="Avatar" className="avatar" />
+          <span className="user-fullname">
+            {user?.fullName || "Tên người dùng"}
+          </span>
           {dropdownOpen && (
             <div className="dropdown">
               <button onClick={() => navigate('/user')}>Tài khoản</button>
@@ -70,12 +67,12 @@ const User = () => {
             </div>
           )}
         </div>
-      </header>
+      </div>
 
       <main className="dashboard-content">
         <div className="left-panel">
           <div className="user-card">
-            <img src={dinoyRajKImg} alt="User" />
+            <img src={avatarImg} alt="User" />
             <h2>{user?.fullName || "Tên người dùng"}</h2>
             <div className="user-actions">
               <span className="user-role">Người dùng</span>
@@ -123,12 +120,20 @@ const User = () => {
 
         </div>
         <div className="booking-section">
-          <div className="booking-content">
-            <img src={calendarIcon} alt="Đặt lịch" className="calendar-icon" />
-            <div className="text-area">
+          <div className="booking-item">
+            <img src={calendarIcon} alt="Đặt lịch" />
+            <div className="booking-text">
               <h4>Đăng ký lịch khám</h4>
               <p>Hãy đặt lịch trước để được phục vụ nhanh và thuận tiện hơn.</p>
               <button onClick={() => navigate('/booking')}>📅 Đặt lịch ngay</button>
+            </div>
+          </div>
+
+          <div className="booking-item">
+            <img src={calendarIcon} alt="Đang phát triển" />
+            <div className="booking-text">
+              <h4>Đang phát triển</h4>
+              <p>Chức năng mới đang được cập nhật và sẽ ra mắt trong thời gian tới.</p>
             </div>
           </div>
         </div>
