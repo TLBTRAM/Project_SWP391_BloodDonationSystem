@@ -1,5 +1,6 @@
 package com.swp.blooddonation.entity;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.swp.blooddonation.enums.Gender;
 import com.swp.blooddonation.enums.Role;
 import jakarta.persistence.*;
@@ -40,6 +41,7 @@ public class Account implements UserDetails {
     @Size(min = 6, message = "Password must be at leat 6 characters!")
     public String password;
 
+    @JsonProperty("fullname")
     public String fullName;
 
     public Date YoB;

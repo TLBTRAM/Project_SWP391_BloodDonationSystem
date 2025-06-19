@@ -7,8 +7,20 @@ import dinoyRajKImg from './images/User/DinoyRajK.png';
 import logoBlood from './images/Logo/logo_blood.png';
 import calendarIcon from './images/User/Calendar.png';
 
+interface UserData  {
+  id: number;
+  fullName: string;
+  email: string;
+  phone: string;
+  age: number;
+  bloodGroup: string;
+  address: string;
+  lastDonationDate: string;
+}
+
 const User = () => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [user, setUser] = useState<UserData | null>(null); 
   const userInfoRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
 
@@ -27,6 +39,14 @@ const User = () => {
     };
     document.addEventListener('click', handleClickOutside);
     return () => document.removeEventListener('click', handleClickOutside);
+  }, []);
+
+  useEffect(() => {
+    const userData = localStorage.getItem("user");
+    
+    if (userData) {
+      setUser(JSON.parse(userData));
+    }
   }, []);
 
   return (
@@ -56,7 +76,7 @@ const User = () => {
         <div className="left-panel">
           <div className="user-card">
             <img src={dinoyRajKImg} alt="User" />
-            <h2>Dinoy Raj K</h2>
+            <h2>{user?.fullName || "Tên người dùng"}</h2>
             <div className="user-actions">
               <span className="user-role">Người dùng</span>
               <button className="edit-profile-btn" onClick={() => navigate('/edit')}>
@@ -69,13 +89,13 @@ const User = () => {
             <h3>Thông tin cá nhân</h3>
             <table>
               <tbody>
-                <tr><td>Họ tên:</td><td>Dinoy Raj K</td></tr>
-                <tr><td>Email:</td><td>dinoykraj@gmail.com</td></tr>
-                <tr><td>Điện thoại:</td><td>7306185390</td></tr>
-                <tr><td>Tuổi:</td><td>21</td></tr>
-                <tr><td>Nhóm máu:</td><td>O+ve</td></tr>
-                <tr><td>Địa chỉ:</td><td>Karuvally Reenugeetham House...</td></tr>
-                <tr><td>Ngày hiến gần nhất:</td><td>11-10-2021</td></tr>
+                <tr><td>Họ tên:</td><td>{user?.fullName}</td></tr>
+                <tr><td>Email:</td><td>{user?.email}</td></tr>
+                <tr><td>Điện thoại:</td><td>{user?.phone}</td></tr>
+                <tr><td>Tuổi:</td><td>{user?.age}</td></tr>
+                <tr><td>Nhóm máu:</td><td>{user?.bloodGroup}</td></tr>
+                <tr><td>Địa chỉ:</td><td>{user?.address}</td></tr>
+                <tr><td>Ngày hiến gần nhất:</td><td>{user?.lastDonationDate}</td></tr>
               </tbody>
             </table>
           </div>

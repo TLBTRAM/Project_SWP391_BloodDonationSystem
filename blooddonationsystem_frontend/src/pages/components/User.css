@@ -97,8 +97,8 @@
 .dashboard-content {
   display: flex;
   flex-wrap: wrap;
-  gap: 2rem;
-  padding: 2rem;
+  gap: 0rem;
+  padding: 4rem;
   max-width: 1200px;
   margin: auto;
 }
@@ -170,8 +170,8 @@
   border-radius: 0%;
   margin-bottom: 1rem;
   border: 3px solid var(--primary-color);
-    display: block;
-      margin-left: auto;
+  display: block;
+  margin-left: auto;
   margin-right: auto;
 }
 
