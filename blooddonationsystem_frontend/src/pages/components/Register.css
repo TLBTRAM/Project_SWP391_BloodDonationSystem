@@ -13,7 +13,7 @@ body {
 .form-container {
   padding: 30px 40px;
   background: white;
-  max-width: 900px;
+  max-width: 700px;
   margin: 30px auto;
   border-radius: 8px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
@@ -40,7 +40,7 @@ body {
 
 .form-row {
   display: flex;
-  gap: 20px;
+  gap: 60px;
   flex-wrap: wrap;
 }
 
@@ -129,5 +129,104 @@ body {
   color: red;
   font-size: 13px;
   margin-top: 4px;
-  margin-left: 4px;
+  text-align: center;
 }
+
+
+/* === LỊCH TUỲ CHỈNH === */
+/* === Giao diện tổng thể === */
+.custom-datepicker {
+  font-family: 'Poppins', sans-serif;
+  border: none;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+  border-radius: 10px;
+  overflow: hidden;
+  margin-right: 30px;
+}
+
+/* === Header của lịch === */
+.react-datepicker__header {
+  background-color: #f44336;
+  color: white;
+  border: none;
+  padding-top: 10px;
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
+}
+
+/* Tháng và năm */
+.react-datepicker__current-month,
+.react-datepicker__day-name {
+  font-weight: 200;
+  color: white;
+}
+
+/* Các ngày trong tháng */
+.react-datepicker__day {
+  color: #333;
+  font-weight: 500;
+  border-radius: 10px;
+  padding: 2px 0;
+  margin: 2px;
+  transition: all 0.2s ease-in-out;
+}
+
+/* Ngày đang được chọn */
+.react-datepicker__day--selected,
+.react-datepicker__day--keyboard-selected {
+  background-color: #f44336 !important;
+  color: white !important;
+}
+
+/* Ngày hôm nay */
+.react-datepicker__day--today {
+  font-weight: bold;
+  color: #f44336;
+  border-bottom: 2px solid #f44336;
+}
+
+/* Dropdown chọn tháng/năm */
+.react-datepicker__month-dropdown,
+.react-datepicker__year-dropdown {
+  background-color: white;
+  border: 1px solid #ddd;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  font-size: 1px;
+}
+
+/* Nút mũi tên lên/xuống */
+.react-datepicker__navigation {
+  top: 16px;
+}
+
+/* Ẩn tam giác phía trên */
+.react-datepicker__triangle {
+  display: none;
+}
+
+/* Nút Clear/Today */
+.react-datepicker__footer {
+  padding: 8px 10px;
+  border-top: 1px solid #eee;
+  display: flex;
+  justify-content: space-between;
+}
+
+.react-datepicker__today-button {
+  background: none;
+  border: none;
+  color: #f44336;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.react-datepicker__clear-button {
+  background: none;
+  border: none;
+  color: #999;
+  font-size: 10px;
+  cursor: pointer;
+}
+
+
+

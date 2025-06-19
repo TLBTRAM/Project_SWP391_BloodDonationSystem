@@ -43,13 +43,13 @@
 }
 
 .sidebar-menu li {
-  padding: 15px 30px;
-  background-color: #ffffff;
+  padding: 18px 30px;
   transition: background 0.2s ease;
-  border-radius: 0;
-  margin: 0;
-  box-shadow: none;
   font-weight: 600;
+  margin: 0;
+  background-color: #ffffff;
+  box-shadow: none;
+  border-radius: 0;
 }
 
 .sidebar-menu li:hover {
@@ -145,7 +145,52 @@ h2 {
 }
 
 /* =======================
-   6. SEARCH & FILTER
+   6. FORM ELEMENTS (input, select, textarea)
+======================= */
+input[type="text"],
+input[type="number"],
+input[type="email"],
+input[type="tel"],
+select,
+textarea {
+  width: 100%;
+  padding: 12px 16px;
+  margin-bottom: 24px;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  font-size: 15px;
+  font-family: "Poppins", sans-serif;
+  background-color: #fdfdfd;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  box-sizing: border-box;
+  appearance: none;
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+  border-color: #ff204e;
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(255, 32, 78, 0.15);
+}
+
+/* Custom arrow for select */
+select {
+  background-image: url("data:image/svg+xml,%3Csvg fill='none' stroke='%23999' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' viewBox='0 0 24 24' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 1rem center;
+  background-size: 16px;
+  padding-right: 2.5rem;
+}
+
+/* Textarea */
+textarea {
+  resize: vertical;
+  min-height: 100px;
+}
+
+/* =======================
+   7. SEARCH & FILTER
 ======================= */
 .search-filter-wrapper {
   width: 100%;
@@ -165,46 +210,12 @@ h2 {
 }
 
 .filter-container select {
-  flex: 1;
   max-width: 300px;
 }
 
-.search-box,
-.filter-container input,
-.filter-container select {
-  padding: 12px 14px;
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  font-size: 15px;
-  background-color: #ffffff;
-  width: 100%;
-  transition: border-color 0.2s ease;
-}
-
-.search-box:focus,
-.filter-container input:focus,
-.filter-container select:focus {
-  border-color: #ff204e;
-  outline: none;
-  box-shadow: 0 0 0 2px rgba(255, 32, 78, 0.1);
-}
-
 /* =======================
-   7. FORM SECTION
+   8. FORM SECTION
 ======================= */
-.manager-container input[type="text"],
-.manager-container input[type="number"] {
-  display: block;
-  width: 100%;
-  max-width: 400px;
-  margin: 10px auto;
-  padding: 10px 14px;
-  border: 1px solid #bbb;
-  border-radius: 8px;
-  font-size: 15px;
-  background: #ffffff;
-}
-
 .manager-container button {
   display: block;
   margin: 20px auto 0;
@@ -224,7 +235,7 @@ h2 {
 }
 
 /* =======================
-   8. TABLE
+   9. TABLE
 ======================= */
 .blood-table {
   width: 100%;
@@ -251,10 +262,6 @@ h2 {
   font-weight: 600;
 }
 
-.blood-table td {
-  background-color: #ffffff;
-}
-
 .blood-table td div {
   margin-top: 4px;
   font-size: 13px;
@@ -262,7 +269,7 @@ h2 {
 }
 
 /* =======================
-   9. TABLE ROW COLORS
+   10. TABLE ROW COLORS
 ======================= */
 .blood-table tr.expired td {
   background-color: #ffe2e2 !important;
@@ -273,7 +280,7 @@ h2 {
 }
 
 /* =======================
-   10. TABLE ACTION BUTTONS
+   11. TABLE ACTION BUTTONS
 ======================= */
 .blood-table button {
   padding: 6px 12px;
@@ -303,7 +310,7 @@ h2 {
 }
 
 /* =======================
-   11. EXPIRY LABELS
+   12. EXPIRY LABELS
 ======================= */
 .expiry-label {
   font-size: 13px;
@@ -320,7 +327,7 @@ h2 {
 }
 
 /* =======================
-   12. STATUS BADGES
+   13. STATUS BADGES
 ======================= */
 .status-badge {
   display: inline-block;
@@ -332,105 +339,64 @@ h2 {
   white-space: nowrap;
 }
 
-/* Còn hạn */
 .status-ok {
   background-color: #d0fdd6;
   color: #057a32;
 }
 
-/* Gần hết hạn */
 .status-warning {
   background-color: #fff6b3;
   color: #a68400;
 }
 
-/* Hết hạn */
 .status-expired {
   background-color: #ffbdbd;
   color: #c30000;
 }
 
 /* =======================
-   13. ADD FORM STYLES
+   14. FORM BOX STYLES
 ======================= */
-/* ===== TITLE ===== */
 .form-page-title {
   text-align: center;
-  font-size: 28px;
+  font-size: 30px;
   font-weight: 700;
-  margin-bottom: 40px;
-  color: #333;
+  margin-bottom: 32px;
+  color: #222;
 }
 
-/* ===== FORM BOX ===== */
 .blood-form {
-  max-width: 600px;
-  margin: 0 auto;
-  padding: 40px;
-  background-color: #ffffff;
-  border-radius: 12px;
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+  max-width: 640px;
+  margin: 40px auto;
+  padding: 36px 40px;
+  background-color: #fff;
+  border-radius: 16px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.06);
 }
 
-/* ===== LABELS ===== */
 .blood-form label {
   display: block;
-  margin-bottom: 6px;
+  margin-bottom: 8px;
   font-weight: 500;
-  color: #444;
+  color: #333;
   font-size: 15px;
 }
 
-/* ===== INPUTS & SELECTS ===== */
-.input-control {
-  width: 100%;
-  height: 48px;
-  padding: 12px 16px;
-  margin-bottom: 20px;
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  font-size: 15px;
-  background-color: #ffffff;
-  transition: border-color 0.2s ease;
-  box-sizing: border-box;
-  appearance: none;
-  -webkit-appearance: none;
-  -moz-appearance: none;
-}
-
-/* Optional custom arrow for select dropdown */
-.custom-select-wrapper {
-  position: relative;
-}
-.custom-select-wrapper select {
-  background-image: url("data:image/svg+xml,%3Csvg fill='none' stroke='%23999' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' viewBox='0 0 24 24' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
-  background-repeat: no-repeat;
-  background-position: right 16px center;
-  background-size: 16px;
-}
-
-/* ===== FOCUS ===== */
-.input-control:focus {
-  border-color: #FF204E;
-  outline: none;
-  box-shadow: 0 0 0 2px rgba(255, 32, 78, 0.1);
-}
-
-/* ===== BUTTON ===== */
 .blood-form button {
   width: 100%;
-  padding: 14px;
-  background-color: #FF204E;
-  color: #ffffff;
+  padding: 14px 0;
+  background-color: #ff204e;
+  color: #fff;
   border: none;
-  border-radius: 8px;
+  border-radius: 10px;
   font-weight: 600;
   font-size: 16px;
   cursor: pointer;
-  transition: background-color 0.2s ease;
-  margin-top: 10px;
+  transition: all 0.25s ease;
+  margin-top: 40px;
 }
 
 .blood-form button:hover {
-  background-color: #d91b41;
+  background-color: #e31d45;
+  box-shadow: 0 4px 12px rgba(255, 32, 78, 0.3);
 }

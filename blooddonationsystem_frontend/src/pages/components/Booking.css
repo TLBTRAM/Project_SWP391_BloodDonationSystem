@@ -1,63 +1,109 @@
-.booking-container {
-  max-width: 400px;
-  margin: 0 auto;
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Poppins', sans-serif;
+}
+
+body {
   background-color: #fff;
-  padding: 24px;
-  border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  font-family: 'Segoe UI', sans-serif;
+  color: #333333;
+}
+
+.booking-container {
+  padding: 30px 40px;
+  background: white;
+  max-width: 700px;
+  margin: 30px auto;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
 }
 
 .booking-container h2 {
-  text-align: center;
-  margin-bottom: 20px;
-  color: #d62828;
-}
-
-.booking-form label {
-  display: block;
-  margin: 10px 0 5px;
+  margin-bottom: 30px;
+  font-size: 30px;
   font-weight: bold;
+  color: #333333;
+  text-align: center;
 }
 
-.booking-form input,
-.booking-form select,
-.booking-form textarea {
-  width: 100%;
-  padding: 8px;
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  font-size: 14px;
+.booking-form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
 }
 
-.booking-form textarea {
-  min-height: 80px;
-  resize: vertical;
+.form-group {
+  display: flex;
+  flex-direction: column;
 }
 
-.booking-form button {
-  margin-top: 15px;
-  width: 100%;
-  padding: 10px;
-  background-color: #d62828;
-  color: white;
-  border: none;
-  border-radius: 8px;
+label {
+  margin-bottom: 6px;
+  font-weight: 500;
+  color: #333;
   font-size: 16px;
+}
+
+input,
+select,
+textarea {
+  padding: 10px 12px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  font-size: 1em;
+  color: #555;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+  border-color: #FF204E;
+  box-shadow: 0 0 0 3px rgba(255, 32, 78, 0.1);
+  outline: none;
+}
+
+textarea {
+  resize: none;
+  min-height: 80px;
+}
+
+/* Nút submit */
+.submit-btn {
+  width: 100%;
+  padding: 12px;
+  background-color: #00224D;
+  color: white;
+  font-weight: bold;
+  border: none;
+  border-radius: 6px;
   cursor: pointer;
+  font-size: 16px;
+  margin-top: 10px;
   transition: background-color 0.3s ease;
 }
 
-.booking-form button:hover {
-  background-color: #b71c1c;
+.submit-btn:hover {
+  background-color: #001731;
 }
 
-.confirmation {
+/* Thông báo thành công */
+.success-message {
+  background-color: #e6ffe6;
+  padding: 20px;
+  border-radius: 8px;
   text-align: center;
-  color: #2d6a4f;
+  color: #006600;
+  font-size: 16px;
 }
 
-.confirmation button {
-  margin-top: 15px;
-  background-color: #457b9d;
+/* Hiển thị dòng báo lỗi màu đỏ */
+.error-text {
+  color: red;
+  font-size: 13px;
+  margin-top: 4px;
+  margin-left: 4px;
 }

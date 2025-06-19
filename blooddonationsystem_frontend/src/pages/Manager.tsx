@@ -32,71 +32,71 @@ const initialData: BloodUnit[] = [
     id: 1,
     group: "A+",
     quantity: 10,
-    entryDate: "01-06-2025",
-    expiryDate: "01-08-2025",
+    entryDate: "01/06/2025",
+    expiryDate: "01/08/2025",
   },
   {
     id: 2,
     group: "B-",
     quantity: 5,
-    entryDate: "05-06-2025",
-    expiryDate: "05-08-2025",
+    entryDate: "05/06/2025",
+    expiryDate: "05/08/2025",
   },
   {
     id: 3,
     group: "O+",
     quantity: 3,
-    entryDate: "10-06-2025",
-    expiryDate: "20-06-2025",
+    entryDate: "10/06/2025",
+    expiryDate: "20/06/2025",
   },
   {
     id: 4,
     group: "AB-",
     quantity: 7,
-    entryDate: "15-05-2025",
-    expiryDate: "10-06-2025",
+    entryDate: "15/05/2025",
+    expiryDate: "10/06/2025",
   },
   {
     id: 5,
     group: "A-",
     quantity: 8,
-    entryDate: "02-06-2025",
-    expiryDate: "02-08-2025",
+    entryDate: "02/06/2025",
+    expiryDate: "02/08/2025",
   },
   {
     id: 6,
     group: "B+",
     quantity: 4,
-    entryDate: "08-06-2025",
-    expiryDate: "08-08-2025",
+    entryDate: "08/06/2025",
+    expiryDate: "08/08/2025",
   },
   {
     id: 7,
     group: "O-",
     quantity: 6,
-    entryDate: "12-06-2025",
-    expiryDate: "22-06-2025",
+    entryDate: "12/06/2025",
+    expiryDate: "22/06/2025",
   },
   {
     id: 8,
     group: "AB+",
     quantity: 9,
-    entryDate: "20-05-2025",
-    expiryDate: "15-07-2025",
+    entryDate: "20/05/2025",
+    expiryDate: "15/07/2025",
   },
   {
     id: 9,
     group: "A+",
     quantity: 2,
-    entryDate: "01-05-2025",
-    expiryDate: "30-06-2025",
+    entryDate: "01/05/2025",
+    expiryDate: "18/06/2025",
   },
   {
     id: 10,
     group: "O+",
     quantity: 11,
-    entryDate: "03-06-2025",
-    expiryDate: "03-08-2025",
+    entryDate: "03/06/2025",
+    expiryDate: "03/08/2025",
   },
 ];
 
@@ -126,12 +126,12 @@ const Manager: React.FC = () => {
     if (name === "entryDate" || name === "expiryDate") {
       let formatted = value.replace(/\D/g, "").slice(0, 8);
       if (formatted.length >= 5) {
-        formatted = `${formatted.slice(0, 2)}-${formatted.slice(
+        formatted = `${formatted.slice(0, 2)}/${formatted.slice(
           2,
           4
-        )}-${formatted.slice(4, 8)}`;
+        )}/${formatted.slice(4, 8)}`;
       } else if (formatted.length >= 3) {
-        formatted = `${formatted.slice(0, 2)}-${formatted.slice(2, 4)}`;
+        formatted = `${formatted.slice(0, 2)}/${formatted.slice(2, 4)}`;
       }
       setFormData((prev) => ({ ...prev, [name]: formatted }));
     } else {
@@ -172,7 +172,7 @@ const Manager: React.FC = () => {
   const getStatusLabel = (
     expiryDate: string
   ): "Hết hạn" | "Gần hết hạn" | "Còn hạn" => {
-    const [day, month, year] = expiryDate.split("-").map(Number);
+    const [day, month, year] = expiryDate.split("/").map(Number);
     const expiry = new Date(year, month - 1, day);
     const today = new Date();
     today.setHours(0, 0, 0, 0);
@@ -200,8 +200,8 @@ const Manager: React.FC = () => {
   const sortFunction = (a: BloodUnit, b: BloodUnit) => {
     const dateA = sortBy === "entry" ? a.entryDate : a.expiryDate;
     const dateB = sortBy === "entry" ? b.entryDate : b.expiryDate;
-    const [da, ma, ya] = dateA.split("-").map(Number);
-    const [db, mb, yb] = dateB.split("-").map(Number);
+    const [da, ma, ya] = dateA.split("/").map(Number);
+    const [db, mb, yb] = dateB.split("/").map(Number);
     const d1 = new Date(ya, ma - 1, da);
     const d2 = new Date(yb, mb - 1, db);
     return d1.getTime() - d2.getTime();
@@ -295,7 +295,7 @@ const Manager: React.FC = () => {
             </li>
             <li className={view === "requests" ? "active" : ""}>
               <button className="menu-item" onClick={() => setView("requests")}>
-                Quản lí yêu cầu cần máu
+                Yêu cầu giao nhận máu
               </button>
             </li>
           </ul>
@@ -310,7 +310,6 @@ const Manager: React.FC = () => {
               <div className="filter-container">
                 <input
                   type="text"
-                  className="search-box"
                   placeholder="Tìm nhóm máu..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
@@ -404,12 +403,11 @@ const Manager: React.FC = () => {
               <h2 className="form-page-title">Thêm đơn vị máu mới</h2>
               <div className="blood-form">
                 <label>Nhóm máu</label>
-                <div className="custom-select-wrapper">
+                <div>
                   <select
                     name="group"
                     value={formData.group}
                     onChange={handleInputChange}
-                    className="input-control"
                   >
                     <option value="">-- Chọn nhóm máu --</option>
                     <option value="A+">A+</option>
@@ -430,27 +428,24 @@ const Manager: React.FC = () => {
                   placeholder="Nhập số lượng"
                   value={formData.quantity}
                   onChange={handleInputChange}
-                  className="input-control"
                 />
 
-                <label>Ngày nhập (dd-mm-yyyy)</label>
+                <label>Ngày nhập (dd/mm/yyyy)</label>
                 <input
                   type="text"
                   name="entryDate"
-                  placeholder="VD: 12-06-2025"
+                  placeholder="VD: 12/06/2025"
                   value={formData.entryDate}
                   onChange={handleInputChange}
-                  className="input-control"
                 />
 
-                <label>Hạn sử dụng (dd-mm-yyyy)</label>
+                <label>Hạn sử dụng (dd/mm/yyyy)</label>
                 <input
                   type="text"
                   name="expiryDate"
-                  placeholder="VD: 20-06-2025"
+                  placeholder="VD: 20/06/2025"
                   value={formData.expiryDate}
                   onChange={handleInputChange}
-                  className="input-control"
                 />
 
                 <button onClick={addBloodUnit}>Thêm đơn vị máu</button>
@@ -516,7 +511,7 @@ const Manager: React.FC = () => {
           {/* --- Trang yêu cầu cần máu --- */}
           {view === "requests" && (
             <>
-              <h2>Quản lý yêu cầu cần máu</h2>
+              <h2>Yêu cầu giao nhận máu</h2>
               <p>Chức năng này đang được phát triển...</p>
             </>
           )}

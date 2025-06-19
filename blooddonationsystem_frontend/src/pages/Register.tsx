@@ -1,16 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
-
 import { Link } from 'react-router-dom';
 
-import "./components/Register.css";
+import './components/Register.css';
 import Header from '../layouts/header-footer/Header';
 import Footer from '../layouts/header-footer/Footer';
 
 const RegisterForm: React.FC = () => {
-  const [firstName, setFirstName] = useState('');
-  const [lastName, setLastName] = useState('');
+  const [fullName, setFullName] = useState('');
   const [birthDate, setBirthDate] = useState<Date | null>(null);
   const [age, setAge] = useState('');
   const [gender, setGender] = useState('');
@@ -23,14 +21,17 @@ const RegisterForm: React.FC = () => {
   useEffect(() => {
     if (!birthDate) {
       setAge('');
-      setErrors(prev => ({ ...prev, birthDate: '' }));
+      setErrors((prev) => ({ ...prev, birthDate: '' }));
       return;
     }
 
     const today = new Date();
     if (birthDate > today) {
       setAge('');
-      setErrors(prev => ({ ...prev, birthDate: 'Ngày sinh không được lớn hơn hiện tại.' }));
+      setErrors((prev) => ({
+        ...prev,
+        birthDate: 'Ngày sinh không được lớn hơn hiện tại.',
+      }));
       return;
     }
 
@@ -40,14 +41,13 @@ const RegisterForm: React.FC = () => {
       calculatedAge--;
     }
 
-    setErrors(prev => ({ ...prev, birthDate: '' }));
+    setErrors((prev) => ({ ...prev, birthDate: '' }));
     setAge(calculatedAge.toString());
   }, [birthDate]);
 
   const validateForm = () => {
     const newErrors: { [key: string]: string } = {};
-    if (!firstName.trim()) newErrors.firstName = 'Vui lòng nhập Họ.';
-    if (!lastName.trim()) newErrors.lastName = 'Vui lòng nhập Tên.';
+    if (!fullName.trim()) newErrors.fullName = 'Vui lòng nhập Họ và Tên.';
     if (!birthDate) newErrors.birthDate = 'Vui lòng chọn ngày sinh.';
     if (!gender) newErrors.gender = 'Vui lòng chọn giới tính.';
     if (phone.length !== 10) newErrors.phone = 'Số điện thoại phải đủ 10 chữ số.';
@@ -55,7 +55,6 @@ const RegisterForm: React.FC = () => {
     else if (!/\S+@\S+\.\S+/.test(email)) newErrors.email = 'Email không hợp lệ.';
     if (!address.trim()) newErrors.address = 'Vui lòng nhập địa chỉ.';
     setErrors(newErrors);
-
     return Object.keys(newErrors).length === 0;
   };
 
@@ -63,7 +62,7 @@ const RegisterForm: React.FC = () => {
     e.preventDefault();
     if (validateForm()) {
       alert('Đăng kí thành công!');
-      // Gửi dữ liệu hoặc xử lý tiếp theo
+      // Xử lý dữ liệu ở đây
     }
   };
 
@@ -74,54 +73,50 @@ const RegisterForm: React.FC = () => {
         <form className="register-form" onSubmit={handleSubmit}>
           <h2 id="register-title">Đăng kí</h2>
 
-          <div className="form-row-group">
+          <div className="form-group">
             <label className="form-label">Họ và Tên</label>
-            <div className="form-row">
-              <div className="form-group" style={{ flex: 1 }}>
-                <input
-                  type="text"
-                  placeholder="Họ"
-                  className="input-text"
-                  value={firstName}
-                  onChange={(e) => setFirstName(e.target.value)}
-                />
-                {errors.firstName && <div className="error-text">{errors.firstName}</div>}
-              </div>
-              <div className="form-group" style={{ flex: 1 }}>
-                <input
-                  type="text"
-                  placeholder="Tên"
-                  className="input-text"
-                  value={lastName}
-                  onChange={(e) => setLastName(e.target.value)}
-                />
-                {errors.lastName && <div className="error-text">{errors.lastName}</div>}
-              </div>
-            </div>
+            <input
+              type="text"
+              className="input-text"
+              placeholder="Nhập họ và tên đầy đủ"
+              value={fullName}
+              onChange={(e) => setFullName(e.target.value)}
+            />
+            {errors.fullName && <div className="error-text">{errors.fullName}</div>}
           </div>
 
-
           <div className="form-row">
-            <div className="form-group">
+            <div className="form-group date-picker-group">
               <label className="form-label">Ngày sinh</label>
-              <DatePicker
-                selected={birthDate}
-                onChange={(date: Date | null) => setBirthDate(date)}
-                dateFormat="dd/MM/yyyy"
-                className="input-text"
-                placeholderText="dd/mm/yyyy"
-                maxDate={new Date()}
-                showMonthDropdown
-                showYearDropdown
-                dropdownMode="select"
-                onKeyDown={(e) => {
-                  const allowedKeys = ['Backspace', 'Delete', 'Tab', 'ArrowLeft', 'ArrowRight', '/'];
-                  const isNumber = e.key >= '0' && e.key <= '9';
-                  if (!isNumber && !allowedKeys.includes(e.key)) {
-                    e.preventDefault();
-                  }
-                }}
-              />
+              <div className="date-picker-wrapper">
+                <DatePicker
+                  selected={birthDate}
+                  onChange={(date: Date | null) => setBirthDate(date)}
+                  dateFormat="dd/MM/yyyy"
+                  placeholderText="dd/mm/yyyy"
+                  className="input-text date-input"
+                  calendarClassName="custom-datepicker"
+                  maxDate={new Date()}
+                  showMonthDropdown
+                  showYearDropdown
+                  dropdownMode="select"
+                  popperPlacement="left"
+                  onKeyDown={(e) => {
+                    const allowedKeys = [
+                      'Backspace',
+                      'Delete',
+                      'Tab',
+                      'ArrowLeft',
+                      'ArrowRight',
+                      '/',
+                    ];
+                    const isNumber = e.key >= '0' && e.key <= '9';
+                    if (!isNumber && !allowedKeys.includes(e.key)) {
+                      e.preventDefault();
+                    }
+                  }}
+                />
+              </div>
               {errors.birthDate && <div className="error-text">{errors.birthDate}</div>}
             </div>
 
@@ -133,7 +128,11 @@ const RegisterForm: React.FC = () => {
 
           <div className="form-group">
             <label className="form-label">Giới tính</label>
-            <select className="input-text" value={gender} onChange={(e) => setGender(e.target.value)}>
+            <select
+              className="input-text"
+              value={gender}
+              onChange={(e) => setGender(e.target.value)}
+            >
               <option value="">Nam/Nữ</option>
               <option value="Nam">Nam</option>
               <option value="Nữ">Nữ</option>
@@ -191,13 +190,15 @@ const RegisterForm: React.FC = () => {
           </div>
 
           <div className="form-footer">
-            <button type="submit" className="submit-btn">Đăng kí</button>
-            <Link to="/login" className="login-text">Bạn đã có tài khoản ?</Link>
+            <button type="submit" className="submit-btn">
+              Đăng kí
+            </button>
+            <Link to="/login" className="login-text">
+              Bạn đã có tài khoản ?
+            </Link>
           </div>
-
         </form>
       </section>
-
       <Footer />
     </>
   );
