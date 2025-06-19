@@ -1,18 +1,24 @@
-/* ===== RESET ===== */
+/* =======================
+   1. RESET STYLES
+======================= */
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  font-family: 'Poppins', sans-serif;
+  font-family: "Poppins", sans-serif;
 }
 
-/* ===== LAYOUT ===== */
+/* =======================
+   2. LAYOUT
+======================= */
 .manager-layout {
   display: flex;
   min-height: 100vh;
 }
 
-/* ===== SIDEBAR ===== */
+/* =======================
+   3. SIDEBAR
+======================= */
 .sidebar {
   width: 280px;
   height: 100vh;
@@ -39,10 +45,11 @@
 .sidebar-menu li {
   padding: 15px 30px;
   background-color: #ffffff;
-  margin: 0;
-  border-radius: 0;
-  box-shadow: none;
   transition: background 0.2s ease;
+  border-radius: 0;
+  margin: 0;
+  box-shadow: none;
+  font-weight: 600;
 }
 
 .sidebar-menu li:hover {
@@ -50,7 +57,7 @@
 }
 
 .sidebar-menu li.active {
-  background: #FF204E;
+  background: #ff204e;
 }
 
 .sidebar-menu li.active .menu-item {
@@ -70,7 +77,9 @@
   cursor: pointer;
 }
 
-/* ===== HEADER ===== */
+/* =======================
+   4. HEADER
+======================= */
 .manager-header {
   display: flex;
   justify-content: space-between;
@@ -87,25 +96,25 @@
   align-items: center;
 }
 
-.manager-logo .logo-img {
+.logo-img {
   height: 70px;
 }
 
 .manager-greeting {
   font-size: 26px;
   font-weight: 600;
-  color: #333333;
+  color: #333;
   white-space: nowrap;
 }
 
 .manager-name {
-  color: #FF204E;
+  color: #ff204e;
   font-weight: 700;
   text-shadow: 2px 2px 6px rgba(255, 32, 78, 0.4);
 }
 
 .manager-logout-btn {
-  background-color: #FF204E;
+  background-color: #ff204e;
   color: white;
   padding: 10px 20px;
   border: none;
@@ -119,7 +128,9 @@
   background-color: #d91b41;
 }
 
-/* ===== MAIN CONTENT ===== */
+/* =======================
+   5. MAIN CONTENT
+======================= */
 .manager-container {
   flex: 1;
   padding: 40px;
@@ -133,27 +144,14 @@ h2 {
   margin-bottom: 50px;
 }
 
-
-/* ===== SEARCH BOX - FILTER-CONTAINER ===== */
-.search-box,
-.filter-container input,
-.filter-container select {
-  padding: 12px 14px;
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  font-size: 15px;
-  background-color: #ffffff;
-  transition: border-color 0.2s ease;
+/* =======================
+   6. SEARCH & FILTER
+======================= */
+.search-filter-wrapper {
   width: 100%;
-
-}
-
-.search-box:focus,
-.filter-container input:focus,
-.filter-container select:focus {
-  border-color: #FF204E;
-  outline: none;
-  box-shadow: 0 0 0 2px rgba(255, 32, 78, 0.1);
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
 }
 
 .filter-container {
@@ -171,17 +169,29 @@ h2 {
   max-width: 300px;
 }
 
-.search-filter-wrapper {
+.search-box,
+.filter-container input,
+.filter-container select {
+  padding: 12px 14px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 15px;
+  background-color: #ffffff;
   width: 100%;
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 0 20px;
+  transition: border-color 0.2s ease;
 }
 
+.search-box:focus,
+.filter-container input:focus,
+.filter-container select:focus {
+  border-color: #ff204e;
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(255, 32, 78, 0.1);
+}
 
-
-
-/* ===== FORM SECTION ===== */
+/* =======================
+   7. FORM SECTION
+======================= */
 .manager-container input[type="text"],
 .manager-container input[type="number"] {
   display: block;
@@ -213,7 +223,9 @@ h2 {
   background-color: #003366;
 }
 
-/* ===== TABLE ===== */
+/* =======================
+   8. TABLE
+======================= */
 .blood-table {
   width: 100%;
   border-collapse: collapse;
@@ -234,7 +246,7 @@ h2 {
 }
 
 .blood-table th {
-  background-color: #FF204E;
+  background-color: #ff204e;
   color: #ffffff;
   font-weight: 600;
 }
@@ -243,21 +255,26 @@ h2 {
   background-color: #ffffff;
 }
 
-.blood-table tr.expired td {
-  background-color: #fff0f0 !important;
-}
-
-.blood-table tr.nearly-expired td {
-  background-color: #fffbe6 !important;
-}
-
 .blood-table td div {
   margin-top: 4px;
   font-size: 13px;
   font-weight: 500;
 }
 
-/* ===== ACTION BUTTONS IN TABLE ===== */
+/* =======================
+   9. TABLE ROW COLORS
+======================= */
+.blood-table tr.expired td {
+  background-color: #ffe2e2 !important;
+}
+
+.blood-table tr.nearly-expired td {
+  background-color: #fffbd1 !important;
+}
+
+/* =======================
+   10. TABLE ACTION BUTTONS
+======================= */
 .blood-table button {
   padding: 6px 12px;
   margin: 0 4px;
@@ -285,7 +302,9 @@ h2 {
   background-color: #c82333;
 }
 
-/* ===== EXPIRY LABELS ===== */
+/* =======================
+   11. EXPIRY LABELS
+======================= */
 .expiry-label {
   font-size: 13px;
   font-weight: 500;
@@ -300,7 +319,9 @@ h2 {
   color: #665c00;
 }
 
-/* ===== STATUS BADGES ===== */
+/* =======================
+   12. STATUS BADGES
+======================= */
 .status-badge {
   display: inline-block;
   padding: 6px 14px;
@@ -329,13 +350,87 @@ h2 {
   color: #c30000;
 }
 
-/* ===== DÒNG TRONG BẢNG - MÀU TƯƠI ===== */
-.blood-table tr.expired td {
-  background-color: #ffe2e2 !important;
+/* =======================
+   13. ADD FORM STYLES
+======================= */
+/* ===== TITLE ===== */
+.form-page-title {
+  text-align: center;
+  font-size: 28px;
+  font-weight: 700;
+  margin-bottom: 40px;
+  color: #333;
 }
 
-.blood-table tr.nearly-expired td {
-  background-color: #fffbd1 !important;
+/* ===== FORM BOX ===== */
+.blood-form {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 40px;
+  background-color: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
 }
 
+/* ===== LABELS ===== */
+.blood-form label {
+  display: block;
+  margin-bottom: 6px;
+  font-weight: 500;
+  color: #444;
+  font-size: 15px;
+}
 
+/* ===== INPUTS & SELECTS ===== */
+.input-control {
+  width: 100%;
+  height: 48px;
+  padding: 12px 16px;
+  margin-bottom: 20px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 15px;
+  background-color: #ffffff;
+  transition: border-color 0.2s ease;
+  box-sizing: border-box;
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+}
+
+/* Optional custom arrow for select dropdown */
+.custom-select-wrapper {
+  position: relative;
+}
+.custom-select-wrapper select {
+  background-image: url("data:image/svg+xml,%3Csvg fill='none' stroke='%23999' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' viewBox='0 0 24 24' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 16px center;
+  background-size: 16px;
+}
+
+/* ===== FOCUS ===== */
+.input-control:focus {
+  border-color: #FF204E;
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(255, 32, 78, 0.1);
+}
+
+/* ===== BUTTON ===== */
+.blood-form button {
+  width: 100%;
+  padding: 14px;
+  background-color: #FF204E;
+  color: #ffffff;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  margin-top: 10px;
+}
+
+.blood-form button:hover {
+  background-color: #d91b41;
+}
