@@ -35,19 +35,27 @@ function Login() {
       console.log("Đăng nhập thành công:", data);
       alert("Đăng nhập thành công");
 
+
+      const role = data.role?.toUpperCase(); // chuẩn hóa về in hoa
+      console.log("Role đã chuẩn hóa:", role);
       localStorage.setItem("token", data.token);
       // 🚀 Điều hướng theo role
       switch (data.role) {
-        case "ADMIN":
-          navigate("/admin/dashboard");
+        case "Admin":
+          navigate("/admin");
           break;
-        case "STAFF":
-          navigate("/medical");
+        case "Manager":
+          navigate("/manager");
           break;
-        case "USER":
-        default:
+        case "MEDICAL STAFF":
+          navigate("/med");
+          break;
+        case "User":
+        case "Donor":
           navigate("/user");
           break;
+        default:
+          alert("Không xác định được vai trò người dùng");
       }
     } catch (error) {
       console.error("Lỗi kết nối tới server:", error);

@@ -5,4 +5,5 @@ public enum Role {
     Recipient,
     MedicalStaff,
     Manager,
+    Admin,
 }
