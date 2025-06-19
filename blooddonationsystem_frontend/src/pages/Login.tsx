@@ -47,7 +47,7 @@ function Login() {
         case "Manager":
           navigate("/manager");
           break;
-        case "MEDICAL STAFF":
+        case "MedicalStaff":
           navigate("/med");
           break;
         case "User":
