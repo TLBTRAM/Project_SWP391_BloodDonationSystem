@@ -41,7 +41,7 @@ public class Account implements UserDetails {
     @Size(min = 6, message = "Password must be at leat 6 characters!")
     public String password;
 
-    @JsonProperty("fullname")
+    @Column(name = "fullname")
     public String fullName;
 
     public Date YoB;

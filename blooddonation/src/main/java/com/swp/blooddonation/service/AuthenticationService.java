@@ -45,6 +45,13 @@ public class AuthenticationService implements UserDetailsService {
     EmailService emailService;
 
     public RegisterResponse register(@Valid RegisRequest regisRequest) {
+        System.out.println("===== DEBUG REGISTER REQUEST =====");
+        System.out.println("Received: " + regisRequest.getFullName());
+        System.out.println("YoB: " + regisRequest.getYoB());
+        System.out.println("Gender: " + regisRequest.getGender());
+        System.out.println("Email: " + regisRequest.getEmail());
+        System.out.println("Phone: " + regisRequest.getPhone());
+        System.out.println("==================================");
         if (authenticationReponsitory.existsByEmail(regisRequest.getEmail())) {
             throw new RuntimeException("Email đã được sử dụng!");
         }
