@@ -9,14 +9,6 @@
   --shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
 }
 
-body {
-  margin: 0;
-  font-family: 'Poppins', sans-serif;
-  background-color: var(--bg-color);
-  color: var(--text-dark);
-  overflow-x: hidden;
-}
-
 .user-dashboard {
   min-height: 100vh;
   overflow-y: auto;
