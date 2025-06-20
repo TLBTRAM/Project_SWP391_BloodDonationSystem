@@ -117,26 +117,25 @@ const User = () => {
           <div className="calendar-booking">
             <Calendar />
           </div>
-
-        </div>
-        <div className="booking-section">
           <div className="booking-item">
-            <img src={calendarIcon} alt="Đặt lịch" />
             <div className="booking-text">
               <h4>Đăng ký lịch khám</h4>
               <p>Hãy đặt lịch trước để được phục vụ nhanh và thuận tiện hơn.</p>
+              <img src={calendarIcon} alt="Đặt lịch" />
+              <br/>  
               <button onClick={() => navigate('/booking')}>📅 Đặt lịch ngay</button>
             </div>
           </div>
 
           <div className="booking-item">
-            <img src={calendarIcon} alt="Đang phát triển" />
             <div className="booking-text">
               <h4>Đang phát triển</h4>
               <p>Chức năng mới đang được cập nhật và sẽ ra mắt trong thời gian tới.</p>
             </div>
           </div>
         </div>
+
+
       </main>
     </div>
   );
