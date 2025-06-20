@@ -1,35 +1,36 @@
-import React, { useState, useEffect } from 'react';
-import DatePicker from 'react-datepicker';
-import 'react-datepicker/dist/react-datepicker.css';
-import { Link } from 'react-router-dom';
+import React, { useState, useEffect } from "react";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
+import { Link } from "react-router-dom";
 
-import './components/Register.css';
-import Header from '../layouts/header-footer/Header';
-import Footer from '../layouts/header-footer/Footer';
+import "./components/Register.css";
+import Header from "../layouts/header-footer/Header";
+import Footer from "../layouts/header-footer/Footer";
 
 const Register: React.FC = () => {
-  const [fullName, setFullName] = useState('');
+  const [fullName, setFullName] = useState("");
   const [birthDate, setBirthDate] = useState<Date | null>(null);
-  const [age, setAge] = useState('');
-  const [gender, setGender] = useState('');
-  const [phone, setPhone] = useState('');
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [age, setAge] = useState("");
+  const [gender, setGender] = useState("");
+  const [phone, setPhone] = useState("");
+  const [email, setEmail] = useState("");
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
 
   useEffect(() => {
     if (!birthDate) {
-      setAge('');
-      setErrors((prev) => ({ ...prev, birthDate: '' }));
+      setAge("");
+      setErrors((prev) => ({ ...prev, birthDate: "" }));
       return;
     }
 
     const today = new Date();
     if (birthDate > today) {
-      setAge('');
+      setAge("");
       setErrors((prev) => ({
         ...prev,
-        birthDate: 'Ngày sinh không được lớn hơn hiện tại.',
+        birthDate: "Ngày sinh không được lớn hơn hiện tại.",
       }));
       return;
     }
@@ -40,20 +41,23 @@ const Register: React.FC = () => {
       calculatedAge--;
     }
 
-    setErrors((prev) => ({ ...prev, birthDate: '' }));
+    setErrors((prev) => ({ ...prev, birthDate: "" }));
     setAge(calculatedAge.toString());
   }, [birthDate]);
 
   const validateForm = () => {
     const newErrors: { [key: string]: string } = {};
-    if (!fullName.trim()) newErrors.fullName = 'Vui lòng nhập Họ và Tên.';
-    if (!birthDate) newErrors.birthDate = 'Vui lòng chọn ngày sinh.';
-    if (!gender) newErrors.gender = 'Vui lòng chọn giới tính.';
-    if (phone.length !== 10) newErrors.phone = 'Số điện thoại phải đủ 10 chữ số.';
-    if (!email.trim()) newErrors.email = 'Vui lòng nhập email.';
-    else if (!/\S+@\S+\.\S+/.test(email)) newErrors.email = 'Email không hợp lệ.';
+    if (!fullName.trim()) newErrors.fullName = "Vui lòng nhập Họ và Tên.";
+    if (!birthDate) newErrors.birthDate = "Vui lòng chọn ngày sinh.";
+    if (!gender) newErrors.gender = "Vui lòng chọn giới tính.";
+    if (phone.length !== 10)
+      newErrors.phone = "Số điện thoại phải đủ 10 chữ số.";
+    if (!email.trim()) newErrors.email = "Vui lòng nhập email.";
+    else if (!/\S+@\S+\.\S+/.test(email))
+      newErrors.email = "Email không hợp lệ.";
+    if (!username.trim()) newErrors.username = "Vui lòng nhập tên người dùng.";
     if (!password || password.length < 6)
-      newErrors.password = 'Mật khẩu phải từ 6 ký tự.';
+      newErrors.password = "Mật khẩu phải từ 6 ký tự.";
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -64,31 +68,34 @@ const Register: React.FC = () => {
 
     const userData = {
       fullName,
-      birthDate: birthDate?.toISOString().split('T')[0],  
+      birthDate: birthDate?.toISOString().split("T")[0],
       gender,
       phone,
       email,
+      username,
       password,
     };
 
     try {
-      const response = await fetch('http://localhost:8080/api/auth/register', {
-        method: 'POST',
+      const response = await fetch("http://localhost:8080/api/auth/register", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify(userData),
       });
 
       if (response.ok) {
-        alert('Đăng ký thành công!');
+        alert("Đăng ký thành công!");
       } else {
         const errorData = await response.json();
-        alert('Đăng ký thất bại: ' + (errorData.message || 'Lỗi không xác định'));
+        alert(
+          "Đăng ký thất bại: " + (errorData.message || "Lỗi không xác định")
+        );
       }
     } catch (error) {
-      console.error('Registration error:', error);
-      alert('Không thể kết nối tới máy chủ. Vui lòng thử lại sau.');
+      console.error("Registration error:", error);
+      alert("Không thể kết nối tới máy chủ. Vui lòng thử lại sau.");
     }
   };
 
@@ -108,7 +115,9 @@ const Register: React.FC = () => {
               value={fullName}
               onChange={(e) => setFullName(e.target.value)}
             />
-            {errors.fullName && <div className="error-text">{errors.fullName}</div>}
+            {errors.fullName && (
+              <div className="error-text">{errors.fullName}</div>
+            )}
           </div>
 
           <div className="form-row">
@@ -129,26 +138,33 @@ const Register: React.FC = () => {
                   popperPlacement="left"
                   onKeyDown={(e) => {
                     const allowedKeys = [
-                      'Backspace',
-                      'Delete',
-                      'Tab',
-                      'ArrowLeft',
-                      'ArrowRight',
-                      '/',
+                      "Backspace",
+                      "Delete",
+                      "Tab",
+                      "ArrowLeft",
+                      "ArrowRight",
+                      "/",
                     ];
-                    const isNumber = e.key >= '0' && e.key <= '9';
+                    const isNumber = e.key >= "0" && e.key <= "9";
                     if (!isNumber && !allowedKeys.includes(e.key)) {
                       e.preventDefault();
                     }
                   }}
                 />
               </div>
-              {errors.birthDate && <div className="error-text">{errors.birthDate}</div>}
+              {errors.birthDate && (
+                <div className="error-text">{errors.birthDate}</div>
+              )}
             </div>
 
             <div className="form-group">
               <label className="form-label">Tuổi</label>
-              <input type="number" className="input-text" value={age} readOnly />
+              <input
+                type="number"
+                className="input-text"
+                value={age}
+                readOnly
+              />
             </div>
           </div>
 
@@ -174,12 +190,18 @@ const Register: React.FC = () => {
               className="input-text"
               value={phone}
               onChange={(e) => {
-                const input = e.target.value.replace(/\D/g, '');
+                const input = e.target.value.replace(/\D/g, "");
                 if (input.length <= 10) setPhone(input);
               }}
               onKeyDown={(e) => {
-                const allowedKeys = ['Backspace', 'Delete', 'ArrowLeft', 'ArrowRight', 'Tab'];
-                const isNumber = e.key >= '0' && e.key <= '9';
+                const allowedKeys = [
+                  "Backspace",
+                  "Delete",
+                  "ArrowLeft",
+                  "ArrowRight",
+                  "Tab",
+                ];
+                const isNumber = e.key >= "0" && e.key <= "9";
                 if (!isNumber && !allowedKeys.includes(e.key)) {
                   e.preventDefault();
                 }
@@ -196,9 +218,25 @@ const Register: React.FC = () => {
               className="input-text"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
+              placeholder="Nhập email"
             />
             {errors.email && <div className="error-text">{errors.email}</div>}
           </div>
+
+          <div className="form-group">
+            <label className="form-label">Tên người dùng</label>
+            <input
+              type="text"
+              className="input-text"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              placeholder="Nhập tên người dùng"
+            />
+            {errors.username && (
+              <div className="error-text">{errors.username}</div>
+            )}
+          </div>
+
           <div className="form-group">
             <label className="form-label">Mật khẩu</label>
             <input
@@ -208,7 +246,9 @@ const Register: React.FC = () => {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
             />
-            {errors.password && <div className="error-text">{errors.password}</div>}
+            {errors.password && (
+              <div className="error-text">{errors.password}</div>
+            )}
           </div>
 
           <div className="form-footer">

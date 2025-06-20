@@ -1,83 +1,84 @@
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-      font-family: 'Poppins', sans-serif;
-    }
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Poppins', sans-serif;
+}
 
-    body {
-      background-color: #fff;
-      color: #333;
-    }
+body {
+  background-color: #fff;
+  color: #333;
+}
 
-    /* Main layout */
-    .login-container {
-      flex: 1;
-      display: flex;
-      flex-direction: row;
-      justify-content: center;
-      align-items: center;
-      gap: 150px;
-      background-color: #fff;
-      flex-wrap: wrap;
-      overflow: hidden;
-    }
+/* Main layout */
+.login-container {
+  flex: 1;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  gap: 150px;
+  background-color: #fff;
+  flex-wrap: wrap;
+  overflow: hidden;
+}
 
-    /* Poster image */
-    .poster img {
-      max-width: 380px;
-      max-height: 465px;
-      border-radius: 8px;
-      object-fit: cover;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    }
+/* Poster image */
+.poster img {
+  max-width: 400px;
+  max-height: 500px;
+  border-radius: 8px;
+  object-fit: cover;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
 
-    /* Login form */
-    .login-form {
-      max-width: 500px;
-      max-height: 600px;
-      width: 100%;
-    }
+/* Login form */
+.login-form {
+  max-width: 500px;
+  max-height: 600px;
+  width: 100%;
+}
 
-    .login-form h2 {
-      color: #FF204E;
-      margin-bottom: 30px;
-      font-size: 35px;
-      font-weight: bold;
-    }
+.login-form h2 {
+  color: #FF204E;
+  margin-bottom: 30px;
+  font-size: 35px;
+  font-weight: bold;
+}
 
-    .login-form input {
-      width: 100%;
-      padding: 12px 14px;
-      margin-bottom: 14px;
-      border: none;
-      border-bottom: 1px solid #ccc;
-      outline: none;
-      font-size: 16px;
-    }
+.login-form input[type="text"],
+.login-form input[type="password"] {
+  width: 100%;
+  padding: 12px 14px;
+  margin-bottom: 18px;
+  border: none;
+  border: 1px solid #ccc;
+  border-radius: 0;
+  border-radius: 4px;
+  outline: none;
+  font-size: 16px;
+  background-color: transparent;
+  color: #333;
+}
 
-    .login-form button {
-      width: 100%;
-      padding: 12px;
-      background-color: #00224D;
-      color: white;
-      font-weight: bold;
-      border: none;
-      border-radius: 4px;
-      cursor: pointer;
-      font-size: 16px;
-      margin-top: 20px;
-    }
+.login-form button {
+  width: 100%;
+  padding: 12px;
+  background-color: #00224D;
+  color: white;
+  font-weight: bold;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+  margin-top: 20px;
+}
 
-    .login-form .forgot {
-      display: block;
-      margin-top: 10px;
-      text-align: right;
-      color: #FF204E;
-      text-decoration: none;
-      font-size: 16px;
-
-    }
-
-
-
+.login-form .forgot {
+  display: block;
+  margin-top: 10px;
+  text-align: right;
+  color: #FF204E;
+  text-decoration: none;
+  font-size: 16px;
+}
