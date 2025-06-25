@@ -113,4 +113,10 @@ public class Account implements UserDetails {
     @JsonIgnore
     private Customer customerProfile;
 
+    @OneToMany(mappedBy = "account")
+    @JsonIgnore
+    List<Appointment> appointments;
+
+    @OneToMany(mappedBy = "account")
+    List<Report> reports;
 }

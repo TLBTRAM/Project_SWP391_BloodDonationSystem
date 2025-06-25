@@ -1,6 +1,6 @@
 package com.swp.blooddonation.api;
 
-import com.swp.blooddonation.dto.AppointmentRequest;
+import com.swp.blooddonation.dto.request.AppointmentRequest;
 import com.swp.blooddonation.entity.Appointment;
 import com.swp.blooddonation.service.AppointmentService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
