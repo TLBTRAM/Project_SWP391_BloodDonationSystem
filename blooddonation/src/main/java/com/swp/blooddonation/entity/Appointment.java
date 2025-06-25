@@ -17,10 +17,13 @@ public class Appointment {
     private Long id;
 
     private LocalDate createAt;
+
     private LocalDate appointmentDate;
 
     @Enumerated(EnumType.STRING)
     private AppointmentEnum status; // PENDING, APPROVED, REJECTED, COMPLETED
+
+
 
     @ManyToOne
     @JoinColumn(name = "customer_id")
