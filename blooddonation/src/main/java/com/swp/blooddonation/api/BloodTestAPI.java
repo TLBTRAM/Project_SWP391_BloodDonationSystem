@@ -1,16 +1,13 @@
 package com.swp.blooddonation.api;
 
-import com.swp.blooddonation.dto.BloodTestResponse;
+import com.swp.blooddonation.dto.response.BloodTestResponse;
 import com.swp.blooddonation.dto.CompleteBloodTest;
 import com.swp.blooddonation.entity.BloodTest;
 import com.swp.blooddonation.service.BloodTestService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.time.LocalDate;
 
 @RestController
 @SecurityRequirement(name = "api")

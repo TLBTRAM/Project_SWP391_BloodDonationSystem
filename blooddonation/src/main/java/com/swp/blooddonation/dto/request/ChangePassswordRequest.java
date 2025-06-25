@@ -1,7 +1,5 @@
-package com.swp.blooddonation.dto;
+package com.swp.blooddonation.dto.request;
 
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
 import lombok.Setter;
 

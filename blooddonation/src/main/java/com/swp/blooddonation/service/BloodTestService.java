@@ -1,6 +1,6 @@
 package com.swp.blooddonation.service;
 
-import com.swp.blooddonation.dto.BloodTestResponse;
+import com.swp.blooddonation.dto.response.BloodTestResponse;
 import com.swp.blooddonation.dto.CompleteBloodTest;
 import com.swp.blooddonation.entity.Account;
 import com.swp.blooddonation.entity.Appointment;
@@ -9,7 +9,6 @@ import com.swp.blooddonation.entity.Customer;
 import com.swp.blooddonation.enums.AppointmentEnum;
 import com.swp.blooddonation.enums.BloodTestStatus;
 import com.swp.blooddonation.enums.Role;
-import com.swp.blooddonation.enums.BloodType;
 
 import com.swp.blooddonation.exception.exceptions.BadRequestException;
 import com.swp.blooddonation.repository.AppointmentRepository;
