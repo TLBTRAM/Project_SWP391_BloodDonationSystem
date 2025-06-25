@@ -17,6 +17,9 @@ public class Appointment {
     private Long id;
 
     private LocalDate createAt;
+
+    private LocalDate createAts;
+
     private LocalDate appointmentDate;
 
     @Enumerated(EnumType.STRING)
