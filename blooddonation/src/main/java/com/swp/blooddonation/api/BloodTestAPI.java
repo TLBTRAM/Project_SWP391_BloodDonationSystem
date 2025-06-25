@@ -1,5 +1,7 @@
 package com.swp.blooddonation.api;
 
+import com.swp.blooddonation.dto.BloodTestResponse;
+import com.swp.blooddonation.dto.CompleteBloodTest;
 import com.swp.blooddonation.entity.BloodTest;
 import com.swp.blooddonation.service.BloodTestService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -28,9 +30,12 @@ public class BloodTestAPI {
     public ResponseEntity<BloodTest> start(@PathVariable Long id) {
         return ResponseEntity.ok(bloodTestService.startBloodTest(id));
     }
-
     @PutMapping("/{id}/complete")
-    public ResponseEntity<BloodTest> complete(@PathVariable Long id, @RequestParam String result, @RequestParam boolean passed) {
-        return ResponseEntity.ok(bloodTestService.completeBloodTest(id, result, passed));
+    public ResponseEntity<BloodTestResponse> complete(
+            @PathVariable Long id,
+            @RequestBody CompleteBloodTest request
+    ) {
+        BloodTestResponse response = bloodTestService.completeBloodTest(id, request);
+        return ResponseEntity.ok(response);
     }
 }

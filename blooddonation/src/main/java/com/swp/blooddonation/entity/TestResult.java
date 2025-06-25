@@ -1,5 +1,6 @@
 package com.swp.blooddonation.entity;
 
+import com.swp.blooddonation.enums.BloodType;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -25,7 +26,7 @@ public class TestResult {
     private Customer customer;
 
 
-    @ManyToOne
+    @Enumerated(EnumType.STRING)
     @JoinColumn(name = "type_id")
     private BloodType type;
 

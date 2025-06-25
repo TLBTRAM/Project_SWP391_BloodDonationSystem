@@ -1,5 +1,6 @@
 package com.swp.blooddonation.entity;
 
+import com.swp.blooddonation.enums.BloodType;
 import jakarta.persistence.*;
 
 
@@ -19,7 +20,8 @@ public class BloodInventory {
     @JoinColumn(name = "register_id")
     private Register register;
 
-    @ManyToOne
-    @JoinColumn(name = "type_id")
-    private BloodType type;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "blood_type")
+    private BloodType bloodType;
 }

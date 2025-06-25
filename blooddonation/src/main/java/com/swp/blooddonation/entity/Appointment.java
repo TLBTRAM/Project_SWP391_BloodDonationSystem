@@ -34,14 +34,6 @@ public class Appointment {
     @JoinColumn(name = "slot_id")
     private Slot slot; // Khung giờ hiến máu
 
-    @OneToMany(mappedBy = "appointment")
-    List<Report> reports;
-
-    @ManyToOne
-    @JoinColumn(name = "account_id")
-    Account account;
-
-
 
     // chỉ có 1 dịch vụ hiến máu nên không cần dùng
 //    @ManyToMany(cascade = CascadeType.ALL)

@@ -1,14 +1,20 @@
 package com.swp.blooddonation.service;
 
+import com.swp.blooddonation.dto.BloodTestResponse;
+import com.swp.blooddonation.dto.CompleteBloodTest;
 import com.swp.blooddonation.entity.Account;
 import com.swp.blooddonation.entity.Appointment;
 import com.swp.blooddonation.entity.BloodTest;
+import com.swp.blooddonation.entity.Customer;
 import com.swp.blooddonation.enums.AppointmentEnum;
 import com.swp.blooddonation.enums.BloodTestStatus;
 import com.swp.blooddonation.enums.Role;
+import com.swp.blooddonation.enums.BloodType;
+
 import com.swp.blooddonation.exception.exceptions.BadRequestException;
 import com.swp.blooddonation.repository.AppointmentRepository;
 import com.swp.blooddonation.repository.BloodTestRepository;
+import com.swp.blooddonation.repository.CustomerRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -22,6 +28,9 @@ public class BloodTestService {
 
     @Autowired
     AppointmentRepository appointmentRepository;
+
+    @Autowired
+    CustomerRepository customerRepository;
 
 
     @Autowired
@@ -57,11 +66,49 @@ public class BloodTestService {
     }
 
     @Transactional
-    public BloodTest completeBloodTest(Long id, String result, boolean passed)  {
-        BloodTest test = bloodTestRepository.findById(id)
+    public BloodTestResponse completeBloodTest(Long testId, CompleteBloodTest request) {
+        BloodTest test = bloodTestRepository.findById(testId)
                 .orElseThrow(() -> new BadRequestException("Blood test not found"));
-        test.setResult(result);
-        test.setStatus(passed ? BloodTestStatus.COMPLETED : BloodTestStatus.FAILED);
-        return bloodTestRepository.save(test);
+
+        Appointment appointment = test.getAppointment();
+        if (appointment == null) {
+            throw new BadRequestException("Appointment not found for this blood test");
+        }
+        test.setResult(request.getResult());
+        test.setStatus(request.isPassed() ? BloodTestStatus.COMPLETED : BloodTestStatus.FAILED);
+        test.setBloodType(request.getBloodType()); // Gán bloodType vào bản ghi xét nghiệm
+        test.setMedicalStaff(appointment.getMedicalStaff());
+
+
+
+
+        Customer donor = appointment.getCustomer().getCustomer();
+        if (donor != null && donor.getBloodType() == null && request.getBloodType() != null) {
+            donor.setBloodType(request.getBloodType());
+            customerRepository.save(donor);
+        }
+
+
+        Account staff = appointment.getMedicalStaff();
+        Long testedById = (staff != null) ? staff.getId() : null;
+        String testedByName = (staff != null) ? staff.getFullName() : "Unknown";
+
+        LocalDate testDate = appointment.getAppointmentDate();
+
+        bloodTestRepository.save(test);
+
+        BloodTestResponse response = new BloodTestResponse();
+        response.setId(test.getId());
+        response.setResult(test.getResult());
+        response.setPassed(request.isPassed());
+        response.setStatus(test.getStatus());
+        response.setBloodType(request.getBloodType()); // hoặc lấy từ test.getBloodType()
+        response.setTestDate(testDate);
+        response.setTestedById(testedById);
+        response.setTestedByName(testedByName); // nhớ thêm trường này trong DTO
+
+        return response;
     }
+
+
 }

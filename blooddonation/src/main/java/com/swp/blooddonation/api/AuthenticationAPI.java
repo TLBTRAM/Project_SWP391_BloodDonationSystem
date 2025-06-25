@@ -1,11 +1,7 @@
 package com.swp.blooddonation.api;
 
 import com.swp.blooddonation.dto.*;
-import com.swp.blooddonation.dto.request.LoginRequest;
-import com.swp.blooddonation.dto.request.RegisRequest;
-import com.swp.blooddonation.dto.request.ResetPasswordRequest;
-import com.swp.blooddonation.dto.response.AccountResponse;
-import com.swp.blooddonation.dto.response.RegisterResponse;
+import com.swp.blooddonation.entity.Account;
 import com.swp.blooddonation.service.AuthenticationService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;

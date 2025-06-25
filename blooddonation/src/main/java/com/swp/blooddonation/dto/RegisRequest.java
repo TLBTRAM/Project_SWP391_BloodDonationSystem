@@ -1,4 +1,4 @@
-package com.swp.blooddonation.dto.request;
+package com.swp.blooddonation.dto;
 
 import com.swp.blooddonation.enums.Gender;
 import lombok.Getter;

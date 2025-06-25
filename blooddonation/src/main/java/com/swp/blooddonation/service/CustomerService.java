@@ -88,7 +88,7 @@ public class CustomerService {
                 .collect(Collectors.toList());
     }
 
-    // ✅ 6. Hủy yêu cầu nhận máu
+    // Hủy yêu cầu nhận máu
     public void cancelRequest(Account account, Long requestId) {
         Customer customer = getCustomer(account);
         BloodRequest request = bloodRequestRepository.findById(requestId)

@@ -1,4 +1,4 @@
-package com.swp.blooddonation.dto.response;
+package com.swp.blooddonation.dto;
 
 import com.swp.blooddonation.enums.Gender;
 import com.swp.blooddonation.enums.Role;

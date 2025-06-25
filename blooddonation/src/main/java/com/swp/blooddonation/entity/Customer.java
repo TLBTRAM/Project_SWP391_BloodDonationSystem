@@ -1,5 +1,6 @@
 package com.swp.blooddonation.entity;
 
+import com.swp.blooddonation.enums.BloodType;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -19,7 +20,8 @@ public class Customer {
     private Account account;
 
     // Từ Donor
-    private String bloodType;
+    @Enumerated(EnumType.STRING)
+    private BloodType bloodType;
     private LocalDate lastDonationDate;
 
     // Từ Recipient

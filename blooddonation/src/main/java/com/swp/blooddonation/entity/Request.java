@@ -1,5 +1,6 @@
 package com.swp.blooddonation.entity;
 
+import com.swp.blooddonation.enums.BloodType;
 import jakarta.persistence.*;
 
 
@@ -20,7 +21,7 @@ public class Request {
     @JoinColumn(name = "user_id")
     private Account account;
 
-    @ManyToOne
-    @JoinColumn(name = "type_id")
+    @Enumerated(EnumType.STRING)
+    @Column(name = "blood_type")
     private BloodType type;
 }

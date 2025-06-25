@@ -1,8 +1,9 @@
-package com.swp.blooddonation.dto.request;
+package com.swp.blooddonation.dto;
 
 import lombok.Data;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Data
 public class AppointmentRequest {

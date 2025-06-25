@@ -1,6 +1,6 @@
 package com.swp.blooddonation.service;
 
-import com.swp.blooddonation.dto.request.AppointmentRequest;
+import com.swp.blooddonation.dto.AppointmentRequest;
 import com.swp.blooddonation.entity.*;
 //import com.swp.blooddonation.entity.MedicineService;
 import com.swp.blooddonation.enums.AppointmentEnum;
