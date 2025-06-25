@@ -8,8 +8,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
-@CrossOrigin("*")
+//@CrossOrigin("*")
+@CrossOrigin(origins = "http://localhost:3000")
 @RequestMapping("/api/auth")
 public class AuthenticationAPI {
 
@@ -26,7 +29,7 @@ public class AuthenticationAPI {
 
     @PostMapping("/login")
     public ResponseEntity login(@Valid @RequestBody LoginRequest loginRequest) {
-        AccountResponse account = authenticationService.login(loginRequest);
+         AccountResponse account = authenticationService.login(loginRequest);
         return ResponseEntity.ok(account);
     }
 
@@ -47,5 +50,12 @@ public class AuthenticationAPI {
 //        User user = authenticationService.changePassword(changePassswordRequest);
 //        return ResponseEntity.ok(user);
 //    }
+
+
+    @GetMapping("/medical-staff")
+    public ResponseEntity getMedicalStaff() {
+         List<MedicalStaffDTO> medicalStaffDTO = authenticationService.getMedicalStaff();
+        return ResponseEntity.ok(medicalStaffDTO);
+    }
 
 }

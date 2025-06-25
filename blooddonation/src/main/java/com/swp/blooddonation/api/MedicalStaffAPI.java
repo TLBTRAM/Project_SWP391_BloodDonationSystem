@@ -1,62 +1,46 @@
 package com.swp.blooddonation.api;
 
-import com.swp.blooddonation.dto.*;
+import com.swp.blooddonation.dto.MedicalStaffDTO;
+import com.swp.blooddonation.dto.MedicalStaffUpdateDTO;
+import com.swp.blooddonation.dto.TestResultDTO;
 import com.swp.blooddonation.entity.Account;
-import com.swp.blooddonation.entity.Sample;
-import com.swp.blooddonation.entity.TestResult;
 import com.swp.blooddonation.service.MedicalStaffService;
-import com.swp.blooddonation.service.SampleService;
-import com.swp.blooddonation.service.TestResultService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/medical-staff")
-@PreAuthorize("hasRole('MEDICALSTAFF')")
-@SecurityRequirement(name = "api")
 @RequiredArgsConstructor
-@CrossOrigin("*")
 public class MedicalStaffAPI {
 
     private final MedicalStaffService medicalStaffService;
-    private final TestResultService testResultService;
 
-    private final SampleService sampleService;
-
-
-    // ✅ Xem thông tin hồ sơ Medical Staff
-    @GetMapping("/me")
-    public ResponseEntity<MedicalStaffDTO> getMyProfile(@AuthenticationPrincipal Account account) {
-        return ResponseEntity.ok(medicalStaffService.getProfile(account));
+    //Xem tất cả xét nghiệm mình đã làm
+    @GetMapping("/test-results")
+    @PreAuthorize("hasRole('MEDICALSTAFF')")
+    public ResponseEntity<List<TestResultDTO>> getAllResults(@AuthenticationPrincipal Account account) {
+        return ResponseEntity.ok(medicalStaffService.getAllTestResults(account));
     }
 
-    // ✅ Cập nhật thông tin Medical Staff
-    @PutMapping("/update-profile")
-    public ResponseEntity<String> updateProfile(@AuthenticationPrincipal Account account,
-                                                @RequestBody MedicalStaffUpdateDTO dto) {
-        medicalStaffService.updateProfile(account, dto);
-        return ResponseEntity.ok("Cập nhật thông tin nhân viên y tế thành công.");
-    }
-    @PostMapping("/samples/{sampleId}/test-results")
-    public ResponseEntity<TestResultResponseDTO> performTest(
-            @AuthenticationPrincipal Account account,
-            @PathVariable Long sampleId,
-            @RequestBody @Valid TestResultRequestDTO testResultRequestDTO
-    ) {
-        TestResult result = testResultService.performTest(sampleId, account.getId(), testResultRequestDTO);
-        TestResultResponseDTO response = testResultService.mapToResponse(result);
-        return ResponseEntity.ok(response);
+    // Tạo xét nghiệm mới cho 1 customer
+    @PostMapping("/test-results")
+    @PreAuthorize("hasRole('MEDICALSTAFF')")
+    public ResponseEntity<String> createResult(@AuthenticationPrincipal Account account,
+                                               @RequestBody TestResultDTO dto) {
+        medicalStaffService.createTestResult(account, dto);
+        return ResponseEntity.ok("Kết quả xét nghiệm đã được lưu.");
     }
 
-    @PostMapping
-    public ResponseEntity<?> createSample(@Valid @RequestBody SampleRequestDTO dto) {
-        Sample sample = sampleService.createSample(dto);
-        return ResponseEntity.status(HttpStatus.CREATED).body(sample);
+    // Xem chi tiết 1 kết quả
+    @GetMapping("/test-results/{id}")
+    @PreAuthorize("hasRole('MEDICALSTAFF')")
+    public ResponseEntity<TestResultDTO> getOne(@PathVariable Long id) {
+        return ResponseEntity.ok(medicalStaffService.getTestResultById(id));
     }
 }

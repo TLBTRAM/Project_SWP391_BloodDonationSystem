@@ -14,7 +14,6 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 public class BlooddonationApplication {
 
 	public static void main(String[] args) {
-
 		SpringApplication.run(BlooddonationApplication.class, args);
 	}
 

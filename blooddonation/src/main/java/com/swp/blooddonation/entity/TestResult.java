@@ -4,45 +4,37 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.time.LocalDate;
+
+import java.util.Date;
 
 @Entity
 @Getter
 @Setter
 public class TestResult {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Long testId;
 
-    private String bloodType;
-
-    private boolean hbv;
-    private boolean hcv;
-    private boolean hiv;
-    private boolean syphilis;
-
-    private double hemoglobin;
+    private Date testDate;
     private String bloodPressure;
-    private double bodyTemperature;
-
-    private boolean isEligible;
-
-    private LocalDate testDate;
+    private String heartRate;
+    private String result;
 
     @ManyToOne
-    @JoinColumn(name = "tested_by", nullable = false)
-    private MedicalStaff testedBy;
+    @JoinColumn(name = "customer_id")
+    private Customer customer;
 
-    @OneToOne
-    @JoinColumn(name = "sample_id", nullable = false)
-    private BloodSample sample;
 
     @ManyToOne
-    @JoinColumn(name = "blood_type_id", nullable = true)
+    @JoinColumn(name = "type_id")
     private BloodType type;
 
     @ManyToOne
-    @JoinColumn(name = "register_id", nullable = false)
+    @JoinColumn(name = "staff_id")
+    private MedicalStaff staff;
+
+    @ManyToOne
+    @JoinColumn(name = "register_id")
     private Register register;
+
 }

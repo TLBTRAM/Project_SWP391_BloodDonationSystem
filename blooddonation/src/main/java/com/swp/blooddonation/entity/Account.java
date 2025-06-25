@@ -1,6 +1,7 @@
 package com.swp.blooddonation.entity;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.swp.blooddonation.enums.EnableStatus;
 import com.swp.blooddonation.enums.Gender;
 import com.swp.blooddonation.enums.Role;
 import jakarta.persistence.*;
@@ -41,7 +42,6 @@ public class Account implements UserDetails {
     @Size(min = 6, message = "Password must be at leat 6 characters!")
     public String password;
 
-    @Column(name = "fullname")
     public String fullName;
 
     public Date YoB;
@@ -53,15 +53,16 @@ public class Account implements UserDetails {
     @Enumerated(EnumType.STRING)
     public Role role;
 
-    private boolean enabled;
+    @Enumerated(EnumType.STRING)
+    public EnableStatus enableStatus;
 
     private String address;
 
     @Override
-  public Collection<? extends GrantedAuthority> getAuthorities() {
-//        return List.of();
+    public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of(new SimpleGrantedAuthority("ROLE_" + role.name()));
     }
+
     @Override
     public String getPassword() {
         return this.password;
@@ -89,6 +90,27 @@ public class Account implements UserDetails {
 
     @Override
     public boolean isEnabled() {
-        return this.enabled;
+        return this.enableStatus == EnableStatus.ENABLE;
     }
+
+    @OneToMany(mappedBy = "account")
+    @JsonIgnore
+    List<AccountSlot> accountSlots;
+
+    @OneToMany(mappedBy = "customer")
+    @JsonIgnore
+    List<Appointment> donorAppointments;
+
+    @OneToMany(mappedBy = "medicalStaff")
+    @JsonIgnore
+    List<Appointment> staffAppointments;
+
+    @OneToOne(mappedBy = "account", cascade = CascadeType.ALL)
+    @JsonIgnore
+    private Customer customer;
+
+    @OneToOne(mappedBy = "account", cascade = CascadeType.ALL)
+    @JsonIgnore
+    private Customer customerProfile;
+
 }

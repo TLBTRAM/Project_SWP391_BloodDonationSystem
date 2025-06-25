@@ -12,7 +12,6 @@ public class MedicalStaff {
 
         @Id
         private Long id;
-
         @OneToOne
         @MapsId
         @JoinColumn(name = "id")

@@ -3,6 +3,7 @@ package com.swp.blooddonation.service;
 import com.swp.blooddonation.dto.*;
 import com.swp.blooddonation.entity.Account;
 import com.swp.blooddonation.entity.VerificationCode;
+import com.swp.blooddonation.enums.EnableStatus;
 import com.swp.blooddonation.enums.Role;
 import com.swp.blooddonation.exception.exceptions.AuthenticationException;
 import com.swp.blooddonation.exception.exceptions.ResetPasswordException;
@@ -15,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -22,6 +24,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class AuthenticationService implements UserDetailsService {
@@ -45,13 +49,6 @@ public class AuthenticationService implements UserDetailsService {
     EmailService emailService;
 
     public RegisterResponse register(@Valid RegisRequest regisRequest) {
-        System.out.println("===== DEBUG REGISTER REQUEST =====");
-        System.out.println("Received: " + regisRequest.getFullName());
-        System.out.println("YoB: " + regisRequest.getYoB());
-        System.out.println("Gender: " + regisRequest.getGender());
-        System.out.println("Email: " + regisRequest.getEmail());
-        System.out.println("Phone: " + regisRequest.getPhone());
-        System.out.println("==================================");
         if (authenticationReponsitory.existsByEmail(regisRequest.getEmail())) {
             throw new RuntimeException("Email đã được sử dụng!");
         }
@@ -62,8 +59,8 @@ public class AuthenticationService implements UserDetailsService {
         // Map từ RegisRequest sang Account
         Account account = modelMapper.map(regisRequest, Account.class);
         account.setCreateAt(LocalDateTime.now());
-        account.setEnabled(true);
-        account.setRole(Role.Donor);
+        account.setEnableStatus(EnableStatus.ENABLE);
+        account.setRole(Role.CUSTOMER);
 
         // Lưu vào DB
         Account savedAccount = authenticationReponsitory.save(account);
@@ -81,33 +78,30 @@ public class AuthenticationService implements UserDetailsService {
     }
 
 
-
     public AccountResponse login(LoginRequest loginRequest){
-        Account acc = authenticationReponsitory.findAccountByEmail(loginRequest.getEmail());
-        if (acc == null) {
-            throw new AuthenticationException("Email không tồn tại");
-        }
-
-        // ✅ In kiểm tra nhanh tại đây
-        System.out.println("=== DEBUG PASSWORD MATCHING ===");
-        System.out.println("Raw password: " + loginRequest.getPassword());
-        System.out.println("Encoded in DB: " + acc.getPassword());
-        System.out.println("Password match? " + passwordEncoder.matches(loginRequest.getPassword(), acc.getPassword()));
-        System.out.println("================================");
-
+//        Account acc = authenticationReponsitory.findAccountByEmail(loginRequest.getEmail());
+//        if (acc == null) {
+//            throw new AuthenticationException("Email không tồn tại");
+//        }
+//
+//        // ✅ In kiểm tra nhanh tại đây
+//        System.out.println("=== DEBUG PASSWORD MATCHING ===");
+//        System.out.println("Raw password: " + loginRequest.getPassword());
+//        System.out.println("Encoded in DB: " + acc.getPassword());
+//        System.out.println("Password match? " + passwordEncoder.matches(loginRequest.getPassword(), acc.getPassword()));
+//        System.out.println("================================");
         try {
             authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
                     loginRequest.getEmail(),
                     loginRequest.getPassword()
 
             ));
-            System.out.println("Thông tin đăng nhập chính xác");
+            System.out.println("Thông tin dằng nhập chính xác");
         }catch (Exception e){
-            System.out.println("Thông tin đăng nhập không chính xác");
+            System.out.println("Thông tin dằng nhập không chính xác!!!!!!!!");
             e.printStackTrace();
             throw new AuthenticationException("invalid...");
         }
-
 
         Account account = authenticationReponsitory.findAccountByEmail(loginRequest.getEmail());
         AccountResponse accountResponse = modelMapper.map(account, AccountResponse.class);
@@ -171,5 +165,18 @@ public class AuthenticationService implements UserDetailsService {
         account.setPassword(passwordEncoder.encode(resetPasswordRequest.getNewPassword()));
         authenticationReponsitory.save(account);
         verificationCodeRepository.deleteByEmail(resetPasswordRequest.getEmail());
+    }
+
+
+    public Account getCurrentAccount(){
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        return authenticationReponsitory.findAccountByEmail(email);
+    }
+
+    public List<MedicalStaffDTO> getMedicalStaff() {
+        List<Account> medicalStaffAccounts = authenticationReponsitory.findByRole(Role.MEDICALSTAFF);
+        return medicalStaffAccounts.stream()
+                .map(account -> modelMapper.map(account, MedicalStaffDTO.class))
+                .collect(Collectors.toList());
     }
 }

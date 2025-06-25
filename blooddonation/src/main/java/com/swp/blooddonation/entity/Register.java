@@ -1,6 +1,8 @@
 package com.swp.blooddonation.entity;
 
 import jakarta.persistence.*;
+import org.apache.catalina.User;
+
 
 import java.sql.Time;
 import java.util.Date;
@@ -28,6 +30,6 @@ public class Register {
     @OneToMany(mappedBy = "register")
     private List<TestResult> testResults;
 
-//    @OneToMany(mappedBy = "register")
-//    private List<BloodInventory> bloodInventories;
+    @OneToMany(mappedBy = "register")
+    private List<BloodInventory> bloodInventories;
 }

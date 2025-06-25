@@ -1,9 +1,11 @@
 package com.swp.blooddonation.repository;
 
+import com.swp.blooddonation.entity.MedicalStaff;
 import com.swp.blooddonation.entity.TestResult;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
 
-@Repository
+import java.util.List;
+
 public interface TestResultRepository extends JpaRepository<TestResult, Long> {
+    List<TestResult> findByStaff(MedicalStaff staff);
 }

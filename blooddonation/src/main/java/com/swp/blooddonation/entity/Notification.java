@@ -2,6 +2,7 @@ package com.swp.blooddonation.entity;
 
 import jakarta.persistence.*;
 
+
 import java.util.Date;
 
 @Entity

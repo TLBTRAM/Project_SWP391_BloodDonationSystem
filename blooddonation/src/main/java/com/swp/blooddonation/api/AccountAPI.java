@@ -1,9 +1,7 @@
 package com.swp.blooddonation.api;
 
 import com.swp.blooddonation.dto.AccountDTO;
-import com.swp.blooddonation.dto.AccountResponse;
 import com.swp.blooddonation.entity.Account;
-import com.swp.blooddonation.repository.AuthenticationReponsitory;
 import com.swp.blooddonation.service.AccountService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.springframework.beans.factory.annotation.Autowired;

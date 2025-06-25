@@ -1,8 +1,8 @@
 package com.swp.blooddonation.service;
 
 import com.swp.blooddonation.dto.AccountDTO;
-import com.swp.blooddonation.dto.UpdateRoleRequest;
 import com.swp.blooddonation.entity.Account;
+import com.swp.blooddonation.repository.AccountRepository;
 import com.swp.blooddonation.repository.AuthenticationReponsitory;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -32,14 +32,6 @@ public class AccountService {
         // Cập nhật các field từ DTO sang entity bằng modelMapper
         modelMapper.map(dto, account);  // map ngược lại từ dto -> entity
         authenticationReponsitory.save(account);
-    }
-
-    public Account updateRole(UpdateRoleRequest request) {
-        Account account = authenticationReponsitory.findById(request.getAccountId())
-                .orElseThrow(() -> new RuntimeException("Account not found"));
-
-        account.setRole(request.getNewRole());
-        return authenticationReponsitory.save(account);
     }
 
     //  Đổi mật khẩu

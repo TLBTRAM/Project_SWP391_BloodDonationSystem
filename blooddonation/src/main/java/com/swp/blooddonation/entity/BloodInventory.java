@@ -1,28 +1,25 @@
 package com.swp.blooddonation.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import lombok.Getter;
-import lombok.Setter;
+import jakarta.persistence.*;
 
-import java.time.LocalDate;
+
+import java.util.Date;
 
 @Entity
-@Getter
-@Setter
 public class BloodInventory {
     @Id
-    private String bloodType; // Ví dụ: A+, O-
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long inventoryId;
 
-    private int totalVolume; // Tổng thể tích (ml)
-    private int totalUnits;  // Số túi máu
-
-    private LocalDate lastUpdated;
+    private Date collectDate;
+    private Date expiryDate;
+    private Double volume;
 
     @ManyToOne
-    @JoinColumn(name = "blood_type_id") // Bạn có thể đổi tên nếu muốn
+    @JoinColumn(name = "register_id")
+    private Register register;
+
+    @ManyToOne
+    @JoinColumn(name = "type_id")
     private BloodType type;
 }
-
