@@ -98,7 +98,7 @@ public class AppointmentService {
 
 
         Appointment appointment = new Appointment();
-        appointment.setCreateAts(LocalDate.now());
+        appointment.setCreateAt(LocalDate.now());
         appointment.setAppointmentDate(appointmentRequest.getAppointmentDate());
         appointment.setStatus(AppointmentEnum.PENDING);
         appointment.setCustomer(account);
