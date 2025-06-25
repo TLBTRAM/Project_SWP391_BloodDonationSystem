@@ -19,6 +19,10 @@ public class AccountAPI {
     @Autowired
     AccountService accountService;
 
+/// / ✅ Lấy thông tin người dùng hiện tại
+/// * @param account - Người dùng đã đăng nhập
+///
+
 
     @GetMapping("/me")
     public ResponseEntity<AccountDTO> getProfile(@AuthenticationPrincipal Account account) {
