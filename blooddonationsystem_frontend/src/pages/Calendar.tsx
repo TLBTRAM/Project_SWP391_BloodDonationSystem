@@ -1,7 +1,7 @@
 import React from 'react';
 import './components/Calendar.css';
 
-const daysOfWeek = ['Th 2', 'Th 3', 'Th 4', 'Th 5', 'Th 6', 'Th 7', 'CN'];
+const daysOfWeek = ['T2', 'T3', 'T4', 'T5', 'T6', 'T7', 'CN'];
 
 const Calendar: React.FC = () => {
   const today = new Date();

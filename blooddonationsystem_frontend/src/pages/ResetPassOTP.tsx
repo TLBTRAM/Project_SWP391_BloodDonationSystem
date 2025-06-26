@@ -1,9 +1,9 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from "react";
 import "./components/ResetPassOTP.css";
-import { Link } from 'react-router-dom';
+import { Link } from "react-router-dom";
 
-import Header from '../layouts/header-footer/Header';
-import Footer from '../layouts/header-footer/Footer';
+import Header from "../layouts/header-footer/Header";
+import Footer from "../layouts/header-footer/Footer";
 
 const ResetPassword: React.FC = () => {
   const inputRefs = useRef<HTMLInputElement[]>([]);
@@ -21,7 +21,7 @@ const ResetPassword: React.FC = () => {
 
       const handleInput = (e: Event) => {
         const target = e.target as HTMLInputElement;
-        const value = target.value.replace(/[^0-9]/g, '');
+        const value = target.value.replace(/[^0-9]/g, "");
         target.value = value;
 
         if (value && index < inputs.length - 1) {
@@ -87,7 +87,7 @@ const ResetPassword: React.FC = () => {
           <h2>Khôi phục mật khẩu</h2>
           <p>Mã xác nhận đã được gửi vào mail bạn</p>
           <div className="code-inputs">
-            {[0, 1, 2, 3].map((_, i) => (
+            {[0, 1, 2, 3, 4, 5].map((_, i) => (
               <input
                 key={i}
                 type="text"
@@ -100,9 +100,13 @@ const ResetPassword: React.FC = () => {
               />
             ))}
           </div>
-        <a href="#" className={`resend ${canResend ? '' : 'disabled'}`} onClick={handleResendClick}>
-            {canResend ? 'Gửi lại mã' : `Gửi lại mã (${timer}s)`}
-        </a>
+          <a
+            href="#"
+            className={`resend ${canResend ? "" : "disabled"}`}
+            onClick={handleResendClick}
+          >
+            {canResend ? "Gửi lại mã" : `Gửi lại mã (${timer}s)`}
+          </a>
 
           <button className="confirm-btn">Xác nhận</button>
         </div>
