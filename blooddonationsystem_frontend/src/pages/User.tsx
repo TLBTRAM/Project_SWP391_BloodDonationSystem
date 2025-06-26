@@ -53,14 +53,36 @@ const User = () => {
   }, []);
 
   useEffect(() => {
-    const userData = localStorage.getItem("user");
-    if (userData) {
-      const parsedUser = JSON.parse(userData);
-      console.log(">> Loaded user from localStorage:", parsedUser);
-      setUser(JSON.parse(userData));
-    }
+    const token = localStorage.getItem("token");
 
+    if (token) {
+      fetch("http://localhost:8080/api/account/me", {
+        method: "GET",
+        headers: {
+          "Authorization": `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      })
+        .then((res) => {
+          if (!res.ok) {
+            throw new Error("Không lấy được thông tin người dùng");
+          }
+          return res.json();
+        })
+        .then((data) => {
+          console.log("User info from BE:", data);
+          setUser(data);
+        })
+        .catch((error) => {
+          console.error("Lỗi khi gọi API /me:", error);
+          alert("Không thể tải thông tin người dùng. Vui lòng đăng nhập lại.");
+          navigate("/login");
+        });
+    } else {
+      navigate("/login");
+    }
   }, []);
+  
   return (
     <div className="user-dashboard">
       <div className="user-topbar">
