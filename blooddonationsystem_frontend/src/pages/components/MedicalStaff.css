@@ -38,13 +38,6 @@ body {
   background: #ffffff;
   padding: 20px 0;
   border-radius: 0 12px 12px 0;
-  position: fixed;
-  top: 0;
-  left: 0;
-  bottom: 0;
-  box-shadow: var(--shadow);
-  overflow-y: auto;
-  z-index: 10;
 }
 
 .sidebar-menu {
@@ -89,13 +82,15 @@ body {
   4. MAIN CONTENT AREA (RIGHT)
 ------------------------------------------ */
 .main-content {
-  margin-left: 280px;
   padding: 40px;
   flex: 1;
   height: 100vh;
   overflow-y: auto;
   background: var(--bg);
   box-sizing: border-box;
+
+  /* Loại bỏ margin-left */
+  margin-left: 0;
 }
 
 /* -----------------------------------------
@@ -217,6 +212,7 @@ body {
   color: var(--primary);
   font-weight: 600;
   margin: 0;
+  padding-right: 175px;
 }
 
 .appointment-header input[type="date"] {
@@ -273,6 +269,7 @@ li {
   6. STATUS BUTTONS (SUCCESS, PENDING)
 ------------------------------------------ */
 .status-button {
+  background-image:none;
   padding: 6px 12px;
   border: none;
   border-radius: 8px;
@@ -290,3 +287,6 @@ li {
   background-color: #facc15;
   color: #1e293b;
 }
+
+
+

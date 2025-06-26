@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import "./components/Booking.css";
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 import Header from "../layouts/header-footer/Header";
 import Footer from "../layouts/header-footer/Footer";
@@ -162,7 +162,7 @@ const Booking = () => {
             <button type="submit" className="submit-btn">
               Đăng ký khám
             </button>
-            <button type="button" className="back-btn" onClick={() => navigate('/user')}>Quay trở lại</button>
+            <Link to="/user" className="back">Quay trở lại</Link>
           </form>
         )}
       </div>

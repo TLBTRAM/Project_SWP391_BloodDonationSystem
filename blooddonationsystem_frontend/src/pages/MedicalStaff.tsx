@@ -3,6 +3,25 @@ import "./components/MedicalStaff.css";
 import docImg from "../pages/images/User/doctor.png";
 import Calendar from "./Calendar";
 
+import ReactDatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
+import { registerLocale } from "react-datepicker";
+import { vi } from "date-fns/locale/vi";
+import { format } from "date-fns";
+import type { Locale } from "date-fns";
+
+import ScheduleManagement from "./MS_components/ScheduleManagement"
+import Screening from "./MS_components/Screening"
+import DonationSchedule from "./MS_components/DonationSchedule"
+import SendToStorage from "./MS_components/SendToStorage"
+import RequestBlood from "./MS_components/RequestBlood"
+
+
+
+// Đăng ký locale tiếng Việt cho ReactDatePicker
+registerLocale("vi", vi as unknown as Locale);
+
+// ========== DASHBOARD ==========
 const MedicalStaff = () => {
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [appointments, setAppointments] = useState<any[]>([]);
@@ -29,6 +48,7 @@ const MedicalStaff = () => {
     (a) => a.date === formatDate(selectedDate)
   );
 
+  
   return (
     <div className="medical-app">
       {/* Sidebar */}
@@ -85,7 +105,6 @@ const MedicalStaff = () => {
       {/* Main Content */}
       <div className="main-content">
         {view === "medicalDashboard" && (
-
           <div className="staff-dashboard">
             <div className="staff-profile">
               <img className="staff-avatar" src={docImg} alt="Medical Staff" />
@@ -105,12 +124,19 @@ const MedicalStaff = () => {
               <div className="appointment-list">
                 <div className="appointment-header">
                   <h3>
-                    Lịch khám - {selectedDate.toLocaleDateString("vi-VN")}
+                    Lịch khám -{" "}
+                    {format(selectedDate, "dd/MM/yyyy", {
+                      locale: vi as unknown as Locale,
+                    })}
                   </h3>
-                  <input
-                    type="date"
-                    value={formatDate(selectedDate)}
-                    onChange={(e) => setSelectedDate(new Date(e.target.value))}
+                  <ReactDatePicker
+                    selected={selectedDate}
+                    onChange={(date: Date | null) => {
+                      if (date) setSelectedDate(date);
+                    }}
+                    dateFormat="dd/MM/yyyy"
+                    locale="vi"
+                    className="custom-datepicker"
                   />
                 </div>
                 {filteredAppointments.length > 0 ? (
@@ -132,24 +158,13 @@ const MedicalStaff = () => {
               </div>
             </div>
           </div>
-
         )}
 
-        {view === "scheduleManagement" && (
-          <p>📥 Lịch khám sàn lọc (đang phát triển)</p>
-        )}
-        {view === "screening" && (
-          <p>🔬 Giao diện Khám sàng lọc (đang phát triển)</p>
-        )}
-        {view === "donationSchedule" && (
-          <p>🩸 Giao diện Lịch hiến máu (đang phát triển)</p>
-        )}
-        {view === "sendToStorage" && (
-          <p>🚚 Giao diện Gửi máu cho kho máu (đang phát triển)</p>
-        )}
-        {view === "requestBlood" && (
-          <p>📥 Giao diện Tạo yêu cầu nhận máu (đang phát triển)</p>
-        )}
+        {view === "scheduleManagement" && <ScheduleManagement />}
+        {view === "screening" && <Screening />}
+        {view === "donationSchedule" && <DonationSchedule />}
+        {view === "sendToStorage" && <SendToStorage />}
+        {view === "requestBlood" && <RequestBlood />}
       </div>
     </div>
   );
