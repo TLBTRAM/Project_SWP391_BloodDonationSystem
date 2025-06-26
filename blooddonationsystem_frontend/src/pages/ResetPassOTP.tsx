@@ -1,81 +1,82 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useState, useRef, useEffect } from "react";
 import "./components/ResetPassOTP.css";
-import { Link } from 'react-router-dom';
+import { useNavigate } from "react-router-dom";
 
-import Header from '../layouts/header-footer/Header';
-import Footer from '../layouts/header-footer/Footer';
+import Header from "../layouts/header-footer/Header";
+import Footer from "../layouts/header-footer/Footer";
 
 const ResetPassword: React.FC = () => {
-  const inputRefs = useRef<HTMLInputElement[]>([]);
+  const navigate = useNavigate();
+  const [otp, setOtp] = useState(["", "", "", ""]);
   const [timer, setTimer] = useState(30);
   const [canResend, setCanResend] = useState(false);
+  const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
 
   useEffect(() => {
-    const inputs = inputRefs.current;
-
-    const inputHandlers: EventListener[] = [];
-    const keydownHandlers: EventListener[] = [];
-
-    inputs.forEach((input, index) => {
-      if (!input) return;
-
-      const handleInput = (e: Event) => {
-        const target = e.target as HTMLInputElement;
-        const value = target.value.replace(/[^0-9]/g, '');
-        target.value = value;
-
-        if (value && index < inputs.length - 1) {
-          inputs[index + 1]?.focus();
-        }
-      };
-
-      const handleKeyDown = (e: Event) => {
-        const event = e as KeyboardEvent;
-        if (event.key === "Backspace" && input && !input.value && index > 0) {
-          inputs[index - 1]?.focus();
-        }
-      };
-
-      input.addEventListener("input", handleInput);
-      input.addEventListener("keydown", handleKeyDown);
-
-      inputHandlers.push(handleInput);
-      keydownHandlers.push(handleKeyDown);
-    });
-
-    return () => {
-      inputs.forEach((input, index) => {
-        if (input) {
-          input.removeEventListener("input", inputHandlers[index]);
-          input.removeEventListener("keydown", keydownHandlers[index]);
-        }
-      });
-    };
-  }, []);
-
-  // Timer effect
-  useEffect(() => {
-    if (timer === 0) {
-      setCanResend(true);
-      return;
-    }
-
     const interval = setInterval(() => {
-      setTimer((prev) => prev - 1);
+      setTimer((prev) => {
+        if (prev <= 1) {
+          setCanResend(true);
+          return 0;
+        }
+        return prev - 1;
+      });
     }, 1000);
 
     return () => clearInterval(interval);
-  }, [timer]);
+  }, []);
 
-  const handleResendClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
+  const handleOtpChange = (index: number, value: string) => {
+    if (value.length > 1) return; // Chỉ cho phép 1 ký tự
+
+    const newOtp = [...otp];
+    newOtp[index] = value;
+    setOtp(newOtp);
+
+    // Tự động chuyển sang ô tiếp theo
+    if (value && index < 3) {
+      inputRefs.current[index + 1]?.focus();
+    }
+  };
+
+  const handleKeyDown = (index: number, e: React.KeyboardEvent) => {
+    if (e.key === "Backspace" && !otp[index] && index > 0) {
+      // Nếu ô hiện tại trống và nhấn backspace, chuyển về ô trước
+      inputRefs.current[index - 1]?.focus();
+    }
+  };
+
+  const handleSubmit = () => {
+    const otpString = otp.join("");
+    if (otpString.length !== 4) {
+      alert("Vui lòng nhập đầy đủ 4 chữ số");
+      return;
+    }
+
+    // Lưu OTP để sử dụng ở bước tiếp theo
+    localStorage.setItem("resetOTP", otpString);
+    navigate("/forgot3");
+  };
+
+  const handleResendClick = async (e: React.MouseEvent<HTMLAnchorElement>) => {
     e.preventDefault();
     if (!canResend) return;
 
-    // TODO: Thực hiện gửi lại mã xác nhận (gọi API hoặc logic khác)
-    alert("Mã xác nhận đã được gửi lại!");
+    const email = localStorage.getItem("resetEmail");
+    if (!email) {
+      alert("Không tìm thấy email. Vui lòng quay lại trang nhập email.");
+      navigate("/forgot");
+      return;
+    }
 
-    setTimer(30);
-    setCanResend(false);
+    try {
+      // TODO: Gọi API gửi lại mã xác nhận
+      alert("Mã xác nhận đã được gửi lại!");
+      setTimer(30);
+      setCanResend(false);
+    } catch (error) {
+      alert("Không thể gửi lại mã xác nhận. Vui lòng thử lại sau.");
+    }
   };
 
   return (
@@ -94,17 +95,26 @@ const ResetPassword: React.FC = () => {
                 maxLength={1}
                 inputMode="numeric"
                 pattern="[0-9]*"
+                value={otp[i]}
+                onChange={(e) => handleOtpChange(i, e.target.value)}
+                onKeyDown={(e) => handleKeyDown(i, e)}
                 ref={(el) => {
                   if (el) inputRefs.current[i] = el;
                 }}
               />
             ))}
           </div>
-        <a href="#" className={`resend ${canResend ? '' : 'disabled'}`} onClick={handleResendClick}>
+          <a 
+            href="#" 
+            className={`resend ${canResend ? '' : 'disabled'}`} 
+            onClick={handleResendClick}
+          >
             {canResend ? 'Gửi lại mã' : `Gửi lại mã (${timer}s)`}
-        </a>
+          </a>
 
-          <button className="confirm-btn">Xác nhận</button>
+          <button className="confirm-btn" onClick={handleSubmit}>
+            Xác nhận
+          </button>
         </div>
       </main>
 

@@ -9,31 +9,39 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import java.util.HashMap;
+import java.util.Map;
 
-@RestControllerAdvice // cái này dùng để đánh dấu đây là ValidationHandler
+@RestControllerAdvice
 public class ValidationHandler {
 
-    // MethodArgumentNotValidException: là cái lỗi khi nhập sai
+    // ✅ Trả lỗi validate dạng JSON (phù hợp cho frontend)
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity handleValidation (MethodArgumentNotValidException exception){
-        String massage = "Người dùng nhập chưa đúng thông tin ";
-
-        // Cứ mỗi thuộc tính lỗi => gắn vào biến message
+    public ResponseEntity<Map<String, String>> handleValidation(MethodArgumentNotValidException exception) {
+        Map<String, String> errors = new HashMap<>();
         for (FieldError fieldError : exception.getBindingResult().getFieldErrors()) {
-            // Name, Id, Score
-            massage += fieldError.getField() + ": " + fieldError.getDefaultMessage() + "\n";
+            errors.put(fieldError.getField(), fieldError.getDefaultMessage());
         }
-        return new ResponseEntity(massage, HttpStatus.BAD_REQUEST);
+
+        // Ví dụ: { "email": "Không được để trống", "password": "Phải dài ít nhất 6 ký tự" }
+        return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
     }
 
+    // ✅ Authentication Exception
     @ExceptionHandler(AuthenticationException.class)
-    public ResponseEntity hadlerAuthenticationException(AuthenticationException exception) {
-        return new ResponseEntity(exception.getMessage(), HttpStatus.UNAUTHORIZED);
+    public ResponseEntity<Map<String, String>> handleAuthenticationException(AuthenticationException exception) {
+        return new ResponseEntity<>(Map.of("message", exception.getMessage()), HttpStatus.UNAUTHORIZED);
     }
 
+    // ✅ Reset Password Exception
     @ExceptionHandler(ResetPasswordException.class)
-    public ResponseEntity handleResetPasswordException(ResetPasswordException exception) {
-        return new ResponseEntity(exception.getMessage(), HttpStatus.BAD_REQUEST);
+    public ResponseEntity<Map<String, String>> handleResetPasswordException(ResetPasswordException exception) {
+        return new ResponseEntity<>(Map.of("message", exception.getMessage()), HttpStatus.BAD_REQUEST);
+    }
+
+    // ✅ RuntimeException (nếu bạn dùng throw new RuntimeException(...) như đăng ký email)
+    @ExceptionHandler(RuntimeException.class)
+    public ResponseEntity<Map<String, String>> handleRuntimeException(RuntimeException ex) {
+        return new ResponseEntity<>(Map.of("message", ex.getMessage()), HttpStatus.BAD_REQUEST);
     }
 }
-

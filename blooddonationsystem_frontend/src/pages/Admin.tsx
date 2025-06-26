@@ -5,6 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import logoBlood from './images/Logo/logo_blood.png';
 
 interface Account {
+
   id: number;
   name: string;
   email: string;
@@ -19,18 +20,22 @@ const initialAccounts: Account[] = [
   { id: 5, name: 'Hoàng Thị E', email: 'e@example.com', role: 'Nhân viên y tế' },
 ];
 
-const adminName = 'Admin'; // bạn có thể lấy từ props, state, hoặc context nếu cần
-
-const handleLogout = () => {
-  // Xử lý đăng xuất tại đây
-  alert('Đăng xuất thành công!');
-};
-
 const Admin: React.FC = () => {
+  const userString = localStorage.getItem("user");
+  const user = userString ? JSON.parse(userString) : null;
+  const adminName = user?.fullName || "Admin"; // hoặc user.name nếu backend trả như vậy
   const [accounts, setAccounts] = useState<Account[]>(initialAccounts);
   const [search, setSearch] = useState('');
   const [filterRole, setFilterRole] = useState<string>('Tất cả');
+  const navigate = useNavigate();
+  const handleLogout = () => {
 
+    // Xoá token hoặc thông tin đăng nhập
+    localStorage.removeItem("token");
+
+    // Điều hướng về trang chính (/), không phải /home
+    navigate("/");
+  };
   const handleDelete = (id: number) => {
     if (window.confirm('Bạn có chắc muốn xóa tài khoản này?')) {
       setAccounts(accounts.filter(account => account.id !== id));
@@ -50,92 +55,92 @@ const Admin: React.FC = () => {
   };
 
   return (
-  <>
-    <header className="admin-header">
-      <div className="admin-logo">
-        <Link to="/">
-          <img src={logoBlood} alt="Logo" className="logo-img" />
-        </Link>
-      </div>
-      <div className="admin-greeting">
-        Xin chào, <span className="admin-name">{adminName}</span>
-      </div>
-      <button className="admin-logout-btn" onClick={handleLogout}>
-        Đăng xuất
-      </button>
-    </header>
-
-
-    <div className="admin-container">
-      <h1>Quản lý tài khoản</h1>
-
-      <div className="role-summary">
-        <div className="summary-box">
-          <div className="summary-icon">👤</div>
-          <div className="summary-role">Người dùng</div>
-          <div className="summary-count">{roleCounts['Người dùng']}</div>
+    <>
+      <header className="admin-header">
+        <div className="admin-logo">
+          <Link to="/">
+            <img src={logoBlood} alt="Logo" className="logo-img" />
+          </Link>
         </div>
-        <div className="summary-box">
-          <div className="summary-icon">🩺</div>
-          <div className="summary-role">Nhân viên y tế</div>
-          <div className="summary-count">{roleCounts['Nhân viên y tế']}</div>
+        <div className="admin-greeting">
+          Xin chào, <span className="admin-name">{adminName}</span>
         </div>
-        <div className="summary-box">
-          <div className="summary-icon">🩸</div>
-          <div className="summary-role">Quản lý kho máu</div>
-          <div className="summary-count">{roleCounts['Quản lý kho máu']}</div>
+        <button className="admin-logout-btn" onClick={handleLogout}>
+          Đăng xuất
+        </button>
+      </header>
+
+
+      <div className="admin-container">
+        <h1>Quản lý tài khoản</h1>
+
+        <div className="role-summary">
+          <div className="summary-box">
+            <div className="summary-icon">👤</div>
+            <div className="summary-role">Người dùng</div>
+            <div className="summary-count">{roleCounts['Người dùng']}</div>
+          </div>
+          <div className="summary-box">
+            <div className="summary-icon">🩺</div>
+            <div className="summary-role">Nhân viên y tế</div>
+            <div className="summary-count">{roleCounts['Nhân viên y tế']}</div>
+          </div>
+          <div className="summary-box">
+            <div className="summary-icon">🩸</div>
+            <div className="summary-role">Quản lý kho máu</div>
+            <div className="summary-count">{roleCounts['Quản lý kho máu']}</div>
+          </div>
         </div>
-      </div>
 
-      <div className="admin-controls">
-        <input
-          type="text"
-          placeholder="Tìm theo tên..."
-          value={search}
-          onChange={e => setSearch(e.target.value)}
-        />
-        <select value={filterRole} onChange={e => setFilterRole(e.target.value)}>
-          <option value="Tất cả">Tất cả</option>
-          <option value="Người dùng">Người dùng</option>
-          <option value="Nhân viên y tế">Nhân viên y tế</option>
-          <option value="Quản lý kho máu">Quản lý kho máu</option>
-        </select>
-      </div>
+        <div className="admin-controls">
+          <input
+            type="text"
+            placeholder="Tìm theo tên..."
+            value={search}
+            onChange={e => setSearch(e.target.value)}
+          />
+          <select value={filterRole} onChange={e => setFilterRole(e.target.value)}>
+            <option value="Tất cả">Tất cả</option>
+            <option value="Người dùng">Người dùng</option>
+            <option value="Nhân viên y tế">Nhân viên y tế</option>
+            <option value="Quản lý kho máu">Quản lý kho máu</option>
+          </select>
+        </div>
 
-      <table className="admin-table">
-        <thead>
-          <tr>
-            <th>Tên</th>
-            <th>Email</th>
-            <th>Vai trò</th>
-            <th>Hành động</th>
-          </tr>
-        </thead>
-        <tbody>
-          {filteredAccounts.length > 0 ? (
-            filteredAccounts.map(account => (
-              <tr key={account.id}>
-                <td>{account.name}</td>
-                <td>{account.email}</td>
-                <td>{account.role}</td>
-                <td>
-                  <button className="edit-btn">Sửa</button>
-                  <button className="delete-btn" onClick={() => handleDelete(account.id)}>
-                    Xóa
-                  </button>
-                </td>
-              </tr>
-            ))
-          ) : (
+        <table className="admin-table">
+          <thead>
             <tr>
-              <td colSpan={4}>Không tìm thấy tài khoản phù hợp.</td>
+              <th>Tên</th>
+              <th>Email</th>
+              <th>Vai trò</th>
+              <th>Hành động</th>
             </tr>
-          )}
-        </tbody>
-      </table>
-    </div>
-  </>
-);
+          </thead>
+          <tbody>
+            {filteredAccounts.length > 0 ? (
+              filteredAccounts.map(account => (
+                <tr key={account.id}>
+                  <td>{account.name}</td>
+                  <td>{account.email}</td>
+                  <td>{account.role}</td>
+                  <td>
+                    <button className="edit-btn">Sửa</button>
+                    <button className="delete-btn" onClick={() => handleDelete(account.id)}>
+                      Xóa
+                    </button>
+                  </td>
+                </tr>
+              ))
+            ) : (
+              <tr>
+                <td colSpan={4}>Không tìm thấy tài khoản phù hợp.</td>
+              </tr>
+            )}
+          </tbody>
+        </table>
+      </div>
+    </>
+  );
 };
 
 export default Admin;

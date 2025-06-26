@@ -35,23 +35,22 @@ function Login() {
       console.log("Đăng nhập thành công:", data);
       alert("Đăng nhập thành công");
 
-
       const role = data.role?.toUpperCase(); // chuẩn hóa về in hoa
       console.log("Role đã chuẩn hóa:", role);
       localStorage.setItem("token", data.token);
+
       // 🚀 Điều hướng theo role
       switch (data.role) {
-        case "Admin":
+        case "ADMIN":
           navigate("/admin");
           break;
-        case "Manager":
+        case "MANAGER":
           navigate("/manager");
           break;
-        case "MedicalStaff":
+        case "MEDICALSTAFF":
           navigate("/med");
           break;
-        case "User":
-        case "Donor":
+        case "CUSTOMER":
           navigate("/user");
           break;
         default:
