@@ -1,5 +1,7 @@
 package com.swp.blooddonation.dto.request;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.swp.blooddonation.enums.Gender;
 import lombok.Getter;
 import lombok.Setter;
@@ -16,5 +18,7 @@ public class RegisRequest {
     public String fullName;
     public String address;
     public Gender gender;
-    public Date yoB;
+    @JsonFormat(pattern = "yyyy-MM-dd")
+    @JsonProperty("birthDate")
+    public Date YoB;
 }

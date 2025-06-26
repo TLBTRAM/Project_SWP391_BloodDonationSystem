@@ -9,9 +9,9 @@ const MedicalStaff = () => {
 
     useEffect(() => {
         const fakeAppointments = [
-            { date: '2025-06-13', time: '09:00', donor: 'Nguyễn Văn A' },
-            { date: '2025-06-13', time: '14:30', donor: 'Trần Thị B' },
-            { date: '2025-06-14', time: '10:15', donor: 'Phạm Văn C' }
+            { date: '2025-06-13', time: '09:00', donor: 'Nguyễn Võ Sỹ Khim' },
+            { date: '2025-06-13', time: '14:30', donor: 'Tester' },
+            { date: '2025-06-16', time: '10:15', donor: 'Nguyễn Võ Sỹ Khim' }
         ];
         setAppointments(fakeAppointments);
     }, []);

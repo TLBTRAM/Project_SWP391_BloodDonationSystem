@@ -54,6 +54,13 @@ public class AuthenticationService implements UserDetailsService {
     EmailService emailService;
 
     public RegisterResponse register(@Valid RegisRequest regisRequest) {
+        System.out.println("===== DEBUG REGISTER REQUEST =====");
+        System.out.println("Received: " + regisRequest.getFullName());
+        System.out.println("YoB: " + regisRequest.getYoB());
+        System.out.println("Gender: " + regisRequest.getGender());
+        System.out.println("Email: " + regisRequest.getEmail());
+        System.out.println("Phone: " + regisRequest.getPhone());
+        System.out.println("==================================");
         if (authenticationReponsitory.existsByEmail(regisRequest.getEmail())) {
             throw new RuntimeException("Email đã được sử dụng!");
         }
@@ -84,26 +91,26 @@ public class AuthenticationService implements UserDetailsService {
 
 
     public AccountResponse login(LoginRequest loginRequest){
-//        Account acc = authenticationReponsitory.findAccountByEmail(loginRequest.getEmail());
-//        if (acc == null) {
-//            throw new AuthenticationException("Email không tồn tại");
-//        }
-//
-//        // ✅ In kiểm tra nhanh tại đây
-//        System.out.println("=== DEBUG PASSWORD MATCHING ===");
-//        System.out.println("Raw password: " + loginRequest.getPassword());
-//        System.out.println("Encoded in DB: " + acc.getPassword());
-//        System.out.println("Password match? " + passwordEncoder.matches(loginRequest.getPassword(), acc.getPassword()));
-//        System.out.println("================================");
+        Account acc = authenticationReponsitory.findAccountByEmail(loginRequest.getEmail());
+        if (acc == null) {
+            throw new AuthenticationException("Email không tồn tại");
+        }
+
+        // ✅ In kiểm tra nhanh tại đây
+        System.out.println("=== DEBUG PASSWORD MATCHING ===");
+        System.out.println("Raw password: " + loginRequest.getPassword());
+        System.out.println("Encoded in DB: " + acc.getPassword());
+        System.out.println("Password match? " + passwordEncoder.matches(loginRequest.getPassword(), acc.getPassword()));
+        System.out.println("================================");
         try {
             authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
                     loginRequest.getEmail(),
                     loginRequest.getPassword()
 
             ));
-            System.out.println("Thông tin dằng nhập chính xác");
+            System.out.println("Thông tin đăng nhập chính xác");
         }catch (Exception e){
-            System.out.println("Thông tin dằng nhập không chính xác!!!!!!!!");
+            System.out.println("Thông tin đăng nhập không chính xác!!!!!!!!");
             e.printStackTrace();
             throw new AuthenticationException("invalid...");
         }
