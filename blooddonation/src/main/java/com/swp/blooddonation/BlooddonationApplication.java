@@ -16,10 +16,13 @@ public class BlooddonationApplication {
 
 	public static void main(String[] args) {
 		SpringApplication.run(BlooddonationApplication.class, args);
+<<<<<<< HEAD
 
 
 		System.out.println("Application started successfully!");
 
+=======
+>>>>>>> tuanhv
 	}
 
 }
