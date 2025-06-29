@@ -13,9 +13,10 @@ type Appointment = {
   time: string;
   donor: string;
   status: string;
+  started?: boolean;
+  symptom?: string;
 };
 
-// ✅ Custom input để hiển thị ngày theo định dạng "Thứ Năm, 26/06/2025"
 const CustomDateInput = forwardRef(({ value, onClick }: any, ref: any) => (
   <button className="custom-date-input" onClick={onClick} ref={ref}>
     {value || "Lọc theo ngày"}
@@ -26,47 +27,32 @@ const ScheduleManagement = () => {
   const [appointments, setAppointments] = useState<Appointment[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [filterDate, setFilterDate] = useState<Date | null>(null);
+  const [selectedAppointmentIndex, setSelectedAppointmentIndex] = useState<number | null>(null);
 
-  // Cập nhật trạng thái
-  const updateStatus = (index: number, newStatus: string) => {
-    const updated = [...appointments];
-    updated[index].status = newStatus;
-    setAppointments(updated);
-  };
-
-  // Dữ liệu mẫu ban đầu
   useEffect(() => {
     const sampleData: Appointment[] = [
-      {
-        date: "2025-06-27",
-        time: "08:00",
-        donor: "Nguyễn Văn A",
-        status: "Chờ khám",
-      },
-      {
-        date: "2025-06-27",
-        time: "09:30",
-        donor: "Trần Thị B",
-        status: "Đã khám",
-      },
-      {
-        date: "2025-06-28",
-        time: "10:00",
-        donor: "Lê Văn C",
-        status: "Chờ khám",
-      },
+      { date: "2025-06-27", time: "08:00", donor: "Nguyễn Văn A", status: "Chờ khám" },
+      { date: "2025-06-27", time: "09:30", donor: "Trần Thị B", status: "Đã khám" },
+      { date: "2025-06-28", time: "10:00", donor: "Lê Văn C", status: "Chờ khám" },
     ];
     setAppointments(sampleData);
   }, []);
 
-  // Lọc danh sách
-  const filteredAppointments = appointments.filter((appt) => {
-    const matchName = appt.donor
-      .toLowerCase()
-      .includes(searchTerm.toLowerCase());
-    const matchDate =
-      !filterDate || appt.date === format(filterDate, "yyyy-MM-dd");
+  const updateStatus = (index: number, newStatus: string) => {
+    const updated = [...appointments];
+    updated[index].status = newStatus;
+    updated[index].started = newStatus === "Đang khám";
+    setAppointments(updated);
+  };
 
+  const startScreening = (index: number) => {
+    updateStatus(index, "Đang khám");
+    setSelectedAppointmentIndex(index);
+  };
+
+  const filteredAppointments = appointments.filter((appt) => {
+    const matchName = appt.donor.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchDate = !filterDate || appt.date === format(filterDate, "yyyy-MM-dd");
     return matchName && matchDate;
   });
 
@@ -78,11 +64,15 @@ const ScheduleManagement = () => {
         <ReactDatePicker
           selected={filterDate}
           onChange={(date) => setFilterDate(date)}
-          placeholderText="Lọc theo ngày"
-          dateFormat="EEEE, dd/MM/yyyy" // ⬅ định dạng đầy đủ với thứ
+          dateFormat="EEEE, dd/MM/yyyy"
           locale="vi"
-          isClearable
+          placeholderText="Lọc theo ngày"
+          calendarClassName="custom-datepicker"
           customInput={<CustomDateInput />}
+          maxDate={new Date()}
+          showMonthDropdown
+          showYearDropdown
+          dropdownMode="select"
         />
         <input
           type="text"
@@ -98,24 +88,81 @@ const ScheduleManagement = () => {
         ) : (
           filteredAppointments.map((appt, idx) => (
             <li key={idx} className="appointment-item">
-              <span>
-                {appt.date} - {appt.time} - {appt.donor}
-              </span>
-              <select
-                value={appt.status}
-                onChange={(e) => updateStatus(idx, e.target.value)}
-                className={`status-select status-${appt.status
-                  .replace(/\s/g, "")
-                  .toLowerCase()}`}
-              >
-                <option value="Chờ khám">Chờ khám</option>
-                <option value="Đã khám">Đã khám</option>
-                <option value="Hủy khám">Hủy khám</option>
-              </select>
+              <div className="appointment-info">
+                <div className="appointment-left">
+                  <span>{format(new Date(appt.date), "dd/MM/yyyy")} - {appt.time}</span>
+                  <span>{appt.donor}</span>
+                </div>
+                <div className="appointment-right">
+                  <span className={`status-label status-${appt.status.replace(/\s/g, "").toLowerCase()}`}>
+                    {appt.status}
+                  </span>
+                  <div className="detail-box">
+                    <button>Chi tiết</button>
+                  </div>
+                  {appt.status === "Chờ khám" && (
+                    <button className="start-btn" onClick={() => startScreening(idx)}>
+                      Bắt đầu khám
+                    </button>
+                  )}
+                </div>
+              </div>
             </li>
           ))
         )}
       </ul>
+
+      {selectedAppointmentIndex !== null && (
+        <div className="modal-overlay">
+          <div className="screening-detail">
+            <button
+              className="screening-close-btn"
+              onClick={() => setSelectedAppointmentIndex(null)}
+            >
+              ×
+            </button>
+
+            <h3>Khám sàng lọc</h3>
+            <p><strong>Người hiến:</strong> {appointments[selectedAppointmentIndex].donor}</p>
+            <p><strong>Thời gian:</strong> {appointments[selectedAppointmentIndex].date} - {appointments[selectedAppointmentIndex].time}</p>
+
+            <textarea
+              placeholder="Nhập triệu chứng..."
+              value={appointments[selectedAppointmentIndex].symptom || ""}
+              onChange={(e) => {
+                const updated = [...appointments];
+                updated[selectedAppointmentIndex].symptom = e.target.value;
+                setAppointments(updated);
+              }}
+            />
+
+            <input type="text" placeholder="Mạch (lần/phút)" className="screening-input" />
+            <input type="text" placeholder="Huyết áp (mmHg)" className="screening-input" />
+            <input type="text" placeholder="Cân nặng (kg)" className="screening-input" />
+
+            <div className="screening-actions">
+              <button
+                className="confirm-btn"
+                onClick={() => {
+                  updateStatus(selectedAppointmentIndex, "Đã khám");
+                  setSelectedAppointmentIndex(null);
+                }}
+              >
+                Đủ điều kiện hiến máu
+              </button>
+              <button
+                className="deny-btn"
+                onClick={() => {
+                  updateStatus(selectedAppointmentIndex, "Không đủ điều kiện");
+                  setSelectedAppointmentIndex(null);
+                }}
+              >
+                Không đủ điều kiện
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

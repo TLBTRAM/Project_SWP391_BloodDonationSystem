@@ -2,10 +2,14 @@ import React, { useState, useEffect } from "react";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { Link } from "react-router-dom";
-
 import "./components/Register.css";
 import Header from "../layouts/header-footer/Header";
 import Footer from "../layouts/header-footer/Footer";
+
+import { vi } from "date-fns/locale";
+import { registerLocale } from "react-datepicker";
+
+registerLocale("vi", vi);
 
 const Register: React.FC = () => {
   const [fullName, setFullName] = useState("");
@@ -128,6 +132,7 @@ const Register: React.FC = () => {
                   selected={birthDate}
                   onChange={(date: Date | null) => setBirthDate(date)}
                   dateFormat="dd/MM/yyyy"
+                  locale="vi"
                   placeholderText="dd/mm/yyyy"
                   className="input-text date-input"
                   calendarClassName="custom-datepicker"
@@ -176,8 +181,8 @@ const Register: React.FC = () => {
               onChange={(e) => setGender(e.target.value)}
             >
               <option value="">Chọn giới tính</option>
-              <option value="MALE">Nam</option>
-              <option value="FEMALE">Nữ</option>
+              <option value="Nam">Nam</option>
+              <option value="Nữ">Nữ</option>
               <option value="Khác">Khác</option>
             </select>
             {errors.gender && <div className="error-text">{errors.gender}</div>}

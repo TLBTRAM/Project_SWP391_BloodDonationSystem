@@ -68,3 +68,78 @@
     .btn-login:hover {
       background-color: #d91b41;
     }
+
+
+  /* Avatar và tên người dùng */
+.user-info {
+  display: flex;
+  align-items: center;
+  position: relative;
+  cursor: pointer;
+}
+
+.user-info .avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-right: 8px;
+  border: 2px solid #FF204E;
+}
+
+.user-info .username {
+  font-weight: 500;
+  color: #334155;
+}
+
+/* Menu xổ xuống */
+.dropdown-menu {
+  position: absolute;
+  top: 120%;
+  right: 0;
+  background-color: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  padding: 8px 0;
+  width: 150px;
+  display: flex;
+  flex-direction: column;
+  z-index: 1000;
+}
+
+.dropdown-menu button {
+  background: none;
+  border: none;
+  padding: 10px 16px;
+  text-align: left;
+  font-size: 14px;
+  color: #334155;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.dropdown-menu button:hover {
+  background-color: #f1f5f9;
+}
+
+/* Đăng ký và đăng nhập khi chưa đăng nhập */
+.auth-buttons {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.btn-register {
+  background-color: transparent;
+  border: none;
+  color: #334155;
+  font-weight: 500;
+  cursor: pointer;
+  text-decoration: underline;
+  font-size: 14px;
+}
+
+.btn-register:hover {
+  color: #FF204E;
+}
