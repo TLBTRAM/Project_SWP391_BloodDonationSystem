@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Entity
 @Getter
@@ -28,7 +29,7 @@ public class BloodTest {
     @Enumerated(EnumType.STRING)
     private BloodType bloodType;
 
-    private LocalDate createdAt;
+    private LocalDateTime createdAt;
 
     @ManyToOne
     @JoinColumn(name = "medical_staff_id") // tên cột trong bảng blood_test

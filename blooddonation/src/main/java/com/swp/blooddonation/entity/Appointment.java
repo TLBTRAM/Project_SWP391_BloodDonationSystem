@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Getter
@@ -16,12 +17,12 @@ public class Appointment {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private LocalDate createAt;
+    private LocalDateTime createdAt;
 
     private LocalDate appointmentDate;
 
     @Enumerated(EnumType.STRING)
-    private AppointmentEnum status; // PENDING, APPROVED, REJECTED, COMPLETED
+    private AppointmentEnum status;
 
 
 
@@ -37,14 +38,17 @@ public class Appointment {
     @JoinColumn(name = "slot_id")
     private Slot slot; // Khung giờ hiến máu
 
-    @ManyToOne
-    @JoinColumn(name = "account_id")
-    Account account;
+//    @ManyToOne
+//    @JoinColumn(name = "account_id")
+//    Account account;
 
 
     @OneToMany(mappedBy = "appointment")
     List<Feedback> feedbacks;
 
+    @OneToOne
+    @JoinColumn(name = "register_id")
+    private Register register;
 
     // chỉ có 1 dịch vụ hiến máu nên không cần dùng
 //    @ManyToMany(cascade = CascadeType.ALL)

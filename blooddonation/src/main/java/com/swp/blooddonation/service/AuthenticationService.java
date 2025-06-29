@@ -12,6 +12,7 @@ import com.swp.blooddonation.enums.EnableStatus;
 import com.swp.blooddonation.enums.Role;
 import com.swp.blooddonation.exception.exceptions.AuthenticationException;
 import com.swp.blooddonation.exception.exceptions.ResetPasswordException;
+import com.swp.blooddonation.exception.exceptions.UserNotFoundException;
 import com.swp.blooddonation.repository.AuthenticationReponsitory;
 import com.swp.blooddonation.repository.VerificationCodeRepository;
 import jakarta.transaction.Transactional;
@@ -27,6 +28,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -182,7 +184,12 @@ public class AuthenticationService implements UserDetailsService {
 
     public Account getCurrentAccount(){
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
-        return authenticationReponsitory.findAccountByEmail(email);
+//        return authenticationReponsitory.findAccountByEmail(email).orElseThrow(() -> new UserNotFoundException("User not found with email: " + email));
+        Account account = authenticationReponsitory.findAccountByEmail(email);
+        if (account == null) {
+            throw new UserNotFoundException("User not found with email: " + email);
+        }
+        return account;
     }
 
     public List<MedicalStaffDTO> getMedicalStaff() {
