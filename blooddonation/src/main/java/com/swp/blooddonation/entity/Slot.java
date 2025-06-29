@@ -18,13 +18,19 @@ public class Slot
     long id;
 
     String label;
-    LocalTime start;
-    LocalTime end;
+    LocalTime startTime;
+    LocalTime endTime;
     boolean isDelete =false;
 
     @OneToMany(mappedBy = "slot")
     @JsonIgnore
     List<AccountSlot> accountSlots;
+
+//    @ManyToOne
+//    @JoinColumn(name = "schedule_id")
+//    private Schedule schedule;
+
+
 }
 
 

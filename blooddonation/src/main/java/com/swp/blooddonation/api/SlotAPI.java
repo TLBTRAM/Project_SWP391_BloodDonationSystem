@@ -2,7 +2,9 @@ package com.swp.blooddonation.api;
 
 import com.swp.blooddonation.dto.AccountDTO;
 import com.swp.blooddonation.dto.RegisterSlotDTO;
+import com.swp.blooddonation.dto.SlotDTO;
 import com.swp.blooddonation.entity.AccountSlot;
+import com.swp.blooddonation.entity.Schedule;
 import com.swp.blooddonation.entity.Slot;
 import com.swp.blooddonation.service.SlotService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -44,19 +46,19 @@ public class SlotAPI {
         return ResponseEntity.ok(accountSlots);
     }
 
-    @GetMapping("/medical-staff-by-date")
-    public ResponseEntity<List<AccountDTO>> getMedicalStaffByDate(
-            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
-
-        List<AccountDTO> staffList = slotService.getMedicalStaffByDate(date);
-        return ResponseEntity.ok(staffList);
-    }
-
-    @GetMapping("/available-slots")
-    public ResponseEntity getRegisteredSlots(
-            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
-        List<AccountSlot> slots = slotService.getAvailableSlotsByDate(date);
-        return ResponseEntity.ok(slots);
-    }
+//    @GetMapping("/medical-staff-by-date")
+//    public ResponseEntity<List<AccountDTO>> getMedicalStaffByDate(
+//            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
+//
+//        List<AccountDTO> staffList = slotService.getMedicalStaffByDate(date);
+//        return ResponseEntity.ok(staffList);
+//    }
+//
+//    @GetMapping("/available-slots")
+//    public ResponseEntity getRegisteredSlots(
+//            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
+//        List<AccountSlot> slots = slotService.getAvailableSlotsByDate(date);
+//        return ResponseEntity.ok(slots);
+//    }
 
 }

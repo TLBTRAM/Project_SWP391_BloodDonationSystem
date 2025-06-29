@@ -9,6 +9,9 @@ import java.util.Date;
 
 @Getter
 @Setter
+
+
+// dùng để đăng ký tài khoản người dùng
 public class RegisRequest {
     public String email;
     public String password;

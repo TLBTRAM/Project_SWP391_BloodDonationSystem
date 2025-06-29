@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 
+import java.time.LocalDate;
 import java.util.Date;
 
 @Entity
@@ -16,7 +17,7 @@ public class TestResult {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long testId;
 
-    private Date testDate;
+    private LocalDate testDate;
     private String bloodPressure;
     private String heartRate;
     private String result;
@@ -27,7 +28,7 @@ public class TestResult {
 
 
     @Enumerated(EnumType.STRING)
-    @JoinColumn(name = "type_id")
+    @Column(name = "type_id")
     private BloodType type;
 
     @ManyToOne
