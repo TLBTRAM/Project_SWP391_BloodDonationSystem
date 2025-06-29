@@ -110,8 +110,6 @@ public class BloodTestService {
         test.setStatus(request.isPassed() ? BloodTestStatus.COMPLETED : BloodTestStatus.FAILED);
         test.setBloodType(request.getBloodType());
         test.setMedicalStaff(appointment.getMedicalStaff());
-        test.setBloodPressure(request.getBloodPressure());
-        test.setHeartRate(request.getHeartRate());
 
         // Cập nhật nhóm máu cho người hiến nếu chưa có
         Customer donor = appointment.getCustomer().getCustomer();
