@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import './Header.css';
-import logoBlood from './logo_blood.png';
-import { useAuth } from './AuthContext';
+import React, { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import "./Header.css";
+import logoBlood from "./logo_blood.png";
+import { useAuth } from "./AuthContext";
 
 const Header: React.FC = () => {
   const navigate = useNavigate();
@@ -11,7 +11,7 @@ const Header: React.FC = () => {
 
   const handleLogout = () => {
     logout();
-    navigate('/');
+    navigate("/");
   };
 
   const toggleDropdown = () => {
@@ -29,23 +29,30 @@ const Header: React.FC = () => {
         <a href="#contact">Liên hệ</a>
         <a href="#info">Thông tin</a>
         <Link to="/team">Đội ngũ nhân viên y tế</Link>
-        {!user && <Link to="/register">Đăng kí ngay</Link>}
+        {!user && (
+          <Link to="/register" className="register-link">
+            Đăng kí ngay
+          </Link>
+        )}
       </nav>
 
       {!user ? (
-        <button className="btn-login" onClick={() => navigate('/login')}>
-          Đăng nhập
-        </button>
+        <div className="auth-buttons">
+          <button className="btn-login" onClick={() => navigate("/login")}>
+            Đăng nhập
+          </button>
+        </div>
       ) : (
         <div className="user-info" onClick={toggleDropdown}>
           <img
-            src={user.avatarUrl || '/default-avatar.png'}
-            alt={user.name || 'User'}
+            src={user.avatarUrl || "/default-avatar.png"}
+            alt={user.name || "User"}
             className="avatar"
           />
+          <span className="username">{user.name}</span>
           {dropdownOpen && (
             <div className="dropdown-menu">
-              <button onClick={() => navigate('/account')}>Tài khoản</button>
+              <button onClick={() => navigate("/account")}>Tài khoản</button>
               <button onClick={handleLogout}>Đăng xuất</button>
             </div>
           )}

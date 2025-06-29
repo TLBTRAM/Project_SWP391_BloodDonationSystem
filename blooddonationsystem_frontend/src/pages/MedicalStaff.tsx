@@ -10,13 +10,10 @@ import { vi } from "date-fns/locale/vi";
 import { format } from "date-fns";
 import type { Locale } from "date-fns";
 
-import ScheduleManagement from "./MS_components/ScheduleManagement"
-import Screening from "./MS_components/Screening"
-import DonationSchedule from "./MS_components/DonationSchedule"
-import SendToStorage from "./MS_components/SendToStorage"
-import RequestBlood from "./MS_components/RequestBlood"
-
-
+import ScheduleManagement from "./MS_components/ScheduleManagement";
+import DonationSchedule from "./MS_components/DonationSchedule";
+import SendToStorage from "./MS_components/SendToStorage";
+import RequestBlood from "./MS_components/RequestBlood";
 
 // Đăng ký locale tiếng Việt cho ReactDatePicker
 registerLocale("vi", vi as unknown as Locale);
@@ -48,7 +45,6 @@ const MedicalStaff = () => {
     (a) => a.date === formatDate(selectedDate)
   );
 
-  
   return (
     <div className="medical-app">
       {/* Sidebar */}
@@ -67,12 +63,7 @@ const MedicalStaff = () => {
               className="menu-item"
               onClick={() => setView("scheduleManagement")}
             >
-              Quản lý lịch khám
-            </button>
-          </li>
-          <li className={view === "screening" ? "active" : ""}>
-            <button className="menu-item" onClick={() => setView("screening")}>
-              Khám sàng lọc
+              Lịch khám sàng lọc
             </button>
           </li>
           <li className={view === "donationSchedule" ? "active" : ""}>
@@ -136,7 +127,28 @@ const MedicalStaff = () => {
                     }}
                     dateFormat="dd/MM/yyyy"
                     locale="vi"
-                    className="custom-datepicker"
+                    placeholderText="dd/mm/yyyy"
+                    className="input-text date-input"
+                    calendarClassName="custom-datepicker"
+                    maxDate={new Date()}
+                    showMonthDropdown
+                    showYearDropdown
+                    dropdownMode="select"
+                    popperPlacement="right"
+                    onKeyDown={(e) => {
+                      const allowedKeys = [
+                        "Backspace",
+                        "Delete",
+                        "Tab",
+                        "ArrowLeft",
+                        "ArrowRight",
+                        "/",
+                      ];
+                      const isNumber = e.key >= "0" && e.key <= "9";
+                      if (!isNumber && !allowedKeys.includes(e.key)) {
+                        e.preventDefault();
+                      }
+                    }}
                   />
                 </div>
                 {filteredAppointments.length > 0 ? (
@@ -161,7 +173,6 @@ const MedicalStaff = () => {
         )}
 
         {view === "scheduleManagement" && <ScheduleManagement />}
-        {view === "screening" && <Screening />}
         {view === "donationSchedule" && <DonationSchedule />}
         {view === "sendToStorage" && <SendToStorage />}
         {view === "requestBlood" && <RequestBlood />}

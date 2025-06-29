@@ -13,6 +13,8 @@ public class BloodTestResponse {
     private String result;
     private boolean passed;
     private LocalDate testDate;
+    private String bloodPressure; // huyết áp
+    private String heartRate; // nhịp tim
     private Long testedById; // id nhân viên thực hiện
     private String testedByName; // tên nhân viên thực hiện
     private BloodTestStatus status;
