@@ -1,10 +1,14 @@
 package com.swp.blooddonation.enums;
 
 public enum AppointmentEnum {
-    PENDING,
-    CANCEL,
+//    PENDING,
+//    CANCEL,
+//    COMPLETED,
+//    APPROVED,
+//    REJECTED,
+//    COLLECTED
+
+    SCHEDULED,
     COMPLETED,
-    APPROVED,
-    REJECTED,
-    COLLECTED
+    CANCELED
 }

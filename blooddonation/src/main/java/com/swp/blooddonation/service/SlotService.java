@@ -2,15 +2,19 @@ package com.swp.blooddonation.service;
 
 import com.swp.blooddonation.dto.AccountDTO;
 import com.swp.blooddonation.dto.RegisterSlotDTO;
+import com.swp.blooddonation.dto.SlotDTO;
 import com.swp.blooddonation.entity.Account;
 import com.swp.blooddonation.entity.AccountSlot;
+import com.swp.blooddonation.entity.Schedule;
 import com.swp.blooddonation.entity.Slot;
 import com.swp.blooddonation.enums.Role;
 import com.swp.blooddonation.exception.exceptions.BadRequestException;
 import com.swp.blooddonation.exception.exceptions.UserNotFoundException;
 import com.swp.blooddonation.repository.AccountSlotRepository;
 import com.swp.blooddonation.repository.AuthenticationReponsitory;
+import com.swp.blooddonation.repository.ScheduleRepository;
 import com.swp.blooddonation.repository.SlotRepository;
+import jakarta.transaction.Transactional;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -32,7 +36,13 @@ public class SlotService {
     AuthenticationReponsitory authenticationReponsitory;
 
     @Autowired
+    AuthenticationService authenticationService;
+
+    @Autowired
     AccountSlotRepository accountSlotRepository;
+
+    @Autowired
+    ScheduleRepository scheduleRepository;
 
     @Autowired
     ModelMapper modelMapper;
@@ -43,53 +53,58 @@ public class SlotService {
     }
 
     public void generateSlots() {
-
-        //Generate tự động slot từ 7h sáng đến 17h chiều
         LocalTime start = LocalTime.of(7, 0);
         LocalTime end = LocalTime.of(17, 0);
         List<Slot> slots = new ArrayList<>();
 
         while (start.isBefore(end)) {
-            Slot slot = new Slot();
-            slot.setLabel(start.toString());
-            slot.setStart(start);
-            slot.setEnd(start.plusMinutes(30));
+            LocalTime slotStart = start;
+            LocalTime slotEnd = start.plusMinutes(30);
 
-            slots.add(slot);
-            start = start.plusMinutes(30);
+            boolean exists = slotRepository.existsByStartTimeAndEndTime(slotStart, slotEnd);
+            if (!exists) {
+                Slot slot = new Slot();
+                slot.setLabel(slotStart + " - " + slotEnd);
+                slot.setStartTime(slotStart);
+                slot.setEndTime(slotEnd);
+                slot.setDelete(false);
+                slots.add(slot);
+            }
+
+            start = slotEnd;
         }
-        slotRepository.saveAll(slots);
+
+        if (!slots.isEmpty()) {
+            slotRepository.saveAll(slots);
+        }
     }
 
+
+    @Transactional
     public List<AccountSlot> registerSlot(RegisterSlotDTO registerSlotDTO) {
-        Account account = authenticationReponsitory.findById(registerSlotDTO.getAccountId())
-                .orElseThrow(() -> new UserNotFoundException("Account không tồn tại"));
+        Account currentAccount = authenticationService.getCurrentAccount();
 
-
-        // nếu đã dùng @PreAuthorize("hasRole('MEDICALSTAFF')") thì không cần kiểm tra role nữa
-//        if (account.getRole() != Role.MEDICALSTAFF) {
-//            throw new BadRequestException("Bạn không có quyền đăng ký lịch này.");
-//        }
-
-        LocalDate date = registerSlotDTO.getDate();
-
-        // Không cho đăng ký vào Thứ 7 và Chủ nhật
-        DayOfWeek dayOfWeek = date.getDayOfWeek();
-        if (dayOfWeek == DayOfWeek.SATURDAY || dayOfWeek == DayOfWeek.SUNDAY) {
-            throw new BadRequestException("Không được đăng ký lịch vào Thứ 7 hoặc Chủ nhật.");
+        if (currentAccount.getRole() != Role.MEDICALSTAFF) {
+            throw new BadRequestException("Chỉ Medical Staff mới được đăng ký lịch làm việc.");
         }
 
-        List<AccountSlot> oldAccountSlot = accountSlotRepository.
-                findAccountsSlotsByAccountAndDate(account, registerSlotDTO.getDate());
+        LocalDate date = registerSlotDTO.getDate();
+//        DayOfWeek dayOfWeek = date.getDayOfWeek();
+//        if (dayOfWeek == DayOfWeek.SATURDAY || dayOfWeek == DayOfWeek.SUNDAY) {
+//            throw new BadRequestException("Không được đăng ký lịch vào Thứ 7 hoặc Chủ nhật.");
+//        }
 
-        if (!oldAccountSlot.isEmpty()) {
-            throw new BadRequestException("Tài khoản đã đăng ký lịch cho ngày này.");
+        boolean existed = accountSlotRepository.existsByAccountAndDate(currentAccount, date);
+        if (existed) {
+            throw new BadRequestException("Bạn đã đăng ký lịch cho ngày này.");
         }
 
         List<AccountSlot> accountSlots = new ArrayList<>();
-        for (Slot slot : slotRepository.findAll()) {
+        List<Slot> allSlots = slotRepository.findAll();
+
+        for (Slot slot : allSlots) {
             long count = accountSlotRepository.countBySlot_IdAndDateAndAccount_Role(
-                    slot.getId(), registerSlotDTO.getDate(), Role.MEDICALSTAFF
+                    slot.getId(), date, Role.MEDICALSTAFF
             );
 
             if (count >= 5) {
@@ -98,13 +113,19 @@ public class SlotService {
 
             AccountSlot accountSlot = new AccountSlot();
             accountSlot.setSlot(slot);
-            accountSlot.setAccount(account);
-            accountSlot.setDate(registerSlotDTO.getDate());
-            accountSlots.add(accountSlot);
+            accountSlot.setAccount(currentAccount);
+            accountSlot.setDate(date);
+            accountSlot.setAvailable(true);
 
+            accountSlots.add(accountSlot);
         }
-        return accountSlotRepository.saveAll(accountSlots);
+
+        accountSlotRepository.saveAll(accountSlots);
+
+        return accountSlots;
     }
+
+
 
 //    public List<AccountSlot> getRegisteredSlots(Long medicalStaffId, LocalDate date) {
 //        Account medicalStaff = authenticationReponsitory.findById(medicalStaffId)
@@ -120,23 +141,23 @@ public class SlotService {
 //        }
 //        return  slotsAvailable;
 //    }
-
-    public List<AccountSlot> getAvailableSlotsByDate(LocalDate date) {
-        List<AccountSlot> accountSlots = accountSlotRepository.findByDate(date);
-        return accountSlots.stream()
-                .filter(AccountSlot::isAvailable)
-                .collect(Collectors.toList());
-    }
-
-
-    public List<AccountDTO> getMedicalStaffByDate(LocalDate date) {
-        List<AccountSlot> accountSlots = accountSlotRepository
-                .findByDateAndAccount_Role( date, Role.MEDICALSTAFF);
-
-        return accountSlots.stream()
-                .map(AccountSlot::getAccount)
-                .distinct()
-                .map(account -> modelMapper.map(account, AccountDTO.class))
-                .collect(Collectors.toList());
-    }
+//
+//    public List<AccountSlot> getAvailableSlotsByDate(LocalDate date) {
+//        List<AccountSlot> accountSlots = accountSlotRepository.findByDate(date);
+//        return accountSlots.stream()
+//                .filter(AccountSlot::isAvailable)
+//                .collect(Collectors.toList());
+//    }
+//
+//
+//    public List<AccountDTO> getMedicalStaffByDate(LocalDate date) {
+//        List<AccountSlot> accountSlots = accountSlotRepository
+//                .findByDateAndAccount_Role( date, Role.MEDICALSTAFF);
+//
+//        return accountSlots.stream()
+//                .map(AccountSlot::getAccount)
+//                .distinct()
+//                .map(account -> modelMapper.map(account, AccountDTO.class))
+//                .collect(Collectors.toList());
+//    }
 }

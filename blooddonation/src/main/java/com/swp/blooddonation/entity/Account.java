@@ -41,7 +41,8 @@ public class Account implements UserDetails {
 
     @NotBlank(message = "Password can not blank")
     @Size(min = 6, message = "Password must be at leat 6 characters!")
-    public String password;
+    @JsonIgnore
+    private String password;
 
     @JsonProperty("fullname")
     @Column(name = "fullname")
@@ -112,9 +113,11 @@ public class Account implements UserDetails {
     @JsonIgnore
     private Customer customer;
 
-    @OneToMany(mappedBy = "account")
+    // Người đi hiến máu (donor)
+    @OneToMany(mappedBy = "customer")
     @JsonIgnore
-    List<Appointment> appointments;
+    private List<Appointment> customerAppointments;
+
 
     @OneToMany(mappedBy = "account")
     List<Feedback> feedbacks;
