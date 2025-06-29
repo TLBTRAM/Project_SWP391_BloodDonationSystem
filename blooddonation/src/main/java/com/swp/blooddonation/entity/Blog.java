@@ -2,29 +2,41 @@ package com.swp.blooddonation.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import jakarta.persistence.Id;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.JoinColumn;
-import java.util.Date;
-
+import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
+import java.time.LocalDateTime;
 
 @Entity
+@Getter
+@Setter
 public class Blog {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long blogId;
 
+    @Column(nullable = false)
     private String title;
+
+    @Column(columnDefinition = "TEXT")
     private String content;
-    private Date createdDate;
+
+    private LocalDateTime createdDate;
 
     @ManyToOne
-    @JoinColumn(name = "account_id")
-    private Account user;
+    @JoinColumn(name = "account_id", nullable = false)
+    @JsonIgnore
+    private Account account;
 
-    // Nếu bạn không dùng Lombok, thêm getter/setter
+    // Getter cho account để tránh circular reference
+    @JsonProperty("authorName")
+    public String getAuthorName() {
+        return account != null ? account.getFullName() : "Unknown";
+    }
+
+    @JsonProperty("authorId")
+    public Long getAuthorId() {
+        return account != null ? account.getId() : null;
+    }
 }
