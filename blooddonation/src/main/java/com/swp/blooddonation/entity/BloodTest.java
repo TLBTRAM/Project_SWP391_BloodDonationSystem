@@ -29,6 +29,11 @@ public class BloodTest {
     @Enumerated(EnumType.STRING)
     private BloodType bloodType;
 
+    private String bloodPressure;
+
+    private String heartRate;
+
+
     private LocalDateTime createdAt;
 
     @ManyToOne
