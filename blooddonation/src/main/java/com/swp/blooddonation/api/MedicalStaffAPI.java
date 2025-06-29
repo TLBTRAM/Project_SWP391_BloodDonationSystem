@@ -29,13 +29,13 @@ public class MedicalStaffAPI {
     }
 
     // Tạo xét nghiệm mới cho 1 customer
-    @PostMapping("/test-results")
-    @PreAuthorize("hasRole('MEDICALSTAFF')")
-    public ResponseEntity<String> createResult(@AuthenticationPrincipal Account account,
-                                               @RequestBody TestResultDTO dto) {
-        medicalStaffService.createTestResult(account, dto);
-        return ResponseEntity.ok("Kết quả xét nghiệm đã được lưu.");
-    }
+//    @PostMapping("/test-results")
+//    @PreAuthorize("hasRole('MEDICALSTAFF')")
+//    public ResponseEntity<String> createResult(@AuthenticationPrincipal Account account,
+//                                               @RequestBody TestResultDTO dto) {
+//        medicalStaffService.createTestResult(account, dto);
+//        return ResponseEntity.ok("Kết quả xét nghiệm đã được lưu.");
+//    }
 
     // Xem chi tiết 1 kết quả
     @GetMapping("/test-results/{id}")

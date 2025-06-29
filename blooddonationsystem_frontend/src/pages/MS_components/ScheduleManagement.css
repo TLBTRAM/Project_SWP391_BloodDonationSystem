@@ -1,0 +1,83 @@
+/* Vùng chính */
+.schedule-container {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 24px;
+  background-color: #f8fafc;
+  font-family: "Segoe UI", sans-serif;
+}
+
+/* Tiêu đề */
+.schedule-container h2 {
+  text-align: center;
+  margin-bottom: 24px;
+  color: #1e293b;
+}
+
+/* Form lọc */
+.form-section {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+/* Nút chọn ngày custom */
+.custom-date-input {
+  padding: 10px 14px;
+  border-radius: 8px;
+  border: 1px solid #d1d5db;
+  background-color: #ffffff;
+  cursor: pointer;
+  font-size: 14px;
+  color: #1e293b;
+  transition: border 0.2s, background-color 0.2s;
+}
+
+.custom-date-input:hover {
+  border-color: #0a2540;
+  background-color: #f1f5f9;
+}
+
+/* Ô tìm kiếm */
+.form-section input[type="text"] {
+  padding: 10px 14px;
+  border-radius: 8px;
+  border: 1px solid #d1d5db;
+  background-color: white;
+  font-size: 14px;
+  min-width: 260px;
+}
+
+/* Trạng thái */
+.status-select {
+  margin: 0;
+  padding: 6px;
+  border-radius: 6px;
+  border: none;
+  font-weight: 500;
+  color: white;
+  max-width: 100px;
+  min-width: 50px;
+  text-align: center;
+  appearance: none;         /* Chuẩn */
+  -webkit-appearance: none; /* Safari/Chrome */
+  -moz-appearance: none;    /* Firefox */
+  background-position: right 10px center; /* Nếu bạn thêm icon custom */
+  background-repeat: no-repeat;
+}
+
+/* Màu theo trạng thái */
+.status-chờkhám {
+  background-color: #facc15; /* vàng */
+}
+
+.status-đãkhám {
+  background-color: #22c55e; /* xanh */
+}
+
+.status-hủykhám {
+  background-color: #ef4444; /* đỏ */
+}

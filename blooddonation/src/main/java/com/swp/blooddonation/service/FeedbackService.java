@@ -28,7 +28,7 @@ public class FeedbackService {
                 .orElseThrow(() -> new BadRequestException("Appointment not found"));
 
         // check xem appointment nay co phai cua account nay hay ko
-        if (appointment.getAccount().getId() != currentAccount.getId()) {
+        if (appointment.getCustomer().getId() != currentAccount.getId()) {
             throw new BadRequestException("This appointment is not yours");
         } else {
             Feedback feedback = new Feedback();

@@ -50,7 +50,7 @@ select,
 textarea {
   padding: 10px 12px;
   border: 1px solid #ddd;
-  border-radius: 5px;
+  border-radius: 10px;
   font-size: 1em;
   color: #555;
   transition: border-color 0.3s ease, box-shadow 0.3s ease;
@@ -88,6 +88,15 @@ textarea {
 
 .submit-btn:hover {
   background-color: #001731;
+}
+
+.booking-form .back {
+  display: block;
+  margin-top: 10px;
+  text-align: center;
+  color: #FF204E;
+  text-decoration: none;
+  font-size: 18px;
 }
 
 /* Thông báo thành công */

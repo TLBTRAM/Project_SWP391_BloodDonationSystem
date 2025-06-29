@@ -25,5 +25,7 @@ public class CompleteBloodTest {
     private String result;
     private boolean passed;
     private BloodType bloodType;
+    private String bloodPressure;
+    private String heartRate;
 }
 

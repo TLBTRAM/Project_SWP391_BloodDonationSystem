@@ -1,6 +1,7 @@
 package com.swp.blooddonation.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.swp.blooddonation.enums.EnableStatus;
 import com.swp.blooddonation.enums.Gender;
 import com.swp.blooddonation.enums.Role;
@@ -40,8 +41,11 @@ public class Account implements UserDetails {
 
     @NotBlank(message = "Password can not blank")
     @Size(min = 6, message = "Password must be at leat 6 characters!")
-    public String password;
+    @JsonIgnore
+    private String password;
 
+    @JsonProperty("fullname")
+    @Column(name = "fullname")
     public String fullName;
 
     public Date YoB;
@@ -109,9 +113,11 @@ public class Account implements UserDetails {
     @JsonIgnore
     private Customer customer;
 
-    @OneToMany(mappedBy = "account")
+    // Người đi hiến máu (donor)
+    @OneToMany(mappedBy = "customer")
     @JsonIgnore
-    List<Appointment> appointments;
+    private List<Appointment> customerAppointments;
+
 
     @OneToMany(mappedBy = "account")
     List<Feedback> feedbacks;

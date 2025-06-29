@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import "./components/Booking.css";
+import { Link, useNavigate } from 'react-router-dom';
 
 import Header from "../layouts/header-footer/Header";
 import Footer from "../layouts/header-footer/Footer";
@@ -16,6 +17,7 @@ interface BookingFormData {
 }
 
 const Booking = () => {
+  const navigate = useNavigate();
   // Giả định các thông tin lấy từ tài khoản đăng nhập
   const [formData, setFormData] = useState<BookingFormData>({
     fullName: "Nguyễn Văn A",
@@ -49,7 +51,6 @@ const Booking = () => {
 
   return (
     <>
-      <Header />
       <div className="booking-container">
         <h2 id="register-title">Đăng ký khám sàng lọc</h2>
 
@@ -161,10 +162,10 @@ const Booking = () => {
             <button type="submit" className="submit-btn">
               Đăng ký khám
             </button>
+            <Link to="/user" className="back">Quay trở lại</Link>
           </form>
         )}
       </div>
-      <Footer />
     </>
   );
 };

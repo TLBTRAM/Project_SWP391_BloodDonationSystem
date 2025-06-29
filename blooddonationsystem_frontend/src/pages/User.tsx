@@ -12,14 +12,24 @@ interface UserData {
   fullName: string;
   email: string;
   phone: string;
-  age: number;
-  bloodGroup: string;
-  address: string;
-  lastDonationDate: string;
+  age?: number;
+  bloodGroup?: string;
+  address?: string;
+  lastDonationDate?: string;
+  birthDate?: string;
 }
 
 const User = () => {
-
+  const calculateAge = (birthDateString: string): number => {
+    const birthDate = new Date(birthDateString);
+    const today = new Date();
+    let age = today.getFullYear() - birthDate.getFullYear();
+    const m = today.getMonth() - birthDate.getMonth();
+    if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
+      age--;
+    }
+    return age;
+  };
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [user, setUser] = useState<UserData | null>(null);
   const userInfoRef = useRef<HTMLDivElement>(null);
@@ -43,15 +53,36 @@ const User = () => {
   }, []);
 
   useEffect(() => {
-    const userData = localStorage.getItem("user");
+    const token = localStorage.getItem("token");
 
-
-
-    if (userData) {
-      setUser(JSON.parse(userData));
+    if (token) {
+      fetch("http://localhost:8080/api/account/me", {
+        method: "GET",
+        headers: {
+          "Authorization": `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      })
+        .then((res) => {
+          if (!res.ok) {
+            throw new Error("Không lấy được thông tin người dùng");
+          }
+          return res.json();
+        })
+        .then((data) => {
+          console.log("User info from BE:", data);
+          setUser(data);
+        })
+        .catch((error) => {
+          console.error("Lỗi khi gọi API /me:", error);
+          alert("Không thể tải thông tin người dùng. Vui lòng đăng nhập lại.");
+          navigate("/login");
+        });
+    } else {
+      navigate("/login");
     }
-
   }, []);
+  
   return (
     <div className="user-dashboard">
       <div className="user-topbar">
@@ -70,7 +101,7 @@ const User = () => {
       </div>
 
       <main className="dashboard-content">
-        <div className="left-panel">
+        <div className="first-panel">
           <div className="user-card">
             <img src={avatarImg} alt="User" />
             <h2>{user?.fullName || "Tên người dùng"}</h2>
@@ -89,16 +120,16 @@ const User = () => {
                 <tr><td>Họ tên:</td><td>{user?.fullName}</td></tr>
                 <tr><td>Email:</td><td>{user?.email}</td></tr>
                 <tr><td>Điện thoại:</td><td>{user?.phone}</td></tr>
-                <tr><td>Tuổi:</td><td>{user?.age}</td></tr>
+                <tr><td>Tuổi:</td><td>{user?.birthDate ? calculateAge(user.birthDate) : '---'}</td></tr>
                 <tr><td>Nhóm máu:</td><td>{user?.bloodGroup}</td></tr>
                 <tr><td>Địa chỉ:</td><td>{user?.address}</td></tr>
-                <tr><td>Ngày hiến gần nhất:</td><td>{user?.lastDonationDate}</td></tr>
+                <tr><td>Ngày hiến gần nhất:</td><td>13 Tháng 12 2020</td></tr>
               </tbody>
             </table>
           </div>
         </div>
 
-        <div className="right-panel">
+        <div className="second-panel">
           <div className="donation-history">
             <h4>Lịch sử hiến máu</h4>
             <table>
@@ -106,10 +137,10 @@ const User = () => {
                 <tr><th>Ngày</th><th>Lượng máu (ml)</th></tr>
               </thead>
               <tbody>
-                <tr><td>13 Dec 2020</td><td>120</td></tr>
-                <tr><td>28 Nov 2020</td><td>20</td></tr>
-                <tr><td>04 Nov 2020</td><td>40</td></tr>
-                <tr><td>15 Oct 2020</td><td>310</td></tr>
+                <tr><td>13 Tháng 12 2020</td><td>120</td></tr>
+                <tr><td>28 Tháng 11 2020</td><td>20</td></tr>
+                <tr><td>04 Tháng 11 2020</td><td>40</td></tr>
+                <tr><td>15 Tháng 11 2020</td><td>310</td></tr>
               </tbody>
             </table>
           </div>
@@ -117,16 +148,17 @@ const User = () => {
           <div className="calendar-booking">
             <Calendar />
           </div>
+        </div>
+        <div className="third-panel">
           <div className="booking-item">
             <div className="booking-text">
               <h4>Đăng ký lịch khám</h4>
               <p>Hãy đặt lịch trước để được phục vụ nhanh và thuận tiện hơn.</p>
               <img src={calendarIcon} alt="Đặt lịch" />
-              <br/>  
+              <br />
               <button onClick={() => navigate('/booking')}>📅 Đặt lịch ngay</button>
             </div>
           </div>
-
           <div className="booking-item">
             <div className="booking-text">
               <h4>Đang phát triển</h4>
@@ -134,7 +166,6 @@ const User = () => {
             </div>
           </div>
         </div>
-
 
       </main>
     </div>

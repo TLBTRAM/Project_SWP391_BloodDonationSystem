@@ -11,6 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -33,17 +34,17 @@ public class MedicalStaffService {
     }
 
     //  Tạo kết quả xét nghiệm mới
-    public void createTestResult(Account account, TestResultDTO dto) {
-        MedicalStaff staff = getMedicalStaff(account);
-        Customer customer = customerRepository.findById(dto.getCustomerId())
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Customer not found"));
-
-        TestResult result = modelMapper.map(dto, TestResult.class);
-        result.setTestDate(dto.getTestDate() != null ? dto.getTestDate() : new Date());
-        result.setCustomer(customer);
-        result.setStaff(staff);
-        testResultRepository.save(result);
-    }
+//    public void createTestResult(Account account, TestResultDTO dto) {
+//        MedicalStaff staff = getMedicalStaff(account);
+//        Customer customer = customerRepository.findById(dto.getCustomerId())
+//                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Customer not found"));
+//
+//        TestResult result = modelMapper.map(dto, TestResult.class);
+//        result.setTestDate(dto.getTestDate() != null ? dto.getTestDate() : Date.UTC());
+//        result.setCustomer(customer);
+//        result.setStaff(staff);
+//        testResultRepository.save(result);
+//    }
 
     //  Lấy chi tiết 1 kết quả xét nghiệm
     public TestResultDTO getTestResultById(Long id) {
@@ -58,15 +59,15 @@ public class MedicalStaffService {
         return dto;
     }
 
-    private TestResult convertToEntity(TestResultDTO dto) {
-        TestResult result = modelMapper.map(dto, TestResult.class);
-        result.setTestDate(dto.getTestDate() != null ? dto.getTestDate() : new Date());
-        return result;
-    }
+//    private TestResult convertToEntity(TestResultDTO dto) {
+//        TestResult result = modelMapper.map(dto, TestResult.class);
+//        result.setTestDate((dto.getTestDate() != null) ? dto.getTestDate() : LocalDate.now());
+//        return result;
+//    }
 
     //  Lấy thông tin MedicalStaff tương ứng với Account
     private MedicalStaff getMedicalStaff(Account account) {
-        return medicalStaffRepository.findById(account.getId())
+        return medicalStaffRepository.findByAccount(account)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.FORBIDDEN, "Không phải Medical Staff"));
     }
 }

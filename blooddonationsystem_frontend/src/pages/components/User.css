@@ -67,21 +67,36 @@
 }
 
 .dashboard-content {
-  display: grid;
-  grid-template-columns: 1fr 2fr;
+    display: flex;
+  flex-direction: row; /* mặc định là row nhưng thêm vào cho chắc */
   gap: 30px;
+  align-items: flex-start;
 }
 
-.left-panel {
+.first-panel, .second-panel, .third-panel {
+  flex: 1;
+}
+
+.first-panel {
+  flex: 1.2;
   display: flex;
   flex-direction: column;
   gap: 30px;
 }
 
 
-.right-panel {
+.second-panel {
+  flex: 1;
   display: flex;
+  flex-direction: column;
   gap: 10px;
+}
+
+.third-panel {
+  flex: 0.9;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
 }
 
 .user-card {
@@ -174,7 +189,7 @@
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
   text-align: center;
   width: fit-content;
-  margin: 45px auto;
+  margin: 5px auto;
 }
 
 .user-info h3 {
