@@ -122,4 +122,6 @@ public class Account implements UserDetails {
     @OneToMany(mappedBy = "account")
     List<Feedback> feedbacks;
 
+    @OneToMany(mappedBy = "account")
+    List<Blog> blogs;
 }

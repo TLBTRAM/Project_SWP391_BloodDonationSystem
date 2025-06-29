@@ -35,4 +35,11 @@ public class RegisterAPI {
         return ResponseEntity.ok(appointment);
     }
 
+    @PreAuthorize("hasRole('CUSTOMER')")
+    @PutMapping("/cancel/{id}")
+    public ResponseEntity<Register> cancelRegister(@PathVariable Long id) {
+        Register register = registerService.cancelRegister(id);
+        return ResponseEntity.ok(register);
+    }
+
 }
