@@ -11,7 +11,6 @@ import { format } from "date-fns";
 import type { Locale } from "date-fns";
 
 import ScheduleManagement from "./MS_components/ScheduleManagement";
-import Screening from "./MS_components/Screening";
 import DonationSchedule from "./MS_components/DonationSchedule";
 import SendToStorage from "./MS_components/SendToStorage";
 import RequestBlood from "./MS_components/RequestBlood";
@@ -64,12 +63,7 @@ const MedicalStaff = () => {
               className="menu-item"
               onClick={() => setView("scheduleManagement")}
             >
-              Quản lý lịch khám
-            </button>
-          </li>
-          <li className={view === "screening" ? "active" : ""}>
-            <button className="menu-item" onClick={() => setView("screening")}>
-              Khám sàng lọc
+              Lịch khám sàng lọc
             </button>
           </li>
           <li className={view === "donationSchedule" ? "active" : ""}>
@@ -179,7 +173,6 @@ const MedicalStaff = () => {
         )}
 
         {view === "scheduleManagement" && <ScheduleManagement />}
-        {view === "screening" && <Screening />}
         {view === "donationSchedule" && <DonationSchedule />}
         {view === "sendToStorage" && <SendToStorage />}
         {view === "requestBlood" && <RequestBlood />}

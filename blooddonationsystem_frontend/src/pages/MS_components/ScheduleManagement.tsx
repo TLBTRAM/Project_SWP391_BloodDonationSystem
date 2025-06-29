@@ -58,7 +58,7 @@ const ScheduleManagement = () => {
 
   return (
     <div className="schedule-container">
-      <h2>Quản lý lịch khám</h2>
+      <h2>Quản lý lịch khám sàng lọc</h2>
 
       <div className="form-section">
         <ReactDatePicker
