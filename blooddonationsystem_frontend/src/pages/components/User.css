@@ -10,6 +10,8 @@
   justify-content: flex-end;
   align-items: center;
   margin-bottom: 30px;
+  position: relative;
+  z-index: 10;
 }
 
 .user-avatar-status {
@@ -17,6 +19,7 @@
   align-items: center;
   gap: 10px;
   position: relative;
+  z-index: 20;
   cursor: pointer;
   background: #fff;
   padding: 10px 15px;
@@ -49,7 +52,7 @@
   border-radius: 12px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
   overflow: hidden;
-  z-index: 100;
+  z-index: 999;
 }
 
 .dropdown button {
@@ -67,13 +70,16 @@
 }
 
 .dashboard-content {
-    display: flex;
-  flex-direction: row; /* mặc định là row nhưng thêm vào cho chắc */
+  display: flex;
+  flex-direction: row;
+  /* mặc định là row nhưng thêm vào cho chắc */
   gap: 30px;
   align-items: flex-start;
 }
 
-.first-panel, .second-panel, .third-panel {
+.first-panel,
+.second-panel,
+.third-panel {
   flex: 1;
 }
 
@@ -163,23 +169,6 @@
   font-weight: 600;
 }
 
-.user-info table {
-  width: 100%;
-  font-size: 14px;
-  border-collapse: collapse;
-}
-
-.user-info td {
-  padding: 10px 0;
-  color: #444;
-  vertical-align: top;
-}
-
-.user-info tr td:first-child {
-  font-weight: 500;
-  width: 140px;
-  color: #666;
-}
 
 .donation-history,
 .calendar-booking {
@@ -193,9 +182,10 @@
 }
 
 .user-info h3 {
-  margin-bottom: 12px;
-  color: #333;
-  font-size: 18px;
+  font-size: 20px;
+  margin-bottom: 20px;
+  color: #2c3e50;
+  font-weight: 700;
 }
 
 .user-info table {

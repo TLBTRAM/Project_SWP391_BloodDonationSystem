@@ -1,7 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './components/Admin.css';
-import { Link } from 'react-router-dom';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import logoBlood from './images/Logo/logo_blood.png';
 
 interface Account {
@@ -12,6 +11,13 @@ interface Account {
   role: 'Người dùng' | 'Nhân viên y tế' | 'Quản lý kho máu';
 }
 
+interface UserData {
+  id: number;
+  fullName: string;
+  email: string;
+  role: string;
+}
+
 const initialAccounts: Account[] = [
   { id: 1, name: 'Nguyễn Văn A', email: 'a@example.com', role: 'Người dùng' },
   { id: 2, name: 'Trần Thị B', email: 'b@example.com', role: 'Nhân viên y tế' },
@@ -20,22 +26,45 @@ const initialAccounts: Account[] = [
   { id: 5, name: 'Hoàng Thị E', email: 'e@example.com', role: 'Nhân viên y tế' },
 ];
 
+
 const Admin: React.FC = () => {
-  const userString = localStorage.getItem("user");
-  const user = userString ? JSON.parse(userString) : null;
-  const adminName = user?.fullName || "Admin"; // hoặc user.name nếu backend trả như vậy
+  const [adminInfo, setAdminInfo] = useState<UserData | null>(null);
   const [accounts, setAccounts] = useState<Account[]>(initialAccounts);
   const [search, setSearch] = useState('');
   const [filterRole, setFilterRole] = useState<string>('Tất cả');
   const navigate = useNavigate();
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+
+    if (token) {
+      fetch("http://localhost:8080/api/admin", {
+        method: "GET",
+        headers: {
+          "Authorization": `Bearer ${token}`,
+          "Content-Type": "application/json"
+        }
+      })
+        .then(res => {
+          if (!res.ok) throw new Error("Không thể lấy thông tin admin");
+          return res.json();
+        })
+        .then(data => {
+          setAdminInfo(data); // chứa fullName: "admin01"
+        })
+        .catch(err => {
+          console.error("Lỗi khi gọi API:", err);
+          navigate("/login");
+        });
+    } else {
+      navigate("/login");
+    }
+  }, []);
+
   const handleLogout = () => {
-
-    // Xoá token hoặc thông tin đăng nhập
     localStorage.removeItem("token");
-
-    // Điều hướng về trang chính (/), không phải /home
     navigate("/");
   };
+
   const handleDelete = (id: number) => {
     if (window.confirm('Bạn có chắc muốn xóa tài khoản này?')) {
       setAccounts(accounts.filter(account => account.id !== id));
@@ -63,7 +92,7 @@ const Admin: React.FC = () => {
           </Link>
         </div>
         <div className="admin-greeting">
-          Xin chào, <span className="admin-name">{adminName}</span>
+          Xin chào, <span className="admin-name"><strong>{adminInfo?.fullName || "Admin"}</strong></span>
         </div>
         <button className="admin-logout-btn" onClick={handleLogout}>
           Đăng xuất
