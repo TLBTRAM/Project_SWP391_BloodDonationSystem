@@ -3,6 +3,9 @@ import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import logoBlood from "./images/Logo/logo_blood.png";
 import "./components/Manager.css";
+import DeleteImg from "./images/Action/bin.png";
+import EditImg from "./images/Action/pen.png";
+
 import {
   BarChart,
   Bar,
@@ -12,8 +15,6 @@ import {
   CartesianGrid,
   ResponsiveContainer,
   Legend,
-  PieChart,
-  Pie,
   Cell,
 } from "recharts";
 
@@ -64,7 +65,7 @@ const initialData: BloodUnit[] = [
     group: "AB-",
     quantity: 7,
     entryDate: "15/05/2025",
-    expiryDate: "10/06/2025",
+    expiryDate: "5/07/2025",
   },
   {
     id: 5,
@@ -112,7 +113,6 @@ const initialData: BloodUnit[] = [
 
 // ========== Component chính ==========
 const Manager: React.FC = () => {
-  // ========== Các state lưu dữ liệu ==========
   const [bloodUnits, setBloodUnits] = useState<BloodUnit[]>(initialData);
   const [searchTerm, setSearchTerm] = useState("");
   const [filterGroup, setFilterGroup] = useState("");
@@ -164,7 +164,6 @@ const Manager: React.FC = () => {
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {
     const { name, value } = e.target;
-
     if (name === "entryDate" || name === "expiryDate") {
       let formatted = value.replace(/\D/g, "").slice(0, 8);
       if (formatted.length >= 5) {
@@ -181,7 +180,6 @@ const Manager: React.FC = () => {
     }
   };
 
-  // ========== Thêm đơn vị máu mới ==========
   const addBloodUnit = () => {
     const quantity = parseInt(formData.quantity);
     if (
@@ -205,12 +203,14 @@ const Manager: React.FC = () => {
     setView("dashboard");
   };
 
-  // ========== Xoá đơn vị máu ==========
   const deleteUnit = (id: number) => {
     setBloodUnits(bloodUnits.filter((unit) => unit.id !== id));
   };
 
-  // ========== Tính trạng thái máu dựa theo hạn sử dụng ==========
+  const editUnit = (id: number) => {
+    alert(`Chức năng sửa đơn vị máu có ID ${id} đang được phát triển.`);
+  };
+
   const getStatusLabel = (
     expiryDate: string
   ): "Hết hạn" | "Gần hết hạn" | "Còn hạn" => {
@@ -224,21 +224,20 @@ const Manager: React.FC = () => {
     if (diff <= 7) return "Gần hết hạn";
     return "Còn hạn";
   };
-  // ========== Gán class cho từng dòng bảng theo trạng thái ==========
+
   const getRowClass = (expiryDate: string) => {
     const status = getStatusLabel(expiryDate);
     if (status === "Hết hạn") return "expired";
     if (status === "Gần hết hạn") return "nearly-expired";
     return "";
   };
-  // ========== Gán màu sắc cho trạng thái ==========
+
   const statusClassMap: Record<string, string> = {
     "Còn hạn": "status-ok",
     "Gần hết hạn": "status-warning",
     "Hết hạn": "status-expired",
   };
 
-  // ========== Hàm sắp xếp ==========
   const sortFunction = (a: BloodUnit, b: BloodUnit) => {
     const dateA = sortBy === "entry" ? a.entryDate : a.expiryDate;
     const dateB = sortBy === "entry" ? b.entryDate : b.expiryDate;
@@ -248,7 +247,7 @@ const Manager: React.FC = () => {
     const d2 = new Date(yb, mb - 1, db);
     return d1.getTime() - d2.getTime();
   };
-  // ========== Lọc và sắp xếp danh sách máu ==========
+
   const filteredUnits = bloodUnits
     .filter((unit) =>
       unit.group.toLowerCase().includes(searchTerm.toLowerCase())
@@ -260,7 +259,6 @@ const Manager: React.FC = () => {
     })
     .sort(sortBy ? sortFunction : undefined);
 
-  // ========== Dữ liệu thống kê theo nhóm máu ==========
   const bloodGroupStats = bloodUnits.reduce<Record<string, number>>(
     (acc, unit) => {
       acc[unit.group] = (acc[unit.group] || 0) + unit.quantity;
@@ -269,15 +267,11 @@ const Manager: React.FC = () => {
     {}
   );
 
-  // Thứ tự nhóm máu cần sắp xếp
   const bloodOrder = ["A+", "B+", "AB+", "O+", "A-", "B-", "AB-", "O-"];
-
-  // Chuyển sang mảng và sắp xếp đúng thứ tự nhóm máu
   const chartData = Object.entries(bloodGroupStats)
     .map(([group, quantity]) => ({ group, quantity }))
     .sort((a, b) => bloodOrder.indexOf(a.group) - bloodOrder.indexOf(b.group));
 
-  // ========== Dữ liệu thống kê theo trạng thái ==========
   const statusStats = bloodUnits.reduce<Record<string, number>>((acc, unit) => {
     const status = getStatusLabel(unit.expiryDate);
     acc[status] = (acc[status] || 0) + unit.quantity;
@@ -285,10 +279,7 @@ const Manager: React.FC = () => {
   }, {});
 
   const chartDataByStatus = Object.entries(statusStats).map(
-    ([status, quantity]) => ({
-      status,
-      quantity,
-    })
+    ([status, quantity]) => ({ status, quantity })
   );
 
   // ========== Giao diện chính ==========
@@ -397,7 +388,7 @@ const Manager: React.FC = () => {
               <table className="blood-table">
                 <thead>
                   <tr>
-                    <th>STT</th>
+                    <th>ID</th>
                     <th>Nhóm máu</th>
                     <th>Số lượng</th>
                     <th>Ngày nhập</th>
@@ -431,10 +422,24 @@ const Manager: React.FC = () => {
                               {status}
                             </span>
                           </td>
-                          <td>
-                            <button onClick={() => deleteUnit(unit.id)}>
-                              Xoá
-                            </button>
+                          <td className="table-action-cell">
+                            <div className="table-action-buttons">
+                              {/* Nút sửa */}
+                              <button
+                                className="action-button-icon"
+                                onClick={() => editUnit(unit.id)}
+                              >
+                                <img src={EditImg} alt="Sửa" />
+                              </button>
+
+                              {/* Nút xoá */}
+                              <button
+                                className="action-button-icon"
+                                onClick={() => deleteUnit(unit.id)}
+                              >
+                                <img src={DeleteImg} alt="Xóa" />
+                              </button>
+                            </div>
                           </td>
                         </tr>
                       );
