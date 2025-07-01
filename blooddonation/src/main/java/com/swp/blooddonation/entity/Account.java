@@ -48,7 +48,10 @@ public class Account implements UserDetails {
     @Column(name = "fullname")
     public String fullName;
 
-    public Date YoB;
+    @Temporal(TemporalType.DATE)
+    @Column(name = "yob")
+    private Date birthDate;
+
     public LocalDateTime createAt;
 
     @Enumerated(EnumType.STRING)

@@ -1,8 +1,11 @@
 // ========== Import thư viện & thành phần cần thiết ==========
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import logoBlood from "./images/Logo/logo_blood.png";
 import "./components/Manager.css";
+import DeleteImg from "./images/Action/bin.png";
+import EditImg from "./images/Action/pen.png";
+
 import {
   BarChart,
   Bar,
@@ -12,8 +15,6 @@ import {
   CartesianGrid,
   ResponsiveContainer,
   Legend,
-  PieChart,
-  Pie,
   Cell,
 } from "recharts";
 
@@ -24,6 +25,16 @@ interface BloodUnit {
   quantity: number;
   entryDate: string;
   expiryDate: string;
+}
+
+interface UserData {
+  id: number;
+  fullName: string;
+  email: string;
+  phone: string;
+  birthDate?: string;
+  address?: string;
+  bloodGroup?: string;
 }
 
 // ========== Dữ liệu mẫu khởi tạo ==========
@@ -54,7 +65,7 @@ const initialData: BloodUnit[] = [
     group: "AB-",
     quantity: 7,
     entryDate: "15/05/2025",
-    expiryDate: "10/06/2025",
+    expiryDate: "5/07/2025",
   },
   {
     id: 5,
@@ -102,12 +113,14 @@ const initialData: BloodUnit[] = [
 
 // ========== Component chính ==========
 const Manager: React.FC = () => {
-  // ========== Các state lưu dữ liệu ==========
   const [bloodUnits, setBloodUnits] = useState<BloodUnit[]>(initialData);
   const [searchTerm, setSearchTerm] = useState("");
   const [filterGroup, setFilterGroup] = useState("");
   const [filterStatus, setFilterStatus] = useState("");
   const [sortBy, setSortBy] = useState("");
+  const navigate = useNavigate();
+  const [user, setUser] = useState<UserData | null>(null);
+
   const [formData, setFormData] = useState({
     group: "",
     quantity: "",
@@ -117,12 +130,40 @@ const Manager: React.FC = () => {
   const [view, setView] = useState<"dashboard" | "add" | "stats" | "requests">(
     "dashboard"
   );
+  React.useEffect(() => {
+    const token = localStorage.getItem("token");
+    console.log("FE token:", token); // debug
+
+    if (token) {
+      fetch("http://localhost:8080/api/account/me", {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      })
+        .then((res) => {
+          if (!res.ok) throw new Error("Lỗi khi gọi API");
+          return res.json();
+        })
+        .then((data) => {
+          console.log("Manager info from BE:", data);
+          setUser(data);
+        })
+        .catch((err) => {
+          console.error("Lỗi lấy thông tin:", err);
+          alert("Không thể tải thông tin người dùng. Vui lòng đăng nhập lại.");
+          window.location.href = "/login";
+        });
+    } else {
+      window.location.href = "/login";
+    }
+  }, []);
 
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {
     const { name, value } = e.target;
-
     if (name === "entryDate" || name === "expiryDate") {
       let formatted = value.replace(/\D/g, "").slice(0, 8);
       if (formatted.length >= 5) {
@@ -139,7 +180,6 @@ const Manager: React.FC = () => {
     }
   };
 
-  // ========== Thêm đơn vị máu mới ==========
   const addBloodUnit = () => {
     const quantity = parseInt(formData.quantity);
     if (
@@ -163,12 +203,14 @@ const Manager: React.FC = () => {
     setView("dashboard");
   };
 
-  // ========== Xoá đơn vị máu ==========
   const deleteUnit = (id: number) => {
     setBloodUnits(bloodUnits.filter((unit) => unit.id !== id));
   };
 
-  // ========== Tính trạng thái máu dựa theo hạn sử dụng ==========
+  const editUnit = (id: number) => {
+    alert(`Chức năng sửa đơn vị máu có ID ${id} đang được phát triển.`);
+  };
+
   const getStatusLabel = (
     expiryDate: string
   ): "Hết hạn" | "Gần hết hạn" | "Còn hạn" => {
@@ -182,21 +224,20 @@ const Manager: React.FC = () => {
     if (diff <= 7) return "Gần hết hạn";
     return "Còn hạn";
   };
-  // ========== Gán class cho từng dòng bảng theo trạng thái ==========
+
   const getRowClass = (expiryDate: string) => {
     const status = getStatusLabel(expiryDate);
     if (status === "Hết hạn") return "expired";
     if (status === "Gần hết hạn") return "nearly-expired";
     return "";
   };
-  // ========== Gán màu sắc cho trạng thái ==========
+
   const statusClassMap: Record<string, string> = {
     "Còn hạn": "status-ok",
     "Gần hết hạn": "status-warning",
     "Hết hạn": "status-expired",
   };
 
-  // ========== Hàm sắp xếp ==========
   const sortFunction = (a: BloodUnit, b: BloodUnit) => {
     const dateA = sortBy === "entry" ? a.entryDate : a.expiryDate;
     const dateB = sortBy === "entry" ? b.entryDate : b.expiryDate;
@@ -206,7 +247,7 @@ const Manager: React.FC = () => {
     const d2 = new Date(yb, mb - 1, db);
     return d1.getTime() - d2.getTime();
   };
-  // ========== Lọc và sắp xếp danh sách máu ==========
+
   const filteredUnits = bloodUnits
     .filter((unit) =>
       unit.group.toLowerCase().includes(searchTerm.toLowerCase())
@@ -218,7 +259,6 @@ const Manager: React.FC = () => {
     })
     .sort(sortBy ? sortFunction : undefined);
 
-  // ========== Dữ liệu thống kê theo nhóm máu ==========
   const bloodGroupStats = bloodUnits.reduce<Record<string, number>>(
     (acc, unit) => {
       acc[unit.group] = (acc[unit.group] || 0) + unit.quantity;
@@ -227,15 +267,11 @@ const Manager: React.FC = () => {
     {}
   );
 
-  // Thứ tự nhóm máu cần sắp xếp
   const bloodOrder = ["A+", "B+", "AB+", "O+", "A-", "B-", "AB-", "O-"];
-
-  // Chuyển sang mảng và sắp xếp đúng thứ tự nhóm máu
   const chartData = Object.entries(bloodGroupStats)
     .map(([group, quantity]) => ({ group, quantity }))
     .sort((a, b) => bloodOrder.indexOf(a.group) - bloodOrder.indexOf(b.group));
 
-  // ========== Dữ liệu thống kê theo trạng thái ==========
   const statusStats = bloodUnits.reduce<Record<string, number>>((acc, unit) => {
     const status = getStatusLabel(unit.expiryDate);
     acc[status] = (acc[status] || 0) + unit.quantity;
@@ -243,10 +279,7 @@ const Manager: React.FC = () => {
   }, {});
 
   const chartDataByStatus = Object.entries(statusStats).map(
-    ([status, quantity]) => ({
-      status,
-      quantity,
-    })
+    ([status, quantity]) => ({ status, quantity })
   );
 
   // ========== Giao diện chính ==========
@@ -260,11 +293,16 @@ const Manager: React.FC = () => {
           </Link>
         </div>
         <div className="manager-greeting">
-          Xin chào, <span className="manager-name">Quản lí kho máu</span>
+          Xin chào,{" "}
+          <span className="manager-name">{user?.fullName || "Quản lí kho máu"}</span>
         </div>
         <button
           className="manager-logout-btn"
-          onClick={() => alert("Đăng xuất thành công!")}
+          onClick={() => {
+            localStorage.removeItem("token"); 
+            alert("Đăng xuất thành công!");
+            navigate("/login"); 
+          }}
         >
           Đăng xuất
         </button>
@@ -350,7 +388,7 @@ const Manager: React.FC = () => {
               <table className="blood-table">
                 <thead>
                   <tr>
-                    <th>STT</th>
+                    <th>ID</th>
                     <th>Nhóm máu</th>
                     <th>Số lượng</th>
                     <th>Ngày nhập</th>
@@ -384,10 +422,24 @@ const Manager: React.FC = () => {
                               {status}
                             </span>
                           </td>
-                          <td>
-                            <button onClick={() => deleteUnit(unit.id)}>
-                              Xoá
-                            </button>
+                          <td className="table-action-cell">
+                            <div className="table-action-buttons">
+                              {/* Nút sửa */}
+                              <button
+                                className="action-button-icon"
+                                onClick={() => editUnit(unit.id)}
+                              >
+                                <img src={EditImg} alt="Sửa" />
+                              </button>
+
+                              {/* Nút xoá */}
+                              <button
+                                className="action-button-icon"
+                                onClick={() => deleteUnit(unit.id)}
+                              >
+                                <img src={DeleteImg} alt="Xóa" />
+                              </button>
+                            </div>
                           </td>
                         </tr>
                       );
