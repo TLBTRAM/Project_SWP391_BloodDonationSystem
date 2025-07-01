@@ -136,8 +136,9 @@ const Register: React.FC = () => {
               )}
             </div>
 
-            <div className="form-row">
-              <div className="form-group date-picker-group">
+
+          <div className="form-row">
+            <div className="form-group date-picker-group">
                 <label className="form-label">Ngày sinh</label>
                 <div className="date-picker-wrapper">
                   <DatePicker
@@ -181,9 +182,9 @@ const Register: React.FC = () => {
                   className="input-text"
                   value={age}
                   readOnly
-                />
-              </div>
+              />
             </div>
+          </div>
 
             <div className="form-group">
               <label className="form-label">Giới tính</label>
@@ -193,8 +194,8 @@ const Register: React.FC = () => {
                 onChange={(e) => setGender(e.target.value)}
               >
                 <option value="">Chọn giới tính</option>
-                <option value="Nam">Nam</option>
-                <option value="Nữ">Nữ</option>
+                <option value="MALE">Nam</option>
+                <option value="FEMALE">Nữ</option>
                 <option value="Khác">Khác</option>
               </select>
               {errors.gender && (

@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/admin")
 @SecurityRequirement(name = "api")
 @RequiredArgsConstructor
+@CrossOrigin("*")
 public class AdminAPI {
 
     @Autowired

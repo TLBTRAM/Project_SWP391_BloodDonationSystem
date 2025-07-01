@@ -1,14 +1,14 @@
 import React, { useState, useEffect } from "react";
 import "./components/MedicalStaff.css";
-import docImg from "../pages/images/User/doctor.png";
+import avatarImg from './images/User/Avatar.png';
 import Calendar from "./Calendar";
 
 import ReactDatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { registerLocale } from "react-datepicker";
 import { vi } from "date-fns/locale/vi";
-import { format } from "date-fns";
-import type { Locale } from "date-fns";
+import { Locale , format } from "date-fns";
+
 
 import Header from "../layouts/header-footer/Header";
 import ScheduleManagement from "./MS_components/ScheduleManagement";
@@ -32,6 +32,8 @@ const MedicalStaff = () => {
     | "requestBlood"
   >("medicalDashboard");
 
+  const [staff, setStaff] = useState<any | null>(null); // ⬅️ thêm: state lưu thông tin nhân viên
+
   useEffect(() => {
     const fakeAppointments = [
       { date: "2025-06-26", time: "09:00", donor: "Nguyễn Võ Sỹ Khim" },
@@ -39,6 +41,34 @@ const MedicalStaff = () => {
       { date: "2025-06-26", time: "10:15", donor: "Nguyễn Võ Sỹ Khim" },
     ];
     setAppointments(fakeAppointments);
+  }, []);
+
+  useEffect(() => {
+    // ⬅️ thêm: gọi API lấy thông tin nhân viên
+    const token = localStorage.getItem("token");
+    console.log("FE token (staff):", token);
+
+    if (token) {
+      fetch("http://localhost:8080/api/account/me", {
+        method: "GET",
+        headers: {
+          "Authorization": `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      })
+        .then((res) => {
+          if (!res.ok) throw new Error("Không lấy được thông tin nhân viên");
+          return res.json();
+        })
+        .then((data) => {
+          console.log("Staff info from BE:", data);
+          setStaff(data);
+        })
+        .catch((error) => {
+          console.error("Lỗi khi gọi API /me:", error);
+          alert("Không thể tải thông tin nhân viên. Vui lòng đăng nhập lại.");
+        });
+    }
   }, []);
 
   const formatDate = (date: Date) => date.toISOString().split("T")[0];
@@ -103,17 +133,17 @@ const MedicalStaff = () => {
               <div className="staff-profile">
                 <img
                   className="staff-avatar"
-                  src={docImg}
+                  src={avatarImg}
                   alt="Medical Staff"
                 />
                 <div>
                   <div className="name-role">
-                    <h2>Grace Wilson</h2>
+                    <h2>{staff?.fullName || "Tên nhân viên"}</h2> {/* ⬅️ thay */}
                     <span className="role-tag">Nhân viên y tế</span>
                   </div>
-                  <p>Email: hoclambacsi@gmail.com</p>
-                  <p>Phone: 0912 345 678</p>
-                  <p>Company: FPT Medicare</p>
+                  <p>Email: {staff?.email || "---"}</p> {/* ⬅️ thay */}
+                  <p>Phone: {staff?.phone || "---"}</p> {/* ⬅️ thay */}
+                  <p>Company: {staff?.address || "Đang cập nhật"}</p> {/* ⬅️ thay */}
                 </div>
                 <button className="edit-button">Chỉnh sửa hồ sơ</button>
               </div>

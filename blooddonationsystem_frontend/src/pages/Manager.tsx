@@ -1,6 +1,6 @@
 // ========== Import thư viện & thành phần cần thiết ==========
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import logoBlood from "./images/Logo/logo_blood.png";
 import "./components/Manager.css";
 import {
@@ -24,6 +24,16 @@ interface BloodUnit {
   quantity: number;
   entryDate: string;
   expiryDate: string;
+}
+
+interface UserData {
+  id: number;
+  fullName: string;
+  email: string;
+  phone: string;
+  birthDate?: string;
+  address?: string;
+  bloodGroup?: string;
 }
 
 // ========== Dữ liệu mẫu khởi tạo ==========
@@ -108,6 +118,9 @@ const Manager: React.FC = () => {
   const [filterGroup, setFilterGroup] = useState("");
   const [filterStatus, setFilterStatus] = useState("");
   const [sortBy, setSortBy] = useState("");
+  const navigate = useNavigate();
+  const [user, setUser] = useState<UserData | null>(null);
+
   const [formData, setFormData] = useState({
     group: "",
     quantity: "",
@@ -117,6 +130,35 @@ const Manager: React.FC = () => {
   const [view, setView] = useState<"dashboard" | "add" | "stats" | "requests">(
     "dashboard"
   );
+  React.useEffect(() => {
+    const token = localStorage.getItem("token");
+    console.log("FE token:", token); // debug
+
+    if (token) {
+      fetch("http://localhost:8080/api/account/me", {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      })
+        .then((res) => {
+          if (!res.ok) throw new Error("Lỗi khi gọi API");
+          return res.json();
+        })
+        .then((data) => {
+          console.log("Manager info from BE:", data);
+          setUser(data);
+        })
+        .catch((err) => {
+          console.error("Lỗi lấy thông tin:", err);
+          alert("Không thể tải thông tin người dùng. Vui lòng đăng nhập lại.");
+          window.location.href = "/login";
+        });
+    } else {
+      window.location.href = "/login";
+    }
+  }, []);
 
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
@@ -260,11 +302,16 @@ const Manager: React.FC = () => {
           </Link>
         </div>
         <div className="manager-greeting">
-          Xin chào, <span className="manager-name">Quản lí kho máu</span>
+          Xin chào,{" "}
+          <span className="manager-name">{user?.fullName || "Quản lí kho máu"}</span>
         </div>
         <button
           className="manager-logout-btn"
-          onClick={() => alert("Đăng xuất thành công!")}
+          onClick={() => {
+            localStorage.removeItem("token"); 
+            alert("Đăng xuất thành công!");
+            navigate("/login"); 
+          }}
         >
           Đăng xuất
         </button>

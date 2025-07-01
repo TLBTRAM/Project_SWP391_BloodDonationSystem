@@ -8,6 +8,7 @@ interface Account {
   id: number;
   name: string;
   email: string;
+  enabled: boolean;
   role: 'Người dùng' | 'Nhân viên y tế' | 'Quản lý kho máu';
 }
 
@@ -18,26 +19,26 @@ interface UserData {
   role: string;
 }
 
-const initialAccounts: Account[] = [
-  { id: 1, name: 'Nguyễn Văn A', email: 'a@example.com', role: 'Người dùng' },
-  { id: 2, name: 'Trần Thị B', email: 'b@example.com', role: 'Nhân viên y tế' },
-  { id: 3, name: 'Lê Văn C', email: 'c@example.com', role: 'Quản lý kho máu' },
-  { id: 4, name: 'Phạm Văn D', email: 'd@example.com', role: 'Người dùng' },
-  { id: 5, name: 'Hoàng Thị E', email: 'e@example.com', role: 'Nhân viên y tế' },
-];
-
-
 const Admin: React.FC = () => {
   const [adminInfo, setAdminInfo] = useState<UserData | null>(null);
-  const [accounts, setAccounts] = useState<Account[]>(initialAccounts);
+  const [accounts, setAccounts] = useState<Account[]>([]);
   const [search, setSearch] = useState('');
   const [filterRole, setFilterRole] = useState<string>('Tất cả');
   const navigate = useNavigate();
+  
+  const toggleEnabled = (id: number) => {
+  setAccounts(prev =>
+    prev.map(acc =>
+      acc.id === id ? { ...acc, enabled: !acc.enabled } : acc
+    )
+  );
+};
+
   useEffect(() => {
     const token = localStorage.getItem("token");
 
     if (token) {
-      fetch("http://localhost:8080/api/admin", {
+      fetch("http://localhost:8080/api/admin/me", {
         method: "GET",
         headers: {
           "Authorization": `Bearer ${token}`,
@@ -49,7 +50,8 @@ const Admin: React.FC = () => {
           return res.json();
         })
         .then(data => {
-          setAdminInfo(data); // chứa fullName: "admin01"
+          console.log("Dữ liệu admin:", data);
+          setAdminInfo(data);
         })
         .catch(err => {
           console.error("Lỗi khi gọi API:", err);
@@ -57,6 +59,42 @@ const Admin: React.FC = () => {
         });
     } else {
       navigate("/login");
+    }
+  }, []);
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+
+    if (token) {
+      fetch("http://localhost:8080/api/admin/users", {
+        method: "GET",
+        headers: {
+          "Authorization": `Bearer ${token}`,
+          "Content-Type": "application/json"
+        }
+      })
+        .then(res => {
+          if (!res.ok) throw new Error("Không thể tải danh sách tài khoản");
+          return res.json();
+        })
+        .then(data => {
+          const mappedAccounts = data.map((acc: any) => ({
+            id: acc.id,
+            name: acc.fullName,
+            email: acc.email,
+            role:
+              acc.role === "CUSTOMER"
+                ? "Người dùng"
+                : acc.role === "MEDICALSTAFF"
+                  ? "Nhân viên y tế"
+                  : acc.role === "MANAGER"
+                    ? "Quản lý kho máu"
+                    : "Admin"
+          }));
+          setAccounts(mappedAccounts);
+        })
+        .catch(err => {
+          console.error("Lỗi khi tải danh sách tài khoản:", err);
+        });
     }
   }, []);
 
@@ -67,21 +105,33 @@ const Admin: React.FC = () => {
 
   const handleDelete = (id: number) => {
     if (window.confirm('Bạn có chắc muốn xóa tài khoản này?')) {
-      setAccounts(accounts.filter(account => account.id !== id));
+      setAccounts((accounts as Account[]).filter(account => account.id !== id));
+      // Bạn có thể gọi API xóa thực sự ở đây nếu cần:
+      /*
+      fetch(`http://localhost:8080/api/admin/users/${id}`, {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      }).then(() => {
+        setAccounts(accounts.filter(account => account.id !== id));
+      });
+      */
     }
   };
 
-  const filteredAccounts = accounts.filter(account => {
+  const filteredAccounts = (accounts as Account[]).filter(account => {
     const matchesRole = filterRole === 'Tất cả' || account.role === filterRole;
     const matchesSearch = account.name.toLowerCase().includes(search.toLowerCase());
     return matchesRole && matchesSearch;
   });
 
   const roleCounts = {
-    'Người dùng': accounts.filter(a => a.role === 'Người dùng').length,
-    'Nhân viên y tế': accounts.filter(a => a.role === 'Nhân viên y tế').length,
-    'Quản lý kho máu': accounts.filter(a => a.role === 'Quản lý kho máu').length,
+    'Người dùng': (accounts as Account[]).filter(a => a.role === 'Người dùng').length,
+    'Nhân viên y tế': (accounts as Account[]).filter(a => a.role === 'Nhân viên y tế').length,
+    'Quản lý kho máu': (accounts as Account[]).filter(a => a.role === 'Quản lý kho máu').length,
   };
+
 
   return (
     <>
@@ -154,6 +204,12 @@ const Admin: React.FC = () => {
                   <td>{account.role}</td>
                   <td>
                     <button className="edit-btn">Sửa</button>
+                    <button
+                      className="status-btn"
+                      onClick={() => toggleEnabled(account.id)}
+                    >
+                      {account.enabled ? "Vô hiệu hóa" : "Kích hoạt"}
+                    </button>
                     <button className="delete-btn" onClick={() => handleDelete(account.id)}>
                       Xóa
                     </button>

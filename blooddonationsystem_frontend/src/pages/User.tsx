@@ -5,6 +5,7 @@ import './components/User.css';
 import Header from '../layouts/header-footer/Header';
 import avatarImg from './images/User/Avatar.png';
 import calendarIcon from './images/User/Calendar.png';
+import notificationIcon from './images/User/notifications.png';
 
 interface UserData {
   id: number;
@@ -96,8 +97,10 @@ const User = () => {
             </span>
             {dropdownOpen && (
               <div className="dropdown">
-                <button onClick={() => navigate('/user')}>Tài khoản</button>
-                <button onClick={handleLogout}>Đăng xuất</button>
+                <button onClick={() => navigate('/user')}>👤 Hồ sơ cá nhân</button>
+                <button onClick={() => navigate('/settings')}>⚙️ Cài đặt</button>
+                <button onClick={() => navigate('/booking-list')}>📅 Lịch hẹn đã đặt</button>
+                <button onClick={handleLogout}>🚪 Đăng xuất</button>
               </div>
             )}
           </div>
@@ -121,7 +124,7 @@ const User = () => {
               <table>
                 <h3 className="info-title">Thông tin cá nhân</h3>
                 <tbody>
-                  <tr><td>👤 Họ tên:</td><td>{user?.fullName}</td></tr> 
+                  <tr><td>👤 Họ tên:</td><td>{user?.fullName}</td></tr>
                   <tr><td>📧 Email:</td><td>{user?.email}</td></tr>
                   <tr><td>📱 Điện thoại:</td><td>{user?.phone}</td></tr>
                   <tr><td>🎂 Tuổi:</td><td>{user?.birthDate ? calculateAge(user.birthDate) : '---'}</td></tr>
@@ -156,11 +159,25 @@ const User = () => {
           <div className="third-panel">
             <div className="booking-item">
               <div className="booking-text">
+
                 <h4>Đăng ký lịch khám</h4>
                 <p>Hãy đặt lịch trước để được phục vụ nhanh và thuận tiện hơn.</p>
                 <img src={calendarIcon} alt="Đặt lịch" />
-                <br />
-                <button onClick={() => navigate('/booking')}>📅 Đặt lịch ngay</button>
+                <button onClick={() => navigate('/booking')}>Đặt lịch ngay</button>
+              </div>
+            </div>
+            <div className="booking-item">
+              <div className="booking-text">
+                <h4>Thông báo</h4>
+                <p>Nhấn vào đây để xem thông báo mới về xét nghiệm, kết quả khám sàng lọc, người cần máu và các cập nhật khác.</p>
+                <img src={notificationIcon} alt="Thông báo" />
+                <button onClick={() => navigate('/notification')}>Xem ngay</button>
+              </div>
+            </div>
+            <div className="booking-item">
+              <div className="booking-text">
+                <h4>Đang phát triển</h4>
+                <p>Chức năng mới đang được cập nhật và sẽ ra mắt trong thời gian tới.</p>
               </div>
             </div>
             <div className="booking-item">
