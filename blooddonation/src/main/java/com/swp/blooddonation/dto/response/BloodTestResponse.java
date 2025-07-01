@@ -2,6 +2,7 @@ package com.swp.blooddonation.dto.response;
 
 import com.swp.blooddonation.enums.BloodTestStatus;
 import com.swp.blooddonation.enums.BloodType;
+import com.swp.blooddonation.enums.RhType;
 import lombok.Data;
 
 import java.time.LocalDate;
@@ -19,4 +20,5 @@ public class BloodTestResponse {
     private String testedByName; // tên nhân viên thực hiện
     private BloodTestStatus status;
     private BloodType bloodType;
+    private RhType rhType;
 }
