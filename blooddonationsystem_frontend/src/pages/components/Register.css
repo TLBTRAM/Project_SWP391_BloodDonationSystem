@@ -11,14 +11,38 @@ body {
   color: #333;
 }
 
-/* Container chính của form */
+/* Thẻ chứa toàn bộ nền hình + lớp phủ */
+.register-bg {
+  position: relative;
+  background-size: cover;
+  background-position: center;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 0;
+}
+
+/* Lớp phủ đỏ mờ */
+.register-bg::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-color: rgba(190, 60, 80, 0.3);
+  z-index: 1;
+}
+
+/* Container form */
 .form-container {
+  position: relative;
   padding: 30px 40px;
-  background: white;
-  max-width: 700px;
-  margin: 30px auto;
+  min-width: 600px;
+  width: 100%;
   border-radius: 8px;
+  background-color: white;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
+  z-index: 2;
+  margin: 60px 0;
 }
 
 #register-title {
@@ -67,16 +91,16 @@ select,
 textarea,
 .react-datepicker-wrapper input {
   width: 100%;
-    padding: 12px 16px;
-    margin-bottom: 24px;
-    border: 1px solid #ccc;
-    border-radius: 10px;
-    font-size: 15px;
-    font-family: "Poppins", sans-serif;
-    background-color: #fdfdfd;
-    transition: border-color 0.3s ease, box-shadow 0.3s ease;
-    box-sizing: border-box;
-    appearance: none;
+  padding: 12px 16px;
+  margin-bottom: 24px;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  font-size: 15px;
+  font-family: "Poppins", sans-serif;
+  background-color: #fdfdfd;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  box-sizing: border-box;
+  appearance: none;
 }
 
 input:focus,

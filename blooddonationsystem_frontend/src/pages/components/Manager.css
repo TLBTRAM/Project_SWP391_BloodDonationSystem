@@ -213,29 +213,9 @@ textarea {
   max-width: 300px;
 }
 
-/* =======================
-   8. FORM SECTION
-======================= */
-.manager-container button {
-  display: block;
-  margin: 20px auto 0;
-  padding: 10px 20px;
-  background-color: #004080;
-  color: #ffffff;
-  border: none;
-  border-radius: 8px;
-  font-weight: 500;
-  font-size: 15px;
-  cursor: pointer;
-  transition: background 0.2s;
-}
-
-.manager-container button:hover {
-  background-color: #003366;
-}
 
 /* =======================
-   9. TABLE
+   8. TABLE
 ======================= */
 .blood-table {
   width: 100%;
@@ -269,7 +249,7 @@ textarea {
 }
 
 /* =======================
-   10. TABLE ROW COLORS
+   9. TABLE ROW COLORS
 ======================= */
 .blood-table tr.expired td {
   background-color: #ffe2e2 !important;
@@ -280,37 +260,36 @@ textarea {
 }
 
 /* =======================
-   11. TABLE ACTION BUTTONS
+   10. TABLE ACTION BUTTONS
 ======================= */
-.blood-table button {
-  padding: 6px 12px;
-  margin: 0 4px;
-  font-size: 14px;
+.table-action-cell {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+}
+
+.table-action-buttons {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+}
+
+.action-button-icon {
+  background: none;
   border: none;
-  border-radius: 6px;
-  color: white;
   cursor: pointer;
-  transition: background 0.2s ease;
+  padding: 0;
 }
 
-.blood-table button:first-child {
-  background-color: #28a745;
-}
-
-.blood-table button:first-child:hover {
-  background-color: #218838;
-}
-
-.blood-table button:last-child {
-  background-color: #dc3545;
-}
-
-.blood-table button:last-child:hover {
-  background-color: #c82333;
+.action-button-icon img {
+  width: 40px;
+  height: 40px;
 }
 
 /* =======================
-   12. EXPIRY LABELS
+   11. EXPIRY LABELS
 ======================= */
 .expiry-label {
   font-size: 13px;
@@ -327,7 +306,7 @@ textarea {
 }
 
 /* =======================
-   13. STATUS BADGES
+   12. STATUS BADGES
 ======================= */
 .status-badge {
   display: inline-block;
@@ -355,7 +334,7 @@ textarea {
 }
 
 /* =======================
-   14. FORM BOX STYLES
+   13. FORM BOX STYLES
 ======================= */
 .form-page-title {
   text-align: center;

@@ -168,6 +168,20 @@ h1 {
   transition: background 0.2s ease;
 }
 
+.status-btn {
+  background-color: #0099ff;
+  color: white;
+  border: none;
+  padding: 6px 10px;
+  margin-left: 5px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.status-btn:hover {
+  background-color: #007acc;
+}
+
 .edit-btn {
   background-color: #28a745; /* giống nút đầu tiên trong CSS2 */
 }

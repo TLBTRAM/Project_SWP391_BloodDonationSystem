@@ -1,15 +1,25 @@
+html, body {
+  margin: 0;
+  padding: 0;
+  height: auto;
+  overflow-x: hidden; /* chỉ ẩn tràn ngang thôi */
+}
+
 .user-dashboard {
   font-family: 'Poppins', sans-serif;
   background: linear-gradient(to bottom right, #f0f4ff, #ffffff);
   min-height: 100vh;
   padding: 30px;
+  height: auto;
 }
 
 .user-topbar {
   display: flex;
   justify-content: flex-end;
   align-items: center;
-  margin-bottom: 30px;
+  margin-bottom: 10px;
+  position: relative;
+  z-index: 10;
 }
 
 .user-avatar-status {
@@ -17,6 +27,7 @@
   align-items: center;
   gap: 10px;
   position: relative;
+  z-index: 20;
   cursor: pointer;
   background: #fff;
   padding: 10px 15px;
@@ -49,7 +60,7 @@
   border-radius: 12px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
   overflow: hidden;
-  z-index: 100;
+  z-index: 999;
 }
 
 .dropdown button {
@@ -67,13 +78,16 @@
 }
 
 .dashboard-content {
-    display: flex;
-  flex-direction: row; /* mặc định là row nhưng thêm vào cho chắc */
+  display: flex;
+  flex-direction: row;
+  /* mặc định là row nhưng thêm vào cho chắc */
   gap: 30px;
-  align-items: flex-start;
+  height: auto;
 }
 
-.first-panel, .second-panel, .third-panel {
+.first-panel,
+.second-panel,
+.third-panel {
   flex: 1;
 }
 
@@ -163,23 +177,6 @@
   font-weight: 600;
 }
 
-.user-info table {
-  width: 100%;
-  font-size: 14px;
-  border-collapse: collapse;
-}
-
-.user-info td {
-  padding: 10px 0;
-  color: #444;
-  vertical-align: top;
-}
-
-.user-info tr td:first-child {
-  font-weight: 500;
-  width: 140px;
-  color: #666;
-}
 
 .donation-history,
 .calendar-booking {
@@ -193,9 +190,10 @@
 }
 
 .user-info h3 {
-  margin-bottom: 12px;
-  color: #333;
-  font-size: 18px;
+  font-size: 20px;
+  margin-bottom: 20px;
+  color: #2c3e50;
+  font-weight: 700;
 }
 
 .user-info table {
@@ -240,34 +238,44 @@
 
 .booking-item {
   display: flex;
-  align-items: flex-start;
-  gap: 15px;
+  flex-direction: row;
+  align-items: center;
+  gap: 20px;
   background: #ffffff;
   border-radius: 16px;
-  box-shadow: 0 3px 12px rgba(0, 0, 0, 0.08);
-  padding: 20px;
-  transition: transform 0.2s ease;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.06);
+  padding: 20px 25px;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+
 }
 
 .booking-item:hover {
-  transform: translateY(-3px);
+  transform: translateY(-4px);
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.08);
 }
 
 .booking-item img {
-  width: 50px;
-  height: 50px;
+  width: 64px;
+  height: 64px;
+  object-fit: contain;
+  margin-right: 15px;
+  border-radius: 12px;
+  background-color: #fce4ec;
+  padding: 8px;
 }
 
 .booking-text h4 {
-  margin: 0 0 6px;
-  font-size: 16px;
-  color: #333;
+  margin: 0 0 8px;
+  font-size: 18px;
+  font-weight: 700;
+  color: #2c3e50;
 }
 
 .booking-text p {
-  margin: 0;
+  margin: 0 0 12px;
   font-size: 14px;
-  color: #666;
+  color: #555;
+  line-height: 1.5;
 }
 
 .booking-text button {

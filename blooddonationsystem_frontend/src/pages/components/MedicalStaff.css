@@ -195,7 +195,7 @@ body {
 ------------------------------------------ */
 .appointment-list {
   background: white;
-  padding: 28px;
+  padding: 28px !important;
   border-radius: 16px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
 }
@@ -286,6 +286,85 @@ li {
 .status-pending {
   background-color: #facc15;
   color: #1e293b;
+}
+
+
+/* -----------------------------------------
+  7. DATEPICKER
+------------------------------------------ */
+.custom-datepicker {
+  font-family: 'Poppins', sans-serif;
+  border: none;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+  border-radius: 10px;
+  overflow: hidden;
+  margin-right: 30px;
+}
+
+.react-datepicker__header {
+  background-color: #ED232B;
+  color: white;
+  border: none;
+  padding-top: 10px;
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
+}
+
+.react-datepicker__current-month,
+.react-datepicker__day-name {
+  font-weight: 500;
+  color: white;
+}
+
+.react-datepicker__day {
+  color: #333;
+  font-weight: 500;
+  border-radius: 10px;
+  padding: 2px 0;
+  margin: 2px;
+  transition: all 0.2s ease-in-out;
+}
+
+.react-datepicker__day--selected,
+.react-datepicker__day--keyboard-selected {
+  background-color: #ED232B !important;
+  color: white !important;
+}
+
+.react-datepicker__day--today {
+  font-weight: bold;
+  color: #ED232B;
+  border-bottom: 2px solid #ED232B;
+}
+
+.react-datepicker__triangle {
+  display: none;
+}
+
+.react-datepicker__month-dropdown,
+.react-datepicker__year-dropdown {
+  background-color: white;
+  border: 1px solid #ddd;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.react-datepicker__navigation {
+  top: 16px;
+}
+
+.react-datepicker__today-button {
+  background: none;
+  border: none;
+  color: #ED232B;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.react-datepicker__current-month {
+  font-size: 28px !important;
+  color: #333333 !important;
+  font-weight: bold !important;
+  text-align: center;
 }
 
 
