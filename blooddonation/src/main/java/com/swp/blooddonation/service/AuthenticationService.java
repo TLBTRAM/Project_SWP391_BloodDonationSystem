@@ -88,7 +88,13 @@ public class AuthenticationService implements UserDetailsService {
         if (savedAccount.getRole() == Role.CUSTOMER) {
             Customer customer = new Customer();
             customer.setAccount(savedAccount);
-            customerRepository.save(customer);
+            try {
+                Customer savedCustomer = customerRepository.save(customer);
+                System.out.println("Saved customer id: " + savedCustomer.getId());
+            } catch (Exception e) {
+                System.out.println("Error saving customer: " + e.getMessage());
+                e.printStackTrace();
+            }
         }
 
         // Gửi email
