@@ -149,6 +149,50 @@ public class RegisterService {
         return registerRepository.save(register);
     }
 
+    @Transactional
+    public void cancelRegister(Long registerId) {
+        Account currentUser = authenticationService.getCurrentAccount();
+
+        Register register = registerRepository.findById(registerId)
+                .orElseThrow(() -> new BadRequestException("Không tìm thấy đơn đăng ký."));
+
+        if (!register.getAccount().getId().equals(currentUser.getId())) {
+            throw new BadRequestException("Bạn không có quyền hủy đơn đăng ký này.");
+        }
+
+        if (register.getStatus() != RegisterStatus.PENDING) {
+            throw new BadRequestException("Chỉ có thể hủy đơn đăng ký đang chờ duyệt (PENDING).");
+        }
+
+        register.setStatus(RegisterStatus.CANCELED);
+        registerRepository.save(register);
+    }
+
+    @Transactional
+    public void rejectRegister(Long registerId, String reason) {
+        Account currentUser = authenticationService.getCurrentAccount();
+
+        if (!currentUser.getRole().equals(Role.MEDICALSTAFF)) {
+            throw new BadRequestException("Chỉ nhân viên y tế mới có quyền từ chối đơn đăng ký.");
+        }
+
+        Register register = registerRepository.findById(registerId)
+                .orElseThrow(() -> new BadRequestException("Không tìm thấy đơn đăng ký."));
+
+        if (register.getStatus() != RegisterStatus.PENDING) {
+            throw new BadRequestException("Chỉ có thể từ chối đơn đăng ký đang chờ duyệt.");
+        }
+
+        register.setStatus(RegisterStatus.REJECTED);
+        register.setRejectedBy(currentUser);
+        register.setRejectionReason(reason);
+        registerRepository.save(register);
+    }
+
+
+
+
+
 
 }
 

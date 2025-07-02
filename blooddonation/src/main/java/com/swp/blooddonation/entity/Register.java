@@ -49,5 +49,12 @@ public class Register {
 
     private LocalDateTime createdAt;
 
+    @ManyToOne
+    @JoinColumn(name = "rejected_by_id")
+    private Account rejectedBy;
+
+    private String rejectionReason;
+
+
 
 }

@@ -2,6 +2,7 @@ package com.swp.blooddonation.api;
 
 
 import com.swp.blooddonation.dto.request.RegisterRequest;
+import com.swp.blooddonation.dto.request.RejectRequest;
 import com.swp.blooddonation.entity.Appointment;
 import com.swp.blooddonation.entity.Register;
 import com.swp.blooddonation.service.RegisterService;
@@ -34,6 +35,19 @@ public class RegisterAPI {
         Appointment appointment = registerService.approveRegister(id);
         return ResponseEntity.ok(appointment);
     }
+    @PreAuthorize("hasRole('MEDICALSTAFF')")
+    @PostMapping("/{registerId}/reject")
+    public void rejectRegister(@PathVariable Long registerId, @RequestBody RejectRequest request) {
+        registerService.rejectRegister(registerId, request.getReason());
+    }
+
+
+    @PreAuthorize("hasRole('CUSTOMER')")
+    @DeleteMapping("/{registerId}/cancel")
+    public void cancelRegister(@PathVariable Long registerId) {
+        registerService.cancelRegister(registerId);
+    }
+
 
     @PreAuthorize("hasRole('CUSTOMER')")
     @PutMapping("/cancel/{id}")

@@ -1,6 +1,7 @@
 package com.swp.blooddonation.entity;
 
 import com.swp.blooddonation.enums.BloodType;
+import com.swp.blooddonation.enums.RhType;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -30,6 +31,10 @@ public class TestResult {
     @Enumerated(EnumType.STRING)
     @Column(name = "type_id")
     private BloodType type;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "rh_type")
+    private RhType rhType;
 
     @ManyToOne
     @JoinColumn(name = "staff_id")

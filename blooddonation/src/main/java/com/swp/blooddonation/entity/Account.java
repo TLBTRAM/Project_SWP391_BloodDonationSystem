@@ -31,7 +31,7 @@ import java.util.List;
 public class Account implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    public long id;
+    public Long id;
 
     @Email(message = "Email not valid!")
     public String email;
@@ -120,7 +120,6 @@ public class Account implements UserDetails {
     @OneToMany(mappedBy = "customer")
     @JsonIgnore
     private List<Appointment> customerAppointments;
-
 
     @OneToMany(mappedBy = "account")
     List<Feedback> feedbacks;

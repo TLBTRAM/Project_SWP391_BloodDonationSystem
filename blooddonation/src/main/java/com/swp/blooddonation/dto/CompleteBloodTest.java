@@ -1,6 +1,7 @@
 package com.swp.blooddonation.dto;
 
 import com.swp.blooddonation.enums.BloodType;
+import com.swp.blooddonation.enums.RhType;
 import lombok.Data;
 
 @Data
@@ -25,6 +26,7 @@ public class CompleteBloodTest {
     private String result;
     private boolean passed;
     private BloodType bloodType;
+    private RhType rhType;
     private String bloodPressure;
     private String heartRate;
 }
