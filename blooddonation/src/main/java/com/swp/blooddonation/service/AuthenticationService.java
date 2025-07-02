@@ -63,7 +63,7 @@ public class AuthenticationService implements UserDetailsService {
     public RegisterResponse register(@Valid RegisRequest regisRequest) {
         System.out.println("===== DEBUG REGISTER REQUEST =====");
         System.out.println("Received: " + regisRequest.getFullName());
-        System.out.println("YoB: " + regisRequest.getYoB());
+        System.out.println("YoB: " + regisRequest.getBirthDate());
         System.out.println("Gender: " + regisRequest.getGender());
         System.out.println("Email: " + regisRequest.getEmail());
         System.out.println("Phone: " + regisRequest.getPhone());
@@ -77,7 +77,7 @@ public class AuthenticationService implements UserDetailsService {
 
         // Map từ RegisRequest sang Account
         Account account = modelMapper.map(regisRequest, Account.class);
-        account.setCreateAt(LocalDateTime.now());
+        account.setCreatedAt(LocalDateTime.now());
         account.setEnableStatus(EnableStatus.ENABLE);
         account.setRole(Role.CUSTOMER);
 
