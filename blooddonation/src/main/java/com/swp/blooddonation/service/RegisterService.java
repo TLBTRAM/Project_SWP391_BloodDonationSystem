@@ -130,26 +130,6 @@ public class RegisterService {
     }
 
     @Transactional
-    public Register cancelRegister(Long registerId) {
-        Account currentUser = authenticationService.getCurrentAccount();
-        Register register = registerRepository.findById(registerId)
-                .orElseThrow(() -> new BadRequestException("Không tìm thấy đơn đăng ký."));
-
-        // Chỉ chủ đơn mới được hủy và chỉ khi trạng thái là PENDING hoặc APPROVED
-        if (!Objects.equals(register.getAccount().getId(), currentUser.getId())) {
-            throw new BadRequestException("Bạn chỉ có thể hủy đơn đăng ký của chính mình.");
-        }
-        if (register.getStatus() == RegisterStatus.CANCELED) {
-            throw new BadRequestException("Đơn đăng ký đã bị hủy trước đó.");
-        }
-        if (register.getStatus() != RegisterStatus.PENDING && register.getStatus() != RegisterStatus.APPROVED) {
-            throw new BadRequestException("Chỉ được hủy đơn ở trạng thái PENDING hoặc APPROVED.");
-        }
-        register.setStatus(RegisterStatus.CANCELED);
-        return registerRepository.save(register);
-    }
-
-    @Transactional
     public void cancelRegister(Long registerId) {
         Account currentUser = authenticationService.getCurrentAccount();
 
