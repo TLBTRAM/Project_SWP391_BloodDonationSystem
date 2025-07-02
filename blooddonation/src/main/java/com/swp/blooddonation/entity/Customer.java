@@ -31,4 +31,7 @@ public class Customer {
     private RhType rhTypeNeeded;
     private String hospitalName;
     private String medicalCondition;
+
+    @Column(nullable = false)
+    private boolean active = true;
 }
