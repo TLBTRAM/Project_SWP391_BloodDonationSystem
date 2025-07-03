@@ -42,18 +42,18 @@ public class RegisterAPI {
     }
 
 
-    @PreAuthorize("hasRole('CUSTOMER')")
-    @DeleteMapping("/{registerId}/cancel")
-    public void cancelRegister(@PathVariable Long registerId) {
-        registerService.cancelRegister(registerId);
-    }
-
-
-    @PreAuthorize("hasRole('CUSTOMER')")
-    @PutMapping("/cancel/{id}")
-    public ResponseEntity<Register> cancelRegister(@PathVariable Long id) {
-        Register register = registerService.cancelRegister(id);
-        return ResponseEntity.ok(register);
-    }
+//    @PreAuthorize("hasRole('CUSTOMER')")
+//    @DeleteMapping("/{registerId}/cancel")
+//    public void cancelRegister(@PathVariable Long registerId) {
+//        registerService.cancelRegister(registerId);
+//    }
+//
+//
+//    @PreAuthorize("hasRole('CUSTOMER')")
+//    @PutMapping("/cancel/{id}")
+//    public ResponseEntity<Register> cancelRegister(@PathVariable Long id) {
+//        Register register = registerService.cancelRegister(id);
+//        return ResponseEntity.ok(register);
+//    }
 
 }
