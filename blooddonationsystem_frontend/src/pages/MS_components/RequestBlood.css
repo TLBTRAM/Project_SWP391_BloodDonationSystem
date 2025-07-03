@@ -1,0 +1,131 @@
+/* Reset mặc định */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Poppins', sans-serif;
+}
+
+/* Tổng thể container */
+.request-container {
+  max-width: 900px;
+  margin: 40px auto;
+  padding: 28px;
+  background-color: #f8fafc;
+  border-radius: 12px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+  transition: all 0.3s ease;
+}
+
+/* Tiêu đề chính */
+.request-container h2 {
+  text-align: center;
+  margin-bottom: 28px;
+  color: #1e293b;
+  font-size: 26px;
+  font-weight: 700;
+}
+
+/* Phần nhập form */
+.form-section {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-bottom: 30px;
+}
+
+.form-section label {
+  font-weight: 600;
+  color: #1e293b;
+  margin-bottom: 6px;
+  display: block;
+}
+
+.form-section input,
+.form-section select {
+  padding: 10px 14px;
+  border-radius: 8px;
+  border: 1px solid #cbd5e1;
+  font-size: 15px;
+  background-color: #ffffff;
+  color: #1e293b;
+  width: 100%;
+  height: 44px;
+  line-height: 1.5;
+  box-sizing: border-box;
+  transition: border-color 0.2s ease;
+  appearance: none; /* ẩn giao diện mặc định của select (nếu muốn tùy chỉnh icon) */
+}
+
+/* Focus effect */
+.form-section input:focus,
+.form-section select:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.3);
+}
+
+/* Nút gửi yêu cầu */
+.submit-btn {
+  align-self: flex-start;
+  padding: 10px 20px;
+  background-color: #16a34a;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 15px;
+  cursor: pointer;
+  transition: background-color 0.2s ease, transform 0.1s ease;
+}
+
+.submit-btn:hover {
+  background-color: #15803d;
+  transform: translateY(-1px);
+}
+
+/* Tiêu đề danh sách */
+.sub-title {
+  font-size: 20px;
+  font-weight: 600;
+  color: #1e293b;
+  margin-bottom: 14px;
+  border-bottom: 1px solid #cbd5e1;
+  padding-bottom: 8px;
+}
+
+/* Danh sách yêu cầu */
+.request-list {
+  list-style: none;
+  padding-left: 0;
+  margin-top: 16px;
+}
+
+.request-item {
+  padding: 14px 18px;
+  margin-bottom: 12px;
+  background-color: #fef2f2;
+  border-left: 5px solid #dc2626;
+  border-radius: 8px;
+  color: #1e293b;
+  font-size: 15px;
+  transition: background-color 0.2s ease;
+}
+
+.request-item:hover {
+  background-color: #fde8e8;
+}
+
+.request-item strong {
+  color: #b91c1c;
+}
+
+.request-item em {
+  font-style: italic;
+  color: #475569;
+}
+
+.request-item .status {
+  font-weight: 600;
+  color: #dc2626;
+}
