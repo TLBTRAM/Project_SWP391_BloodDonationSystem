@@ -21,7 +21,8 @@ public class RegisRequest {
     public String fullName;
     public String address;
     public Gender gender;
+
     @JsonFormat(pattern = "yyyy-MM-dd")
     @JsonProperty("birthDate")
-    public Date YoB;
+    public Date birthDate;
 }

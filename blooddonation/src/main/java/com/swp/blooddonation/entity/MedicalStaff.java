@@ -17,5 +17,7 @@ public class MedicalStaff {
         @JoinColumn(name = "id")
         private Account account;
         private String department;
+        @Column(nullable = false)
+        private boolean active = true;
     }
 

@@ -129,6 +129,7 @@ public class BloodTestService {
             testResult.setHeartRate(request.getHeartRate());
             testResult.setResult(request.getResult());
             testResult.setType(request.getBloodType());
+            testResult.setRhType(request.getRhType());
             testResult.setCustomer(donor);
             Account staffAccount = appointment.getMedicalStaff();
             MedicalStaff staff = medicalStaffRepository.findById(staffAccount.getId())
@@ -151,6 +152,7 @@ public class BloodTestService {
         response.setPassed(request.isPassed());
         response.setStatus(test.getStatus());
         response.setBloodType(request.getBloodType());
+        response.setRhType(request.getRhType());
         response.setTestDate(testDate);
         response.setTestedById(testedById);
         response.setTestedByName(testedByName);

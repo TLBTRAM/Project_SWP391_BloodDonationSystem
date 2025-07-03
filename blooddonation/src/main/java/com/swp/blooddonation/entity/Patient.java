@@ -7,31 +7,28 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Getter
 @Setter
-public class BloodRequest {
+public class Patient {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
-    private Account requester; // người gửi yêu cầu (Donor / Medical Staff)
-
-    @ManyToOne
-    private Patient patient;   // bệnh nhân cần máu
+    private String fullName;
+    private LocalDate dateOfBirth;
+    private String address;
 
     @Enumerated(EnumType.STRING)
-    private BloodType bloodType;
+    private BloodType bloodType; // optional
     @Enumerated(EnumType.STRING)
     private RhType rhType;
 
-    private int requiredVolume;
     private String hospitalName;
     private String medicalCondition;
 
-    private LocalDate requestDate;
-    private String status; // e.g., PENDING, APPROVED, FULFILLED
+    @OneToMany(mappedBy = "patient")
+    private List<BloodRequest> requests; // Liên kết các yêu cầu truyền máu
 }
