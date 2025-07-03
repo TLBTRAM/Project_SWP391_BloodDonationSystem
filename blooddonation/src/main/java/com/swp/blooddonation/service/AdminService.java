@@ -100,7 +100,7 @@ public class AdminService {
     public void updateUserStatus(Long userId, boolean enabled) {
         Account account = accountRepository.findById(userId)
                 .orElseThrow(() -> new UserNotFoundException("User not found with ID: " + userId));
-        account.setEnableStatus(EnableStatus.ENABLE);
+        account.setEnableStatus(enabled ? EnableStatus.ENABLE : EnableStatus.DISABLE);
         accountRepository.save(account);
     }
 
