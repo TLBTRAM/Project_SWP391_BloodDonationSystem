@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import logoBlood from "./images/Logo/logo_blood.png";
 import "./components/Manager.css";
+
 import DeleteImg from "./images/Action/bin.png";
 import EditImg from "./images/Action/pen.png";
 
