@@ -18,7 +18,9 @@ public class Slot
     long id;
 
     String label;
+    @Column(name = "start_time")
     LocalTime startTime;
+    @Column(name = "end_time")
     LocalTime endTime;
     boolean isDelete =false;
 
