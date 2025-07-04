@@ -12,6 +12,6 @@ public class SlotDTO
 {
     long id;
     String label;
-    LocalTime start;
-    LocalTime end;
+    LocalTime startTime;
+    LocalTime endTime;
 }
