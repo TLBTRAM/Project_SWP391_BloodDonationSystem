@@ -63,6 +63,7 @@ const Admin: React.FC = () => {
   }, []);
   useEffect(() => {
     const token = localStorage.getItem("token");
+    // console.log("TOKEN:", token);
 
     if (token) {
       fetch("http://localhost:8080/api/admin/users", {
