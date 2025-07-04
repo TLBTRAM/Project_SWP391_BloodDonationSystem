@@ -2,6 +2,7 @@ package com.swp.blooddonation.service;
 
 import com.swp.blooddonation.dto.AccountDTO;
 import com.swp.blooddonation.entity.Account;
+import com.swp.blooddonation.enums.Role;
 import com.swp.blooddonation.repository.AccountRepository;
 import com.swp.blooddonation.repository.AuthenticationReponsitory;
 import lombok.RequiredArgsConstructor;
@@ -31,8 +32,10 @@ public class AccountService {
 
     //  Cập nhật hồ sơ cá nhân
     public void updateProfile(Account account, AccountDTO dto) {
-        // Cập nhật các field từ DTO sang entity bằng modelMapper
+        // Luôn giữ nguyên role cũ, không cho phép đổi role qua updateProfile
+        Role oldRole = account.getRole();
         modelMapper.map(dto, account);  // map ngược lại từ dto -> entity
+        account.setRole(oldRole); // đảm bảo role không bị thay đổi
         authenticationReponsitory.save(account);
     }
 
