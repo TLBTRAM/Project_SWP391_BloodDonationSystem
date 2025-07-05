@@ -70,7 +70,7 @@ public class AuthenticationService implements UserDetailsService {
 
         // Map từ RegisRequest sang Account
         Account account = modelMapper.map(regisRequest, Account.class);
-        account.setCreateAt(LocalDateTime.now());
+        account.setCreatedAt(LocalDateTime.now());
         account.setEnableStatus(EnableStatus.ENABLE);
         account.setRole(Role.CUSTOMER);
 

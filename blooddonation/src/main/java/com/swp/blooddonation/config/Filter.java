@@ -43,7 +43,23 @@ public class Filter extends OncePerRequestFilter {
     public boolean isPublicAPI(String uri, String method) {
         AntPathMatcher matcher = new AntPathMatcher();
 
-        if (method.equals("GET")) return true;
+        // Chỉ cho phép một số GET endpoints cụ thể
+        if (method.equals("GET")) {
+            // Cho phép Swagger UI và API docs
+            if (uri.startsWith("/v3/api-docs") || uri.startsWith("/swagger-ui")) {
+                return true;
+            }
+            // Cho phép public blog endpoints
+            if (uri.startsWith("/api/blogs") && !uri.contains("/my-blogs")) {
+                return true;
+            }
+            // Cho phép public slot info
+            if (uri.equals("/api/slot/getSlot")) {
+                return true;
+            }
+            // Tất cả GET requests khác cần authentication
+            return false;
+        }
 
         return PUBLIC_API.stream().anyMatch(pattern -> {
             String[] parts = pattern.split(":", 2);

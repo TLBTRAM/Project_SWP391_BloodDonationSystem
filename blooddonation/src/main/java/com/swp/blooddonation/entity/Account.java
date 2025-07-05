@@ -50,7 +50,7 @@ public class Account implements UserDetails {
 
     @Temporal(TemporalType.DATE)
     @Column(name = "birth_date")
-    private Date birthDate;
+    public Date birthDate;
 
     @Column(name = "created_at")
     public LocalDateTime createdAt;

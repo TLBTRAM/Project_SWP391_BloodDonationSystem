@@ -15,7 +15,7 @@ public class RegisterResponse {
     private String email;
     private String phone;
     private String fullName;
-    private LocalDateTime createAt;
+    private LocalDateTime createdAt;
     private Gender gender;
     private Role role;
     private boolean enabled;
