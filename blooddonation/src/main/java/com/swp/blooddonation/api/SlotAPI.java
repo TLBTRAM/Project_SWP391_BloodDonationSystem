@@ -26,7 +26,7 @@ public class SlotAPI {
     SlotService slotService;
 
 
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
     @PostMapping("generate")
     public void generateSlot(){
         slotService.generateSlots();
