@@ -3,6 +3,8 @@ package com.swp.blooddonation.enums;
 public enum BloodRequestStatus {
     PENDING,
     APPROVED,
+    READY,
     REJECTED,
-    FULFILLED
+    COMPLETED,
+    CANCELLED
 }

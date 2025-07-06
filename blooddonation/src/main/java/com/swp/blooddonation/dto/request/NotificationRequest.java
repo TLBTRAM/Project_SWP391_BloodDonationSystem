@@ -1,14 +1,16 @@
 package com.swp.blooddonation.dto.request;
 
 import com.swp.blooddonation.enums.NotificationType;
-import lombok.Data;
+import lombok.*;
 
 import java.util.List;
 
 @Data
+@Builder
+@AllArgsConstructor
 public class NotificationRequest {
-    private List<Long> receiverIds;
-    private String title;
-    private String content;
-    private NotificationType type;
+    public List<Long> receiverIds;
+    public String title;
+    public String content;
+    public NotificationType type;
 }

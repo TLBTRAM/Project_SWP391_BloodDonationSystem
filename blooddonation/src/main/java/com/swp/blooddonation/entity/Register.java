@@ -38,6 +38,7 @@ public class Register {
     private Account account;
 
     @ManyToOne
+    @JoinColumn(name = "schedule_id")
     private Schedule schedule;
 
 //    @OneToMany(mappedBy = "register")
@@ -55,6 +56,11 @@ public class Register {
 
     private String rejectionReason;
 
+    @Column(name = "canceled_at")
+    private LocalDateTime canceledAt;
+
+    @Column(name = "cancel_reason")
+    private String cancelReason;
 
 
 }

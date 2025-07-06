@@ -1,6 +1,7 @@
 package com.swp.blooddonation.api;
 
 
+import com.swp.blooddonation.dto.request.CancelRegisterRequest;
 import com.swp.blooddonation.dto.request.RegisterRequest;
 import com.swp.blooddonation.dto.request.RejectRequest;
 import com.swp.blooddonation.entity.Appointment;
@@ -23,37 +24,45 @@ public class RegisterAPI {
     private final RegisterService registerService;
 
     @PreAuthorize("hasRole('CUSTOMER')")
-    @PostMapping("/create")
+    @PostMapping("/createRegister")
     public ResponseEntity<Register> createRegister(@RequestBody RegisterRequest request) {
         Register register = registerService.createRegister(request);
         return ResponseEntity.ok(register);
     }
 
+    /**
+     * MEDICALSTAFF chấp nhận đơn đăng ký
+     */
     @PreAuthorize("hasRole('MEDICALSTAFF')")
-    @PutMapping("/registers/{id}/approve")
+    @PutMapping("/{id}/approve")
     public ResponseEntity<?> approveRegister(@PathVariable Long id) {
         Appointment appointment = registerService.approveRegister(id);
         return ResponseEntity.ok(appointment);
     }
+
+
+    /**
+     * MEDICALSTAFF từ chối đơn đăng ký
+     */
     @PreAuthorize("hasRole('MEDICALSTAFF')")
-    @PostMapping("/{registerId}/reject")
+    @PostMapping("/{id}/reject")
     public void rejectRegister(@PathVariable Long registerId, @RequestBody RejectRequest request) {
         registerService.rejectRegister(registerId, request.getReason());
     }
 
+    /**
+     * CUSTOMER hủy đơn đăng ký ở trạng thái PENDING
+     */
+    @PreAuthorize("hasRole('CUSTOMER')")
+    @PutMapping("/{id}/cancel")
+    public ResponseEntity<Register> cancelRegister(
+            @PathVariable Long id,
+            @RequestBody CancelRegisterRequest request) {
 
-//    @PreAuthorize("hasRole('CUSTOMER')")
-//    @DeleteMapping("/{registerId}/cancel")
-//    public void cancelRegister(@PathVariable Long registerId) {
-//        registerService.cancelRegister(registerId);
-//    }
-//
-//
-//    @PreAuthorize("hasRole('CUSTOMER')")
-//    @PutMapping("/cancel/{id}")
-//    public ResponseEntity<Register> cancelRegister(@PathVariable Long id) {
-//        Register register = registerService.cancelRegister(id);
-//        return ResponseEntity.ok(register);
-//    }
+        Register register = registerService.cancelRegisterByCustomer(id, request.getReason());
+        return ResponseEntity.ok(register);
+    }
+
+
 
 }

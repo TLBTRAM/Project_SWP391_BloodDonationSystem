@@ -2,9 +2,11 @@ package com.swp.blooddonation.service;
 
 import com.swp.blooddonation.dto.request.BloodRequestRequest;
 import com.swp.blooddonation.dto.request.ComponentBloodRequestRequest;
-import com.swp.blooddonation.dto.request.ComponentRequestDTO;
+import com.swp.blooddonation.dto.request.NotificationRequest;
 import com.swp.blooddonation.entity.*;
 import com.swp.blooddonation.enums.BloodRequestStatus;
+import com.swp.blooddonation.enums.BloodUnitStatus;
+import com.swp.blooddonation.enums.NotificationType;
 import com.swp.blooddonation.enums.Role;
 import com.swp.blooddonation.exception.exceptions.BadRequestException;
 import com.swp.blooddonation.repository.*;
@@ -15,6 +17,9 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -24,7 +29,7 @@ public class BloodRequestService {
     private AuthenticationService authenticationService;
 
     @Autowired
-    private BloodRequestRepository bloodRequestRepository;
+    private WholeBloodRequestRepository bloodRequestRepository;
 
     @Autowired
     private PendingPatientRequestRepository pendingPatientRequestRepository;
@@ -34,6 +39,15 @@ public class BloodRequestService {
 
     @Autowired
     BloodRequestComponentRepository bloodRequestComponentRepository;
+
+    @Autowired
+    BloodUnitRepository bloodUnitRepository;
+
+    @Autowired
+    WholeBloodRequestRepository wholeBloodRequestRepository;
+
+    @Autowired
+    NotificationService notificationService;
 
     @Transactional
     public WholeBloodRequest requestBlood(BloodRequestRequest dto) {
@@ -118,7 +132,6 @@ public class BloodRequestService {
 
 
 
-
     @Transactional
     public void approveBloodRequest(Long requestId) {
         WholeBloodRequest request = bloodRequestRepository.findById(requestId)
@@ -128,11 +141,11 @@ public class BloodRequestService {
             throw new BadRequestException("Yêu cầu đã được xử lý.");
         }
 
-        // 1. Lấy thông tin bệnh nhân tạm thời
+        // Lấy thông tin bệnh nhân tạm thời
         PendingPatientRequest pending = pendingPatientRequestRepository.findByWholeBloodRequest(request)
                 .orElseThrow(() -> new BadRequestException("Không tìm thấy thông tin bệnh nhân."));
 
-        // 2. Tạo bệnh nhân chính thức
+        // Tạo bệnh nhân chính thức
         Patient patient = new Patient();
         patient.setFullName(pending.getFullName());
         patient.setDateOfBirth(pending.getDateOfBirth());
@@ -141,16 +154,82 @@ public class BloodRequestService {
         patient.setRhType(request.getRhType());
         patient.setHospitalName(request.getHospitalName());
         patient.setMedicalCondition(request.getMedicalCondition());
-
         patientRepository.save(patient);
 
-        // 3. Gán bệnh nhân vào yêu cầu máu
-        request.setPatient(patient);
-        request.setStatus(BloodRequestStatus.APPROVED);
-        bloodRequestRepository.save(request);
+        // Tìm máu đủ điều kiện
+        int totalRequired = request.getRequiredVolume();
+        List<BloodUnit> availableUnits = bloodUnitRepository.findUsableBloodUnits(
+                request.getBloodType(), request.getRhType());
+        availableUnits.sort(Comparator.comparing(BloodUnit::getExpirationDate));
 
-        // 4. Cập nhật trạng thái pending
+        int accumulated = 0;
+        List<BloodUnit> selectedUnits = new ArrayList<>();
+        for (BloodUnit unit : availableUnits) {
+            if (accumulated >= totalRequired) break;
+            accumulated += unit.getTotalVolume();
+            selectedUnits.add(unit);
+        }
+
+        if (accumulated == 0) {
+            throw new BadRequestException("Không tìm thấy đơn vị máu phù hợp.");
+        }
+
+        // Gán máu cho bản gốc luôn, không tạo mới nếu đủ
+        for (BloodUnit unit : selectedUnits) {
+            unit.setStatus(BloodUnitStatus.RESERVED);
+            bloodUnitRepository.save(unit);
+        }
+
+        request.setPatient(patient);
+
+        if (accumulated >= totalRequired) {
+            //  ĐỦ: Cập nhật trạng thái sang READY
+            request.setStatus(BloodRequestStatus.READY);
+            bloodRequestRepository.save(request);
+
+            notificationService.sendNotification(NotificationRequest.builder()
+                    .receiverIds(List.of(request.getRequester().getId()))
+                    .title("Yêu cầu truyền máu đã sẵn sàng")
+                    .content("Yêu cầu truyền máu cho bệnh nhân " + patient.getFullName() + " đã được chuẩn bị đầy đủ.")
+                    .type(NotificationType.BLOOD_REQUEST)
+                    .build());
+        } else {
+            //  KHÔNG ĐỦ: cập nhật bản gốc còn lại, tạo bản mới với phần đủ
+            int remaining = totalRequired - accumulated;
+
+            // 1. Tạo yêu cầu mới với phần đủ
+            WholeBloodRequest readyPart = new WholeBloodRequest();
+            readyPart.setBloodType(request.getBloodType());
+            readyPart.setRhType(request.getRhType());
+            readyPart.setRequiredVolume(accumulated);
+            readyPart.setHospitalName(request.getHospitalName());
+            readyPart.setMedicalCondition(request.getMedicalCondition());
+            readyPart.setStatus(BloodRequestStatus.READY);
+            readyPart.setPatient(patient);
+            readyPart.setRequester(request.getRequester());
+            readyPart.setRequestDate(LocalDate.now()); // bạn nên đặt ngày mới
+            wholeBloodRequestRepository.save(readyPart);
+
+            // 2. Cập nhật yêu cầu gốc còn lại
+            request.setRequiredVolume(remaining);
+            request.setStatus(BloodRequestStatus.PENDING);
+            bloodRequestRepository.save(request);
+
+            notificationService.sendNotification(NotificationRequest.builder()
+                    .receiverIds(List.of(request.getRequester().getId()))
+                    .title("Yêu cầu truyền máu một phần")
+                    .content("Yêu cầu truyền máu cho bệnh nhân " + patient.getFullName()
+                            + " chỉ được đáp ứng một phần (" + accumulated + "ml). Cần bổ sung thêm " + remaining + "ml.")
+                    .type(NotificationType.BLOOD_REQUEST)
+                    .build());
+        }
+
+        // Cập nhật trạng thái bệnh nhân tạm thời
         pending.setStatus(BloodRequestStatus.APPROVED);
         pendingPatientRequestRepository.save(pending);
     }
+
+
+
+
 }

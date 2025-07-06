@@ -36,10 +36,10 @@ public class BloodRequestAPI {
     }
 
 
-//    @PreAuthorize("hasAnyRole('MANAGER', 'MEDICALSTAFF')")
-//    @PutMapping("/{id}/approve")
-//    public ResponseEntity<?> approveBloodRequest(@PathVariable("id") Long id) {
-//        bloodRequestService.approveBloodRequest(id);
-//        return ResponseEntity.ok("Phê duyệt yêu cầu thành công.");
-//    }
+    @PreAuthorize("hasAnyRole('MANAGER', 'MEDICALSTAFF')")
+    @PutMapping("/{id}/approve")
+    public ResponseEntity<?> approveBloodRequest(@PathVariable("id") Long id) {
+        bloodRequestService.approveBloodRequest(id);
+        return ResponseEntity.ok("Phê duyệt yêu cầu thành công.");
+    }
 }
