@@ -1,5 +1,6 @@
 package com.swp.blooddonation.entity;
 
+import com.swp.blooddonation.enums.BloodRequestStatus;
 import com.swp.blooddonation.enums.BloodType;
 import com.swp.blooddonation.enums.RhType;
 import jakarta.persistence.*;
@@ -12,7 +13,7 @@ import java.time.LocalDateTime;
 @Entity
 @Getter
 @Setter
-public class BloodRequest {
+public class WholeBloodRequest {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -25,6 +26,8 @@ public class BloodRequest {
 
     @Enumerated(EnumType.STRING)
     private BloodType bloodType;
+
+
     @Enumerated(EnumType.STRING)
     private RhType rhType;
 
@@ -33,5 +36,9 @@ public class BloodRequest {
     private String medicalCondition;
 
     private LocalDate requestDate;
-    private String status; // e.g., PENDING, APPROVED, FULFILLED
+
+
+
+    @Enumerated(EnumType.STRING)
+    private BloodRequestStatus status;; // PENDING, APPROVED, FULFILLED
 }

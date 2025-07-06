@@ -131,6 +131,7 @@ public class BloodTestService {
             testResult.setType(request.getBloodType());
             testResult.setRhType(request.getRhType());
             testResult.setCustomer(donor);
+            testResult.setAppointment(appointment);
             Account staffAccount = appointment.getMedicalStaff();
             MedicalStaff staff = medicalStaffRepository.findById(staffAccount.getId())
                     .orElseThrow(() -> new BadRequestException("Medical staff not found"));

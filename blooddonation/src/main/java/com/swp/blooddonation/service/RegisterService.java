@@ -1,9 +1,13 @@
 package com.swp.blooddonation.service;
 
 
+import com.swp.blooddonation.dto.request.NotificationRequest;
+import com.swp.blooddonation.dto.request.NotificationRequest;
 import com.swp.blooddonation.dto.request.RegisterRequest;
 import com.swp.blooddonation.entity.*;
 import com.swp.blooddonation.enums.AppointmentEnum;
+import com.swp.blooddonation.enums.NotificationType;
+import com.swp.blooddonation.enums.NotificationType;
 import com.swp.blooddonation.enums.RegisterStatus;
 import com.swp.blooddonation.enums.Role;
 import com.swp.blooddonation.exception.exceptions.BadRequestException;
@@ -17,6 +21,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 import java.util.List;
+import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
@@ -34,6 +39,16 @@ public class RegisterService {
 
     @Autowired
     ScheduleRepository scheduleRepository;
+
+    @Autowired
+    PendingPatientRequestRepository pendingPatientRequestRepository;
+
+    @Autowired
+    PatientRepository patientRepository;
+
+    @Autowired
+    private NotificationService notificationService;
+
 
     @Transactional
     public Register createRegister(RegisterRequest request) {
@@ -72,8 +87,8 @@ public class RegisterService {
         register.setNote(request.getNote());
         register.setStatus(RegisterStatus.PENDING);
         register.setCreatedAt(LocalDateTime.now());
-
         return registerRepository.save(register);
+
     }
 
     @Transactional
@@ -125,27 +140,24 @@ public class RegisterService {
         appointment.setStatus(AppointmentEnum.SCHEDULED);
         appointment.setCreatedAt(LocalDateTime.now());
 
-        return appointmentRepository.save(appointment);
+        Appointment savedAppointment = appointmentRepository.save(appointment);
+
+        NotificationRequest notiRequest = NotificationRequest.builder()
+                .receiverIds(List.of(register.getAccount().getId()))
+                .title("Đơn đăng ký hiến máu đã được duyệt")
+                .content("Đơn đăng ký của bạn cho ngày " + appointment.getAppointmentDate() + " đã được chấp nhận.")
+                .type(NotificationType.APPOINTMENT)
+                .build();
+        notificationService.sendNotification(notiRequest);
+
+
+        // thêm gửi mail ở đây
+
+
+
+        return savedAppointment;
     }
 
-    @Transactional
-    public void cancelRegister(Long registerId) {
-        Account currentUser = authenticationService.getCurrentAccount();
-
-        Register register = registerRepository.findById(registerId)
-                .orElseThrow(() -> new BadRequestException("Không tìm thấy đơn đăng ký."));
-
-        if (!register.getAccount().getId().equals(currentUser.getId())) {
-            throw new BadRequestException("Bạn không có quyền hủy đơn đăng ký này.");
-        }
-
-        if (register.getStatus() != RegisterStatus.PENDING) {
-            throw new BadRequestException("Chỉ có thể hủy đơn đăng ký đang chờ duyệt (PENDING).");
-        }
-
-        register.setStatus(RegisterStatus.CANCELED);
-        registerRepository.save(register);
-    }
 
     @Transactional
     public void rejectRegister(Long registerId, String reason) {
@@ -167,6 +179,37 @@ public class RegisterService {
         register.setRejectionReason(reason);
         registerRepository.save(register);
     }
+
+
+
+    @Transactional
+    public Register cancelRegisterByCustomer(Long registerId, String reason) {
+        Account currentUser = authenticationService.getCurrentAccount();
+
+        Register register = registerRepository.findById(registerId)
+                .orElseThrow(() -> new BadRequestException("Không tìm thấy đơn đăng ký."));
+
+        if (!register.getAccount().getId().equals(currentUser.getId())) {
+            throw new BadRequestException("Bạn không có quyền hủy đơn đăng ký này.");
+        }
+
+        if (register.getStatus() == RegisterStatus.CANCELED) {
+            throw new BadRequestException("Đơn đăng ký đã bị hủy trước đó.");
+        }
+
+        if (register.getStatus() != RegisterStatus.PENDING) {
+            throw new BadRequestException("Chỉ có thể hủy đơn đăng ký đang chờ duyệt (PENDING).");
+        }
+
+        register.setStatus(RegisterStatus.CANCELED);
+        register.setCanceledAt(LocalDateTime.now());
+        register.setCancelReason(reason);
+        return registerRepository.save(register);
+    }
+
+
+
+
 
 
 
