@@ -36,6 +36,12 @@ public class RegisterService {
     @Autowired
     ScheduleRepository scheduleRepository;
 
+    @Autowired
+    PendingPatientRequestRepository pendingPatientRequestRepository;
+
+    @Autowired
+    PatientRepository patientRepository;
+
     @Transactional
     public Register createRegister(RegisterRequest request) {
         Account currentUser = authenticationService.getCurrentAccount();
@@ -73,8 +79,8 @@ public class RegisterService {
         register.setNote(request.getNote());
         register.setStatus(RegisterStatus.PENDING);
         register.setCreatedAt(LocalDateTime.now());
-
         return registerRepository.save(register);
+
     }
 
     @Transactional

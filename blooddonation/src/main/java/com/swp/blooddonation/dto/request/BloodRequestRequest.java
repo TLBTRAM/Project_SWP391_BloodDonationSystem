@@ -1,6 +1,7 @@
 package com.swp.blooddonation.dto.request;
 
 import com.swp.blooddonation.enums.BloodType;
+import com.swp.blooddonation.enums.Gender;
 import com.swp.blooddonation.enums.RhType;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -15,9 +16,13 @@ import java.time.LocalDate;
 public class BloodRequestRequest {
     private Long patientId; // optional nếu đã có
 
-    private String patientFullName;
-    private LocalDate patientDateOfBirth;
+    private String fullName;
+    private LocalDate dateOfBirth;
     private String patientAddress;
+    private String phone;
+
+    @Enumerated(EnumType.STRING)
+    private Gender gender;
 
     @Enumerated(EnumType.STRING)
     private BloodType bloodType;

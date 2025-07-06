@@ -3,7 +3,6 @@ package com.swp.blooddonation.service;
 import com.swp.blooddonation.dto.CustomerDTO;
 import com.swp.blooddonation.dto.DonationHistoryDTO;
 import com.swp.blooddonation.entity.Account;
-import com.swp.blooddonation.entity.BloodRequest;
 import com.swp.blooddonation.entity.Customer;
 import com.swp.blooddonation.entity.DonationHistory;
 import com.swp.blooddonation.repository.BloodRequestRepository;

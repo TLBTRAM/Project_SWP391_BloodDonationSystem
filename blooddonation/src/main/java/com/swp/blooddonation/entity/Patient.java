@@ -30,5 +30,9 @@ public class Patient {
     private String medicalCondition;
 
     @OneToMany(mappedBy = "patient")
-    private List<BloodRequest> requests; // Liên kết các yêu cầu truyền máu
+    private List<WholeBloodRequest> requests;
+
+    @OneToMany(mappedBy = "patient")
+    private List<BloodRequestComponent> componentRequests; // optional, nếu bệnh nhân có yêu cầu về các thành phần máu
+
 }
