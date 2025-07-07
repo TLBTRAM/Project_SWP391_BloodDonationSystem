@@ -3,8 +3,6 @@ package com.swp.blooddonation.dto.request;
 import com.swp.blooddonation.enums.BloodType;
 import com.swp.blooddonation.enums.Gender;
 import com.swp.blooddonation.enums.RhType;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -13,25 +11,41 @@ import lombok.Data;
 import java.time.LocalDate;
 
 @Data
-public class BloodRequestRequest {
-    private Long patientId; // optional nếu đã có
+public class ComponentBloodRequestRequest {
 
+    @NotBlank
     private String fullName;
-    private LocalDate dateOfBirth;
-    private String patientAddress;
-    private String phone;
 
-    @Enumerated(EnumType.STRING)
+    @NotNull
     private Gender gender;
 
-    @Enumerated(EnumType.STRING)
+    @NotNull
+    private LocalDate dateOfBirth;
+
+    @NotBlank
+    private String phone;
+
+    @NotBlank
+    private String patientAddress;
+
+    @NotNull
     private BloodType bloodType;
 
-    @Enumerated(EnumType.STRING)
+    @NotNull
     private RhType rhType;
 
-    private int requiredVolume;
-
+    @NotBlank
     private String hospitalName;
+
+    @NotBlank
     private String medicalCondition;
+
+    @Min(0)
+    private int redCellQuantity;
+
+    @Min(0)
+    private int plasmaQuantity;
+
+    @Min(0)
+    private int plateletQuantity;
 }

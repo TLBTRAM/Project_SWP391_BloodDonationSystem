@@ -1,20 +1,32 @@
 package com.swp.blooddonation.entity;
 
+import com.swp.blooddonation.enums.NotificationType;
 import jakarta.persistence.*;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.Setter;
 
 
+import java.time.LocalDateTime;
 import java.util.Date;
 
 @Entity
+@Builder
+@Setter
+@Getter
 public class Notification {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long notificationId;
+    @Id @GeneratedValue
+    private Long id;
 
+    private Long receiverId; // ID người nhận
+    private String title;
     private String content;
-    private Date date;
 
-    @ManyToOne
-    @JoinColumn(name = "user_id")
-    private Account account;
+    @Enumerated(EnumType.STRING)
+    private NotificationType type; // INFO, WARNING, ACTION, BLOOD_REQUEST, etc.
+
+    private boolean isRead = false;
+
+    private LocalDateTime createdAt = LocalDateTime.now();
 }
+

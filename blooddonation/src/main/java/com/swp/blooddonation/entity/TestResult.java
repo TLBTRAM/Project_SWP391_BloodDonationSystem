@@ -41,7 +41,7 @@ public class TestResult {
     private MedicalStaff staff;
 
     @ManyToOne
-    @JoinColumn(name = "register_id")
-    private Register register;
+    @JoinColumn(name = "appointment_id")
+    private Appointment appointment;
 
 }

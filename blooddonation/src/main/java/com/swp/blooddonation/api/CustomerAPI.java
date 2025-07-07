@@ -19,10 +19,10 @@ public class CustomerAPI {
     private final CustomerService customerService;
 
     //  Lấy hồ sơ cá nhân
-    @GetMapping("/profile")
-    public ResponseEntity<CustomerDTO> getProfile(@AuthenticationPrincipal Account account) {
-        return ResponseEntity.ok(customerService.getProfile(account));
-    }
+//    @GetMapping("/profile")
+//    public ResponseEntity<CustomerDTO> getProfile(@AuthenticationPrincipal Account account) {
+//        return ResponseEntity.ok(customerService.getProfile(account));
+//    }
 //
 //    //  Lịch sử hiến máu
 //    @GetMapping("/donation-history")

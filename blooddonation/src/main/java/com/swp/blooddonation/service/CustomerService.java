@@ -3,10 +3,7 @@ package com.swp.blooddonation.service;
 import com.swp.blooddonation.dto.CustomerDTO;
 import com.swp.blooddonation.dto.DonationHistoryDTO;
 import com.swp.blooddonation.entity.Account;
-import com.swp.blooddonation.entity.BloodRequest;
 import com.swp.blooddonation.entity.Customer;
-import com.swp.blooddonation.entity.DonationHistory;
-import com.swp.blooddonation.repository.BloodRequestRepository;
 import com.swp.blooddonation.repository.CustomerRepository;
 import com.swp.blooddonation.repository.DonationHistoryRepository;
 import lombok.RequiredArgsConstructor;
@@ -16,7 +13,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 

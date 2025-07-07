@@ -1,30 +1,45 @@
 package com.swp.blooddonation.api;
 
 import com.swp.blooddonation.dto.request.BloodRequestRequest;
-import com.swp.blooddonation.entity.BloodRequest;
+import com.swp.blooddonation.dto.request.ComponentBloodRequestRequest;
+import com.swp.blooddonation.entity.WholeBloodRequest;
 import com.swp.blooddonation.service.BloodRequestService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/requests")
 @SecurityRequirement(name = "api")
-@RequiredArgsConstructor
+@RequestMapping("/api/blood-requests")
 public class BloodRequestAPI {
-    private final BloodRequestService bloodRequestService;
 
 
-    @PreAuthorize("hasRole('DONOR') or hasRole('MEDICALSTAFF')")
+    @Autowired
+    BloodRequestService bloodRequestService;
+
+
+    @PreAuthorize("hasRole('CUSTOMER') or hasRole('MEDICALSTAFF')")
     @PostMapping("/create")
     public ResponseEntity<?> createRequest(@Valid @RequestBody BloodRequestRequest bloodRequestRequest) {
-        BloodRequest result = bloodRequestService.requestBlood(bloodRequestRequest);
+        WholeBloodRequest result = bloodRequestService.requestBlood(bloodRequestRequest);
         return ResponseEntity.ok(result);
+    }
+
+    @PostMapping("/blood-requests/component")
+    public ResponseEntity<?> requestBloodByComponent(@RequestBody @Valid ComponentBloodRequestRequest dto) {
+        bloodRequestService.requestBloodByComponent(dto);
+        return ResponseEntity.ok("Gửi yêu cầu truyền thành phần máu thành công.");
+    }
+
+
+    @PreAuthorize("hasAnyRole('MANAGER', 'MEDICALSTAFF')")
+    @PutMapping("/{id}/approve")
+    public ResponseEntity<?> approveBloodRequest(@PathVariable("id") Long id) {
+        bloodRequestService.approveBloodRequest(id);
+        return ResponseEntity.ok("Phê duyệt yêu cầu thành công.");
     }
 }
