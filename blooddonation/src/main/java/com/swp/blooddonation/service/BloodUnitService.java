@@ -9,6 +9,7 @@ import com.swp.blooddonation.repository.*;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import com.swp.blooddonation.dto.request.NotificationRequest;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -35,6 +36,11 @@ public class BloodUnitService {
     @Autowired
     BloodComponentRepository bloodComponentRepository;
 
+    @Autowired
+    private NotificationService notificationService;
+
+    @Autowired
+    private AccountRepository accountRepository;
 
     @Transactional
     public BloodUnit collectBlood(CollectBloodRequest request) {
@@ -131,5 +137,23 @@ public class BloodUnitService {
         return component;
     }
 
+    public void checkAndNotifyLowBloodVolume() {
+        Integer total = bloodUnitRepository.getTotalUsableVolume();
+        if (total == null) total = 0;
+        if (total < 2000) {
+            // Lấy userId của CUSTOMER, MEDICALSTAFF, MANAGER
+            List<Long> userIds = new ArrayList<>();
+            for (com.swp.blooddonation.enums.Role role : List.of(com.swp.blooddonation.enums.Role.CUSTOMER, com.swp.blooddonation.enums.Role.MEDICALSTAFF, com.swp.blooddonation.enums.Role.MANAGER)) {
+                userIds.addAll(accountRepository.findByRole(role).stream().map(Account::getId).toList());
+            }
+            NotificationRequest noti = NotificationRequest.builder()
+                .receiverIds(userIds)
+                .title("Cảnh báo lượng máu trong kho thấp")
+                .content("Lượng máu usable trong kho hiện tại chỉ còn " + total + "ml. Vui lòng kiểm tra và bổ sung.")
+                .type(com.swp.blooddonation.enums.NotificationType.SYSTEM)
+                .build();
+            notificationService.sendNotification(noti);
+        }
+    }
 
 }
