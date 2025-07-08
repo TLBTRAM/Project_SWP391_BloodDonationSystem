@@ -2,11 +2,8 @@ package com.swp.blooddonation.entity;
 
 import com.swp.blooddonation.enums.NotificationType;
 import jakarta.persistence.*;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.NoArgsConstructor;
-import lombok.AllArgsConstructor;
+import lombok.*;
+
 
 import java.time.LocalDateTime;
 import java.util.Date;
@@ -30,8 +27,13 @@ public class Notification {
 
     private boolean isRead = false;
 
-    private LocalDateTime createdAt = LocalDateTime.now();
+    private LocalDateTime createdAt;
 
-
+    @PrePersist
+    public void prePersist() {
+        if (createdAt == null) {
+            createdAt = LocalDateTime.now();
+        }
+    }
 }
 
