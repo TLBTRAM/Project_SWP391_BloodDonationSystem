@@ -56,6 +56,13 @@ public class NotificationService {
                 .orElse(false);
     }
 
+    public long countAll() {
+        return notificationRepository.count();
+    }
+    public long countByUserId(Long userId) {
+        return notificationRepository.countByReceiverId(userId);
+    }
+
     private NotificationDTO toDTO(Notification n) {
         return NotificationDTO.builder()
                 .id(n.getId())

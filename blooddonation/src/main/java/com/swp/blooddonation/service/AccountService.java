@@ -18,6 +18,8 @@ public class AccountService {
 //    private final AccountRepository accountRepository;
     @Autowired
     AuthenticationReponsitory authenticationReponsitory;
+    @Autowired
+    private AccountRepository accountRepository;
 
 
     private final PasswordEncoder passwordEncoder;
@@ -52,5 +54,20 @@ public class AccountService {
     // ✅ Đăng xuất (nếu cần)
     public void logout(Account account) {
         // Nếu dùng token blacklist / refresh token thì xử lý ở đây
+    }
+
+    public String getRoleById(Long userId) {
+        Account acc = accountRepository.findById(userId).orElse(null);
+        return acc != null ? acc.getRoleName() : null;
+    }
+    public long countAll() {
+        return accountRepository.count();
+    }
+    public Long getIdByEmail(String email) {
+        Account acc = accountRepository.findByEmail(email);
+        return acc != null ? acc.getId() : null;
+    }
+    public Account getProfile(Long userId) {
+        return accountRepository.findById(userId).orElse(null);
     }
 }

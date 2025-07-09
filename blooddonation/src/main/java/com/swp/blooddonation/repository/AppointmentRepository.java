@@ -18,5 +18,5 @@ public interface AppointmentRepository extends JpaRepository<Appointment, Long> 
     Optional<Appointment> findByCustomer_IdAndAppointmentDateAndStatus(Long customerId, LocalDate date, AppointmentEnum status);
     int countBySlotAndAppointmentDate(Slot slot, LocalDate date);
     long countByMedicalStaffAndSlotAndAppointmentDate(Account medicalStaff, Slot slot, LocalDate appointmentDate);
-
+    long countByCustomerId(Long customerId);
 }
