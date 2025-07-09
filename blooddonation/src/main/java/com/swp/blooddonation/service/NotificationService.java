@@ -6,6 +6,7 @@ import com.swp.blooddonation.dto.response.NotificationDTO;
 import com.swp.blooddonation.entity.Notification;
 import com.swp.blooddonation.repository.NotificationRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -15,6 +16,8 @@ import java.util.List;
 public class NotificationService {
 
     private final NotificationRepository notificationRepository;
+    @Autowired
+    private com.swp.blooddonation.repository.AccountRepository accountRepository;
 
 
     public void sendNotification(NotificationRequest request) {
