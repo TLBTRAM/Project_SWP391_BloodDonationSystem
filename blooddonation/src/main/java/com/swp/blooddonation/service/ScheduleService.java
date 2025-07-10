@@ -39,7 +39,7 @@ public class ScheduleService {
 
         // Map lại sang response DTO
         ScheduleResponseDTO response = modelMapper.map(savedSchedule, ScheduleResponseDTO.class);
-        response.setCreatedBy(currentUser.getFullName());
+        response.setCreatedBy(savedSchedule.getAccount().getId());
 
         return response;
     }

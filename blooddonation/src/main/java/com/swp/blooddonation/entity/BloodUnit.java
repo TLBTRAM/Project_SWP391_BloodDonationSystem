@@ -38,5 +38,10 @@ public class BloodUnit {
 
     @ManyToOne
     private MedicalStaff collectedBy;
+
+    @ManyToOne
+    @JoinColumn(name = "whole_blood_request_id")
+    private WholeBloodRequest wholeBloodRequest;
+
 }
 

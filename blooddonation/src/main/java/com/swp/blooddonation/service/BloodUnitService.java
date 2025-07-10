@@ -35,6 +35,9 @@ public class BloodUnitService {
     @Autowired
     BloodComponentRepository bloodComponentRepository;
 
+    @Autowired
+    TestResultRepository testResultRepository;
+
 
     @Transactional
     public BloodUnit collectBlood(CollectBloodRequest request) {
@@ -51,6 +54,14 @@ public class BloodUnitService {
         if (test.getStatus() != BloodTestStatus.COMPLETED) {
             throw new BadRequestException("Blood test must be completed first.");
         }
+
+        TestResult testResult = testResultRepository.findByBloodTest(test)
+                .orElseThrow(() -> new BadRequestException("Test result not found for this test."));
+
+        if (!testResult.isPassed()) {
+            throw new BadRequestException("Cannot collect blood: test result did not pass.");
+        }
+
 
         // Lấy người hiến từ appointment
         Appointment appointment = test.getAppointment();

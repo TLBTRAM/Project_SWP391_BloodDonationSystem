@@ -20,6 +20,7 @@ import java.time.LocalDateTime;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -70,8 +71,8 @@ public class RegisterService {
             throw new BadRequestException("Chưa có nhân viên y tế làm việc trong ngày đã chọn.");
         }
 
-        boolean exists = registerRepository.existsByAccountAndSlot_IdAndRegisterDate(
-                currentUser, slot.getId(), registerDate);
+        boolean exists = registerRepository.existsByAccountAndSlotAndRegisterDate(
+                currentUser, slot, registerDate);
 
         if (exists) {
             throw new BadRequestException("Bạn đã đăng ký slot này vào ngày này.");
@@ -91,48 +92,71 @@ public class RegisterService {
 
     @Transactional
     public Appointment approveRegister(Long registerId) {
-        // 1. Tìm đơn đăng ký
+        // 1. Lấy đơn đăng ký
         Register register = registerRepository.findById(registerId)
                 .orElseThrow(() -> new BadRequestException("Không tìm thấy đơn đăng ký."));
 
         if (register.getStatus() != RegisterStatus.PENDING) {
-            throw new BadRequestException("Chỉ được duyệt đơn đăng ký đang ở trạng thái PENDING.");
+            throw new BadRequestException("Chỉ được duyệt đơn đang ở trạng thái PENDING.");
         }
 
         Slot slot = register.getSlot();
         LocalDate date = register.getRegisterDate();
 
-        // 2. Lấy danh sách Medical Staff đã đăng ký lịch làm việc cho slot đó ngày đó
-        List<AccountSlot> availableStaffSlots = accountSlotRepository.findBySlotAndDateAndAccount_Role(slot, date, Role.MEDICALSTAFF);
+        // 2. Lấy danh sách nhân viên y tế có lịch làm việc cho slot này vào ngày đó
+        List<Account> medicalStaffList = accountSlotRepository
+                .findBySlotAndDateAndAccount_Role(slot, date, Role.MEDICALSTAFF)
+                .stream()
+                .map(AccountSlot::getAccount)
+                .collect(Collectors.toList());
 
-        if (availableStaffSlots.isEmpty()) {
-            throw new BadRequestException("Không có nhân viên y tế nào đăng ký làm việc cho slot này.");
+        if (medicalStaffList.isEmpty()) {
+            throw new BadRequestException("Không có nhân viên y tế nào cho slot này.");
         }
 
-        // 3. Tìm staff có ít hơn 3 appointment cho slot + ngày
+        // 3. Lấy toàn bộ các Register (không chỉ PENDING), sắp xếp theo createdAt
+        List<Register> allRegistersForSlotAndDate = registerRepository
+                .findBySlotAndRegisterDateOrderByCreatedAt(slot, date);
+
+        // 4. Tìm vị trí (index) của register hiện tại
+        int registerIndex = -1;
+        for (int i = 0; i < allRegistersForSlotAndDate.size(); i++) {
+            if (Objects.equals(allRegistersForSlotAndDate.get(i).getId(), registerId)) {
+                registerIndex = i;
+                break;
+            }
+        }
+
+        if (registerIndex == -1) {
+            throw new BadRequestException("Không xác định được thứ tự đăng ký.");
+        }
+
+        // 5. Gán staff theo index % số lượng staff
         Account selectedStaff = null;
-        for (AccountSlot staffSlot : availableStaffSlots) {
-            Account staff = staffSlot.getAccount();
-            long assigned = appointmentRepository.countByMedicalStaffAndSlotAndAppointmentDate(staff, slot, date);
+        int staffCount = medicalStaffList.size();
+        for (int offset = 0; offset < staffCount; offset++) {
+            int index = (registerIndex + offset) % staffCount;
+            Account candidate = medicalStaffList.get(index);
+            long assigned = appointmentRepository.countByMedicalStaffAndSlotAndAppointmentDate(candidate, slot, date);
             if (assigned < 3) {
-                selectedStaff = staff;
+                selectedStaff = candidate;
                 break;
             }
         }
 
         if (selectedStaff == null) {
-            throw new BadRequestException("Tất cả nhân viên y tế đã đủ số lượng phục vụ trong slot này.");
+            throw new BadRequestException("Tất cả nhân viên y tế đã đủ 3 lịch cho slot này.");
         }
 
-        // 4. Cập nhật trạng thái đơn đăng ký
+        // 6. Cập nhật đơn đăng ký
         register.setStatus(RegisterStatus.APPROVED);
         registerRepository.save(register);
 
-        // 5. Tạo Appointment
+        // 7. Tạo lịch hẹn
         Appointment appointment = new Appointment();
         appointment.setRegister(register);
         appointment.setCustomer(register.getAccount());
-        appointment.setMedicalStaff(selectedStaff); // Gán theo thứ tự logic
+        appointment.setMedicalStaff(selectedStaff);
         appointment.setSlot(slot);
         appointment.setAppointmentDate(date);
         appointment.setStatus(AppointmentEnum.SCHEDULED);
@@ -140,21 +164,20 @@ public class RegisterService {
 
         Appointment savedAppointment = appointmentRepository.save(appointment);
 
-        NotificationRequest notiRequest = NotificationRequest.builder()
+        // 8. Gửi thông báo
+        NotificationRequest noti = NotificationRequest.builder()
                 .receiverIds(List.of(register.getAccount().getId()))
                 .title("Đơn đăng ký hiến máu đã được duyệt")
-                .content("Đơn đăng ký của bạn cho ngày " + appointment.getAppointmentDate() + " đã được chấp nhận.")
+                .content("Bạn đã được đặt lịch hiến máu vào ngày " + date + ".")
                 .type(NotificationType.APPOINTMENT)
                 .build();
-        notificationService.sendNotification(notiRequest);
+        notificationService.sendNotification(noti);
 
-
-        // thêm gửi mail ở đây
-
-
+        // TODO: Gửi email (nếu có yêu cầu)
 
         return savedAppointment;
     }
+
 
 
     @Transactional

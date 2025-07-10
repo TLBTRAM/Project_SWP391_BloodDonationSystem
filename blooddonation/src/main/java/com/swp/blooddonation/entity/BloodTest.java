@@ -35,5 +35,6 @@ public class BloodTest {
     @JoinColumn(name = "medical_staff_id") // tên cột trong bảng blood_test
     private Account medicalStaff;
 
+
     // Getters/Setters
 }

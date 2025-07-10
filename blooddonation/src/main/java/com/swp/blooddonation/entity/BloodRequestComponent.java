@@ -37,6 +37,9 @@ public class BloodRequestComponent {
     @Enumerated(EnumType.STRING)
     private BloodRequestStatus status;
 
+//    @Enumerated(EnumType.STRING)
+//    private ComponentType componentType;
+
     //các thành phần máu
     private int redCellQuantity;     // Hồng cầu
     private int plasmaQuantity;      // Huyết tương
