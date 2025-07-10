@@ -18,6 +18,7 @@ interface BookingFormData {
 
 const Booking = () => {
   const navigate = useNavigate();
+
   // Giả định các thông tin lấy từ tài khoản đăng nhập
   const [formData, setFormData] = useState<BookingFormData>({
     fullName: "Nguyễn Văn A",
@@ -41,23 +42,37 @@ const Booking = () => {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    // TODO: Gửi dữ liệu về server
-    console.log("Dữ liệu khám sàng lọc:", formData);
-    setSubmitted(true);
+    try {
+      const response = await fetch("http://localhost:8080/api/appointments", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData), // Gửi dữ liệu JSON lên server
+      });
+
+      if (response.ok) {
+        setSubmitted(true);
+      } else {
+        console.error("Gửi thất bại");
+      }
+    } catch (error) {
+      console.error("Lỗi gửi:", error);
+    }
   };
 
   return (
     <>
+      <Header />
       <div className="booking-container">
         <h2 id="register-title">Đăng ký khám sàng lọc</h2>
 
         {submitted ? (
           <div className="success-message">
-            ✅ Bạn đã đăng ký thành công! Chúng tôi sẽ liên hệ để xác nhận lịch
-            khám.
+            ✅ Bạn đã đăng ký thành công! Chúng tôi sẽ liên hệ để xác nhận lịch khám.
           </div>
         ) : (
           <form className="booking-form" onSubmit={handleSubmit}>
@@ -166,6 +181,7 @@ const Booking = () => {
           </form>
         )}
       </div>
+      <Footer />
     </>
   );
 };

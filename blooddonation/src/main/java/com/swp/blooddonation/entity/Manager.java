@@ -17,4 +17,7 @@ public class Manager {
     @JoinColumn(name = "id")
     private Account account;
     private String note;
+
+    @Column(nullable = false)
+    private boolean active = true;
 }

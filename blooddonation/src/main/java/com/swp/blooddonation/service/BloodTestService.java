@@ -17,6 +17,8 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Date;
 
+import com.swp.blooddonation.dto.request.NotificationRequest;
+
 @Service
 public class BloodTestService {
     @Autowired
@@ -36,6 +38,9 @@ public class BloodTestService {
 
     @Autowired
     private AuthenticationService authenticationService;
+
+    @Autowired
+    private NotificationService notificationService;
 
     @Transactional
     public BloodTest createBloodTest(Long customerId) {
@@ -159,6 +164,18 @@ public class BloodTestService {
         response.setTestDate(testDate);
         response.setTestedById(testedById);
         response.setTestedByName(testedByName);
+
+        // Gửi notification kết quả xét nghiệm cho người hiến
+        if (donor != null && donor.getAccount() != null) {
+            NotificationRequest notiRequest = NotificationRequest.builder()
+                .receiverIds(java.util.List.of(donor.getAccount().getId()))
+                .title("Kết quả xét nghiệm máu")
+                .content("Kết quả xét nghiệm của bạn cho cuộc hẹn ngày " + testDate + ": " + request.getResult() + (request.isPassed() ? ". Bạn đủ điều kiện hiến máu." : ". Bạn chưa đủ điều kiện hiến máu."))
+                .type(com.swp.blooddonation.enums.NotificationType.TEST_RESULT)
+                .build();
+            // Inject NotificationService nếu chưa có
+            notificationService.sendNotification(notiRequest);
+        }
 
         return response;
     }

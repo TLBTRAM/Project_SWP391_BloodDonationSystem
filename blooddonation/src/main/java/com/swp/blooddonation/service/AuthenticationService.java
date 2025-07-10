@@ -7,6 +7,7 @@ import com.swp.blooddonation.dto.request.ResetPasswordRequest;
 import com.swp.blooddonation.dto.response.AccountResponse;
 import com.swp.blooddonation.dto.response.RegisterResponse;
 import com.swp.blooddonation.entity.Account;
+import com.swp.blooddonation.entity.Customer;
 import com.swp.blooddonation.entity.VerificationCode;
 import com.swp.blooddonation.enums.EnableStatus;
 import com.swp.blooddonation.enums.Role;
@@ -14,6 +15,7 @@ import com.swp.blooddonation.exception.exceptions.AuthenticationException;
 import com.swp.blooddonation.exception.exceptions.ResetPasswordException;
 import com.swp.blooddonation.exception.exceptions.UserNotFoundException;
 import com.swp.blooddonation.repository.AuthenticationReponsitory;
+import com.swp.blooddonation.repository.CustomerRepository;
 import com.swp.blooddonation.repository.VerificationCodeRepository;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
@@ -55,10 +57,13 @@ public class AuthenticationService implements UserDetailsService {
     @Autowired
     EmailService emailService;
 
+    @Autowired
+    CustomerRepository customerRepository;
+
     public RegisterResponse register(@Valid RegisRequest regisRequest) {
         System.out.println("===== DEBUG REGISTER REQUEST =====");
         System.out.println("Received: " + regisRequest.getFullName());
-        System.out.println("YoB: " + regisRequest.getYoB());
+        System.out.println("YoB: " + regisRequest.getBirthDate());
         System.out.println("Gender: " + regisRequest.getGender());
         System.out.println("Email: " + regisRequest.getEmail());
         System.out.println("Phone: " + regisRequest.getPhone());
@@ -72,12 +77,25 @@ public class AuthenticationService implements UserDetailsService {
 
         // Map từ RegisRequest sang Account
         Account account = modelMapper.map(regisRequest, Account.class);
-        account.setCreateAt(LocalDateTime.now());
+        account.setCreatedAt(LocalDateTime.now());
         account.setEnableStatus(EnableStatus.ENABLE);
         account.setRole(Role.CUSTOMER);
 
         // Lưu vào DB
         Account savedAccount = authenticationReponsitory.save(account);
+
+        // Tạo Customer nếu là role CUSTOMER
+        if (savedAccount.getRole() == Role.CUSTOMER) {
+            Customer customer = new Customer();
+            customer.setAccount(savedAccount);
+            try {
+                Customer savedCustomer = customerRepository.save(customer);
+                System.out.println("Saved customer id: " + savedCustomer.getId());
+            } catch (Exception e) {
+                System.out.println("Error saving customer: " + e.getMessage());
+                e.printStackTrace();
+            }
+        }
 
         // Gửi email
         EmailDetail emailDetail = new EmailDetail();

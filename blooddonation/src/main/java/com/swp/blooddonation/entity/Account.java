@@ -49,10 +49,11 @@ public class Account implements UserDetails {
     public String fullName;
 
     @Temporal(TemporalType.DATE)
-    @Column(name = "yob")
-    private Date birthDate;
+    @Column(name = "birth_date")
+    public Date birthDate;
 
-    public LocalDateTime createAt;
+    @Column(name = "created_at")
+    public LocalDateTime createdAt;
 
     @Enumerated(EnumType.STRING)
     public Gender gender;

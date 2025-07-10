@@ -142,8 +142,8 @@ const MedicalStaff = () => {
                     <span className="role-tag">Nhân viên y tế</span>
                   </div>
                   <p>Email: {staff?.email || "---"}</p> {/* ⬅️ thay */}
-                  <p>Phone: {staff?.phone || "---"}</p> {/* ⬅️ thay */}
-                  <p>Company: {staff?.address || "Đang cập nhật"}</p> {/* ⬅️ thay */}
+                  <p>Số điện thoại: {staff?.phone || "---"}</p> {/* ⬅️ thay */}
+                  <p>Đơn vị: {staff?.address || "Trung tâm hiến máu"}</p> {/* ⬅️ thay */}
                 </div>
                 <button className="edit-button">Chỉnh sửa hồ sơ</button>
               </div>

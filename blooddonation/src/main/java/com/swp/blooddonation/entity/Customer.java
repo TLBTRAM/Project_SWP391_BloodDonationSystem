@@ -25,10 +25,6 @@ public class Customer {
     private BloodType bloodType;
     private LocalDate lastDonationDate;
 
-    // Từ Recipient
-//    private String bloodTypeNeeded;
-    @Enumerated(EnumType.STRING)
-    private RhType rhTypeNeeded;
-    private String hospitalName;
-    private String medicalCondition;
+    @Column(nullable = false)
+    private boolean active = true;
 }

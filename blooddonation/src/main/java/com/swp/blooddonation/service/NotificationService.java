@@ -47,6 +47,12 @@ public class NotificationService {
         notificationRepository.deleteById(id);
     }
 
+    public boolean isOwner(Long notificationId, Long accountId) {
+        return notificationRepository.findById(notificationId)
+                .map(notification -> notification.getReceiverId().equals(accountId))
+                .orElse(false);
+    }
+
     private NotificationDTO toDTO(Notification n) {
         return NotificationDTO.builder()
                 .id(n.getId())

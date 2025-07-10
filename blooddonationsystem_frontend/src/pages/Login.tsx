@@ -2,7 +2,7 @@ import React, { useState } from "react";
 
 import "./components/Login.css";
 import loginImage from "./images/Banner/login_img.jpeg";
-
+import { useAuth } from "../layouts/header-footer/AuthContext";
 import { Link, useNavigate } from 'react-router-dom';
 
 import Header from '../layouts/header-footer/Header';
@@ -13,6 +13,7 @@ function Login() {
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
 
+  const { login } = useAuth();
   const handleLogin = async () => {
     try {
       const res = await fetch("http://localhost:8080/api/auth/login", {
@@ -38,6 +39,7 @@ function Login() {
       const role = data.role?.toUpperCase(); // chuẩn hóa về in hoa
       console.log("Role đã chuẩn hóa:", role);
       localStorage.setItem("token", data.token);
+      login(data);
 
       // 🚀 Điều hướng theo role
       switch (data.role) {

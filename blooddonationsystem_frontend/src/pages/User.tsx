@@ -4,7 +4,7 @@ import Calendar from './Calendar';
 import './components/User.css';
 import Header from '../layouts/header-footer/Header';
 import avatarImg from './images/User/Avatar.png';
-import calendarIcon from './images/User/Calendar.png';
+import calendarIcon from './images/User/calendar.png';
 import notificationIcon from './images/User/notifications.png';
 
 interface UserData {
@@ -90,20 +90,7 @@ const User = () => {
 
       <div className="user-dashboard">
         <div className="user-topbar">
-          <div className="user-avatar-status" ref={userInfoRef} onClick={toggleDropdown}>
-            <img src={avatarImg} alt="Avatar" className="avatar" />
-            <span className="user-fullname">
-              {user?.fullName || "Tên người dùng"}
-            </span>
-            {dropdownOpen && (
-              <div className="dropdown">
-                <button onClick={() => navigate('/user')}>👤 Hồ sơ cá nhân</button>
-                <button onClick={() => navigate('/settings')}>⚙️ Cài đặt</button>
-                <button onClick={() => navigate('/booking-list')}>📅 Lịch hẹn đã đặt</button>
-                <button onClick={handleLogout}>🚪 Đăng xuất</button>
-              </div>
-            )}
-          </div>
+        
         </div>
 
         <main className="dashboard-content">

@@ -2,9 +2,11 @@ package com.swp.blooddonation.service;
 
 
 import com.swp.blooddonation.dto.request.NotificationRequest;
+import com.swp.blooddonation.dto.request.NotificationRequest;
 import com.swp.blooddonation.dto.request.RegisterRequest;
 import com.swp.blooddonation.entity.*;
 import com.swp.blooddonation.enums.AppointmentEnum;
+import com.swp.blooddonation.enums.NotificationType;
 import com.swp.blooddonation.enums.NotificationType;
 import com.swp.blooddonation.enums.RegisterStatus;
 import com.swp.blooddonation.enums.Role;

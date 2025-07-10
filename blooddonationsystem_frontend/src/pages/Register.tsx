@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { Link } from "react-router-dom";
@@ -14,6 +15,7 @@ import { registerLocale } from "react-datepicker";
 registerLocale("vi", vi);
 
 const Register: React.FC = () => {
+  const navigate = useNavigate();
   const [fullName, setFullName] = useState("");
   const [birthDate, setBirthDate] = useState<Date | null>(null);
   const [age, setAge] = useState("");
@@ -93,6 +95,7 @@ const Register: React.FC = () => {
 
       if (response.ok) {
         alert("Đăng ký thành công!");
+        navigate("/login");
       } else {
         const errorData = await response.json();
         alert(
