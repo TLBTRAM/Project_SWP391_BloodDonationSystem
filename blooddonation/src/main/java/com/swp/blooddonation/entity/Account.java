@@ -101,6 +101,10 @@ public class Account implements UserDetails {
         return this.enableStatus == EnableStatus.ENABLE;
     }
 
+    public String getRoleName() {
+        return role != null ? role.name() : null;
+    }
+
     @OneToMany(mappedBy = "account")
     @JsonIgnore
     List<AccountSlot> accountSlots;

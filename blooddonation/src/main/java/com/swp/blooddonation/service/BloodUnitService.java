@@ -167,4 +167,18 @@ public class BloodUnitService {
         }
     }
 
+    public long countAll() {
+        return bloodUnitRepository.count();
+    }
+    public long countAllUnits() {
+        Long sum = bloodUnitRepository.sumUnits();
+        return sum != null ? sum : 0;
+    }
+    public long countByUserId(Long userId) {
+        return bloodUnitRepository.countByDonorId(userId);
+    }
+    public long countUnitsByUserId(Long userId) {
+        Long sum = bloodUnitRepository.sumUnitsByUserId(userId);
+        return sum != null ? sum : 0;
+    }
 }
