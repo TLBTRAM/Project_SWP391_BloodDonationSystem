@@ -40,8 +40,15 @@ public class TestResult {
     @JoinColumn(name = "staff_id")
     private MedicalStaff staff;
 
-    @ManyToOne
-    @JoinColumn(name = "appointment_id")
-    private Appointment appointment;
+//    @ManyToOne
+//    @JoinColumn(name = "appointment_id")
+//    private Appointment appointment;
+
+    @Column(nullable = false)
+    private boolean passed;
+
+    @OneToOne
+    @JoinColumn(name = "blood_test_id", nullable = false)
+    private BloodTest bloodTest;
 
 }

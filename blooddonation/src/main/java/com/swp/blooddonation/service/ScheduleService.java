@@ -39,11 +39,7 @@ public class ScheduleService {
 
         // Map lại sang response DTO
         ScheduleResponseDTO response = modelMapper.map(savedSchedule, ScheduleResponseDTO.class);
-        String createdBy = currentUser.getFullName();
-        if (createdBy == null || createdBy.isEmpty()) {
-            createdBy = currentUser.getEmail();
-        }
-        response.setCreatedBy(createdBy);
+        response.setCreatedBy(savedSchedule.getAccount().getId());
 
         return response;
     }

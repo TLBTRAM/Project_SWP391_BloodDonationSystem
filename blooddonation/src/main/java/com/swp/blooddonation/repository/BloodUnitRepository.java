@@ -1,6 +1,7 @@
 package com.swp.blooddonation.repository;
 
 import com.swp.blooddonation.entity.BloodUnit;
+import com.swp.blooddonation.entity.WholeBloodRequest;
 import com.swp.blooddonation.enums.BloodType;
 import com.swp.blooddonation.enums.BloodUnitStatus;
 import com.swp.blooddonation.enums.RhType;
@@ -19,6 +20,8 @@ public interface BloodUnitRepository extends JpaRepository<BloodUnit, Long> {
                 "AND u.expirationDate >= CURRENT_DATE")
         List<BloodUnit> findUsableBloodUnits(@Param("bloodType") BloodType bloodType,
                                              @Param("rhType") RhType rhType);
+        List<BloodUnit> findByWholeBloodRequest(WholeBloodRequest request);
+
 
         @Query("SELECT SUM(u.totalVolume) FROM BloodUnit u WHERE u.status = com.swp.blooddonation.enums.BloodUnitStatus.COLLECTED AND u.expirationDate >= CURRENT_DATE")
         Integer getTotalUsableVolume();

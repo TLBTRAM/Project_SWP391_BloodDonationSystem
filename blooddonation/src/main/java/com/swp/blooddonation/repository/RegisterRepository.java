@@ -3,15 +3,27 @@ package com.swp.blooddonation.repository;
 import com.swp.blooddonation.entity.Account;
 import com.swp.blooddonation.entity.Register;
 import com.swp.blooddonation.entity.Slot;
+import com.swp.blooddonation.enums.RegisterStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.sql.Time;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.List;
 
 public interface RegisterRepository extends JpaRepository<Register, Long> {
-//    boolean existsByAccountAndSlotAndTime(Account account, Slot slot, LocalTime time);
-    boolean existsByAccountAndSlot_IdAndRegisterDate(Account account, Long slotId, LocalDate registerDate);
 
+
+
+    boolean existsByAccountAndSlotAndRegisterDate(Account account, Slot slot, LocalDate registerDate);
+
+    List<Register> findBySlotAndRegisterDateAndStatusOrderByCreatedAt(
+            Slot slot,
+            LocalDate registerDate,
+            RegisterStatus status
+    );
+
+    List<Register> findBySlotAndRegisterDateOrderByCreatedAt(Slot slot, LocalDate registerDate);
 
 }

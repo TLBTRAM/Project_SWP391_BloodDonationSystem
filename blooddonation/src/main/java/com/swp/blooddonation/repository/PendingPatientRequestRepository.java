@@ -9,7 +9,7 @@ import java.util.Optional;
 
 public interface PendingPatientRequestRepository extends JpaRepository<PendingPatientRequest, Long> {
     Optional<PendingPatientRequest> findByWholeBloodRequest(WholeBloodRequest wholeBloodRequest);
-    Optional<PendingPatientRequest> findByBloodRequestComponent(BloodRequestComponent bloodRequestComponent);
+    Optional<PendingPatientRequest> findByBloodRequestComponent(BloodRequestComponent request);
 
 }
 

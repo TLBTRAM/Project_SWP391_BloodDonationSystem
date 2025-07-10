@@ -9,6 +9,8 @@ import lombok.Setter;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -41,4 +43,8 @@ public class WholeBloodRequest {
 
     @Enumerated(EnumType.STRING)
     private BloodRequestStatus status;; // PENDING, APPROVED, FULFILLED
+    @OneToMany(mappedBy = "wholeBloodRequest", cascade = CascadeType.ALL)
+    private List<BloodUnit> providedBloodUnits = new ArrayList<>();
+
+
 }

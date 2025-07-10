@@ -8,11 +8,9 @@ import java.time.LocalTime;
 
 @Data
 public class ScheduleResponseDTO {
-    private Long scheduleId;
+    private Long id;
     private LocalDate scheduleDate;
-//    private LocalTime startTime;
-//    private LocalTime endTime;
     private ScheduleStatus status;
-
-    private String createdBy; // tên hoặc email của người tạo lịch
+    private Long createdBy;
 }
+

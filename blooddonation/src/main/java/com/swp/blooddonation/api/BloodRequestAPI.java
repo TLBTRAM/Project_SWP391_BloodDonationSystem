@@ -42,4 +42,26 @@ public class BloodRequestAPI {
         bloodRequestService.approveBloodRequest(id);
         return ResponseEntity.ok("Phê duyệt yêu cầu thành công.");
     }
+
+    @PreAuthorize("hasAnyRole('MANAGER', 'MEDICALSTAFF')")
+    @PutMapping("/component/{id}/approve")
+    public ResponseEntity<?> approveComponentBloodRequest(@PathVariable("id") Long id) {
+        bloodRequestService.approveComponentRequest(id);
+        return ResponseEntity.ok("Phê duyệt yêu cầu truyền thành phần máu thành công.");
+    }
+    @PreAuthorize("hasAnyRole('MANAGER', 'MEDICALSTAFF')")
+    @PutMapping("/whole-requests/{id}/complete")
+    public ResponseEntity<?> completeWholeRequest(@PathVariable Long id) {
+        bloodRequestService.completeWholeBloodRequest(id);
+        return ResponseEntity.ok("Đã hoàn tất yêu cầu truyền máu.");
+    }
+
+    @PreAuthorize("hasAnyRole('MANAGER', 'MEDICALSTAFF')")
+    @PutMapping("/whole-requests/{id}/reject")
+    public ResponseEntity<?> rejectRequest(@PathVariable Long id, @RequestParam String reason) {
+        bloodRequestService.rejectWholeBloodRequest(id, reason);
+        return ResponseEntity.ok("Đã từ chối yêu cầu truyền máu.");
+    }
+
+
 }
