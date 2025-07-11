@@ -26,4 +26,11 @@ public interface BloodUnitRepository extends JpaRepository<BloodUnit, Long> {
         @Query("SELECT SUM(u.totalVolume) FROM BloodUnit u WHERE u.status = com.swp.blooddonation.enums.BloodUnitStatus.COLLECTED AND u.expirationDate >= CURRENT_DATE")
         Integer getTotalUsableVolume();
 
+    @Query("SELECT SUM(bu.totalVolume) FROM BloodUnit bu")
+    Long sumUnits();
+
+    long countByDonorId(Long donorId);
+
+    @Query("SELECT SUM(bu.totalVolume) FROM BloodUnit bu WHERE bu.donor.id = :userId")
+    Long sumUnitsByUserId(@Param("userId") Long userId);
 }

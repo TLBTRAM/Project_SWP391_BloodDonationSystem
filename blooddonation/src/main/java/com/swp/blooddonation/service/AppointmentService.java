@@ -9,6 +9,7 @@ import com.swp.blooddonation.enums.RegisterStatus;
 import com.swp.blooddonation.enums.Role;
 import com.swp.blooddonation.exception.exceptions.BadRequestException;
 import com.swp.blooddonation.repository.*;
+import com.swp.blooddonation.repository.AppointmentRepository;
 import jakarta.transaction.Transactional;
 import javassist.NotFoundException;
 import org.modelmapper.ModelMapper;
@@ -66,6 +67,12 @@ public class AppointmentService {
 
         appointment.setStatus(AppointmentEnum.COMPLETED);
         return appointmentRepository.save(appointment);
+    }
+    public long countAll() {
+        return appointmentRepository.count();
+    }
+    public long countByUserId(Long userId) {
+        return appointmentRepository.countByCustomerId(userId);
     }
 
 
