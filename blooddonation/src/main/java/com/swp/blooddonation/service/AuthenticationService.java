@@ -5,18 +5,16 @@ import com.swp.blooddonation.dto.request.LoginRequest;
 import com.swp.blooddonation.dto.request.RegisRequest;
 import com.swp.blooddonation.dto.request.ResetPasswordRequest;
 import com.swp.blooddonation.dto.response.AccountResponse;
+import com.swp.blooddonation.dto.response.RegisterAccountResponse;
 import com.swp.blooddonation.dto.response.RegisterResponse;
-import com.swp.blooddonation.entity.Account;
-import com.swp.blooddonation.entity.Customer;
-import com.swp.blooddonation.entity.VerificationCode;
+import com.swp.blooddonation.entity.*;
 import com.swp.blooddonation.enums.EnableStatus;
 import com.swp.blooddonation.enums.Role;
 import com.swp.blooddonation.exception.exceptions.AuthenticationException;
+import com.swp.blooddonation.exception.exceptions.BadRequestException;
 import com.swp.blooddonation.exception.exceptions.ResetPasswordException;
 import com.swp.blooddonation.exception.exceptions.UserNotFoundException;
-import com.swp.blooddonation.repository.AuthenticationReponsitory;
-import com.swp.blooddonation.repository.CustomerRepository;
-import com.swp.blooddonation.repository.VerificationCodeRepository;
+import com.swp.blooddonation.repository.*;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import org.modelmapper.ModelMapper;
@@ -60,7 +58,18 @@ public class AuthenticationService implements UserDetailsService {
     @Autowired
     CustomerRepository customerRepository;
 
-    public RegisterResponse register(@Valid RegisRequest regisRequest) {
+
+    @Autowired
+    ProvinceRepository provinceRepository;
+
+    @Autowired
+    DistrictRepository districtRepository;
+
+    @Autowired
+
+    WardRepository wardRepository;
+
+    public RegisterAccountResponse register(@Valid RegisRequest regisRequest) {
         System.out.println("===== DEBUG REGISTER REQUEST =====");
         System.out.println("Received: " + regisRequest.getFullName());
         System.out.println("YoB: " + regisRequest.getBirthDate());
@@ -68,20 +77,44 @@ public class AuthenticationService implements UserDetailsService {
         System.out.println("Email: " + regisRequest.getEmail());
         System.out.println("Phone: " + regisRequest.getPhone());
         System.out.println("==================================");
+
+        // Kiểm tra email đã tồn tại chưa
         if (authenticationReponsitory.existsByEmail(regisRequest.getEmail())) {
             throw new RuntimeException("Email đã được sử dụng!");
         }
 
         // Mã hoá mật khẩu
-        regisRequest.setPassword(passwordEncoder.encode(regisRequest.getPassword()));
+        String encodedPassword = passwordEncoder.encode(regisRequest.getPassword());
 
-        // Map từ RegisRequest sang Account
-        Account account = modelMapper.map(regisRequest, Account.class);
+        // Tạo đối tượng Account
+        Account account = new Account();
+        account.setEmail(regisRequest.getEmail());
+        account.setPhone(regisRequest.getPhone());
+        account.setPassword(encodedPassword);
+        account.setFullName(regisRequest.getFullName());
+        account.setBirthDate(regisRequest.getBirthDate());
+        account.setGender(regisRequest.getGender());
         account.setCreatedAt(LocalDateTime.now());
         account.setEnableStatus(EnableStatus.ENABLE);
         account.setRole(Role.CUSTOMER);
 
-        // Lưu vào DB
+        // Lấy thông tin địa chỉ hành chính từ DTO
+        AddressDTO dto = regisRequest.getAddress();
+        Province province = provinceRepository.findById(dto.getProvinceId())
+                .orElseThrow(() -> new BadRequestException("Tỉnh/Thành không tồn tại"));
+
+        District district = districtRepository.findById(dto.getDistrictId())
+                .orElseThrow(() -> new BadRequestException("Quận/Huyện không tồn tại"));
+
+        Ward ward = wardRepository.findById(dto.getWardId())
+                .orElseThrow(() -> new BadRequestException("Phường/Xã không tồn tại"));
+
+        account.setProvince(province);
+        account.setDistrict(district);
+        account.setWard(ward);
+        account.setStreet(dto.getStreet());
+
+        // Lưu tài khoản vào DB
         Account savedAccount = authenticationReponsitory.save(account);
 
         // Tạo Customer nếu là role CUSTOMER
@@ -93,20 +126,35 @@ public class AuthenticationService implements UserDetailsService {
                 System.out.println("Saved customer id: " + savedCustomer.getId());
             } catch (Exception e) {
                 System.out.println("Error saving customer: " + e.getMessage());
-                e.printStackTrace();
             }
         }
 
-        // Gửi email
+        // Gửi email chào mừng
         EmailDetail emailDetail = new EmailDetail();
         emailDetail.setMailRecipient(savedAccount.getEmail());
         emailDetail.setSubject("Welcome to Blood Donation Website");
         emailService.sendMailRegister(emailDetail);
 
-        // Map từ Account sang RegisterResponse
-        RegisterResponse registerResponse = modelMapper.map(savedAccount, RegisterResponse.class);
+        // Tạo phản hồi
+        RegisterAccountResponse response = new RegisterAccountResponse();
+        response.setId(savedAccount.getId());
+        response.setEmail(savedAccount.getEmail());
+        response.setPhone(savedAccount.getPhone());
+        response.setFullName(savedAccount.getFullName());
+        response.setGender(savedAccount.getGender());
+        response.setBirthDate(savedAccount.getBirthDate());
+        response.setEnabled(savedAccount.isEnabled());
+        response.setCreatedAt(savedAccount.getCreatedAt());
 
-        return registerResponse;
+        String fullAddress = String.join(", ",
+                savedAccount.getStreet(),
+                savedAccount.getWard().getName(),
+                savedAccount.getDistrict().getName(),
+                savedAccount.getProvince().getName()
+        );
+        response.setFullAddress(fullAddress);
+
+        return response;
     }
 
 

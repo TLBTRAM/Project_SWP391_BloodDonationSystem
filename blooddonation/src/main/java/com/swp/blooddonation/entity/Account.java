@@ -44,8 +44,8 @@ public class Account implements UserDetails {
     @JsonIgnore
     private String password;
 
-    @JsonProperty("fullname")
-    @Column(name = "fullname")
+    @JsonProperty("full_name")
+    @Column(name = "full_name")
     public String fullName;
 
     @Temporal(TemporalType.DATE)
@@ -64,7 +64,20 @@ public class Account implements UserDetails {
     @Enumerated(EnumType.STRING)
     public EnableStatus enableStatus;
 
-    private String address;
+    @ManyToOne
+    @JoinColumn(name = "province_id")
+    private Province province;
+
+    @ManyToOne
+    @JoinColumn(name = "district_id")
+    private District district;
+
+    @ManyToOne
+    @JoinColumn(name = "ward_id")
+    private Ward ward;
+
+    @Column(name = "street")
+    private String street;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

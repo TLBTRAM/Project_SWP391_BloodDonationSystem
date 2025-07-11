@@ -6,6 +6,7 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -19,6 +20,8 @@ public class AdminAPI {
     AdminService adminService;
 
 
+
+    @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/users/{userId}/role")
     public ResponseEntity<String> updateUserRole(
             @PathVariable Long userId,

@@ -55,6 +55,18 @@ public class AppointmentService {
     ModelMapper modelMapper;
 
 
+    @Transactional
+    public Appointment completeAppointment(Long appointmentId) {
+        Appointment appointment = appointmentRepository.findById(appointmentId)
+                .orElseThrow(() -> new BadRequestException("Không tìm thấy lịch hẹn với ID: " + appointmentId));
+
+        if (appointment.getStatus() != AppointmentEnum.SCHEDULED) {
+            throw new BadRequestException("Chỉ lịch hẹn đang ở trạng thái SCHEDULED mới được hoàn thành.");
+        }
+
+        appointment.setStatus(AppointmentEnum.COMPLETED);
+        return appointmentRepository.save(appointment);
+    }
 
 
 }
