@@ -4,6 +4,7 @@ import com.swp.blooddonation.dto.CustomerDTO;
 import com.swp.blooddonation.dto.DonationHistoryDTO;
 import com.swp.blooddonation.entity.Account;
 import com.swp.blooddonation.service.CustomerService;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -13,6 +14,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/customer")
+@SecurityRequirement(name = "api")
 @RequiredArgsConstructor
 public class CustomerAPI {
 
@@ -36,5 +38,10 @@ public class CustomerAPI {
 //        return ResponseEntity.ok(customerService.getDonationRecommendation(account));
 //    }
 
+    // Xem thời điểm sẵn sàng hiến máu tiếp theo
+    @GetMapping("/ready-date")
+    public ResponseEntity<CustomerService.ReadyDateResponse> getReadyDate(@AuthenticationPrincipal Account account) {
+        return ResponseEntity.ok(customerService.getReadyDate(account));
+    }
 }
 

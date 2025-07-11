@@ -53,6 +53,23 @@ public class CustomerService {
                 : "Bạn đã có thể hiến máu trở lại.";
     }
 
+    // DTO trả về ngày sẵn sàng hiến máu
+    public static class ReadyDateResponse {
+        private String readyDate;
+        public ReadyDateResponse(String readyDate) { this.readyDate = readyDate; }
+        public String getReadyDate() { return readyDate; }
+        public void setReadyDate(String readyDate) { this.readyDate = readyDate; }
+    }
+
+    public ReadyDateResponse getReadyDate(Account account) {
+        Customer customer = getCustomer(account);
+        LocalDate last = customer.getLastDonationDate();
+        String date;
+        if (last == null) date = LocalDate.now().toString();
+        else date = last.plusDays(90).toString();
+        return new ReadyDateResponse(date);
+    }
+
     // 🔐 Lấy Customer từ Account
     private Customer getCustomer(Account account) {
         return customerRepository.findById(account.getId())
