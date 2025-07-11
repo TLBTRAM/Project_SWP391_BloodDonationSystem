@@ -23,6 +23,10 @@ public class Customer {
     // Từ Donor
     @Enumerated(EnumType.STRING)
     private BloodType bloodType;
+
+    @Enumerated(EnumType.STRING)
+    private RhType rhType;
+
     private LocalDate lastDonationDate;
 
     @Column(nullable = false)

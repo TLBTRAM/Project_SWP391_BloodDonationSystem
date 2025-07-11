@@ -2,6 +2,7 @@ package com.swp.blooddonation.entity;
 
 import com.swp.blooddonation.enums.BloodTestStatus;
 import com.swp.blooddonation.enums.BloodType;
+import com.swp.blooddonation.enums.RhType;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -30,6 +31,11 @@ public class BloodTest {
     private BloodType bloodType;
 
     private LocalDateTime createdAt;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "rh_type")
+    private RhType rhType;
+
 
     @ManyToOne
     @JoinColumn(name = "medical_staff_id") // tên cột trong bảng blood_test

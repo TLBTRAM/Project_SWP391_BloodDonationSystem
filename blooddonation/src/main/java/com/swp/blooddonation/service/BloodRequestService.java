@@ -1,5 +1,6 @@
 package com.swp.blooddonation.service;
 
+import com.swp.blooddonation.dto.AddressDTO;
 import com.swp.blooddonation.dto.request.BloodRequestRequest;
 import com.swp.blooddonation.dto.request.ComponentBloodRequestRequest;
 import com.swp.blooddonation.dto.request.NotificationRequest;
@@ -51,6 +52,7 @@ public class BloodRequestService {
     @Autowired
     NotificationService notificationService;
 
+
     @Transactional
     public WholeBloodRequest requestBlood(BloodRequestRequest dto) {
         Account currentUser = authenticationService.getCurrentAccount();
@@ -59,7 +61,7 @@ public class BloodRequestService {
             throw new BadRequestException("Chỉ người dùng hoặc nhân viên y tế mới được gửi yêu cầu.");
         }
 
-        // 1. Tạo BloodRequest (chưa có patient)
+        // 1. Tạo WholeBloodRequest (chưa có patient)
         WholeBloodRequest request = new WholeBloodRequest();
         request.setRequester(currentUser);
         request.setBloodType(dto.getBloodType());
@@ -71,24 +73,30 @@ public class BloodRequestService {
         request.setStatus(BloodRequestStatus.PENDING);
         bloodRequestRepository.save(request);
 
-        // 2. Tạo bản ghi PendingPatientRequest
+        // 2. Map AddressDTO sang các trường riêng lẻ
+        AddressDTO address = dto.getPatientAddress();
+
+        // 3. Tạo bản ghi PendingPatientRequest
         PendingPatientRequest pending = PendingPatientRequest.builder()
                 .fullName(dto.getFullName())
                 .gender(dto.getGender())
                 .dateOfBirth(dto.getDateOfBirth())
                 .phone(dto.getPhone())
-                .address(dto.getPatientAddress())
+                .street(address.getStreet())
+                .wardId(address.getWardId())
+                .districtId(address.getDistrictId())
+                .provinceId(address.getProvinceId())
                 .email(null)
                 .bloodType(dto.getBloodType().name())
                 .status(BloodRequestStatus.PENDING)
                 .createdAt(LocalDateTime.now())
                 .wholeBloodRequest(request)
                 .build();
+
         pendingPatientRequestRepository.save(pending);
 
         return request;
     }
-
 
     @Transactional
     public void completeWholeBloodRequest(Long requestId) {
@@ -174,13 +182,18 @@ public class BloodRequestService {
 
         bloodRequestComponentRepository.save(request);
 
+        AddressDTO address = dto.getPatientAddress();
+
         // 2. Tạo bản ghi bệnh nhân tạm thời
         PendingPatientRequest pending = PendingPatientRequest.builder()
                 .fullName(dto.getFullName())
                 .gender(dto.getGender())
                 .dateOfBirth(dto.getDateOfBirth())
                 .phone(dto.getPhone())
-                .address(dto.getPatientAddress())
+                .street(address.getStreet())
+                .wardId(address.getWardId())
+                .districtId(address.getDistrictId())
+                .provinceId(address.getProvinceId())
                 .email(null)
                 .bloodType(dto.getBloodType().name())
                 .status(BloodRequestStatus.PENDING)
@@ -213,7 +226,10 @@ public class BloodRequestService {
         Patient patient = new Patient();
         patient.setFullName(pending.getFullName());
         patient.setDateOfBirth(pending.getDateOfBirth());
-        patient.setAddress(pending.getAddress());
+        patient.setStreet(pending.getStreet());
+        patient.setWardId(pending.getWardId());
+        patient.setDistrictId(pending.getDistrictId());
+        patient.setProvinceId(pending.getProvinceId());
         patient.setBloodType(request.getBloodType());
         patient.setRhType(request.getRhType());
         patient.setHospitalName(request.getHospitalName());
@@ -241,7 +257,7 @@ public class BloodRequestService {
         }
 
         if (accumulated >= required) {
-            // ✅ Đủ máu: cấp trực tiếp cho yêu cầu chính
+            // Đủ máu: cấp trực tiếp cho yêu cầu chính
             request.setPatient(patient);
             request.setStatus(BloodRequestStatus.READY);
             bloodRequestRepository.save(request);
@@ -256,7 +272,7 @@ public class BloodRequestService {
                     .build());
 
         } else {
-            // ✅ Không đủ máu: tạo yêu cầu mới cho phần đủ
+            //  Không đủ máu: tạo yêu cầu mới cho phần đủ
             WholeBloodRequest readyPart = new WholeBloodRequest();
             readyPart.setBloodType(request.getBloodType());
             readyPart.setRhType(request.getRhType());
@@ -318,7 +334,10 @@ public class BloodRequestService {
         Patient patient = new Patient();
         patient.setFullName(pending.getFullName());
         patient.setDateOfBirth(pending.getDateOfBirth());
-        patient.setAddress(pending.getAddress());
+        patient.setStreet(pending.getStreet());
+        patient.setWardId(pending.getWardId());
+        patient.setDistrictId(pending.getDistrictId());
+        patient.setProvinceId(pending.getProvinceId());
         patient.setBloodType(request.getBloodType());
         patient.setRhType(request.getRhType());
         patient.setHospitalName(request.getHospitalName());
@@ -379,6 +398,8 @@ public class BloodRequestService {
         pending.setStatus(BloodRequestStatus.APPROVED);
         pendingPatientRequestRepository.save(pending);
     }
+
+
 
     private boolean processComponent(
             BloodType bloodType,

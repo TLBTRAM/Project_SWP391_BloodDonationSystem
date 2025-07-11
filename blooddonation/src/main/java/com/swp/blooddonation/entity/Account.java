@@ -2,6 +2,7 @@ package com.swp.blooddonation.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.swp.blooddonation.enums.BloodType;
 import com.swp.blooddonation.enums.EnableStatus;
 import com.swp.blooddonation.enums.Gender;
 import com.swp.blooddonation.enums.Role;

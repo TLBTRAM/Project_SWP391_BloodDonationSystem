@@ -1,5 +1,6 @@
 package com.swp.blooddonation.dto.request;
 
+import com.swp.blooddonation.dto.AddressDTO;
 import com.swp.blooddonation.enums.BloodType;
 import com.swp.blooddonation.enums.Gender;
 import com.swp.blooddonation.enums.RhType;
@@ -18,7 +19,7 @@ public class BloodRequestRequest {
 
     private String fullName;
     private LocalDate dateOfBirth;
-    private String patientAddress;
+    private AddressDTO patientAddress;
     private String phone;
 
     @Enumerated(EnumType.STRING)
