@@ -52,12 +52,12 @@ public class AppointmentAPI {
 //        return ResponseEntity.ok(appointment);
 //    }
 //
-//    @PreAuthorize("hasRole('MEDICALSTAFF')")
-//    @PutMapping("/{id}/complete")
-//    public ResponseEntity<Appointment> completeAppointment(@PathVariable Long id) {
-//        Appointment appointment = appointmentService.completeAppointment(id);
-//        return ResponseEntity.ok(appointment);
-//    }
+    @PreAuthorize("hasRole('MEDICALSTAFF')")
+    @PutMapping("/{id}/complete")
+    public ResponseEntity<Appointment> completeAppointment(@PathVariable Long id) {
+        Appointment appointment = appointmentService.completeAppointment(id);
+        return ResponseEntity.ok(appointment);
+    }
 //
 //    @GetMapping("/{id}")
 //    public ResponseEntity<Appointment> getAppointmentById(@PathVariable Long id) {

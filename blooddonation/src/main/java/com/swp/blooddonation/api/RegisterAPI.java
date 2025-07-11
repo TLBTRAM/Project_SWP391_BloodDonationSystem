@@ -46,8 +46,8 @@ public class RegisterAPI {
      */
     @PreAuthorize("hasRole('MEDICALSTAFF')")
     @PostMapping("/{id}/reject")
-    public void rejectRegister(@PathVariable Long registerId, @RequestBody RejectRequest request) {
-        registerService.rejectRegister(registerId, request.getReason());
+    public void rejectRegister(@PathVariable("id") Long id, @RequestBody RejectRequest request) {
+        registerService.rejectRegister(id, request.getReason());
     }
 
     /**

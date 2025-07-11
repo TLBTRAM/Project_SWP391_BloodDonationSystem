@@ -85,6 +85,12 @@ public class BloodUnitService {
             throw new BadRequestException("Total volume must be between 1 and 500 ml.");
         }
 
+
+        donor.setLastDonationDate(LocalDate.now());
+        customerRepository.save(donor);
+
+
+
         // Tạo BloodUnit
         BloodUnit unit = new BloodUnit();
         unit.setBloodType(request.getBloodType());

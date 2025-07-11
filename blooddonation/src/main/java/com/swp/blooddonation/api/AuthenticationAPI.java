@@ -5,6 +5,7 @@ import com.swp.blooddonation.dto.request.LoginRequest;
 import com.swp.blooddonation.dto.request.RegisRequest;
 import com.swp.blooddonation.dto.request.ResetPasswordRequest;
 import com.swp.blooddonation.dto.response.AccountResponse;
+import com.swp.blooddonation.dto.response.RegisterAccountResponse;
 import com.swp.blooddonation.dto.response.RegisterResponse;
 import com.swp.blooddonation.service.AuthenticationService;
 import jakarta.validation.Valid;
@@ -26,8 +27,8 @@ public class AuthenticationAPI {
     @PostMapping("/register")
     public ResponseEntity register(@Valid @RequestBody RegisRequest regisRequest){
         // nhờ thằng AuthenticationService => tạo dùm account
-        RegisterResponse registerResponse = authenticationService.register(regisRequest);
-        return  ResponseEntity.ok(registerResponse);
+        RegisterAccountResponse registerAccountResponse = authenticationService.register(regisRequest);
+        return  ResponseEntity.ok(registerAccountResponse);
     }
 
 

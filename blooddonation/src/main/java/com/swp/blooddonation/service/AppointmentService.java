@@ -26,7 +26,7 @@ import java.util.stream.Collectors;
 public class AppointmentService {
     
     @Autowired
-    private AppointmentRepository appointmentRepository;
+    AppointmentRepository appointmentRepository;
 
     @Autowired
     AccountSlotRepository accountSlotRepository;
@@ -55,6 +55,19 @@ public class AppointmentService {
     @Autowired
     ModelMapper modelMapper;
 
+
+    @Transactional
+    public Appointment completeAppointment(Long appointmentId) {
+        Appointment appointment = appointmentRepository.findById(appointmentId)
+                .orElseThrow(() -> new BadRequestException("Không tìm thấy lịch hẹn với ID: " + appointmentId));
+
+        if (appointment.getStatus() != AppointmentEnum.SCHEDULED) {
+            throw new BadRequestException("Chỉ lịch hẹn đang ở trạng thái SCHEDULED mới được hoàn thành.");
+        }
+
+        appointment.setStatus(AppointmentEnum.COMPLETED);
+        return appointmentRepository.save(appointment);
+    }
     public long countAll() {
         return appointmentRepository.count();
     }

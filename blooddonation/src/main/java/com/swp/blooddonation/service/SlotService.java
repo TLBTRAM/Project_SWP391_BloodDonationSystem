@@ -8,6 +8,7 @@ import com.swp.blooddonation.entity.AccountSlot;
 import com.swp.blooddonation.entity.Schedule;
 import com.swp.blooddonation.entity.Slot;
 import com.swp.blooddonation.enums.Role;
+import com.swp.blooddonation.enums.ScheduleStatus;
 import com.swp.blooddonation.exception.exceptions.BadRequestException;
 import com.swp.blooddonation.exception.exceptions.UserNotFoundException;
 import com.swp.blooddonation.repository.AccountSlotRepository;
@@ -93,6 +94,11 @@ public class SlotService {
 //        if (dayOfWeek == DayOfWeek.SATURDAY || dayOfWeek == DayOfWeek.SUNDAY) {
 //            throw new BadRequestException("Không được đăng ký lịch vào Thứ 7 hoặc Chủ nhật.");
 //        }
+
+        boolean hasOpenSchedule = scheduleRepository.existsByScheduleDateAndStatus(date, ScheduleStatus.OPEN);
+        if (!hasOpenSchedule) {
+            throw new BadRequestException("Không thể đăng ký vì chưa có lịch làm việc (Schedule) OPEN cho ngày " + date + ".");
+        }
 
         boolean existed = accountSlotRepository.existsByAccountAndDate(currentAccount, date);
         if (existed) {
