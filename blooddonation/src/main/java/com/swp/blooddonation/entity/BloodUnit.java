@@ -34,10 +34,10 @@ public class BloodUnit {
     private BloodUnitStatus status; // COLLECTED, SEPARATED, EXPIRED
 
     @ManyToOne
-    private Customer donor;
+    private User donor;
 
     @ManyToOne
-    private MedicalStaff collectedBy;
+    private User collectedBy;
 
     @ManyToOne
     @JoinColumn(name = "whole_blood_request_id")

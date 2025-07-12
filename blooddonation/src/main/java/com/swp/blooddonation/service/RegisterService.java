@@ -2,11 +2,10 @@ package com.swp.blooddonation.service;
 
 
 import com.swp.blooddonation.dto.request.NotificationRequest;
-import com.swp.blooddonation.dto.request.NotificationRequest;
 import com.swp.blooddonation.dto.request.RegisterRequest;
 import com.swp.blooddonation.entity.*;
+import com.swp.blooddonation.entity.Account;
 import com.swp.blooddonation.enums.AppointmentEnum;
-import com.swp.blooddonation.enums.NotificationType;
 import com.swp.blooddonation.enums.NotificationType;
 import com.swp.blooddonation.enums.RegisterStatus;
 import com.swp.blooddonation.enums.Role;
@@ -22,7 +21,6 @@ import java.time.LocalDateTime;
 
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -50,14 +48,29 @@ public class RegisterService {
     @Autowired
     private NotificationService notificationService;
 
+    @Autowired
+    UserRepository userRepository;
+    @Autowired
+    UserService userService;
+
 
     @Transactional
     public Register createRegister(RegisterRequest request) {
-        Account currentUser = authenticationService.getCurrentAccount();
 
 
+        User currentUser = userService.getCurrentUser();
+        if (currentUser == null) {
+            throw new BadRequestException("Thông tin người dùng không tồn tại.");
+        }
 
         LocalDate registerDate = request.getDate();
+
+        boolean isWorkingThatDay = accountSlotRepository
+                .existsByUserAndDate(currentUser, registerDate);
+
+        if (isWorkingThatDay) {
+            throw new BadRequestException("Bạn đã đăng ký làm việc trong ngày này nên không thể đăng ký hiến máu.");
+        }
 
         Slot slot = slotRepository.findById(request.getSlotId())
                 .orElseThrow(() -> new BadRequestException("Không tìm thấy slot."));
@@ -65,32 +78,32 @@ public class RegisterService {
         Schedule schedule = scheduleRepository.findByScheduleDate(registerDate)
                 .orElseThrow(() -> new BadRequestException("Không có lịch làm việc cho ngày đã chọn."));
 
-
         List<AccountSlot> workingStaff = accountSlotRepository
-                .findByDateAndAccount_Role(registerDate, Role.MEDICALSTAFF);
+                .findByDateAndUser_Account_Role(registerDate, Role.MEDICALSTAFF);
 
         if (workingStaff.isEmpty()) {
             throw new BadRequestException("Chưa có nhân viên y tế làm việc trong ngày đã chọn.");
         }
 
-        boolean exists = registerRepository.existsByAccountAndSlotAndRegisterDate(
-                currentUser, slot, registerDate);
+        boolean exists = registerRepository.existsByUserAndSlotAndRegisterDate(
+                currentUser, slot, registerDate); // 💡 Đổi lại method đúng theo field
 
         if (exists) {
             throw new BadRequestException("Bạn đã đăng ký slot này vào ngày này.");
         }
 
         Register register = new Register();
-        register.setAccount(currentUser);
+        register.setUser(currentUser);
         register.setRegisterDate(registerDate);
         register.setSlot(slot);
         register.setSchedule(schedule);
         register.setNote(request.getNote());
         register.setStatus(RegisterStatus.PENDING);
         register.setCreatedAt(LocalDateTime.now());
-        return registerRepository.save(register);
 
+        return registerRepository.save(register);
     }
+
 
     @Transactional
     public Appointment approveRegister(Long registerId) {
@@ -106,11 +119,16 @@ public class RegisterService {
         LocalDate date = register.getRegisterDate();
 
         // 2. Lấy danh sách nhân viên y tế có lịch làm việc cho slot này vào ngày đó
-        List<Account> medicalStaffList = accountSlotRepository
-                .findBySlotAndDateAndAccount_Role(slot, date, Role.MEDICALSTAFF)
-                .stream()
-                .map(AccountSlot::getAccount)
-                .collect(Collectors.toList());
+        List<AccountSlot> accountSlots = accountSlotRepository
+                .findBySlotAndDateAndUser_Account_Role(slot, date, Role.MEDICALSTAFF);
+
+        // Lấy ra user tương ứng từ Account
+        List<User> medicalStaffList = accountSlots.stream()
+                .map(AccountSlot::getUser)
+                .filter(Objects::nonNull)
+                .toList();
+
+
 
         if (medicalStaffList.isEmpty()) {
             throw new BadRequestException("Không có nhân viên y tế nào cho slot này.");
@@ -134,14 +152,14 @@ public class RegisterService {
         }
 
         // 5. Gán staff theo index % số lượng staff
-        Account selectedStaff = null;
+        User selectedStaff = null;
         int staffCount = medicalStaffList.size();
         for (int offset = 0; offset < staffCount; offset++) {
             int index = (registerIndex + offset) % staffCount;
-            Account candidate = medicalStaffList.get(index);
-            long assigned = appointmentRepository.countByMedicalStaffAndSlotAndAppointmentDate(candidate, slot, date);
+            User candidateUser = medicalStaffList.get(index);
+            long assigned = appointmentRepository.countByMedicalStaffAndSlotAndAppointmentDate(candidateUser, slot, date);
             if (assigned < 3) {
-                selectedStaff = candidate;
+                selectedStaff = candidateUser;
                 break;
             }
         }
@@ -157,7 +175,7 @@ public class RegisterService {
         // 7. Tạo lịch hẹn
         Appointment appointment = new Appointment();
         appointment.setRegister(register);
-        appointment.setCustomer(register.getAccount());
+        appointment.setCustomer(register.getUser());
         appointment.setMedicalStaff(selectedStaff);
         appointment.setSlot(slot);
         appointment.setAppointmentDate(date);
@@ -168,7 +186,7 @@ public class RegisterService {
 
         // 8. Gửi thông báo
         NotificationRequest noti = NotificationRequest.builder()
-                .receiverIds(List.of(register.getAccount().getId()))
+                .receiverIds(List.of(register.getUser().getId()))
                 .title("Đơn đăng ký hiến máu đã được duyệt")
                 .content("Bạn đã được đặt lịch hiến máu vào ngày " + date + ".")
                 .type(NotificationType.APPOINTMENT)
@@ -184,12 +202,11 @@ public class RegisterService {
 
     @Transactional
     public void rejectRegister(Long registerId, String reason) {
-        Account currentUser = authenticationService.getCurrentAccount();
+        User currentUser = userService.getCurrentUser();
 
-        if (!currentUser.getRole().equals(Role.MEDICALSTAFF)) {
+        if (!currentUser.getAccount().getRole().equals(Role.MEDICALSTAFF)) {
             throw new BadRequestException("Chỉ nhân viên y tế mới có quyền từ chối đơn đăng ký.");
         }
-
         Register register = registerRepository.findById(registerId)
                 .orElseThrow(() -> new BadRequestException("Không tìm thấy đơn đăng ký."));
 
@@ -207,12 +224,12 @@ public class RegisterService {
 
     @Transactional
     public Register cancelRegisterByCustomer(Long registerId, String reason) {
-        Account currentUser = authenticationService.getCurrentAccount();
+        User currentUser = userService.getCurrentUser();
 
         Register register = registerRepository.findById(registerId)
                 .orElseThrow(() -> new BadRequestException("Không tìm thấy đơn đăng ký."));
 
-        if (!register.getAccount().getId().equals(currentUser.getId())) {
+        if (!register.getUser().getId().equals(currentUser.getId())) {
             throw new BadRequestException("Bạn không có quyền hủy đơn đăng ký này.");
         }
 

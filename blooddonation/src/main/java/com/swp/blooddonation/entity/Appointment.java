@@ -28,20 +28,15 @@ public class Appointment {
 
     @ManyToOne
     @JoinColumn(name = "customer_id")
-    private Account customer; // Người hiến máu
+    private User customer; // Người hiến máu
 
     @ManyToOne
     @JoinColumn(name = "medical_staff_id")
-    private Account medicalStaff; // Gán khi phê duyệt
+    private User medicalStaff; // Gán khi phê duyệt
 
     @ManyToOne
     @JoinColumn(name = "slot_id")
     private Slot slot; // Khung giờ hiến máu
-
-//    @ManyToOne
-//    @JoinColumn(name = "account_id")
-//    Account account;
-
 
     @OneToMany(mappedBy = "appointment")
     List<Feedback> feedbacks;
@@ -50,16 +45,5 @@ public class Appointment {
     @JoinColumn(name = "register_id")
     private Register register;
 
-    // chỉ có 1 dịch vụ hiến máu nên không cần dùng
-//    @ManyToMany(cascade = CascadeType.ALL)
-//    @JoinTable(
-//            name="appointment_services",
-//            joinColumns = @JoinColumn(name="appointment_id"),
-//            inverseJoinColumns = @JoinColumn(name="service_id")
-//    )
-//    private List<MedicineService> medicineServices;
-
-    // Nếu muốn dùng chung cho cả nhận máu, thêm:
-    // private String type; // "DONATION" hoặc "REQUEST"
 }
 

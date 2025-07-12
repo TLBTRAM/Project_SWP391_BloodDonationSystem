@@ -19,7 +19,10 @@ public class Patient {
 
     private String fullName;
     private LocalDate dateOfBirth;
-    private String address;
+    private String street;
+    private Long wardId;
+    private Long districtId;
+    private Long provinceId;
 
     @Enumerated(EnumType.STRING)
     private BloodType bloodType; // optional

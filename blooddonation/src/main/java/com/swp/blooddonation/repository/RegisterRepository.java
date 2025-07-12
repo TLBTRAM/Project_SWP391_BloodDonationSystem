@@ -3,6 +3,7 @@ package com.swp.blooddonation.repository;
 import com.swp.blooddonation.entity.Account;
 import com.swp.blooddonation.entity.Register;
 import com.swp.blooddonation.entity.Slot;
+import com.swp.blooddonation.entity.User;
 import com.swp.blooddonation.enums.RegisterStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
 
@@ -16,7 +17,7 @@ public interface RegisterRepository extends JpaRepository<Register, Long> {
 
 
 
-    boolean existsByAccountAndSlotAndRegisterDate(Account account, Slot slot, LocalDate registerDate);
+    boolean existsByUserAndSlotAndRegisterDate(User user, Slot slot, LocalDate registerDate);
 
     List<Register> findBySlotAndRegisterDateAndStatusOrderByCreatedAt(
             Slot slot,

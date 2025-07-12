@@ -1,6 +1,7 @@
 package com.swp.blooddonation.repository;
 
 import com.swp.blooddonation.entity.Account;
+//import com.swp.blooddonation.entity.Customer;
 import com.swp.blooddonation.enums.Role;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
@@ -17,11 +18,11 @@ public interface AccountRepository extends JpaRepository<Account, Long> {
     // Kiểm tra email đã tồn tại chưa
     boolean existsByEmail(String email);
 
-    // Kiểm tra số điện thoại đã tồn tại chưa
-    boolean existsByPhone(String phone);
+
 
     // Tìm tài khoản theo vai trò
     List<Account> findByRole(Role role);
 
     Account findByEmail(String email);
+    Optional<Account> findById(Long id);
 }

@@ -29,7 +29,7 @@ public class Schedule {
 
     @ManyToOne
     @JoinColumn(name = "user_id")
-    private Account account;
+    private User user;
 
     @OneToMany(mappedBy = "schedule")
     @JsonIgnore

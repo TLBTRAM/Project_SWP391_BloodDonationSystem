@@ -16,8 +16,8 @@ public class AccountSlot {
     LocalDate date;
 
     @ManyToOne
-    @JoinColumn(name = "account_id")
-    Account account;
+    @JoinColumn(name = "user_id")
+    private User user;
 
     @ManyToOne
     @JoinColumn(name ="slot_id")

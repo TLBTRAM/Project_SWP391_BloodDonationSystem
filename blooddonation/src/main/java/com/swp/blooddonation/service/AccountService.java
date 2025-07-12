@@ -1,36 +1,66 @@
 package com.swp.blooddonation.service;
 
 import com.swp.blooddonation.dto.AccountDTO;
+import com.swp.blooddonation.dto.AddressDTO;
+import com.swp.blooddonation.dto.DonationHistoryDTO;
 import com.swp.blooddonation.entity.Account;
+import com.swp.blooddonation.entity.User;
 import com.swp.blooddonation.enums.Role;
 import com.swp.blooddonation.repository.AccountRepository;
 import com.swp.blooddonation.repository.AuthenticationReponsitory;
+import com.swp.blooddonation.repository.DonationHistoryRepository;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Service
 @RequiredArgsConstructor
 public class AccountService {
 
-//    private final AccountRepository accountRepository;
     @Autowired
     AuthenticationReponsitory authenticationReponsitory;
     @Autowired
-    private AccountRepository accountRepository;
+    AccountRepository accountRepository;
+
+    @Autowired
+    PasswordEncoder passwordEncoder;
+
+    @Autowired
+    ModelMapper modelMapper;
+
+    @Autowired
+    DonationHistoryRepository donationHistoryRepository;
 
 
-    private final PasswordEncoder passwordEncoder;
-    private final ModelMapper modelMapper;
 
-
-
-    // ✅ Trả về thông tin tài khoản hiện tại
-    public AccountDTO getProfile(Account account) {
-        return modelMapper.map(account, AccountDTO.class);
-    }
+    //  Trả về thông tin tài khoản hiện tại
+//    public AccountDTO getProfile(User user) {
+//        AccountDTO dto = modelMapper.map(user, AccountDTO.class);
+//
+//        AddressDTO addressDTO = new AddressDTO();
+//        if (user.getProvince() != null) {
+//            addressDTO.setProvinceId(user.getProvince().getId());
+//            addressDTO.setProvinceName(user.getProvince().getName());
+//        }
+//        if (user.getDistrict() != null) {
+//            addressDTO.setDistrictId(user.getDistrict().getId());
+//            addressDTO.setDistrictName(user.getDistrict().getName());
+//        }
+//        if (user.getWard() != null) {
+//            addressDTO.setWardId(user.getWard().getId());
+//            addressDTO.setWardName(user.getWard().getName());
+//        }
+//        addressDTO.setStreet(user.getStreet());
+//
+//        dto.setAddress(addressDTO);
+//        return dto;
+//    }
 
     //  Cập nhật hồ sơ cá nhân
     public void updateProfile(Account account, AccountDTO dto) {
@@ -51,7 +81,7 @@ public class AccountService {
 //        accountRepository.save(account);
 //    }
 
-    // ✅ Đăng xuất (nếu cần)
+    // Đăng xuất (nếu cần)
     public void logout(Account account) {
         // Nếu dùng token blacklist / refresh token thì xử lý ở đây
     }
@@ -70,4 +100,44 @@ public class AccountService {
     public Account getProfile(Long userId) {
         return accountRepository.findById(userId).orElse(null);
     }
+
+
+        // 1. Lấy hồ sơ Customer
+
+    // 2. Lịch sử hiến máu
+    public List<DonationHistoryDTO> getDonationHistory(User user) {
+        return donationHistoryRepository.findByCustomer(user).stream()
+                .map(dh -> modelMapper.map(dh, DonationHistoryDTO.class))
+                .collect(Collectors.toList());
+    }
+
+
+    // 3. Gợi ý ngày hiến máu tiếp theo
+    public String getDonationRecommendation(User user) {
+        LocalDate last = user.getLastDonationDate();
+        if (last == null) return "Bạn chưa từng hiến máu. Bạn có thể hiến ngay hôm nay.";
+
+        LocalDate next = last.plusDays(90);
+        return next.isAfter(LocalDate.now())
+                ? "Bạn có thể hiến máu lại vào ngày: " + next
+                : "Bạn đã có thể hiến máu trở lại.";
+    }
+
+
+    // DTO trả về ngày sẵn sàng hiến máu
+    public static class ReadyDateResponse {
+        private String readyDate;
+        public ReadyDateResponse(String readyDate) { this.readyDate = readyDate; }
+        public String getReadyDate() { return readyDate; }
+        public void setReadyDate(String readyDate) { this.readyDate = readyDate; }
+    }
+    public ReadyDateResponse getReadyDate(User user) {
+        LocalDate last = user.getLastDonationDate();
+        String date = (last == null)
+                ? LocalDate.now().toString()
+                : last.plusDays(90).toString();
+        return new ReadyDateResponse(date);
+    }
+
+
 }

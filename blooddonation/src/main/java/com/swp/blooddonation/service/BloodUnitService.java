@@ -3,6 +3,7 @@ package com.swp.blooddonation.service;
 import com.swp.blooddonation.dto.request.BloodComponentVolumeRequest;
 import com.swp.blooddonation.dto.request.CollectBloodRequest;
 import com.swp.blooddonation.entity.*;
+import com.swp.blooddonation.entity.DonationHistory;
 import com.swp.blooddonation.enums.*;
 import com.swp.blooddonation.exception.exceptions.BadRequestException;
 import com.swp.blooddonation.repository.*;
@@ -12,6 +13,7 @@ import org.springframework.stereotype.Service;
 import com.swp.blooddonation.dto.request.NotificationRequest;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,11 +29,10 @@ public class BloodUnitService {
     @Autowired
     AuthenticationService authenticationService;
 
-    @Autowired
-    MedicalStaffRepository medicalStaffRepository;
+
 
     @Autowired
-    CustomerRepository customerRepository;
+    UserRepository userRepository;
 
     @Autowired
     BloodComponentRepository bloodComponentRepository;
@@ -44,12 +45,17 @@ public class BloodUnitService {
     @Autowired
     TestResultRepository testResultRepository;
 
+    @Autowired
+    private DonationHistoryRepository donationHistoryRepository;
+    @Autowired
+    UserService userService;
+
 
     @Transactional
     public BloodUnit collectBlood(CollectBloodRequest request) {
-        Account currentUser = authenticationService.getCurrentAccount();
+        User currentUser = userService.getCurrentUser();
 
-        if (!currentUser.getRole().equals(Role.MEDICALSTAFF)) {
+        if (!currentUser.getAccount().getRole().equals(Role.MEDICALSTAFF)) {
             throw new BadRequestException("Only medical staff can collect blood.");
         }
 
@@ -71,25 +77,25 @@ public class BloodUnitService {
 
         // Lấy người hiến từ appointment
         Appointment appointment = test.getAppointment();
-        Account donorAccount = appointment.getCustomer();
-
-        Customer donor = customerRepository.findByAccount(donorAccount)
-                .orElseThrow(() -> new BadRequestException("The linked account is not a donor."));
-
-        // Lấy thông tin MedicalStaff từ account hiện tại
-        MedicalStaff staff = medicalStaffRepository.findById(currentUser.getId())
-                .orElseThrow(() -> new BadRequestException("Medical staff not found"));
+        User donor = appointment.getCustomer();
 
         // Validate thể tích
         if (request.getTotalVolume() <= 0 || request.getTotalVolume() > 500) {
             throw new BadRequestException("Total volume must be between 1 and 500 ml.");
         }
 
-
+        // Cập nhật ngày hiến máu cuối cùng cho người hiến
         donor.setLastDonationDate(LocalDate.now());
-        customerRepository.save(donor);
+        userRepository.save(donor);
 
-
+        // Tạo bản ghi lịch sử hiến máu
+        DonationHistory donationHistory = new DonationHistory();
+        donationHistory.setDonationDate(LocalDateTime.now());
+        donationHistory.setVolume(request.getTotalVolume());
+        donationHistory.setCustomer(donor);
+        donationHistory.setLocation("Blood Donation Center");
+        donationHistory.setNotes("Blood collected by " + currentUser.getFullName());
+        donationHistoryRepository.save(donationHistory);
 
         // Tạo BloodUnit
         BloodUnit unit = new BloodUnit();
@@ -99,7 +105,7 @@ public class BloodUnitService {
         unit.setCollectedDate(LocalDate.now());
         unit.setExpirationDate(LocalDate.now().plusDays(42)); // Hạn dùng máu toàn phần: 42 ngày
         unit.setDonor(donor);
-        unit.setCollectedBy(staff);
+        unit.setCollectedBy(currentUser);
         unit.setStatus(BloodUnitStatus.COLLECTED);
 
         return bloodUnitRepository.save(unit);

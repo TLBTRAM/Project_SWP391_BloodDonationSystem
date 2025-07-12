@@ -2,16 +2,12 @@ package com.swp.blooddonation.service;
 
 
 import com.swp.blooddonation.entity.Account;
-import com.swp.blooddonation.entity.MedicalStaff;
-import com.swp.blooddonation.entity.Customer;
-import com.swp.blooddonation.entity.Manager;
+import com.swp.blooddonation.entity.User;
 import com.swp.blooddonation.enums.EnableStatus;
 import com.swp.blooddonation.enums.Role;
 import com.swp.blooddonation.exception.exceptions.UserNotFoundException;
 import com.swp.blooddonation.repository.AccountRepository;
-import com.swp.blooddonation.repository.MedicalStaffRepository;
-import com.swp.blooddonation.repository.CustomerRepository;
-import com.swp.blooddonation.repository.ManagerRepository;
+import com.swp.blooddonation.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,69 +26,24 @@ public class AdminService {
     private final ModelMapper modelMapper;
 
     @Autowired
-    MedicalStaffRepository medicalStaffRepository;
-
-    @Autowired
-    CustomerRepository customerRepository;
-
-    @Autowired
-    ManagerRepository managerRepository;
+    UserRepository userRepository;
 
     //  Cập nhật role của người dùng
     public void updateUserRole(Long userId, Role newRole) {
         Account account = accountRepository.findById(userId)
                 .orElseThrow(() -> new UserNotFoundException("User not found with ID: " + userId));
-        Role oldRole = account.getRole(); // lưu role cũ (để xử lý nếu chuyển từ khác sang MEDICALSTAFF)
+        Role oldRole = account.getRole(); // lưu role cũ
 
-        // Ẩn (set active=false) bản ghi vai trò cũ nếu có
-        if (oldRole == Role.MEDICALSTAFF) {
-            medicalStaffRepository.findById(account.getId()).ifPresent(staff -> {
-                staff.setActive(false);
-                medicalStaffRepository.save(staff);
-            });
-        } else if (oldRole == Role.CUSTOMER) {
-            customerRepository.findById(account.getId()).ifPresent(customer -> {
-                customer.setActive(false);
-                customerRepository.save(customer);
-            });
-        } else if (oldRole == Role.MANAGER) {
-            // Giả sử có managerRepository
-            managerRepository.findById(account.getId()).ifPresent(manager -> {
-                manager.setActive(false);
-                managerRepository.save(manager);
-            });
-        }
-
+        // Cập nhật role trong Account
         account.setRole(newRole);
         accountRepository.save(account);
 
-        // Hiện (set active=true) hoặc tạo mới bản ghi vai trò mới
-        if (newRole == Role.MEDICALSTAFF) {
-            MedicalStaff staff = medicalStaffRepository.findById(account.getId()).orElse(null);
-            if (staff == null) {
-                staff = new MedicalStaff();
-                staff.setAccount(account);
-                staff.setDepartment(null);
-            }
-            staff.setActive(true);
-            medicalStaffRepository.save(staff);
-        } else if (newRole == Role.CUSTOMER) {
-            Customer customer = customerRepository.findById(account.getId()).orElse(null);
-            if (customer == null) {
-                customer = new Customer();
-                customer.setAccount(account);
-            }
-            customer.setActive(true);
-            customerRepository.save(customer);
-        } else if (newRole == Role.MANAGER) {
-            // Giả sử có managerRepository
-            Manager manager = managerRepository.findById(account.getId()).orElse(null);
-            if (manager == null) {
-                manager = new Manager();
-                manager.setAccount(account);
-            }
-            manager.setActive(true);
-            managerRepository.save(manager);
+        // Tạo hoặc cập nhật User nếu cần
+        User user = userRepository.findById(account.getId()).orElse(null);
+        if (user == null) {
+            user = new User();
+            user.setAccount(account);
+            userRepository.save(user);
         }
     }
 
