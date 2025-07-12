@@ -28,13 +28,10 @@ public class BloodTestService {
     AppointmentRepository appointmentRepository;
 
     @Autowired
-    CustomerRepository customerRepository;
+    UserRepository userRepository;
 
     @Autowired
     TestResultRepository testResultRepository;
-
-    @Autowired
-    MedicalStaffRepository medicalStaffRepository;
 
     @Autowired
     private AuthenticationService authenticationService;
@@ -117,10 +114,10 @@ public class BloodTestService {
         test.setMedicalStaff(appointment.getMedicalStaff());
 
         // Cập nhật nhóm máu cho người hiến nếu chưa có
-        Customer donor = appointment.getCustomer().getCustomer();
+        User donor = userRepository.findByAccount(appointment.getCustomer()).orElse(null);
         if (donor != null && donor.getBloodType() == null && request.getBloodType() != null) {
             donor.setBloodType(request.getBloodType());
-            customerRepository.save(donor);
+            userRepository.save(donor);
         }
 
         // Lưu kết quả xét nghiệm
@@ -140,7 +137,7 @@ public class BloodTestService {
             testResult.setPassed(true);
             testResult.setBloodTest(test);
             Account staffAccount = appointment.getMedicalStaff();
-            MedicalStaff staff = medicalStaffRepository.findById(staffAccount.getId())
+            User staff = userRepository.findByAccount(staffAccount)
                     .orElseThrow(() -> new BadRequestException("Medical staff not found"));
             testResult.setStaff(staff);
 
@@ -148,9 +145,13 @@ public class BloodTestService {
         }
 
         // Chuẩn bị dữ liệu phản hồi
-        Account staff = appointment.getMedicalStaff();
-        Long testedById = (staff != null) ? staff.getId() : null;
-        String testedByName = (staff != null) ? staff.getFullName() : "Unknown";
+        Account staffAccount = appointment.getMedicalStaff();
+        User staffUser = null;
+        if (staffAccount != null) {
+            staffUser = userRepository.findByAccount(staffAccount).orElse(null);
+        }
+        Long testedById = (staffUser != null) ? staffUser.getId() : null;
+        String testedByName = (staffUser != null) ? staffUser.getFullName() : "Unknown";
 
         LocalDate testDate = appointment.getAppointmentDate();
 

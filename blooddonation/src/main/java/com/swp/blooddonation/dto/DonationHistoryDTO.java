@@ -2,13 +2,13 @@ package com.swp.blooddonation.dto;
 
 import lombok.Data;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Data
 public class DonationHistoryDTO {
     private Long id;
-    private LocalDate donationDate;
+    private LocalDateTime donationDate;
     private int volume; // ml
     private String location;
-    private String note;
+    private String notes;
 }

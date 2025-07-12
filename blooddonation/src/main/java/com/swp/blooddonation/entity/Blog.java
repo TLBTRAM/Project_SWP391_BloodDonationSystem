@@ -32,7 +32,10 @@ public class Blog {
     // Getter cho account để tránh circular reference
     @JsonProperty("authorName")
     public String getAuthorName() {
-        return account != null ? account.getFullName() : "Unknown";
+        if (account != null && account.getUser() != null) {
+            return account.getUser().getFullName();
+        }
+        return "Unknown";
     }
 
     @JsonProperty("authorId")

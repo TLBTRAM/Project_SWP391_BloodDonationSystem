@@ -47,7 +47,7 @@ public class AppointmentService {
     EmailService emailService;
 
     @Autowired
-    CustomerRepository customerRepository;
+    UserRepository userRepository;
 
     @Autowired
     RegisterRepository registerRepository;

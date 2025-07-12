@@ -56,7 +56,7 @@ public class AuthenticationService implements UserDetailsService {
     EmailService emailService;
 
     @Autowired
-    CustomerRepository customerRepository;
+    UserRepository userRepository;
 
 
     @Autowired
@@ -86,14 +86,10 @@ public class AuthenticationService implements UserDetailsService {
         // Mã hoá mật khẩu
         String encodedPassword = passwordEncoder.encode(regisRequest.getPassword());
 
-        // Tạo đối tượng Account
+        // Tạo đối tượng Account (chỉ chứa thông tin authentication)
         Account account = new Account();
         account.setEmail(regisRequest.getEmail());
-        account.setPhone(regisRequest.getPhone());
         account.setPassword(encodedPassword);
-        account.setFullName(regisRequest.getFullName());
-        account.setBirthDate(regisRequest.getBirthDate());
-        account.setGender(regisRequest.getGender());
         account.setCreatedAt(LocalDateTime.now());
         account.setEnableStatus(EnableStatus.ENABLE);
         account.setRole(Role.CUSTOMER);
@@ -109,24 +105,28 @@ public class AuthenticationService implements UserDetailsService {
         Ward ward = wardRepository.findById(dto.getWardId())
                 .orElseThrow(() -> new BadRequestException("Phường/Xã không tồn tại"));
 
-        account.setProvince(province);
-        account.setDistrict(district);
-        account.setWard(ward);
-        account.setStreet(dto.getStreet());
-
         // Lưu tài khoản vào DB
         Account savedAccount = authenticationReponsitory.save(account);
 
-        // Tạo Customer nếu là role CUSTOMER
-        if (savedAccount.getRole() == Role.CUSTOMER) {
-            Customer customer = new Customer();
-            customer.setAccount(savedAccount);
-            try {
-                Customer savedCustomer = customerRepository.save(customer);
-                System.out.println("Saved customer id: " + savedCustomer.getId());
-            } catch (Exception e) {
-                System.out.println("Error saving customer: " + e.getMessage());
-            }
+        // Tạo User cho tất cả role
+        User user = new User();
+        user.setAccount(savedAccount);
+        
+        // Set personal info từ regisRequest
+        user.setFullName(regisRequest.getFullName());
+        user.setPhone(regisRequest.getPhone());
+        user.setBirthDate(regisRequest.getBirthDate());
+        user.setGender(regisRequest.getGender());
+        user.setProvince(province);
+        user.setDistrict(district);
+        user.setWard(ward);
+        user.setStreet(dto.getStreet());
+        
+        try {
+            User savedUser = userRepository.save(user);
+            System.out.println("Saved user id: " + savedUser.getId());
+        } catch (Exception e) {
+            System.out.println("Error saving user: " + e.getMessage());
         }
 
         // Gửi email chào mừng
@@ -139,18 +139,18 @@ public class AuthenticationService implements UserDetailsService {
         RegisterAccountResponse response = new RegisterAccountResponse();
         response.setId(savedAccount.getId());
         response.setEmail(savedAccount.getEmail());
-        response.setPhone(savedAccount.getPhone());
-        response.setFullName(savedAccount.getFullName());
-        response.setGender(savedAccount.getGender());
-        response.setBirthDate(savedAccount.getBirthDate());
+        response.setPhone(regisRequest.getPhone());
+        response.setFullName(regisRequest.getFullName());
+        response.setGender(regisRequest.getGender());
+        response.setBirthDate(regisRequest.getBirthDate());
         response.setEnabled(savedAccount.isEnabled());
         response.setCreatedAt(savedAccount.getCreatedAt());
 
         String fullAddress = String.join(", ",
-                savedAccount.getStreet(),
-                savedAccount.getWard().getName(),
-                savedAccount.getDistrict().getName(),
-                savedAccount.getProvince().getName()
+                dto.getStreet(),
+                ward.getName(),
+                district.getName(),
+                province.getName()
         );
         response.setFullAddress(fullAddress);
 
@@ -259,9 +259,15 @@ public class AuthenticationService implements UserDetailsService {
     }
 
     public List<MedicalStaffDTO> getMedicalStaff() {
-        List<Account> medicalStaffAccounts = authenticationReponsitory.findByRole(Role.MEDICALSTAFF);
-        return medicalStaffAccounts.stream()
-                .map(account -> modelMapper.map(account, MedicalStaffDTO.class))
+        List<User> medicalStaffUsers = userRepository.findByRole(Role.MEDICALSTAFF);
+        return medicalStaffUsers.stream()
+                .map(user -> {
+                    MedicalStaffDTO dto = modelMapper.map(user, MedicalStaffDTO.class);
+                    dto.setFullName(user.getFullName());
+                    dto.setEmail(user.getAccount().getEmail());
+                    dto.setPhone(user.getPhone());
+                    return dto;
+                })
                 .collect(Collectors.toList());
     }
 }
