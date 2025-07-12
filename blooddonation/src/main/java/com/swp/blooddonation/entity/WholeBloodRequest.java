@@ -21,7 +21,7 @@ public class WholeBloodRequest {
     private Long id;
 
     @ManyToOne
-    private Account requester; // người gửi yêu cầu (Donor / Medical Staff)
+    private User requester; // người gửi yêu cầu (Donor / Medical Staff)
 
     @ManyToOne
     private Patient patient;   // bệnh nhân cần máu
@@ -43,6 +43,7 @@ public class WholeBloodRequest {
 
     @Enumerated(EnumType.STRING)
     private BloodRequestStatus status;; // PENDING, APPROVED, FULFILLED
+
     @OneToMany(mappedBy = "wholeBloodRequest", cascade = CascadeType.ALL)
     private List<BloodUnit> providedBloodUnits = new ArrayList<>();
 

@@ -19,8 +19,6 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
-import static com.swp.blooddonation.enums.ComponentType.*;
-
 @Service
 @RequiredArgsConstructor
 public class BloodRequestService {
@@ -52,14 +50,18 @@ public class BloodRequestService {
     @Autowired
     NotificationService notificationService;
 
+    @Autowired
+    UserService userService;
+
 
     @Transactional
     public WholeBloodRequest requestBlood(BloodRequestRequest dto) {
-        Account currentUser = authenticationService.getCurrentAccount();
+        User currentUser = userService.getCurrentUser();
 
-        if (currentUser.getRole() != Role.CUSTOMER && currentUser.getRole() != Role.MEDICALSTAFF) {
+        if (currentUser.getAccount().getRole() != Role.CUSTOMER && currentUser.getAccount().getRole() != Role.MEDICALSTAFF) {
             throw new BadRequestException("Chỉ người dùng hoặc nhân viên y tế mới được gửi yêu cầu.");
         }
+
 
         // 1. Tạo WholeBloodRequest (chưa có patient)
         WholeBloodRequest request = new WholeBloodRequest();
@@ -161,9 +163,9 @@ public class BloodRequestService {
 
     @Transactional
     public BloodRequestComponent requestBloodByComponent(ComponentBloodRequestRequest dto) {
-        Account currentUser = authenticationService.getCurrentAccount();
+        User currentUser = userService.getCurrentUser();
 
-        if (currentUser.getRole() != Role.CUSTOMER && currentUser.getRole() != Role.MEDICALSTAFF) {
+        if (currentUser.getAccount().getRole() != Role.CUSTOMER && currentUser.getAccount().getRole() != Role.MEDICALSTAFF) {
             throw new BadRequestException("Chỉ người dùng hoặc nhân viên y tế mới được gửi yêu cầu.");
         }
 

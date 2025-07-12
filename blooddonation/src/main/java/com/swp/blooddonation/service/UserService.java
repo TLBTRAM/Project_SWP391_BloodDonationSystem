@@ -7,11 +7,16 @@ import com.swp.blooddonation.enums.Role;
 import com.swp.blooddonation.entity.Account;
 import com.swp.blooddonation.entity.User;
 import com.swp.blooddonation.enums.Role;
+import com.swp.blooddonation.exception.exceptions.UserNotFoundException;
+import com.swp.blooddonation.repository.AuthenticationReponsitory;
 import com.swp.blooddonation.repository.UserRepository;
 import com.swp.blooddonation.repository.DonationHistoryRepository;
+import jakarta.persistence.Access;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -27,6 +32,9 @@ public class UserService {
     private final DonationHistoryRepository donationHistoryRepository;
     private final ModelMapper modelMapper;
 
+
+    @Autowired
+    AuthenticationReponsitory authenticationReponsitory;
     // 1. Lấy hồ sơ User
     public CustomerDTO getProfile(Account account) {
         User user = getUser(account);
@@ -125,4 +133,20 @@ public class UserService {
     public List<User> getUsersByRole(String role) {
         return userRepository.findByRole(role);
     }
+
+    public User getCurrentUser() {
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        Account account = authenticationReponsitory.findAccountByEmail(email);
+        if (account == null) {
+            throw new UserNotFoundException("Không tìm thấy tài khoản với email: " + email);
+        }
+
+        User user = account.getUser();
+        if (user == null) {
+            throw new UserNotFoundException("Không tìm thấy người dùng gắn với tài khoản: " + email);
+        }
+
+        return user;
+    }
+
 } 

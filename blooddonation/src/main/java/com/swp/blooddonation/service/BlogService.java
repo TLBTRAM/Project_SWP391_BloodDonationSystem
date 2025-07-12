@@ -3,8 +3,9 @@ package com.swp.blooddonation.service;
 import com.swp.blooddonation.dto.request.BlogRequest;
 import com.swp.blooddonation.dto.response.BlogResponse;
 import com.swp.blooddonation.entity.Blog;
-import com.swp.blooddonation.entity.Account;
+import com.swp.blooddonation.entity.User;
 import com.swp.blooddonation.exception.exceptions.BadRequestException;
+import com.swp.blooddonation.exception.exceptions.UserNotFoundException;
 import com.swp.blooddonation.repository.BlogRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -26,16 +27,24 @@ public class BlogService {
 
     @Autowired
     private ModelMapper modelMapper;
+    @Autowired
+    UserService userService;
 
     // Tạo blog mới
     @Transactional
     public BlogResponse createBlog(BlogRequest blogRequest) {
-        Account currentUser = authenticationService.getCurrentAccount();
 
+
+
+        // Lấy User từ Account
+        User currentUser = userService.getCurrentUser();
+        if (currentUser == null) {
+            throw new UserNotFoundException("User profile not found for current account.");
+        }
         Blog blog = new Blog();
         blog.setTitle(blogRequest.getTitle());
         blog.setContent(blogRequest.getContent());
-        blog.setAccount(currentUser);
+        blog.setUser(currentUser);
         blog.setCreatedDate(LocalDateTime.now());
 
         Blog savedBlog = blogRepository.save(blog);
@@ -59,8 +68,8 @@ public class BlogService {
 
     // Lấy blog của user hiện tại
     public List<BlogResponse> getMyBlogs() {
-        Account currentUser = authenticationService.getCurrentAccount();
-        List<Blog> blogs = blogRepository.findByAccountOrderByCreatedDateDesc(currentUser);
+        User currentUser = userService.getCurrentUser();
+        List<Blog> blogs = blogRepository.findByUserOrderByCreatedDateDesc(currentUser);
         return blogs.stream()
                 .map(this::convertToResponse)
                 .collect(Collectors.toList());
@@ -69,12 +78,12 @@ public class BlogService {
     // Cập nhật blog
     @Transactional
     public BlogResponse updateBlog(Long blogId, BlogRequest blogRequest) {
-        Account currentUser = authenticationService.getCurrentAccount();
+        User currentUser = userService.getCurrentUser();
         Blog blog = blogRepository.findById(blogId)
                 .orElseThrow(() -> new BadRequestException("Không tìm thấy blog với ID: " + blogId));
 
         // Kiểm tra quyền sở hữu
-        if (!Objects.equals(blog.getAccount().getId(), currentUser.getId())) {
+        if (!Objects.equals(blog.getUser().getId(), currentUser.getId())) {
             throw new BadRequestException("Bạn chỉ có thể xóa blog của chính mình");
         }
 
@@ -88,12 +97,12 @@ public class BlogService {
     // Xóa blog
     @Transactional
     public void deleteBlog(Long blogId) {
-        Account currentUser = authenticationService.getCurrentAccount();
+        User currentUser = userService.getCurrentUser();
         Blog blog = blogRepository.findById(blogId)
                 .orElseThrow(() -> new BadRequestException("Không tìm thấy blog với ID: " + blogId));
 
         // Kiểm tra quyền sở hữu
-        if (!Objects.equals(blog.getAccount().getId(), currentUser.getId())) {
+        if (!Objects.equals(blog.getUser().getId(), currentUser.getId())) {
             throw new BadRequestException("Bạn chỉ có thể cập nhật blog của chính mình");
         }
 

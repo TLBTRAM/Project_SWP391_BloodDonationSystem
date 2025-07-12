@@ -13,7 +13,7 @@ import java.util.Date;
 @Getter
 @Setter
 public class AccountDTO {
-    private Long id;
+
     private String email;
     private String phone;
     private String fullName;

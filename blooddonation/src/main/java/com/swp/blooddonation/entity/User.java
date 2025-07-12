@@ -1,5 +1,6 @@
 package com.swp.blooddonation.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.swp.blooddonation.enums.BloodType;
 import com.swp.blooddonation.enums.Gender;
 import com.swp.blooddonation.enums.Role;
@@ -10,6 +11,8 @@ import lombok.Setter;
 
 import java.time.LocalDate;
 import java.util.Date;
+import java.util.List;
+
 import jakarta.validation.constraints.Pattern;
 
 @Entity
@@ -65,4 +68,27 @@ public class User {
 
     // Thuộc tính từ Manager
     private String note;
+
+    @OneToMany(mappedBy = "user")
+    private List<Blog> blogs;
+
+    @OneToMany(mappedBy = "customer")
+    @JsonIgnore
+    private List<Appointment> customerAppointments;
+
+    @OneToMany(mappedBy = "user")
+    List<Feedback> feedbacks;
+
+    @OneToMany(mappedBy = "user")
+    @JsonIgnore
+    List<AccountSlot> accountSlots;
+
+    @OneToMany(mappedBy = "customer")
+    @JsonIgnore
+    List<Appointment> donorAppointments;
+
+    @OneToMany(mappedBy = "medicalStaff")
+    @JsonIgnore
+    List<Appointment> staffAppointments;
+
 } 

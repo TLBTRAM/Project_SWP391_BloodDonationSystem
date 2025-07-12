@@ -3,10 +3,7 @@ package com.swp.blooddonation.service;
 import com.swp.blooddonation.dto.AccountDTO;
 import com.swp.blooddonation.dto.RegisterSlotDTO;
 import com.swp.blooddonation.dto.SlotDTO;
-import com.swp.blooddonation.entity.Account;
-import com.swp.blooddonation.entity.AccountSlot;
-import com.swp.blooddonation.entity.Schedule;
-import com.swp.blooddonation.entity.Slot;
+import com.swp.blooddonation.entity.*;
 import com.swp.blooddonation.enums.Role;
 import com.swp.blooddonation.enums.ScheduleStatus;
 import com.swp.blooddonation.exception.exceptions.BadRequestException;
@@ -46,6 +43,9 @@ public class SlotService {
     ScheduleRepository scheduleRepository;
 
     @Autowired
+    UserService userService;
+
+    @Autowired
     ModelMapper modelMapper;
 
     //font-end load được list slot
@@ -83,9 +83,12 @@ public class SlotService {
 
     @Transactional
     public List<AccountSlot> registerSlot(RegisterSlotDTO registerSlotDTO) {
-        Account currentAccount = authenticationService.getCurrentAccount();
+        User currentUser = userService.getCurrentUser();
 
-        if (currentAccount.getRole() != Role.MEDICALSTAFF) {
+         // nếu đã ánh xạ @OneToOne
+
+
+        if (currentUser.getAccount().getRole() != Role.MEDICALSTAFF) {
             throw new BadRequestException("Chỉ Medical Staff mới được đăng ký lịch làm việc.");
         }
 
@@ -100,7 +103,7 @@ public class SlotService {
             throw new BadRequestException("Không thể đăng ký vì chưa có lịch làm việc (Schedule) OPEN cho ngày " + date + ".");
         }
 
-        boolean existed = accountSlotRepository.existsByAccountAndDate(currentAccount, date);
+        boolean existed = accountSlotRepository.existsByUserAndDate(currentUser, date);
         if (existed) {
             throw new BadRequestException("Bạn đã đăng ký lịch cho ngày này.");
         }
@@ -109,7 +112,7 @@ public class SlotService {
         List<Slot> allSlots = slotRepository.findAll();
 
         for (Slot slot : allSlots) {
-            long count = accountSlotRepository.countBySlot_IdAndDateAndAccount_Role(
+            long count = accountSlotRepository.countBySlot_IdAndDateAndUser_Account_Role(
                     slot.getId(), date, Role.MEDICALSTAFF
             );
 
@@ -119,7 +122,7 @@ public class SlotService {
 
             AccountSlot accountSlot = new AccountSlot();
             accountSlot.setSlot(slot);
-            accountSlot.setAccount(currentAccount);
+            accountSlot.setUser(currentUser);
             accountSlot.setDate(date);
             accountSlot.setAvailable(true);
 

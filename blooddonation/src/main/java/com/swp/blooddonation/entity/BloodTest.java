@@ -39,7 +39,7 @@ public class BloodTest {
 
     @ManyToOne
     @JoinColumn(name = "medical_staff_id") // tên cột trong bảng blood_test
-    private Account medicalStaff;
+    private User medicalStaff;
 
 
     // Getters/Setters

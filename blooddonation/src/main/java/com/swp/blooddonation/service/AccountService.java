@@ -23,23 +23,23 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class AccountService {
 
-//    private final AccountRepository accountRepository;
     @Autowired
     AuthenticationReponsitory authenticationReponsitory;
     @Autowired
-    private AccountRepository accountRepository;
+    AccountRepository accountRepository;
 
+    @Autowired
+    PasswordEncoder passwordEncoder;
 
-    private final PasswordEncoder passwordEncoder;
-    private final ModelMapper modelMapper;
-
+    @Autowired
+    ModelMapper modelMapper;
 
     @Autowired
     DonationHistoryRepository donationHistoryRepository;
 
 
-//
-//    //  Trả về thông tin tài khoản hiện tại
+
+    //  Trả về thông tin tài khoản hiện tại
 //    public AccountDTO getProfile(User user) {
 //        AccountDTO dto = modelMapper.map(user, AccountDTO.class);
 //

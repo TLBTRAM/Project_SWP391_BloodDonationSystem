@@ -47,13 +47,15 @@ public class BloodUnitService {
 
     @Autowired
     private DonationHistoryRepository donationHistoryRepository;
+    @Autowired
+    UserService userService;
 
 
     @Transactional
     public BloodUnit collectBlood(CollectBloodRequest request) {
-        Account currentUser = authenticationService.getCurrentAccount();
+        User currentUser = userService.getCurrentUser();
 
-        if (!currentUser.getRole().equals(Role.MEDICALSTAFF)) {
+        if (!currentUser.getAccount().getRole().equals(Role.MEDICALSTAFF)) {
             throw new BadRequestException("Only medical staff can collect blood.");
         }
 
@@ -75,23 +77,14 @@ public class BloodUnitService {
 
         // Lấy người hiến từ appointment
         Appointment appointment = test.getAppointment();
-        Account account = appointment.getCustomer();
-
-        User donor = userRepository.findByAccount(account)
-                .orElseThrow(() -> new BadRequestException("The linked account is not a donor."));
-//        Account donor = customerRepository.findByAccount(donorAccount)
-//                .orElseThrow(() -> new BadRequestException("The linked account is not a donor."));
-
-        // Lấy thông tin User từ account hiện tại
-        User staff = userRepository.findByAccount(currentUser)
-                .orElseThrow(() -> new BadRequestException("Medical staff not found"));
+        User donor = appointment.getCustomer();
 
         // Validate thể tích
         if (request.getTotalVolume() <= 0 || request.getTotalVolume() > 500) {
             throw new BadRequestException("Total volume must be between 1 and 500 ml.");
         }
 
-
+        // Cập nhật ngày hiến máu cuối cùng cho người hiến
         donor.setLastDonationDate(LocalDate.now());
         userRepository.save(donor);
 
@@ -101,7 +94,7 @@ public class BloodUnitService {
         donationHistory.setVolume(request.getTotalVolume());
         donationHistory.setCustomer(donor);
         donationHistory.setLocation("Blood Donation Center");
-        donationHistory.setNotes("Blood collected by " + staff.getFullName());
+        donationHistory.setNotes("Blood collected by " + currentUser.getFullName());
         donationHistoryRepository.save(donationHistory);
 
         // Tạo BloodUnit
@@ -112,7 +105,7 @@ public class BloodUnitService {
         unit.setCollectedDate(LocalDate.now());
         unit.setExpirationDate(LocalDate.now().plusDays(42)); // Hạn dùng máu toàn phần: 42 ngày
         unit.setDonor(donor);
-        unit.setCollectedBy(staff);
+        unit.setCollectedBy(currentUser);
         unit.setStatus(BloodUnitStatus.COLLECTED);
 
         return bloodUnitRepository.save(unit);

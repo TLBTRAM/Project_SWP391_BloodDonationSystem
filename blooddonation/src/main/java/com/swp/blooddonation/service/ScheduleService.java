@@ -4,11 +4,13 @@ import com.swp.blooddonation.dto.request.ScheduleRequestDTO;
 import com.swp.blooddonation.dto.response.ScheduleResponseDTO;
 import com.swp.blooddonation.entity.Account;
 import com.swp.blooddonation.entity.Schedule;
+import com.swp.blooddonation.entity.User;
 import com.swp.blooddonation.enums.ScheduleStatus;
 import com.swp.blooddonation.exception.exceptions.BadRequestException;
 import com.swp.blooddonation.repository.ScheduleRepository;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalTime;
@@ -21,8 +23,13 @@ public class ScheduleService {
     private final AuthenticationService authenticationService;
     private final ModelMapper modelMapper;
 
+    @Autowired
+    UserService userService;
+
     public ScheduleResponseDTO createSchedule(ScheduleRequestDTO request) {
-        Account currentUser = authenticationService.getCurrentAccount();
+        User currentUser = userService.getCurrentUser();
+
+
 
         boolean exists = scheduleRepository.existsByScheduleDate(request.getScheduleDate());
         if (exists) {
@@ -31,7 +38,7 @@ public class ScheduleService {
 
         // Map từ DTO sang entity
         Schedule schedule = modelMapper.map(request, Schedule.class);
-        schedule.setAccount(currentUser);
+        schedule.setUser(currentUser);
         schedule.setStatus(ScheduleStatus.OPEN); // mặc định là OPEN khi tạo mới
 
         // Lưu vào DB
@@ -39,7 +46,7 @@ public class ScheduleService {
 
         // Map lại sang response DTO
         ScheduleResponseDTO response = modelMapper.map(savedSchedule, ScheduleResponseDTO.class);
-        response.setCreatedBy(savedSchedule.getAccount().getId());
+        response.setCreatedBy(savedSchedule.getUser().getId());
 
         return response;
     }

@@ -41,12 +41,21 @@ public class BloodTestService {
     @Autowired
     private NotificationService notificationService;
 
+    @Autowired
+    UserService userService;
+
     @Transactional
     public BloodTest createBloodTest(Long customerId) {
-        Account currentUser = authenticationService.getCurrentAccount();
+        User currentUser = userService.getCurrentUser();
 
-        if (!currentUser.getRole().equals(Role.MEDICALSTAFF)) {
+
+
+        if (!currentUser.getAccount().getRole().equals(Role.MEDICALSTAFF)) {
             throw new BadRequestException("Only medical staff can create blood tests");
+        }
+
+        if (currentUser == null) {
+            throw new BadRequestException("User profile not found for the current account.");
         }
 
         LocalDate today = LocalDate.now();
@@ -75,7 +84,7 @@ public class BloodTestService {
 
     @Transactional
     public BloodTest startBloodTest(Long id) {
-        Account currentUser = authenticationService.getCurrentAccount();
+        User currentUser = userService.getCurrentUser();
 
         BloodTest test = bloodTestRepository.findById(id)
                 .orElseThrow(() -> new BadRequestException("Blood test not found"));
@@ -95,7 +104,11 @@ public class BloodTestService {
 
     @Transactional
     public BloodTestResponse completeBloodTest(Long testId, CompleteBloodTest request) {
-        Account currentUser = authenticationService.getCurrentAccount();
+        User currentUser = userService.getCurrentUser();
+
+        if (currentUser == null) {
+            throw new BadRequestException("User profile not found for current account.");
+        }
 
         BloodTest test = bloodTestRepository.findById(testId)
                 .orElseThrow(() -> new BadRequestException("Blood test not found"));
@@ -105,7 +118,8 @@ public class BloodTestService {
             throw new BadRequestException("Appointment not found for this blood test");
         }
 
-        if (appointment.getMedicalStaff().getId() != currentUser.getId()) {
+        // So sánh staff theo userId (vì appointment.medicalStaff là User)
+        if (appointment.getMedicalStaff() == null || !appointment.getMedicalStaff().getId().equals(currentUser.getId())) {
             throw new BadRequestException("Bạn không có quyền hoàn tất xét nghiệm này");
         }
 
@@ -113,10 +127,11 @@ public class BloodTestService {
         test.setResult(request.getResult());
         test.setStatus(BloodTestStatus.COMPLETED);
         test.setBloodType(request.getBloodType());
-        test.setMedicalStaff(appointment.getMedicalStaff());
+        test.setRhType(request.getRhType());
+        test.setMedicalStaff(currentUser);
 
         // Cập nhật nhóm máu cho người hiến nếu chưa có
-        User donor = userRepository.findByAccount(appointment.getCustomer()).orElse(null);
+        User donor = appointment.getCustomer();
         if (donor != null && donor.getBloodType() == null && request.getBloodType() != null) {
             donor.setBloodType(request.getBloodType());
             userRepository.save(donor);
@@ -125,10 +140,7 @@ public class BloodTestService {
         bloodTestRepository.save(test);
 
         LocalDate testDate = appointment.getAppointmentDate();
-        Account staffAccount = appointment.getMedicalStaff();
-        User staffUser = (staffAccount != null)
-                ? userRepository.findByAccount(staffAccount).orElse(null)
-                : null;
+        User staffUser = appointment.getMedicalStaff();
 
         Long testedById = (staffUser != null) ? staffUser.getId() : null;
         String testedByName = (staffUser != null) ? staffUser.getFullName() : "Unknown";
@@ -151,12 +163,12 @@ public class BloodTestService {
         }
 
         // Gửi thông báo cho người hiến
-        if (staffAccount != null) {
+        if (donor != null) {
             String content = "Kết quả xét nghiệm của bạn cho cuộc hẹn ngày " + testDate + ": " + request.getResult();
             content += request.isPassed() ? ". Bạn đủ điều kiện hiến máu." : ". Bạn chưa đủ điều kiện hiến máu.";
 
             NotificationRequest notiRequest = NotificationRequest.builder()
-                    .receiverIds(List.of(staffAccount.getId()))
+                    .receiverIds(List.of(donor.getAccount().getId()))
                     .title("Kết quả xét nghiệm máu")
                     .content(content)
                     .type(NotificationType.TEST_RESULT)
@@ -165,7 +177,7 @@ public class BloodTestService {
             notificationService.sendNotification(notiRequest);
         }
 
-        // Chuẩn bị response cho cả hai trường hợp
+        // Chuẩn bị response
         BloodTestResponse response = new BloodTestResponse();
         response.setId(test.getId());
         response.setResult(test.getResult());

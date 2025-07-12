@@ -88,30 +88,28 @@ public class Account implements UserDetails {
         return role != null ? role.name() : null;
     }
 
-    @OneToMany(mappedBy = "account")
-    @JsonIgnore
-    List<AccountSlot> accountSlots;
-
-    @OneToMany(mappedBy = "customer")
-    @JsonIgnore
-    List<Appointment> donorAppointments;
-
-    @OneToMany(mappedBy = "medicalStaff")
-    @JsonIgnore
-    List<Appointment> staffAppointments;
+//    @OneToMany(mappedBy = "account")
+//    @JsonIgnore
+//    List<AccountSlot> accountSlots;
+//
+//    @OneToMany(mappedBy = "customer")
+//    @JsonIgnore
+//    List<Appointment> donorAppointments;
+//
+//    @OneToMany(mappedBy = "medicalStaff")
+//    @JsonIgnore
+//    List<Appointment> staffAppointments;
 
     @OneToOne(mappedBy = "account", cascade = CascadeType.ALL)
     @JsonIgnore
     private User user;
 
-    // Người đi hiến máu (donor)
-    @OneToMany(mappedBy = "customer")
-    @JsonIgnore
-    private List<Appointment> customerAppointments;
+//    // Người đi hiến máu (donor)
+//    @OneToMany(mappedBy = "customer")
+//    @JsonIgnore
+//    private List<Appointment> customerAppointments;
+//
+//    @OneToMany(mappedBy = "account")
+//    List<Feedback> feedbacks;
 
-    @OneToMany(mappedBy = "account")
-    List<Feedback> feedbacks;
-
-    @OneToMany(mappedBy = "account")
-    List<Blog> blogs;
 }

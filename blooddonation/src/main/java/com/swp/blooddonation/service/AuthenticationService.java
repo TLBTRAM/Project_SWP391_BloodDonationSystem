@@ -247,16 +247,16 @@ public class AuthenticationService implements UserDetailsService {
         verificationCodeRepository.deleteByEmail(resetPasswordRequest.getEmail());
     }
 
-
-    public Account getCurrentAccount(){
-        String email = SecurityContextHolder.getContext().getAuthentication().getName();
-//        return authenticationReponsitory.findAccountByEmail(email).orElseThrow(() -> new UserNotFoundException("User not found with email: " + email));
-        Account account = authenticationReponsitory.findAccountByEmail(email);
-        if (account == null) {
-            throw new UserNotFoundException("User not found with email: " + email);
-        }
-        return account;
-    }
+//
+//    public Account getCurrentAccount(){
+//        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+////        return authenticationReponsitory.findAccountByEmail(email).orElseThrow(() -> new UserNotFoundException("User not found with email: " + email));
+//        Account account = authenticationReponsitory.findAccountByEmail(email);
+//        if (account == null) {
+//            throw new UserNotFoundException("User not found with email: " + email);
+//        }
+//        return account;
+//    }
 
     public List<MedicalStaffDTO> getMedicalStaff() {
         List<User> medicalStaffUsers = userRepository.findByRole(Role.MEDICALSTAFF);
