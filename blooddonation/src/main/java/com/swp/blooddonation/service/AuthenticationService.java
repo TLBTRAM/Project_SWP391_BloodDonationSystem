@@ -164,7 +164,7 @@ public class AuthenticationService implements UserDetailsService {
             throw new AuthenticationException("Email không tồn tại");
         }
 
-        // ✅ In kiểm tra nhanh tại đây
+        // In kiểm tra nhanh tại đây
         System.out.println("=== DEBUG PASSWORD MATCHING ===");
         System.out.println("Raw password: " + loginRequest.getPassword());
         System.out.println("Encoded in DB: " + acc.getPassword());

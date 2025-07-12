@@ -77,7 +77,7 @@ public class BloodUnitService {
         Appointment appointment = test.getAppointment();
         Account account = appointment.getCustomer();
 
-        User donor = userRepository.findByAccount(donorAccount)
+        User donor = userRepository.findByAccount(account)
                 .orElseThrow(() -> new BadRequestException("The linked account is not a donor."));
 //        Account donor = customerRepository.findByAccount(donorAccount)
 //                .orElseThrow(() -> new BadRequestException("The linked account is not a donor."));

@@ -3,6 +3,7 @@ package com.swp.blooddonation.api;
 import com.swp.blooddonation.dto.AccountDTO;
 import com.swp.blooddonation.dto.DonationHistoryDTO;
 import com.swp.blooddonation.entity.Account;
+import com.swp.blooddonation.entity.User;
 import com.swp.blooddonation.service.AccountService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,10 +25,10 @@ public class AccountAPI {
 
 
 
-    @GetMapping("/me")
-    public ResponseEntity<AccountDTO> getProfile(@AuthenticationPrincipal Account account) {
-        return ResponseEntity.ok(accountService.getProfile(account));
-    }
+//    @GetMapping("/me")
+//    public ResponseEntity<AccountDTO> getProfile(@AuthenticationPrincipal User user) {
+//        return ResponseEntity.ok(accountService.getProfile(user));
+//    }
 
     // Cập nhật hồ sơ người dùng (dùng lại AccountDTO cho update)
     @PutMapping("/update-profile")
@@ -53,22 +54,22 @@ public class AccountAPI {
     }
 
     @GetMapping("/donation-history")
-    public ResponseEntity<List<DonationHistoryDTO>> getDonationHistory(@AuthenticationPrincipal Account account) {
-        return ResponseEntity.ok(accountService.getDonationHistory(account));
+    public ResponseEntity<List<DonationHistoryDTO>> getDonationHistory(@AuthenticationPrincipal User user) {
+        return ResponseEntity.ok(accountService.getDonationHistory(user));
     }
 
 
 
     @GetMapping("/donation-recommendation")
-    public ResponseEntity<String> getDonationRecommendation(@AuthenticationPrincipal Account account) {
-        return ResponseEntity.ok(accountService.getDonationRecommendation(account));
+    public ResponseEntity<String> getDonationRecommendation(@AuthenticationPrincipal User user) {
+        return ResponseEntity.ok(accountService.getDonationRecommendation(user));
     }
 
 
 
     @GetMapping("/ready-date")
-    public ResponseEntity<AccountService.ReadyDateResponse> getReadyDate(@AuthenticationPrincipal Account account) {
-        return ResponseEntity.ok(accountService.getReadyDate(account));
+    public ResponseEntity<AccountService.ReadyDateResponse> getReadyDate(@AuthenticationPrincipal User user) {
+        return ResponseEntity.ok(accountService.getReadyDate(user));
     }
 
 }
