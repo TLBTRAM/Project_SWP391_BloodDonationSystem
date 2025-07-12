@@ -2,7 +2,7 @@ package com.swp.blooddonation.service;
 
 import com.swp.blooddonation.dto.TestResultDTO;
 import com.swp.blooddonation.entity.*;
-import com.swp.blooddonation.repository.CustomerRepository;
+//import com.swp.blooddonation.repository.CustomerRepository;
 import com.swp.blooddonation.repository.MedicalStaffRepository;
 import com.swp.blooddonation.repository.TestResultRepository;
 import lombok.RequiredArgsConstructor;
@@ -21,7 +21,7 @@ import java.util.stream.Collectors;
 public class MedicalStaffService {
 
     private final MedicalStaffRepository medicalStaffRepository;
-    private final CustomerRepository customerRepository;
+//    private final CustomerRepository customerRepository;
     private final TestResultRepository testResultRepository;
     private final ModelMapper modelMapper;
 

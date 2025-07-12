@@ -30,8 +30,7 @@ public class BloodTestService {
     AppointmentRepository appointmentRepository;
 
     @Autowired
-    CustomerRepository customerRepository;
-
+    AccountRepository accountRepository;
     @Autowired
     TestResultRepository testResultRepository;
 
@@ -119,11 +118,11 @@ public class BloodTestService {
         test.setMedicalStaff(appointment.getMedicalStaff());
 
         // Cập nhật nhóm máu cho người hiến nếu chưa có
-        Customer donor = appointment.getCustomer().getCustomer();
-        if (donor != null && donor.getBloodType() == null && request.getBloodType() != null) {
-            donor.setBloodType(request.getBloodType());
-            donor.setRhType(request.getRhType());
-            customerRepository.save(donor);
+        Account account = appointment.getCustomer();
+        if (account != null && account.getBloodType() == null && request.getBloodType() != null) {
+            account.setBloodType(request.getBloodType());
+            account.setRhType(request.getRhType());
+            accountRepository.save(account);
         }
 
         // Lưu kết quả xét nghiệm
@@ -137,7 +136,7 @@ public class BloodTestService {
         testResult.setResult(request.getResult());
         testResult.setType(request.getBloodType());
         testResult.setRhType(request.getRhType());
-        testResult.setCustomer(donor);
+        testResult.setCustomer(account);
         testResult.setPassed(request.isPassed());
         testResult.setBloodTest(test);
 
@@ -165,12 +164,12 @@ public class BloodTestService {
         response.setTestedByName(testedByName);
 
         // Gửi thông báo kết quả xét nghiệm
-        if (donor != null && donor.getAccount() != null) {
+        if (account != null ) {
             String content = "Kết quả xét nghiệm của bạn cho cuộc hẹn ngày " + testDate + ": " + request.getResult();
             content += request.isPassed() ? ". Bạn đủ điều kiện hiến máu." : ". Bạn chưa đủ điều kiện hiến máu.";
 
             NotificationRequest notiRequest = NotificationRequest.builder()
-                    .receiverIds(List.of(donor.getAccount().getId()))
+                    .receiverIds(List.of(account.getId()))
                     .title("Kết quả xét nghiệm máu")
                     .content(content)
                     .type(NotificationType.TEST_RESULT)

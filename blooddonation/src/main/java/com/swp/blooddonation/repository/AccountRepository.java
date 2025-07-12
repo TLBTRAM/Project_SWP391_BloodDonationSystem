@@ -1,6 +1,7 @@
 package com.swp.blooddonation.repository;
 
 import com.swp.blooddonation.entity.Account;
+//import com.swp.blooddonation.entity.Customer;
 import com.swp.blooddonation.enums.Role;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
@@ -24,4 +25,5 @@ public interface AccountRepository extends JpaRepository<Account, Long> {
     List<Account> findByRole(Role role);
 
     Account findByEmail(String email);
+    Optional<Account> findById(Long id);
 }

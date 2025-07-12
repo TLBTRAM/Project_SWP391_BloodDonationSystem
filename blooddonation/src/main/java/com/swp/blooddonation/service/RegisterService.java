@@ -55,9 +55,14 @@ public class RegisterService {
     public Register createRegister(RegisterRequest request) {
         Account currentUser = authenticationService.getCurrentAccount();
 
-
-
         LocalDate registerDate = request.getDate();
+
+        boolean isWorkingThatDay = accountSlotRepository
+                .existsByAccountAndDate(currentUser, registerDate);
+
+        if (isWorkingThatDay) {
+            throw new BadRequestException("Bạn đã đăng ký làm việc trong ngày này nên không thể đăng ký hiến máu.");
+        }
 
         Slot slot = slotRepository.findById(request.getSlotId())
                 .orElseThrow(() -> new BadRequestException("Không tìm thấy slot."));

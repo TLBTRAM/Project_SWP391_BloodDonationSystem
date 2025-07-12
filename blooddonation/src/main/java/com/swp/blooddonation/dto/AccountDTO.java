@@ -1,10 +1,13 @@
 package com.swp.blooddonation.dto;
 
+import com.swp.blooddonation.enums.BloodType;
 import com.swp.blooddonation.enums.Gender;
+import com.swp.blooddonation.enums.RhType;
 import com.swp.blooddonation.enums.Role;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.time.LocalDate;
 import java.util.Date;
 
 @Getter
@@ -16,6 +19,8 @@ public class AccountDTO {
     private String fullName;
     private Date birthDate;
     private Gender gender;
-    private Role role;
-    private String address;
+    private AddressDTO address;
+    private LocalDate lastDonationDate;
+    private BloodType bloodType;
+    private RhType rhType;
 }

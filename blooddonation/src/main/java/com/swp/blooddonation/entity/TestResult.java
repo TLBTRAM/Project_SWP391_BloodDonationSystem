@@ -25,7 +25,7 @@ public class TestResult {
 
     @ManyToOne
     @JoinColumn(name = "customer_id")
-    private Customer customer;
+    private Account customer;
 
 
     @Enumerated(EnumType.STRING)

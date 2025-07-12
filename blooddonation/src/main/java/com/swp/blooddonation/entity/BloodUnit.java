@@ -34,7 +34,7 @@ public class BloodUnit {
     private BloodUnitStatus status; // COLLECTED, SEPARATED, EXPIRED
 
     @ManyToOne
-    private Customer donor;
+    private Account donor;
 
     @ManyToOne
     private MedicalStaff collectedBy;

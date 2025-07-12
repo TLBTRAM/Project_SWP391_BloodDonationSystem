@@ -14,10 +14,18 @@ public class AddressDTO {
 
     @NotNull(message = "Phường / xã không được để trống")
     private Long wardId;
+    private String wardName;
+
 
     @NotNull(message = "Quận / huyện không được để trống")
     private Long districtId;
+    private String districtName;
+
 
     @NotNull(message = "Tỉnh / thành phố không được để trống")
+
     private Long provinceId;
+    private String provinceName;
+
+
 }

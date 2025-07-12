@@ -55,8 +55,8 @@ public class AuthenticationService implements UserDetailsService {
     @Autowired
     EmailService emailService;
 
-    @Autowired
-    CustomerRepository customerRepository;
+//    @Autowired
+//    CustomerRepository customerRepository;
 
 
     @Autowired
@@ -117,18 +117,6 @@ public class AuthenticationService implements UserDetailsService {
         // Lưu tài khoản vào DB
         Account savedAccount = authenticationReponsitory.save(account);
 
-        // Tạo Customer nếu là role CUSTOMER
-        if (savedAccount.getRole() == Role.CUSTOMER) {
-            Customer customer = new Customer();
-            customer.setAccount(savedAccount);
-            try {
-                Customer savedCustomer = customerRepository.save(customer);
-                System.out.println("Saved customer id: " + savedCustomer.getId());
-            } catch (Exception e) {
-                System.out.println("Error saving customer: " + e.getMessage());
-            }
-        }
-
         // Gửi email chào mừng
         EmailDetail emailDetail = new EmailDetail();
         emailDetail.setMailRecipient(savedAccount.getEmail());
@@ -164,7 +152,7 @@ public class AuthenticationService implements UserDetailsService {
             throw new AuthenticationException("Email không tồn tại");
         }
 
-        // ✅ In kiểm tra nhanh tại đây
+        // In kiểm tra nhanh tại đây
         System.out.println("=== DEBUG PASSWORD MATCHING ===");
         System.out.println("Raw password: " + loginRequest.getPassword());
         System.out.println("Encoded in DB: " + acc.getPassword());

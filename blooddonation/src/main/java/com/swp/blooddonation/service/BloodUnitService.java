@@ -31,9 +31,6 @@ public class BloodUnitService {
     MedicalStaffRepository medicalStaffRepository;
 
     @Autowired
-    CustomerRepository customerRepository;
-
-    @Autowired
     BloodComponentRepository bloodComponentRepository;
 
     @Autowired
@@ -41,6 +38,7 @@ public class BloodUnitService {
 
     @Autowired
     private AccountRepository accountRepository;
+
     @Autowired
     TestResultRepository testResultRepository;
 
@@ -71,10 +69,10 @@ public class BloodUnitService {
 
         // Lấy người hiến từ appointment
         Appointment appointment = test.getAppointment();
-        Account donorAccount = appointment.getCustomer();
+        Account account = appointment.getCustomer();
 
-        Customer donor = customerRepository.findByAccount(donorAccount)
-                .orElseThrow(() -> new BadRequestException("The linked account is not a donor."));
+//        Account donor = customerRepository.findByAccount(donorAccount)
+//                .orElseThrow(() -> new BadRequestException("The linked account is not a donor."));
 
         // Lấy thông tin MedicalStaff từ account hiện tại
         MedicalStaff staff = medicalStaffRepository.findById(currentUser.getId())
@@ -86,8 +84,8 @@ public class BloodUnitService {
         }
 
 
-        donor.setLastDonationDate(LocalDate.now());
-        customerRepository.save(donor);
+        account.setLastDonationDate(LocalDate.now());
+        accountRepository.save(account);
 
 
 
@@ -98,7 +96,7 @@ public class BloodUnitService {
         unit.setTotalVolume(request.getTotalVolume());
         unit.setCollectedDate(LocalDate.now());
         unit.setExpirationDate(LocalDate.now().plusDays(42)); // Hạn dùng máu toàn phần: 42 ngày
-        unit.setDonor(donor);
+        unit.setDonor(account);
         unit.setCollectedBy(staff);
         unit.setStatus(BloodUnitStatus.COLLECTED);
 

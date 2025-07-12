@@ -2,10 +2,7 @@ package com.swp.blooddonation.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.swp.blooddonation.enums.BloodType;
-import com.swp.blooddonation.enums.EnableStatus;
-import com.swp.blooddonation.enums.Gender;
-import com.swp.blooddonation.enums.Role;
+import com.swp.blooddonation.enums.*;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -19,6 +16,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.Date;
@@ -80,6 +78,16 @@ public class Account implements UserDetails {
     @Column(name = "street")
     private String street;
 
+
+        // Từ Donor
+    @Enumerated(EnumType.STRING)
+    private BloodType bloodType;
+
+    @Enumerated(EnumType.STRING)
+    private RhType rhType;
+
+    private LocalDate lastDonationDate;
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of(new SimpleGrantedAuthority("ROLE_" + role.name()));
@@ -123,17 +131,13 @@ public class Account implements UserDetails {
     @JsonIgnore
     List<AccountSlot> accountSlots;
 
-    @OneToMany(mappedBy = "customer")
-    @JsonIgnore
-    List<Appointment> donorAppointments;
-
     @OneToMany(mappedBy = "medicalStaff")
     @JsonIgnore
     List<Appointment> staffAppointments;
 
-    @OneToOne(mappedBy = "account", cascade = CascadeType.ALL)
-    @JsonIgnore
-    private Customer customer;
+//    @OneToOne(mappedBy = "account", cascade = CascadeType.ALL)
+//    @JsonIgnore
+//    private Customer customer;
 
     // Người đi hiến máu (donor)
     @OneToMany(mappedBy = "customer")
