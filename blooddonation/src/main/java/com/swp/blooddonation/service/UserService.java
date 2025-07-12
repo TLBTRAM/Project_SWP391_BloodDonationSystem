@@ -6,7 +6,6 @@ import com.swp.blooddonation.dto.MedicalStaffDTO;
 import com.swp.blooddonation.enums.Role;
 import com.swp.blooddonation.entity.Account;
 import com.swp.blooddonation.entity.User;
-import com.swp.blooddonation.enums.Role;
 import com.swp.blooddonation.repository.UserRepository;
 import com.swp.blooddonation.repository.DonationHistoryRepository;
 import lombok.RequiredArgsConstructor;
@@ -108,17 +107,17 @@ public class UserService {
 
     // 7. Lấy tất cả Customer
     public List<User> getAllCustomers() {
-        return userRepository.findByRole(Role.CUSTOMER);
+        return userRepository.findAllCustomers();
     }
 
     // 8. Lấy tất cả Medical Staff
     public List<User> getAllMedicalStaff() {
-        return userRepository.findByRole(Role.MEDICALSTAFF);
+        return userRepository.findAllMedicalStaff();
     }
 
     // 9. Lấy tất cả Manager
     public List<User> getAllManagers() {
-        return userRepository.findByRole(Role.MANAGER);
+        return userRepository.findAllManagers();
     }
 
     // 10. Lấy User theo Role

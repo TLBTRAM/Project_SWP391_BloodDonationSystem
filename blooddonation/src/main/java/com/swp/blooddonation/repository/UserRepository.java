@@ -17,10 +17,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
     Optional<User> findByAccount_Email(String email);
     boolean existsByAccount_Id(Long accountId);
     
-    // Kiểm tra số điện thoại đã tồn tại chưa
-    boolean existsByPhone(String phone);
-    
-    // Custom queries theo role
+    // Custom queries theo role (role được lưu trong Account)
     @Query("SELECT u FROM User u WHERE u.account.role = ?1")
     List<User> findByRole(Role role);
     

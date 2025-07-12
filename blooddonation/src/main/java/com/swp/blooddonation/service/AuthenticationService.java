@@ -111,6 +111,7 @@ public class AuthenticationService implements UserDetailsService {
         // Tạo User cho tất cả role
         User user = new User();
         user.setAccount(savedAccount);
+        // Role được lưu trong Account, không cần set trong User
         
         // Set personal info từ regisRequest
         user.setFullName(regisRequest.getFullName());
@@ -259,15 +260,9 @@ public class AuthenticationService implements UserDetailsService {
     }
 
     public List<MedicalStaffDTO> getMedicalStaff() {
-        List<User> medicalStaffUsers = userRepository.findByRole(Role.MEDICALSTAFF);
-        return medicalStaffUsers.stream()
-                .map(user -> {
-                    MedicalStaffDTO dto = modelMapper.map(user, MedicalStaffDTO.class);
-                    dto.setFullName(user.getFullName());
-                    dto.setEmail(user.getAccount().getEmail());
-                    dto.setPhone(user.getPhone());
-                    return dto;
-                })
+        List<Account> medicalStaffAccounts = authenticationReponsitory.findByRole(Role.MEDICALSTAFF);
+        return medicalStaffAccounts.stream()
+                .map(account -> modelMapper.map(account, MedicalStaffDTO.class))
                 .collect(Collectors.toList());
     }
 }
