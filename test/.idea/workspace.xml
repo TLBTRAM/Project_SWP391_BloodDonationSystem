@@ -4,7 +4,15 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="a2c878fb-c0ff-4d09-b02c-f6125112f9c5" name="Changes" comment="" />
+    <list default="true" id="a2c878fb-c0ff-4d09-b02c-f6125112f9c5" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/../blooddonationsystem_frontend/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/../blooddonationsystem_frontend/package-lock.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../blooddonationsystem_frontend/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/../blooddonationsystem_frontend/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../blooddonationsystem_frontend/src/pages/Register.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/../blooddonationsystem_frontend/src/pages/Register.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../blooddonationsystem_frontend/src/pages/User.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/../blooddonationsystem_frontend/src/pages/User.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../blooddonationsystem_frontend/src/pages/components/Register.css" beforeDir="false" afterPath="$PROJECT_DIR$/../blooddonationsystem_frontend/src/pages/components/Register.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../blooddonationsystem_frontend/src/pages/images/Banner/Register_img.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -41,7 +49,6 @@
       <option name="ALTERNATIVE_JRE_PATH" value="ms-21" />
       <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="true" />
       <option name="MAIN_CLASS_NAME" value="com.swp.blooddonation.BlooddonationApplication" />
-      <module name="blooddonation" />
       <method v="2">
         <option name="Make" enabled="true" />
       </method>

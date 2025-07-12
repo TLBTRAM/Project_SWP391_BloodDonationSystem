@@ -66,11 +66,23 @@ body {
   flex-wrap: wrap;
 }
 
+.form-row-2 {
+  display: flex;
+  gap: 16px;
+  justify-content: space-between;
+  flex-wrap: wrap; /* responsive */
+}
+
 .form-group {
   display: flex;
   flex-direction: column;
   flex: 1;
   min-width: 150px;
+}
+
+.location-group {
+  flex: 1;
+  min-width: 200px;
 }
 
 .form-label {
@@ -115,7 +127,7 @@ textarea:focus {
 .submit-btn {
   width: 100%;
   padding: 12px;
-  background-color: #00224D;
+  background-color: #00224D !important;
   color: white;
   font-weight: bold;
   border: none;
