@@ -28,6 +28,32 @@ public class AppointmentService {
     @Autowired
     AppointmentRepository appointmentRepository;
 
+    @Autowired
+    AccountSlotRepository accountSlotRepository;
+
+    @Autowired
+    AuthenticationReponsitory authenticationReponsitory;
+
+    @Autowired
+    AuthenticationService authenticationService;
+
+    @Autowired
+    BloodTestRepository bloodTestRepository;
+
+    @Autowired
+    SlotRepository slotRepository;
+
+    @Autowired
+    EmailService emailService;
+
+    @Autowired
+    UserRepository userRepository;
+
+    @Autowired
+    RegisterRepository registerRepository;
+
+    @Autowired
+    ModelMapper modelMapper;
 
 
     @Transactional

@@ -2,16 +2,12 @@ package com.swp.blooddonation.service;
 
 
 import com.swp.blooddonation.entity.Account;
-import com.swp.blooddonation.entity.MedicalStaff;
-//import com.swp.blooddonation.entity.Customer;
-import com.swp.blooddonation.entity.Manager;
+import com.swp.blooddonation.entity.User;
 import com.swp.blooddonation.enums.EnableStatus;
 import com.swp.blooddonation.enums.Role;
 import com.swp.blooddonation.exception.exceptions.UserNotFoundException;
 import com.swp.blooddonation.repository.AccountRepository;
-import com.swp.blooddonation.repository.MedicalStaffRepository;
-//import com.swp.blooddonation.repository.CustomerRepository;
-import com.swp.blooddonation.repository.ManagerRepository;
+import com.swp.blooddonation.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,66 +22,30 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class AdminService {
 
+    private final AccountRepository accountRepository;
     private final ModelMapper modelMapper;
 
     @Autowired
-    MedicalStaffRepository medicalStaffRepository;
-
-//    @Autowired
-//    CustomerRepository customerRepository;
-
-    @Autowired
-    AccountRepository accountRepository;
-
-    @Autowired
-    ManagerRepository managerRepository;
+    UserRepository userRepository;
 
     //  Cập nhật role của người dùng
     public void updateUserRole(Long userId, Role newRole) {
         Account account = accountRepository.findById(userId)
                 .orElseThrow(() -> new UserNotFoundException("User not found with ID: " + userId));
+        Role oldRole = account.getRole(); // lưu role cũ
 
-        Role oldRole = account.getRole(); // Lưu role cũ
-
-        // Nếu role cũ là MEDICALSTAFF thì ẩn bản ghi medicalStaff
-        if (oldRole == Role.MEDICALSTAFF) {
-            medicalStaffRepository.findById(account.getId()).ifPresent(staff -> {
-                staff.setActive(false);
-                medicalStaffRepository.save(staff);
-            });
-        } else if (oldRole == Role.MANAGER) {
-            managerRepository.findById(account.getId()).ifPresent(manager -> {
-                manager.setActive(false);
-                managerRepository.save(manager);
-            });
-        }
-
-        // Cập nhật role mới
+        // Cập nhật role trong Account
         account.setRole(newRole);
         accountRepository.save(account);
 
-        // Tạo hoặc hiển bản ghi mới cho các role yêu cầu bảng riêng
-        if (newRole == Role.MEDICALSTAFF) {
-            MedicalStaff staff = medicalStaffRepository.findById(account.getId()).orElse(null);
-            if (staff == null) {
-                staff = new MedicalStaff();
-                staff.setAccount(account);
-                staff.setDepartment(null); // Có thể bổ sung sau
-            }
-            staff.setActive(true);
-            medicalStaffRepository.save(staff);
-        } else if (newRole == Role.MANAGER) {
-            Manager manager = managerRepository.findById(account.getId()).orElse(null);
-            if (manager == null) {
-                manager = new Manager();
-                manager.setAccount(account);
-            }
-            manager.setActive(true);
-            managerRepository.save(manager);
+        // Tạo hoặc cập nhật User nếu cần
+        User user = userRepository.findById(account.getId()).orElse(null);
+        if (user == null) {
+            user = new User();
+            user.setAccount(account);
+            userRepository.save(user);
         }
-
     }
-
 
     //  Kích hoạt / vô hiệu hóa tài khoản
     public void updateUserStatus(Long userId, boolean enabled) {

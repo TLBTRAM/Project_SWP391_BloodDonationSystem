@@ -2,11 +2,12 @@ package com.swp.blooddonation.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.swp.blooddonation.enums.EnableStatus;
+import com.swp.blooddonation.enums.Role;
 import com.swp.blooddonation.enums.*;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -16,10 +17,8 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Collection;
-import java.util.Date;
 import java.util.List;
 
 @Getter
@@ -35,27 +34,13 @@ public class Account implements UserDetails {
     @Email(message = "Email not valid!")
     public String email;
 
-    @Pattern(regexp = "^(0|\\+84)(3[2-9]|5[6|8|9]|7[0|6-9]|8[1-5]|9[0-9])[0-9]{7}$", message = "Phone invalid!")
-    public String phone;
-
     @NotBlank(message = "Password can not blank")
     @Size(min = 6, message = "Password must be at leat 6 characters!")
     @JsonIgnore
     private String password;
 
-    @JsonProperty("full_name")
-    @Column(name = "full_name")
-    public String fullName;
-
-    @Temporal(TemporalType.DATE)
-    @Column(name = "birth_date")
-    public Date birthDate;
-
     @Column(name = "created_at")
     public LocalDateTime createdAt;
-
-    @Enumerated(EnumType.STRING)
-    public Gender gender;
 
     @Enumerated(EnumType.STRING)
     public Role role;
@@ -63,30 +48,6 @@ public class Account implements UserDetails {
     @Enumerated(EnumType.STRING)
     public EnableStatus enableStatus;
 
-    @ManyToOne
-    @JoinColumn(name = "province_id")
-    private Province province;
-
-    @ManyToOne
-    @JoinColumn(name = "district_id")
-    private District district;
-
-    @ManyToOne
-    @JoinColumn(name = "ward_id")
-    private Ward ward;
-
-    @Column(name = "street")
-    private String street;
-
-
-        // Từ Donor
-    @Enumerated(EnumType.STRING)
-    private BloodType bloodType;
-
-    @Enumerated(EnumType.STRING)
-    private RhType rhType;
-
-    private LocalDate lastDonationDate;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -131,13 +92,17 @@ public class Account implements UserDetails {
     @JsonIgnore
     List<AccountSlot> accountSlots;
 
+    @OneToMany(mappedBy = "customer")
+    @JsonIgnore
+    List<Appointment> donorAppointments;
+
     @OneToMany(mappedBy = "medicalStaff")
     @JsonIgnore
     List<Appointment> staffAppointments;
 
-//    @OneToOne(mappedBy = "account", cascade = CascadeType.ALL)
-//    @JsonIgnore
-//    private Customer customer;
+    @OneToOne(mappedBy = "account", cascade = CascadeType.ALL)
+    @JsonIgnore
+    private User user;
 
     // Người đi hiến máu (donor)
     @OneToMany(mappedBy = "customer")

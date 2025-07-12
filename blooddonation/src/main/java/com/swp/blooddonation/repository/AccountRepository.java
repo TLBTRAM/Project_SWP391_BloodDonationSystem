@@ -18,8 +18,7 @@ public interface AccountRepository extends JpaRepository<Account, Long> {
     // Kiểm tra email đã tồn tại chưa
     boolean existsByEmail(String email);
 
-    // Kiểm tra số điện thoại đã tồn tại chưa
-    boolean existsByPhone(String phone);
+
 
     // Tìm tài khoản theo vai trò
     List<Account> findByRole(Role role);

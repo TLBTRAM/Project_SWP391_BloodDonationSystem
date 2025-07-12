@@ -3,6 +3,7 @@ package com.swp.blooddonation.service;
 import com.swp.blooddonation.dto.request.BloodComponentVolumeRequest;
 import com.swp.blooddonation.dto.request.CollectBloodRequest;
 import com.swp.blooddonation.entity.*;
+import com.swp.blooddonation.entity.DonationHistory;
 import com.swp.blooddonation.enums.*;
 import com.swp.blooddonation.exception.exceptions.BadRequestException;
 import com.swp.blooddonation.repository.*;
@@ -12,6 +13,7 @@ import org.springframework.stereotype.Service;
 import com.swp.blooddonation.dto.request.NotificationRequest;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,8 +29,10 @@ public class BloodUnitService {
     @Autowired
     AuthenticationService authenticationService;
 
+
+
     @Autowired
-    MedicalStaffRepository medicalStaffRepository;
+    UserRepository userRepository;
 
     @Autowired
     BloodComponentRepository bloodComponentRepository;
@@ -38,9 +42,11 @@ public class BloodUnitService {
 
     @Autowired
     private AccountRepository accountRepository;
-
     @Autowired
     TestResultRepository testResultRepository;
+
+    @Autowired
+    private DonationHistoryRepository donationHistoryRepository;
 
 
     @Transactional
@@ -71,11 +77,13 @@ public class BloodUnitService {
         Appointment appointment = test.getAppointment();
         Account account = appointment.getCustomer();
 
+        User donor = userRepository.findByAccount(donorAccount)
+                .orElseThrow(() -> new BadRequestException("The linked account is not a donor."));
 //        Account donor = customerRepository.findByAccount(donorAccount)
 //                .orElseThrow(() -> new BadRequestException("The linked account is not a donor."));
 
-        // Lấy thông tin MedicalStaff từ account hiện tại
-        MedicalStaff staff = medicalStaffRepository.findById(currentUser.getId())
+        // Lấy thông tin User từ account hiện tại
+        User staff = userRepository.findByAccount(currentUser)
                 .orElseThrow(() -> new BadRequestException("Medical staff not found"));
 
         // Validate thể tích
@@ -84,10 +92,17 @@ public class BloodUnitService {
         }
 
 
-        account.setLastDonationDate(LocalDate.now());
-        accountRepository.save(account);
+        donor.setLastDonationDate(LocalDate.now());
+        userRepository.save(donor);
 
-
+        // Tạo bản ghi lịch sử hiến máu
+        DonationHistory donationHistory = new DonationHistory();
+        donationHistory.setDonationDate(LocalDateTime.now());
+        donationHistory.setVolume(request.getTotalVolume());
+        donationHistory.setCustomer(donor);
+        donationHistory.setLocation("Blood Donation Center");
+        donationHistory.setNotes("Blood collected by " + staff.getFullName());
+        donationHistoryRepository.save(donationHistory);
 
         // Tạo BloodUnit
         BloodUnit unit = new BloodUnit();
@@ -96,7 +111,7 @@ public class BloodUnitService {
         unit.setTotalVolume(request.getTotalVolume());
         unit.setCollectedDate(LocalDate.now());
         unit.setExpirationDate(LocalDate.now().plusDays(42)); // Hạn dùng máu toàn phần: 42 ngày
-        unit.setDonor(account);
+        unit.setDonor(donor);
         unit.setCollectedBy(staff);
         unit.setStatus(BloodUnitStatus.COLLECTED);
 

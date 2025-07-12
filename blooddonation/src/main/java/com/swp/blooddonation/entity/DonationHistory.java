@@ -19,7 +19,7 @@ public class DonationHistory {
 
     @ManyToOne
     @JoinColumn(name = "customer_id")
-    private Account account;
+    private User customer;
 
     private String location;
     private String notes;

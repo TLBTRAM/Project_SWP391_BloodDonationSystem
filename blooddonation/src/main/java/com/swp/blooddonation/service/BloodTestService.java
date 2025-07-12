@@ -30,12 +30,10 @@ public class BloodTestService {
     AppointmentRepository appointmentRepository;
 
     @Autowired
-    AccountRepository accountRepository;
-    @Autowired
-    TestResultRepository testResultRepository;
+    UserRepository userRepository;
 
     @Autowired
-    MedicalStaffRepository medicalStaffRepository;
+    TestResultRepository testResultRepository;
 
     @Autowired
     private AuthenticationService authenticationService;
@@ -94,6 +92,7 @@ public class BloodTestService {
         test.setStatus(BloodTestStatus.IN_PROGRESS);
         return bloodTestRepository.save(test);
     }
+
     @Transactional
     public BloodTestResponse completeBloodTest(Long testId, CompleteBloodTest request) {
         Account currentUser = authenticationService.getCurrentAccount();
@@ -114,42 +113,46 @@ public class BloodTestService {
         test.setResult(request.getResult());
         test.setStatus(BloodTestStatus.COMPLETED);
         test.setBloodType(request.getBloodType());
-        test.setRhType(request.getRhType());
         test.setMedicalStaff(appointment.getMedicalStaff());
 
         // Cập nhật nhóm máu cho người hiến nếu chưa có
-        Account account = appointment.getCustomer();
-        if (account != null && account.getBloodType() == null && request.getBloodType() != null) {
-            account.setBloodType(request.getBloodType());
-            account.setRhType(request.getRhType());
-            accountRepository.save(account);
+        User donor = userRepository.findByAccount(appointment.getCustomer()).orElse(null);
+        if (donor != null && donor.getBloodType() == null && request.getBloodType() != null) {
+            donor.setBloodType(request.getBloodType());
+            userRepository.save(donor);
         }
 
         // Lưu kết quả xét nghiệm
         bloodTestRepository.save(test);
 
-        // Luôn lưu TestResult dù passed là false
-        TestResult testResult = new TestResult();
-        testResult.setTestDate(LocalDate.now());
-        testResult.setBloodPressure(request.getBloodPressure());
-        testResult.setHeartRate(request.getHeartRate());
-        testResult.setResult(request.getResult());
-        testResult.setType(request.getBloodType());
-        testResult.setRhType(request.getRhType());
-        testResult.setCustomer(account);
-        testResult.setPassed(request.isPassed());
-        testResult.setBloodTest(test);
-
-        Account staffAccount = appointment.getMedicalStaff();
-        MedicalStaff staff = medicalStaffRepository.findById(staffAccount.getId())
-                .orElseThrow(() -> new BadRequestException("Medical staff not found"));
-        testResult.setStaff(staff);
+        // Nếu xét nghiệm đạt yêu cầu thì lưu vào TestResult
+        if (request.isPassed()) {
+            TestResult testResult = new TestResult();
+            testResult.setTestDate(LocalDate.now());
+            testResult.setBloodPressure(request.getBloodPressure());
+            testResult.setHeartRate(request.getHeartRate());
+            testResult.setResult(request.getResult());
+            testResult.setType(request.getBloodType());
+            testResult.setRhType(request.getRhType());
+            testResult.setCustomer(donor);
+//            testResult.setAppointment(appointment);
+            testResult.setPassed(true);
+            testResult.setBloodTest(test);
+            Account staffAccount = appointment.getMedicalStaff();
+            User staff = userRepository.findByAccount(staffAccount)
+                    .orElseThrow(() -> new BadRequestException("Medical staff not found"));
+            testResult.setStaff(staff);
 
         testResultRepository.save(testResult);
 
-        // Chuẩn bị phản hồi
-        Long testedById = (staffAccount != null) ? staffAccount.getId() : null;
-        String testedByName = (staffAccount != null) ? staffAccount.getFullName() : "Unknown";
+        // Chuẩn bị dữ liệu phản hồi
+        User staffUser = null;
+        if (staffAccount != null) {
+            staffUser = userRepository.findByAccount(staffAccount).orElse(null);
+        }
+        Long testedById = (staffUser != null) ? staffUser.getId() : null;
+        String testedByName = (staffUser != null) ? staffUser.getFullName() : "Unknown";
+
         LocalDate testDate = appointment.getAppointmentDate();
 
         BloodTestResponse response = new BloodTestResponse();
@@ -164,12 +167,12 @@ public class BloodTestService {
         response.setTestedByName(testedByName);
 
         // Gửi thông báo kết quả xét nghiệm
-        if (account != null ) {
+        if (staffAccount != null ) {
             String content = "Kết quả xét nghiệm của bạn cho cuộc hẹn ngày " + testDate + ": " + request.getResult();
             content += request.isPassed() ? ". Bạn đủ điều kiện hiến máu." : ". Bạn chưa đủ điều kiện hiến máu.";
 
             NotificationRequest notiRequest = NotificationRequest.builder()
-                    .receiverIds(List.of(account.getId()))
+                    .receiverIds(List.of(staffAccount.getId()))
                     .title("Kết quả xét nghiệm máu")
                     .content(content)
                     .type(NotificationType.TEST_RESULT)
