@@ -11,6 +11,7 @@ import java.util.List;
 @RequestMapping("/api/compatibility")
 @SecurityRequirement(name = "api")
 public class BloodCompatibilityAPI {
+    
     @GetMapping("/whole-blood")
     public List<String> getCompatibleWholeBloodDonors(
             @RequestParam BloodType recipientType,
