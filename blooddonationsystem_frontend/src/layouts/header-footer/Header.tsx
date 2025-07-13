@@ -5,9 +5,7 @@ import avatarImg from './Avatar.png';
 import logoBlood from "./logo_blood.png";
 import { useAuth } from "./AuthContext";
 interface UserData {
-
   fullName: string;
-
 }
 
 const Header: React.FC = () => {
