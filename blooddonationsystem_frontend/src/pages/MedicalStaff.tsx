@@ -11,6 +11,7 @@ import { Locale , format } from "date-fns";
 
 
 import Header from "../layouts/header-footer/Header";
+import ScheduleSetup from "./MS_components/ScheduleSetup";
 import ScheduleManagement from "./MS_components/ScheduleManagement";
 import DonationSchedule from "./MS_components/DonationSchedule";
 import SendToStorage from "./MS_components/SendToStorage";
@@ -25,6 +26,7 @@ const MedicalStaff = () => {
   const [appointments, setAppointments] = useState<any[]>([]);
   const [view, setView] = useState<
     | "medicalDashboard"
+    | "scheduleSetup"
     | "scheduleManagement"
     | "screening"
     | "donationSchedule"
@@ -89,6 +91,14 @@ const MedicalStaff = () => {
                 onClick={() => setView("medicalDashboard")}
               >
                 Thông tin nhân viên
+              </button>
+            </li>
+            <li className={view === "scheduleSetup" ? "active" : ""}>
+              <button
+                className="menu-item"
+                onClick={() => setView("scheduleSetup")}
+              >
+                Tạo / Đăng kí lịch làm việc
               </button>
             </li>
             <li className={view === "scheduleManagement" ? "active" : ""}>
@@ -209,6 +219,8 @@ const MedicalStaff = () => {
             </div>
           )}
 
+
+          {view === "scheduleSetup" && <ScheduleSetup />}
           {view === "scheduleManagement" && <ScheduleManagement />}
           {view === "donationSchedule" && <DonationSchedule />}
           {view === "sendToStorage" && <SendToStorage />}
