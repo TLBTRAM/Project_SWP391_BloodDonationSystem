@@ -21,6 +21,7 @@ public class BlogAPI {
     private final BlogService blogService;
 
     // Tạo blog mới (chỉ user đã đăng nhập)
+    @PreAuthorize("isAuthenticated()")
     @PostMapping
     public ResponseEntity<BlogResponse> createBlog(@Valid @RequestBody BlogRequest blogRequest) {
         BlogResponse blog = blogService.createBlog(blogRequest);
@@ -42,6 +43,7 @@ public class BlogAPI {
     }
 
     // Lấy blog của user hiện tại
+    @PreAuthorize("isAuthenticated()")
     @GetMapping("/my-blogs")
     public ResponseEntity<List<BlogResponse>> getMyBlogs() {
         List<BlogResponse> blogs = blogService.getMyBlogs();
@@ -49,6 +51,7 @@ public class BlogAPI {
     }
 
     // Cập nhật blog (chỉ chủ sở hữu)
+    @PreAuthorize("isAuthenticated()")
     @PutMapping("/{blogId}")
     public ResponseEntity<BlogResponse> updateBlog(
             @PathVariable Long blogId,
@@ -58,6 +61,7 @@ public class BlogAPI {
     }
 
     // Xóa blog (chỉ chủ sở hữu)
+    @PreAuthorize("isAuthenticated()")
     @DeleteMapping("/{blogId}")
     public ResponseEntity<Void> deleteBlog(@PathVariable Long blogId) {
         blogService.deleteBlog(blogId);

@@ -57,6 +57,10 @@ public class Filter extends OncePerRequestFilter {
             if (uri.equals("/api/slot/getSlot")) {
                 return true;
             }
+            // Cho phép public blood compatibility endpoints
+            if (uri.startsWith("/api/compatibility")) {
+                return true;
+            }
             // Tất cả GET requests khác cần authentication
             return false;
         }
