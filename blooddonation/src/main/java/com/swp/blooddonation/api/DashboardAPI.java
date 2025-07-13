@@ -6,6 +6,7 @@ import com.swp.blooddonation.service.AppointmentService;
 import com.swp.blooddonation.service.NotificationService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -24,6 +25,7 @@ public class DashboardAPI {
     private final AppointmentService appointmentService;
     private final NotificationService notificationService;
 
+    @PreAuthorize("isAuthenticated()")
     @GetMapping
     public Map<String, Object> getDashboard(@AuthenticationPrincipal UserDetails userDetails) {
         Map<String, Object> result = new HashMap<>();

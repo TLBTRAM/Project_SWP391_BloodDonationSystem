@@ -13,6 +13,7 @@
     "@types/react-dom": "^19.1.6",
     "axios": "^1.10.0",
     "date-fns": "^4.1.0",
+    "pc-vn": "^1.0.1",
     "react": "^19.1.0",
     "react-datepicker": "^8.4.0",
     "react-dom": "^19.1.0",

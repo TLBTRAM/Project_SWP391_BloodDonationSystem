@@ -26,12 +26,13 @@ public class SlotAPI {
     SlotService slotService;
 
 
-    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER','MEDICALSTAFF' )")
     @PostMapping("generate")
     public void generateSlot(){
         slotService.generateSlots();
     }
 
+    //@PreAuthorize("isAuthenticated()")
     @GetMapping("getSlot")
     public ResponseEntity getSlot(){
         List<Slot> slots = slotService.get();

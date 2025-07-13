@@ -4,13 +4,20 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { Link } from "react-router-dom";
 import "./components/Register.css";
-import registerBackground from "./images/Banner/Register_img.jpg";
+import registerBackground from "./images/Banner/Register_img.png";
 
 import Header from "../layouts/header-footer/Header";
 import Footer from "../layouts/header-footer/Footer";
 
 import { vi } from "date-fns/locale";
 import { registerLocale } from "react-datepicker";
+
+import pcVN from "pc-vn";
+
+// Type declarations to fix TypeScript errors
+type Province = { code: string; name: string };
+type District = { code: string; name: string };
+type Ward = { code: string; name: string };
 
 registerLocale("vi", vi);
 
@@ -25,6 +32,10 @@ const Register: React.FC = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
+  const [selectedProvince, setSelectedProvince] = useState("");
+  const [selectedDistrict, setSelectedDistrict] = useState("");
+  const [selectedWard, setSelectedWard] = useState("");
+  const [street, setStreet] = useState("");
 
   useEffect(() => {
     if (!birthDate) {
@@ -82,6 +93,9 @@ const Register: React.FC = () => {
       email,
       username,
       password,
+      address: `${street}, ${pcVN.getWardByCode(selectedWard)?.name}, ${
+        pcVN.getDistrictByCode(selectedDistrict)?.name
+      }, ${pcVN.getProvinceByCode(selectedProvince)?.name}`,
     };
 
     try {
@@ -111,7 +125,6 @@ const Register: React.FC = () => {
   return (
     <>
       <Header />
-
       <div
         className="register-bg"
         style={{
@@ -139,9 +152,8 @@ const Register: React.FC = () => {
               )}
             </div>
 
-
-          <div className="form-row">
-            <div className="form-group date-picker-group">
+            <div className="form-row">
+              <div className="form-group date-picker-group">
                 <label className="form-label">Ngày sinh</label>
                 <div className="date-picker-wrapper">
                   <DatePicker
@@ -185,9 +197,9 @@ const Register: React.FC = () => {
                   className="input-text"
                   value={age}
                   readOnly
-              />
+                />
+              </div>
             </div>
-          </div>
 
             <div className="form-group">
               <label className="form-label">Giới tính</label>
@@ -246,6 +258,81 @@ const Register: React.FC = () => {
               {errors.email && <div className="error-text">{errors.email}</div>}
             </div>
 
+            <div className="form-row-2">
+              <div className="form-group location-group">
+                <label className="form-label">Tỉnh/Thành phố</label>
+                <select
+                  className="input-text"
+                  value={selectedProvince}
+                  onChange={(e) => {
+                    setSelectedProvince(e.target.value);
+                    setSelectedDistrict("");
+                    setSelectedWard("");
+                  }}
+                >
+                  <option value="">Chọn tỉnh/thành</option>
+                  {pcVN.getProvinces().map((province: Province) => (
+                    <option key={province.code} value={province.code}>
+                      {province.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div className="form-group location-group">
+                <label className="form-label">Quận/Huyện</label>
+                <select
+                  className="input-text"
+                  value={selectedDistrict}
+                  onChange={(e) => {
+                    setSelectedDistrict(e.target.value);
+                    setSelectedWard("");
+                  }}
+                  disabled={!selectedProvince}
+                >
+                  <option value="">Chọn quận/huyện</option>
+                  {pcVN
+                    .getDistrictsByProvinceCode(selectedProvince)
+                    .map((district: District) => (
+                      <option key={district.code} value={district.code}>
+                        {district.name}
+                      </option>
+                    ))}
+                </select>
+              </div>
+
+              <div className="form-group location-group">
+                <label className="form-label">Phường/Xã</label>
+                <select
+                  className="input-text"
+                  value={selectedWard}
+                  onChange={(e) => setSelectedWard(e.target.value)}
+                  disabled={!selectedDistrict}
+                >
+                  <option value="">Chọn phường/xã</option>
+                  {pcVN
+                    .getWardsByDistrictCode(selectedDistrict)
+                    .map((ward: Ward) => (
+                      <option key={ward.code} value={ward.code}>
+                        {ward.name}
+                      </option>
+                    ))}
+                </select>
+              </div>
+
+              <div className="form-group location-group">
+              <label className="form-label">Số nhà, tên đường</label>
+              <input
+                type="text"
+                className="input-text"
+                value={street}
+                onChange={(e) => setStreet(e.target.value)}
+                placeholder="Nhập số nhà, tên đường"
+              />
+            </div>
+            </div>
+
+
             <div className="form-group">
               <label className="form-label">Tên người dùng</label>
               <input
@@ -285,7 +372,6 @@ const Register: React.FC = () => {
           </form>
         </section>
       </div>
-
       <Footer />
     </>
   );

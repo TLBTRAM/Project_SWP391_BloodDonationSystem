@@ -27,8 +27,6 @@ public class User {
     @JoinColumn(name = "id")
     private Account account;
 
-
-
     // Personal Info (chuyển từ Account)
     public String fullName;
     

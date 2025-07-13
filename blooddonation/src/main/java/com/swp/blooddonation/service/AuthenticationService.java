@@ -32,6 +32,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -221,28 +222,66 @@ public class AuthenticationService implements UserDetailsService {
     public void sendResetCode(String email) {
         Account account = authenticationReponsitory.findAccountByEmail(email);
         if (account == null) throw new RuntimeException("Email không tồn tại");
+        
+        // Kiểm tra xem có mã cũ chưa hết hạn không
+        Optional<VerificationCode> existingCode = verificationCodeRepository.findTopByEmailOrderByExpiresAtDesc(email);
+        if (existingCode.isPresent() && existingCode.get().getExpiresAt().isAfter(LocalDateTime.now())) {
+            throw new RuntimeException("Mã xác minh trước đó vẫn còn hiệu lực. Vui lòng kiểm tra email hoặc đợi 10 phút.");
+        }
+        
         // Xóa mã cũ (nếu có)
         verificationCodeRepository.deleteByEmail(email);
+        
+        // Tạo mã 6 số ngẫu nhiên
         String code = String.format("%06d", new java.util.Random().nextInt(999999));
         VerificationCode vc = new VerificationCode(email, code, LocalDateTime.now().plusMinutes(10));
         verificationCodeRepository.save(vc);
 
+        // Gửi email
         emailService.sendEmailCode(email, "Mã xác minh đặt lại mật khẩu", "Mã xác minh của bạn là: " + code);
     }
 
     @Transactional
     public void resetPassword(ResetPasswordRequest resetPasswordRequest) {
+        // Validate input
+        if (resetPasswordRequest.getEmail() == null || resetPasswordRequest.getEmail().trim().isEmpty()) {
+            throw new ResetPasswordException("Email không được để trống");
+        }
+        if (resetPasswordRequest.getCode() == null || resetPasswordRequest.getCode().trim().isEmpty()) {
+            throw new ResetPasswordException("Mã xác minh không được để trống");
+        }
+        if (resetPasswordRequest.getNewPassword() == null || resetPasswordRequest.getNewPassword().trim().isEmpty()) {
+            throw new ResetPasswordException("Mật khẩu mới không được để trống");
+        }
+        if (resetPasswordRequest.getNewPassword().length() < 6) {
+            throw new ResetPasswordException("Mật khẩu phải có ít nhất 6 ký tự");
+        }
+
+        // Tìm mã xác minh
         VerificationCode vc = verificationCodeRepository.findTopByEmailOrderByExpiresAtDesc(resetPasswordRequest.getEmail())
                 .orElseThrow(() -> new ResetPasswordException("Không tìm thấy mã xác minh"));
 
-        if (!vc.getCode().equals(resetPasswordRequest.getCode())) throw new ResetPasswordException("Mã không chính xác");
-        if (vc.getExpiresAt().isBefore(LocalDateTime.now())) throw new ResetPasswordException("Mã đã hết hạn");
+        // Kiểm tra mã
+        if (!vc.getCode().equals(resetPasswordRequest.getCode())) {
+            throw new ResetPasswordException("Mã không chính xác");
+        }
+        
+        // Kiểm tra hết hạn
+        if (vc.getExpiresAt().isBefore(LocalDateTime.now())) {
+            throw new ResetPasswordException("Mã đã hết hạn");
+        }
 
+        // Tìm tài khoản
         Account account = authenticationReponsitory.findAccountByEmail(resetPasswordRequest.getEmail());
-        if (account == null) throw new ResetPasswordException("Người dùng không tồn tại");
+        if (account == null) {
+            throw new ResetPasswordException("Người dùng không tồn tại");
+        }
 
+        // Cập nhật mật khẩu
         account.setPassword(passwordEncoder.encode(resetPasswordRequest.getNewPassword()));
         authenticationReponsitory.save(account);
+        
+        // Xóa mã xác minh đã sử dụng
         verificationCodeRepository.deleteByEmail(resetPasswordRequest.getEmail());
     }
 
@@ -258,15 +297,9 @@ public class AuthenticationService implements UserDetailsService {
 //    }
 
     public List<MedicalStaffDTO> getMedicalStaff() {
-        List<User> medicalStaffUsers = userRepository.findByRole(Role.MEDICALSTAFF);
-        return medicalStaffUsers.stream()
-                .map(user -> {
-                    MedicalStaffDTO dto = modelMapper.map(user, MedicalStaffDTO.class);
-                    dto.setFullName(user.getFullName());
-                    dto.setEmail(user.getAccount().getEmail());
-                    dto.setPhone(user.getPhone());
-                    return dto;
-                })
+        List<Account> medicalStaffAccounts = authenticationReponsitory.findByRole(Role.MEDICALSTAFF);
+        return medicalStaffAccounts.stream()
+                .map(account -> modelMapper.map(account, MedicalStaffDTO.class))
                 .collect(Collectors.toList());
     }
 }
