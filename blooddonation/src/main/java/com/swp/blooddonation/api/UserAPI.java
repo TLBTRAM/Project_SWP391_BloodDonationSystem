@@ -23,9 +23,10 @@ public class UserAPI {
     private final UserService userService;
 
     // Lấy hồ sơ cá nhân (cho tất cả role)
+
     @GetMapping("/profile")
-    public ResponseEntity<CustomerDTO> getProfile(@AuthenticationPrincipal Account account) {
-        return ResponseEntity.ok(userService.getProfile(account));
+    public ResponseEntity<CustomerDTO> getProfile() {
+        return ResponseEntity.ok(userService.getProfile()); //
     }
 
     // Lịch sử hiến máu (chỉ cho CUSTOMER)

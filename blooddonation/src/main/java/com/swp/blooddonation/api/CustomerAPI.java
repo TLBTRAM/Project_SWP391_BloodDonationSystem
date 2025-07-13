@@ -3,6 +3,7 @@ package com.swp.blooddonation.api;
 import com.swp.blooddonation.dto.CustomerDTO;
 import com.swp.blooddonation.dto.DonationHistoryDTO;
 import com.swp.blooddonation.entity.Account;
+import com.swp.blooddonation.entity.User;
 import com.swp.blooddonation.service.UserService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
@@ -21,10 +22,10 @@ public class CustomerAPI {
     private final UserService userService;
 
     //  Lấy hồ sơ cá nhân
-    @GetMapping("/profile")
-    public ResponseEntity<CustomerDTO> getProfile(@AuthenticationPrincipal Account account) {
-        return ResponseEntity.ok(userService.getProfile(account));
-    }
+//    @GetMapping("/profile")
+//    public ResponseEntity<CustomerDTO> getProfile(@AuthenticationPrincipal User user) {
+//        return ResponseEntity.ok(userService.getProfile(user));
+//    }
 
     //  Lịch sử hiến máu
     @GetMapping("/donation-history")

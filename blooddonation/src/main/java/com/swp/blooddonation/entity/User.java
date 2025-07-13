@@ -61,6 +61,11 @@ public class User {
     // Thuộc tính từ Customer
     @Enumerated(EnumType.STRING)
     private BloodType bloodType;
+
+    @Enumerated(EnumType.STRING)
+    private RhType rhType;
+
+
     private LocalDate lastDonationDate;
 
     // Thuộc tính từ MedicalStaff
