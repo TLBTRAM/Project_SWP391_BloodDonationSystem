@@ -5,7 +5,7 @@ import com.swp.blooddonation.dto.DonationHistoryDTO;
 import com.swp.blooddonation.dto.MedicalStaffDTO;
 import com.swp.blooddonation.enums.Role;
 import com.swp.blooddonation.entity.Account;
-import com.swp.blooddonation.entity.Use;
+import com.swp.blooddonation.entity.User;
 import com.swp.blooddonation.enums.Role;
 import com.swp.blooddonation.exception.exceptions.UserNotFoundException;
 import com.swp.blooddonation.repository.AuthenticationReponsitory;
