@@ -2,8 +2,7 @@ package com.swp.blooddonation.service;
 
 import com.swp.blooddonation.dto.TestResultDTO;
 import com.swp.blooddonation.entity.*;
-import com.swp.blooddonation.repository.CustomerRepository;
-import com.swp.blooddonation.repository.MedicalStaffRepository;
+import com.swp.blooddonation.repository.UserRepository;
 import com.swp.blooddonation.repository.TestResultRepository;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -20,31 +19,17 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class MedicalStaffService {
 
-    private final MedicalStaffRepository medicalStaffRepository;
-    private final CustomerRepository customerRepository;
+    private final UserRepository userRepository;
     private final TestResultRepository testResultRepository;
     private final ModelMapper modelMapper;
 
     // Lấy danh sách tất cả kết quả xét nghiệm do MedicalStaff này thực hiện
     public List<TestResultDTO> getAllTestResults(Account account) {
-        MedicalStaff staff = getMedicalStaff(account);
+        User staff = getMedicalStaff(account);
         return testResultRepository.findByStaff(staff).stream()
                 .map(this::convertToDTO)
                 .collect(Collectors.toList());
     }
-
-    //  Tạo kết quả xét nghiệm mới
-//    public void createTestResult(Account account, TestResultDTO dto) {
-//        MedicalStaff staff = getMedicalStaff(account);
-//        Customer customer = customerRepository.findById(dto.getCustomerId())
-//                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Customer not found"));
-//
-//        TestResult result = modelMapper.map(dto, TestResult.class);
-//        result.setTestDate(dto.getTestDate() != null ? dto.getTestDate() : Date.UTC());
-//        result.setCustomer(customer);
-//        result.setStaff(staff);
-//        testResultRepository.save(result);
-//    }
 
     //  Lấy chi tiết 1 kết quả xét nghiệm
     public TestResultDTO getTestResultById(Long id) {
@@ -59,15 +44,9 @@ public class MedicalStaffService {
         return dto;
     }
 
-//    private TestResult convertToEntity(TestResultDTO dto) {
-//        TestResult result = modelMapper.map(dto, TestResult.class);
-//        result.setTestDate((dto.getTestDate() != null) ? dto.getTestDate() : LocalDate.now());
-//        return result;
-//    }
-
-    //  Lấy thông tin MedicalStaff tương ứng với Account
-    private MedicalStaff getMedicalStaff(Account account) {
-        return medicalStaffRepository.findByAccount(account)
+    //  Lấy thông tin User tương ứng với Account (phải là MEDICALSTAFF)
+    private User getMedicalStaff(Account account) {
+        return userRepository.findByAccount(account)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.FORBIDDEN, "Không phải Medical Staff"));
     }
 }

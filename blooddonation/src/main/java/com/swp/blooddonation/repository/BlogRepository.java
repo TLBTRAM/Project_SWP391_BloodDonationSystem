@@ -2,6 +2,7 @@ package com.swp.blooddonation.repository;
 
 import com.swp.blooddonation.entity.Blog;
 import com.swp.blooddonation.entity.Account;
+import com.swp.blooddonation.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -16,12 +17,11 @@ public interface BlogRepository extends JpaRepository<Blog, Long> {
     List<Blog> findAllByOrderByCreatedDateDesc();
 
     // Lấy blog theo tác giả
-    List<Blog> findByAccountOrderByCreatedDateDesc(Account account);
+    List<Blog> findByUserOrderByCreatedDateDesc(User user);
+
 
     // Tìm kiếm blog theo tiêu đề
     @Query("SELECT b FROM Blog b WHERE b.title LIKE %:keyword% OR b.content LIKE %:keyword% ORDER BY b.createdDate DESC")
     List<Blog> searchBlogs(@Param("keyword") String keyword);
 
-    // Đếm số blog của một tác giả
-    long countByAccount(Account account);
 }

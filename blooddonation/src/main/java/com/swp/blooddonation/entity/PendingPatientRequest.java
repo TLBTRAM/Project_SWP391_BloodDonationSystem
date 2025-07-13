@@ -29,7 +29,11 @@ public class PendingPatientRequest {
 
     private String phone;
 
-    private String address;
+    private String street;
+    private Long wardId;
+    private Long districtId;
+    private Long provinceId;
+
 
     private String bloodType;
 

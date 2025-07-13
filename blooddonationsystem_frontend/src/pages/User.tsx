@@ -57,7 +57,7 @@ const User = () => {
     console.log("FE token:", token);//check có in token ko
 
     if (token) {
-      fetch("http://localhost:8080/api/account/me", {
+      fetch("http://localhost:8080/api/user/profile", {
         method: "GET",
         headers: {
           "Authorization": `Bearer ${token}`,

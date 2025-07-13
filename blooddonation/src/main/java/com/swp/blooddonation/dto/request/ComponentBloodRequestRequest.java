@@ -1,5 +1,6 @@
 package com.swp.blooddonation.dto.request;
 
+import com.swp.blooddonation.dto.AddressDTO;
 import com.swp.blooddonation.enums.BloodType;
 import com.swp.blooddonation.enums.Gender;
 import com.swp.blooddonation.enums.RhType;
@@ -26,7 +27,7 @@ public class ComponentBloodRequestRequest {
     private String phone;
 
     @NotBlank
-    private String patientAddress;
+    private AddressDTO patientAddress;
 
     @NotNull
     private BloodType bloodType;

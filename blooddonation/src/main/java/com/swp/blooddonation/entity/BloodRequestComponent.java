@@ -18,7 +18,7 @@ public class BloodRequestComponent {
     private Long id;
 
     @ManyToOne
-    private Account requester;
+    private User requester;
 
     @ManyToOne
     private Patient patient;

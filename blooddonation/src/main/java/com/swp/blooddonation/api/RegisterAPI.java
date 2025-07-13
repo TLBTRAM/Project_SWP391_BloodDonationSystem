@@ -23,7 +23,6 @@ public class RegisterAPI {
 
     private final RegisterService registerService;
 
-    @PreAuthorize("hasRole('CUSTOMER')")
     @PostMapping("/createRegister")
     public ResponseEntity<Register> createRegister(@RequestBody RegisterRequest request) {
         Register register = registerService.createRegister(request);

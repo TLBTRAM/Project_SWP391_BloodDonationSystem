@@ -32,6 +32,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -56,7 +57,7 @@ public class AuthenticationService implements UserDetailsService {
     EmailService emailService;
 
     @Autowired
-    CustomerRepository customerRepository;
+    UserRepository userRepository;
 
 
     @Autowired
@@ -86,14 +87,10 @@ public class AuthenticationService implements UserDetailsService {
         // Mã hoá mật khẩu
         String encodedPassword = passwordEncoder.encode(regisRequest.getPassword());
 
-        // Tạo đối tượng Account
+        // Tạo đối tượng Account (chỉ chứa thông tin authentication)
         Account account = new Account();
         account.setEmail(regisRequest.getEmail());
-        account.setPhone(regisRequest.getPhone());
         account.setPassword(encodedPassword);
-        account.setFullName(regisRequest.getFullName());
-        account.setBirthDate(regisRequest.getBirthDate());
-        account.setGender(regisRequest.getGender());
         account.setCreatedAt(LocalDateTime.now());
         account.setEnableStatus(EnableStatus.ENABLE);
         account.setRole(Role.CUSTOMER);
@@ -109,24 +106,28 @@ public class AuthenticationService implements UserDetailsService {
         Ward ward = wardRepository.findById(dto.getWardId())
                 .orElseThrow(() -> new BadRequestException("Phường/Xã không tồn tại"));
 
-        account.setProvince(province);
-        account.setDistrict(district);
-        account.setWard(ward);
-        account.setStreet(dto.getStreet());
-
         // Lưu tài khoản vào DB
         Account savedAccount = authenticationReponsitory.save(account);
 
-        // Tạo Customer nếu là role CUSTOMER
-        if (savedAccount.getRole() == Role.CUSTOMER) {
-            Customer customer = new Customer();
-            customer.setAccount(savedAccount);
-            try {
-                Customer savedCustomer = customerRepository.save(customer);
-                System.out.println("Saved customer id: " + savedCustomer.getId());
-            } catch (Exception e) {
-                System.out.println("Error saving customer: " + e.getMessage());
-            }
+        // Tạo User cho tất cả role
+        User user = new User();
+        user.setAccount(savedAccount);
+
+        // Set personal info từ regisRequest
+        user.setFullName(regisRequest.getFullName());
+        user.setPhone(regisRequest.getPhone());
+        user.setBirthDate(regisRequest.getBirthDate());
+        user.setGender(regisRequest.getGender());
+        user.setProvince(province);
+        user.setDistrict(district);
+        user.setWard(ward);
+        user.setStreet(dto.getStreet());
+
+        try {
+            User savedUser = userRepository.save(user);
+            System.out.println("Saved user id: " + savedUser.getId());
+        } catch (Exception e) {
+            System.out.println("Error saving user: " + e.getMessage());
         }
 
         // Gửi email chào mừng
@@ -139,18 +140,18 @@ public class AuthenticationService implements UserDetailsService {
         RegisterAccountResponse response = new RegisterAccountResponse();
         response.setId(savedAccount.getId());
         response.setEmail(savedAccount.getEmail());
-        response.setPhone(savedAccount.getPhone());
-        response.setFullName(savedAccount.getFullName());
-        response.setGender(savedAccount.getGender());
-        response.setBirthDate(savedAccount.getBirthDate());
+        response.setPhone(regisRequest.getPhone());
+        response.setFullName(regisRequest.getFullName());
+        response.setGender(regisRequest.getGender());
+        response.setBirthDate(regisRequest.getBirthDate());
         response.setEnabled(savedAccount.isEnabled());
         response.setCreatedAt(savedAccount.getCreatedAt());
 
         String fullAddress = String.join(", ",
-                savedAccount.getStreet(),
-                savedAccount.getWard().getName(),
-                savedAccount.getDistrict().getName(),
-                savedAccount.getProvince().getName()
+                dto.getStreet(),
+                ward.getName(),
+                district.getName(),
+                province.getName()
         );
         response.setFullAddress(fullAddress);
 
@@ -164,7 +165,7 @@ public class AuthenticationService implements UserDetailsService {
             throw new AuthenticationException("Email không tồn tại");
         }
 
-        // ✅ In kiểm tra nhanh tại đây
+        // In kiểm tra nhanh tại đây
         System.out.println("=== DEBUG PASSWORD MATCHING ===");
         System.out.println("Raw password: " + loginRequest.getPassword());
         System.out.println("Encoded in DB: " + acc.getPassword());
@@ -222,41 +223,79 @@ public class AuthenticationService implements UserDetailsService {
     public void sendResetCode(String email) {
         Account account = authenticationReponsitory.findAccountByEmail(email);
         if (account == null) throw new RuntimeException("Email không tồn tại");
+        
+        // Kiểm tra xem có mã cũ chưa hết hạn không
+        Optional<VerificationCode> existingCode = verificationCodeRepository.findTopByEmailOrderByExpiresAtDesc(email);
+        if (existingCode.isPresent() && existingCode.get().getExpiresAt().isAfter(LocalDateTime.now())) {
+            throw new RuntimeException("Mã xác minh trước đó vẫn còn hiệu lực. Vui lòng kiểm tra email hoặc đợi 10 phút.");
+        }
+        
         // Xóa mã cũ (nếu có)
         verificationCodeRepository.deleteByEmail(email);
+        
+        // Tạo mã 6 số ngẫu nhiên
         String code = String.format("%06d", new java.util.Random().nextInt(999999));
         VerificationCode vc = new VerificationCode(email, code, LocalDateTime.now().plusMinutes(10));
         verificationCodeRepository.save(vc);
 
+        // Gửi email
         emailService.sendEmailCode(email, "Mã xác minh đặt lại mật khẩu", "Mã xác minh của bạn là: " + code);
     }
 
     @Transactional
     public void resetPassword(ResetPasswordRequest resetPasswordRequest) {
+        // Validate input
+        if (resetPasswordRequest.getEmail() == null || resetPasswordRequest.getEmail().trim().isEmpty()) {
+            throw new ResetPasswordException("Email không được để trống");
+        }
+        if (resetPasswordRequest.getCode() == null || resetPasswordRequest.getCode().trim().isEmpty()) {
+            throw new ResetPasswordException("Mã xác minh không được để trống");
+        }
+        if (resetPasswordRequest.getNewPassword() == null || resetPasswordRequest.getNewPassword().trim().isEmpty()) {
+            throw new ResetPasswordException("Mật khẩu mới không được để trống");
+        }
+        if (resetPasswordRequest.getNewPassword().length() < 6) {
+            throw new ResetPasswordException("Mật khẩu phải có ít nhất 6 ký tự");
+        }
+
+        // Tìm mã xác minh
         VerificationCode vc = verificationCodeRepository.findTopByEmailOrderByExpiresAtDesc(resetPasswordRequest.getEmail())
                 .orElseThrow(() -> new ResetPasswordException("Không tìm thấy mã xác minh"));
 
-        if (!vc.getCode().equals(resetPasswordRequest.getCode())) throw new ResetPasswordException("Mã không chính xác");
-        if (vc.getExpiresAt().isBefore(LocalDateTime.now())) throw new ResetPasswordException("Mã đã hết hạn");
+        // Kiểm tra mã
+        if (!vc.getCode().equals(resetPasswordRequest.getCode())) {
+            throw new ResetPasswordException("Mã không chính xác");
+        }
+        
+        // Kiểm tra hết hạn
+        if (vc.getExpiresAt().isBefore(LocalDateTime.now())) {
+            throw new ResetPasswordException("Mã đã hết hạn");
+        }
 
+        // Tìm tài khoản
         Account account = authenticationReponsitory.findAccountByEmail(resetPasswordRequest.getEmail());
-        if (account == null) throw new ResetPasswordException("Người dùng không tồn tại");
+        if (account == null) {
+            throw new ResetPasswordException("Người dùng không tồn tại");
+        }
 
+        // Cập nhật mật khẩu
         account.setPassword(passwordEncoder.encode(resetPasswordRequest.getNewPassword()));
         authenticationReponsitory.save(account);
+        
+        // Xóa mã xác minh đã sử dụng
         verificationCodeRepository.deleteByEmail(resetPasswordRequest.getEmail());
     }
 
-
-    public Account getCurrentAccount(){
-        String email = SecurityContextHolder.getContext().getAuthentication().getName();
-//        return authenticationReponsitory.findAccountByEmail(email).orElseThrow(() -> new UserNotFoundException("User not found with email: " + email));
-        Account account = authenticationReponsitory.findAccountByEmail(email);
-        if (account == null) {
-            throw new UserNotFoundException("User not found with email: " + email);
-        }
-        return account;
-    }
+//
+//    public Account getCurrentAccount(){
+//        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+////        return authenticationReponsitory.findAccountByEmail(email).orElseThrow(() -> new UserNotFoundException("User not found with email: " + email));
+//        Account account = authenticationReponsitory.findAccountByEmail(email);
+//        if (account == null) {
+//            throw new UserNotFoundException("User not found with email: " + email);
+//        }
+//        return account;
+//    }
 
     public List<MedicalStaffDTO> getMedicalStaff() {
         List<Account> medicalStaffAccounts = authenticationReponsitory.findByRole(Role.MEDICALSTAFF);

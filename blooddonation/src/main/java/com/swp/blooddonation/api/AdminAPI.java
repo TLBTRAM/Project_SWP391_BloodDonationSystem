@@ -31,6 +31,7 @@ public class AdminAPI {
     }
 
     // Kích hoạt / vô hiệu hóa tài khoản
+    @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/users/{userId}/status")
     public ResponseEntity<String> updateUserStatus(
             @PathVariable Long userId,
@@ -40,6 +41,7 @@ public class AdminAPI {
     }
 
     // Xóa tài khoản
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/users/{userId}")
     public ResponseEntity<String> deleteUser(@PathVariable Long userId) {
         adminService.deleteUser(userId);

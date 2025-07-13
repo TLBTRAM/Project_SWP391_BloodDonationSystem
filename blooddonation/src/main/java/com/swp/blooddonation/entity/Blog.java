@@ -25,18 +25,33 @@ public class Blog {
     private LocalDateTime createdDate;
 
     @ManyToOne
-    @JoinColumn(name = "account_id", nullable = false)
+    @JoinColumn(name = "user_id", nullable = false)
     @JsonIgnore
-    private Account account;
+    private User user;
 
     // Getter cho account để tránh circular reference
     @JsonProperty("authorName")
     public String getAuthorName() {
-        return account != null ? account.getFullName() : "Unknown";
+        if (user != null) {
+            return user.getFullName();
+        }
+        return "Unknown";
     }
 
     @JsonProperty("authorId")
     public Long getAuthorId() {
-        return account != null ? account.getId() : null;
+
+        return user != null ? user.getId() : null;
+
     }
+
+//    @ManyToOne
+//    @JoinColumn(name = "account_id")
+//    private Account account;
+
+//    @ManyToOne
+//    @JoinColumn(name = "user_id")  // tuỳ bạn đặt tên cột
+//    private User user;
+
+
 }

@@ -1,47 +1,52 @@
-package com.swp.blooddonation.api;
-
-import com.swp.blooddonation.dto.CustomerDTO;
-import com.swp.blooddonation.dto.DonationHistoryDTO;
-import com.swp.blooddonation.entity.Account;
-import com.swp.blooddonation.service.CustomerService;
-import io.swagger.v3.oas.annotations.security.SecurityRequirement;
-import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
-
-@RestController
-@RequestMapping("/api/customer")
-@SecurityRequirement(name = "api")
-@RequiredArgsConstructor
-public class CustomerAPI {
-
-    private final CustomerService customerService;
-
-    //  Lấy hồ sơ cá nhân
+//package com.swp.blooddonation.api;
+//
+//import com.swp.blooddonation.dto.CustomerDTO;
+//import com.swp.blooddonation.dto.DonationHistoryDTO;
+//import com.swp.blooddonation.entity.Account;
+//import com.swp.blooddonation.service.UserService;
+//import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+//import lombok.RequiredArgsConstructor;
+//import org.springframework.http.ResponseEntity;
+//import org.springframework.security.access.prepost.PreAuthorize;
+//import org.springframework.security.core.annotation.AuthenticationPrincipal;
+//import org.springframework.web.bind.annotation.*;
+//
+//import java.util.List;
+//
+//@RestController
+//@RequestMapping("/api/customer")
+//@SecurityRequirement(name = "api")
+//@RequiredArgsConstructor
+//public class CustomerAPI {
+//
+//    private final UserService userService;
+//
+//    //  Lấy hồ sơ cá nhân
+//    @PreAuthorize("hasRole('CUSTOMER')")
 //    @GetMapping("/profile")
 //    public ResponseEntity<CustomerDTO> getProfile(@AuthenticationPrincipal Account account) {
-//        return ResponseEntity.ok(customerService.getProfile(account));
+//        return ResponseEntity.ok(userService.getProfile(account));
 //    }
 //
 //    //  Lịch sử hiến máu
+//    @PreAuthorize("hasRole('CUSTOMER')")
 //    @GetMapping("/donation-history")
 //    public ResponseEntity<List<DonationHistoryDTO>> getDonationHistory(@AuthenticationPrincipal Account account) {
-//        return ResponseEntity.ok(customerService.getDonationHistory(account));
+//        return ResponseEntity.ok(userService.getDonationHistory(account));
 //    }
 //
 //    //Gợi ý ngày hiến máu tiếp theo
+//    @PreAuthorize("hasRole('CUSTOMER')")
 //    @GetMapping("/donation-recommendation")
 //    public ResponseEntity<String> getDonationRecommendation(@AuthenticationPrincipal Account account) {
-//        return ResponseEntity.ok(customerService.getDonationRecommendation(account));
+//        return ResponseEntity.ok(userService.getDonationRecommendation(account));
 //    }
-
-    // Xem thời điểm sẵn sàng hiến máu tiếp theo
-    @GetMapping("/ready-date")
-    public ResponseEntity<CustomerService.ReadyDateResponse> getReadyDate(@AuthenticationPrincipal Account account) {
-        return ResponseEntity.ok(customerService.getReadyDate(account));
-    }
-}
-
+//
+//    // Xem thời điểm sẵn sàng hiến máu tiếp theo
+//    @PreAuthorize("hasRole('CUSTOMER')")
+//    @GetMapping("/ready-date")
+//    public ResponseEntity<UserService.ReadyDateResponse> getReadyDate(@AuthenticationPrincipal Account account) {
+//        return ResponseEntity.ok(userService.getReadyDate(account));
+//    }
+//}
+//

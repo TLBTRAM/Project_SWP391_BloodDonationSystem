@@ -5,15 +5,12 @@ import com.swp.blooddonation.enums.RegisterStatus;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
-import org.apache.catalina.User;
 
 
-import java.sql.Time;
+
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.util.Date;
-import java.util.List;
+
 
 @Entity
 @Getter
@@ -33,9 +30,9 @@ public class Register {
     private String note;
 
     @ManyToOne
-    @JoinColumn(name = "account_id")
+    @JoinColumn(name = "user_id")
     @JsonIgnore
-    private Account account;
+    private User user;
 
     @ManyToOne
     @JoinColumn(name = "schedule_id")
@@ -52,7 +49,7 @@ public class Register {
 
     @ManyToOne
     @JoinColumn(name = "rejected_by_id")
-    private Account rejectedBy;
+    private User rejectedBy;
 
     private String rejectionReason;
 

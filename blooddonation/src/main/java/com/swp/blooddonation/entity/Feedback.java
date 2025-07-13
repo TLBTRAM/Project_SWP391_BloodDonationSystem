@@ -25,9 +25,9 @@ public class Feedback {
 
 
     @ManyToOne
-    @JoinColumn(name = "acount_id")
+    @JoinColumn(name = "user_id")
     @JsonIgnore
-    Account account;
+    User user;
 
     @ManyToOne
     @JoinColumn(name = "appointment_id")
