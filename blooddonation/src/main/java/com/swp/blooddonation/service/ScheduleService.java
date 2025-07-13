@@ -13,7 +13,9 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -29,7 +31,15 @@ public class ScheduleService {
     public ScheduleResponseDTO createSchedule(ScheduleRequestDTO request) {
         User currentUser = userService.getCurrentUser();
 
-
+        // Đóng tất cả schedule cũ (OPEN và scheduleDate < ngày mới)
+        LocalDate newDate = request.getScheduleDate();
+        List<Schedule> openSchedules = scheduleRepository.findAll().stream()
+                .filter(s -> s.getStatus() == ScheduleStatus.OPEN && s.getScheduleDate().isBefore(newDate))
+                .toList();
+        for (Schedule s : openSchedules) {
+            s.setStatus(ScheduleStatus.CLOSED);
+        }
+        scheduleRepository.saveAll(openSchedules);
 
         boolean exists = scheduleRepository.existsByScheduleDate(request.getScheduleDate());
         if (exists) {
