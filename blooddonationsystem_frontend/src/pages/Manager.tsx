@@ -136,7 +136,7 @@ const Manager: React.FC = () => {
     console.log("FE token:", token); // debug
 
     if (token) {
-      fetch("http://localhost:8080/api/account/me", {
+      fetch("http://localhost:8080/api/user/profile", {
         method: "GET",
         headers: {
           Authorization: `Bearer ${token}`,

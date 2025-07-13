@@ -43,7 +43,7 @@ const Admin: React.FC = () => {
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (token) {
-      fetch("http://localhost:8080/api/admin/me", {
+      fetch("http://localhost:8080/api/user/profile", {
         method: "GET",
         headers: {
           Authorization: `Bearer ${token}`,

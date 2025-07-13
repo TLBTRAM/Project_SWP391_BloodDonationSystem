@@ -11,6 +11,7 @@ import { Locale , format } from "date-fns";
 
 
 import Header from "../layouts/header-footer/Header";
+import ScheduleSetup from "./MS_components/ScheduleSetup";
 import ScheduleManagement from "./MS_components/ScheduleManagement";
 import DonationSchedule from "./MS_components/DonationSchedule";
 import SendToStorage from "./MS_components/SendToStorage";
@@ -25,6 +26,7 @@ const MedicalStaff = () => {
   const [appointments, setAppointments] = useState<any[]>([]);
   const [view, setView] = useState<
     | "medicalDashboard"
+    | "scheduleSetup"
     | "scheduleManagement"
     | "screening"
     | "donationSchedule"
@@ -49,7 +51,7 @@ const MedicalStaff = () => {
     console.log("FE token (staff):", token);
 
     if (token) {
-      fetch("http://localhost:8080/api/account/me", {
+      fetch("http://localhost:8080/api/user/profile", {
         method: "GET",
         headers: {
           "Authorization": `Bearer ${token}`,
@@ -89,6 +91,14 @@ const MedicalStaff = () => {
                 onClick={() => setView("medicalDashboard")}
               >
                 Thông tin nhân viên
+              </button>
+            </li>
+            <li className={view === "scheduleSetup" ? "active" : ""}>
+              <button
+                className="menu-item"
+                onClick={() => setView("scheduleSetup")}
+              >
+                Tạo / Đăng kí lịch làm việc
               </button>
             </li>
             <li className={view === "scheduleManagement" ? "active" : ""}>
@@ -138,12 +148,12 @@ const MedicalStaff = () => {
                 />
                 <div>
                   <div className="name-role">
-                    <h2>{staff?.fullName || "Tên nhân viên"}</h2> {/* ⬅️ thay */}
+                    <h2>{staff?.fullName || "Tên nhân viên"}</h2> 
                     <span className="role-tag">Nhân viên y tế</span>
                   </div>
-                  <p>Email: {staff?.email || "---"}</p> {/* ⬅️ thay */}
-                  <p>Số điện thoại: {staff?.phone || "---"}</p> {/* ⬅️ thay */}
-                  <p>Đơn vị: {staff?.address || "Trung tâm hiến máu"}</p> {/* ⬅️ thay */}
+                  <p>Email: {staff?.email || "---"}</p> 
+                  <p>Số điện thoại: {staff?.phone || "---"}</p> 
+                  <p>Đơn vị: {staff?.address || "Trung tâm hiến máu"}</p> 
                 </div>
                 <button className="edit-button">Chỉnh sửa hồ sơ</button>
               </div>
@@ -209,6 +219,8 @@ const MedicalStaff = () => {
             </div>
           )}
 
+
+          {view === "scheduleSetup" && <ScheduleSetup />}
           {view === "scheduleManagement" && <ScheduleManagement />}
           {view === "donationSchedule" && <DonationSchedule />}
           {view === "sendToStorage" && <SendToStorage />}
