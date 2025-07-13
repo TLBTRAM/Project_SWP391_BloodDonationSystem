@@ -36,12 +36,36 @@ public class UserService {
     @Autowired
     AuthenticationReponsitory authenticationReponsitory;
     // 1. Lấy hồ sơ User
-    public CustomerDTO getProfile(Account account) {
-        User user = getUser(account);
-        CustomerDTO dto = modelMapper.map(user, CustomerDTO.class);
+    public CustomerDTO getProfile() {
+        User user = getCurrentUser();
+        CustomerDTO dto = new CustomerDTO();
+        dto.setId(user.getId());
         dto.setFullName(user.getFullName());
+        dto.setBirthDate(user.getBirthDate());
+        dto.setLastDonationDate(user.getLastDonationDate());
+        dto.setPhone(user.getPhone());
+
+        // Set email từ Account
+        if (user.getAccount() != null) {
+            dto.setEmail(user.getAccount().getEmail());
+        }
+
+        // Set BloodType và RhType
+        dto.setBloodType(user.getBloodType());
+        dto.setRhType(user.getRhType());
+
+        // Ghép địa chỉ
+        StringBuilder addressBuilder = new StringBuilder();
+        if (user.getStreet() != null) addressBuilder.append(user.getStreet()).append(", ");
+        if (user.getWard() != null) addressBuilder.append(user.getWard().getName()).append(", ");
+        if (user.getDistrict() != null) addressBuilder.append(user.getDistrict().getName()).append(", ");
+        if (user.getProvince() != null) addressBuilder.append(user.getProvince().getName());
+
+        dto.setAddress(addressBuilder.toString());
+
         return dto;
     }
+
 
     // 2. Lịch sử hiến máu (chỉ cho CUSTOMER)
     public List<DonationHistoryDTO> getDonationHistory(Account account) {
@@ -136,16 +160,25 @@ public class UserService {
 
     public User getCurrentUser() {
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        System.out.println("🔍 Đang lấy thông tin người dùng cho email: " + email);
+
         Account account = authenticationReponsitory.findAccountByEmail(email);
+
         if (account == null) {
-            throw new UserNotFoundException("Không tìm thấy tài khoản với email: " + email);
+            throw new UserNotFoundException("❌ Không tìm thấy tài khoản với email: " + email);
         }
 
+        System.out.println("✅ Tìm thấy Account. ID: " + account.getId());
+        System.out.println("⚙️ Account Role: " + account.getRole());
+
         User user = account.getUser();
+
         if (user == null) {
+            System.out.println("❌ Không tìm thấy User gắn với Account ID: " + account.getId());
             throw new UserNotFoundException("Không tìm thấy người dùng gắn với tài khoản: " + email);
         }
 
+        System.out.println("✅ Tìm thấy User. ID: " + user.getId());
         return user;
     }
 

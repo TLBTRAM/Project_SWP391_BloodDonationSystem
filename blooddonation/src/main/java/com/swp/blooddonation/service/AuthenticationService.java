@@ -107,11 +107,12 @@ public class AuthenticationService implements UserDetailsService {
                 .orElseThrow(() -> new BadRequestException("Phường/Xã không tồn tại"));
 
         // Lưu tài khoản vào DB
-        Account savedAccount = authenticationReponsitory.save(account);
+//        Account savedAccount = authenticationReponsitory.save(account);
 
         // Tạo User cho tất cả role
         User user = new User();
-        user.setAccount(savedAccount);
+        user.setAccount(account);
+        account.setUser(user);
 
         // Set personal info từ regisRequest
         user.setFullName(regisRequest.getFullName());
@@ -123,12 +124,10 @@ public class AuthenticationService implements UserDetailsService {
         user.setWard(ward);
         user.setStreet(dto.getStreet());
 
-        try {
-            User savedUser = userRepository.save(user);
-            System.out.println("Saved user id: " + savedUser.getId());
-        } catch (Exception e) {
-            System.out.println("Error saving user: " + e.getMessage());
-        }
+        User savedUser = userRepository.save(user);
+        Account savedAccount = savedUser.getAccount();
+
+
 
         // Gửi email chào mừng
         EmailDetail emailDetail = new EmailDetail();
