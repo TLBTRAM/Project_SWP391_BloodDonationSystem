@@ -259,15 +259,9 @@ public class AuthenticationService implements UserDetailsService {
 //    }
 
     public List<MedicalStaffDTO> getMedicalStaff() {
-        List<User> medicalStaffUsers = userRepository.findByRole(Role.MEDICALSTAFF);
-        return medicalStaffUsers.stream()
-                .map(user -> {
-                    MedicalStaffDTO dto = modelMapper.map(user, MedicalStaffDTO.class);
-                    dto.setFullName(user.getFullName());
-                    dto.setEmail(user.getAccount().getEmail());
-                    dto.setPhone(user.getPhone());
-                    return dto;
-                })
+        List<Account> medicalStaffAccounts = authenticationReponsitory.findByRole(Role.MEDICALSTAFF);
+        return medicalStaffAccounts.stream()
+                .map(account -> modelMapper.map(account, MedicalStaffDTO.class))
                 .collect(Collectors.toList());
     }
 }
