@@ -98,13 +98,16 @@ const Register: React.FC = () => {
       password,
       address: {
         street,
+
         wardId: selectedWard,
         districtId: selectedDistrict,
         provinceId: selectedProvince,
+
       },
     };
 
     try {
+      console.log("Thông tin gửi đi:", userData);
       const response = await fetch("http://localhost:8080/api/auth/register", {
         method: "POST",
         headers: {
@@ -336,15 +339,15 @@ const Register: React.FC = () => {
               </div>
 
               <div className="form-group location-group">
-              <label className="form-label">Số nhà, tên đường</label>
-              <input
-                type="text"
-                className="input-text"
-                value={street}
-                onChange={(e) => setStreet(e.target.value)}
-                placeholder="Nhập số nhà, tên đường"
-              />
-            </div>
+                <label className="form-label">Số nhà, tên đường</label>
+                <input
+                  type="text"
+                  className="input-text"
+                  value={street}
+                  onChange={(e) => setStreet(e.target.value)}
+                  placeholder="Nhập số nhà, tên đường"
+                />
+              </div>
             </div>
 
 
