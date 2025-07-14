@@ -165,6 +165,12 @@ const Admin: React.FC = () => {
       .length,
   };
 
+  const roleIcons: Record<string, string> = {
+    "Người dùng": "👤",
+    "Nhân viên y tế": "🩺",
+    "Quản lý kho máu": "🏥",
+  };
+
   return (
     <>
       <header className="admin-header">
@@ -190,7 +196,7 @@ const Admin: React.FC = () => {
         <div className="role-summary">
           {Object.entries(roleCounts).map(([role, count]) => (
             <div className="summary-box" key={role}>
-              <div className="summary-icon">👤</div>
+              <div className="summary-icon">{roleIcons[role] || "👤"}</div>
               <div className="summary-role">{role}</div>
               <div className="summary-count">{count}</div>
             </div>
@@ -305,7 +311,10 @@ const Admin: React.FC = () => {
                 <strong>{deletingAccount.name}</strong> không?
               </p>
               <div className="modal-buttons">
-                <button onClick={confirmDeleteAccount} className="save-button-2">
+                <button
+                  onClick={confirmDeleteAccount}
+                  className="save-button-2"
+                >
                   Xóa
                 </button>
                 <button
