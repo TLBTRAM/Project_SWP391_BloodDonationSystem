@@ -98,7 +98,7 @@ const MedicalStaff = () => {
                 className="menu-item"
                 onClick={() => setView("scheduleSetup")}
               >
-                Tạo / Đăng kí lịch làm việc
+                Đăng kí lịch làm việc
               </button>
             </li>
             <li className={view === "scheduleManagement" ? "active" : ""}>

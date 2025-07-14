@@ -98,9 +98,11 @@ const Register: React.FC = () => {
       password,
       address: {
         street,
-        wardId: Number(selectedWard),
-        districtId: Number(selectedDistrict),
-        provinceId: Number(selectedProvince),
+
+        wardId: selectedWard,
+        districtId: selectedDistrict,
+        provinceId: selectedProvince,
+
       },
     };
 
