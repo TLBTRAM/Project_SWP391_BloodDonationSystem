@@ -37,6 +37,7 @@ const Register: React.FC = () => {
   const [selectedWard, setSelectedWard] = useState("");
   const [street, setStreet] = useState("");
   const [showSuccess, setShowSuccess] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
     if (!birthDate) {
@@ -85,6 +86,7 @@ const Register: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!validateForm()) return;
+    setIsSubmitting(true);
 
     const userData = {
       fullName,
@@ -121,10 +123,12 @@ const Register: React.FC = () => {
         alert(
           "Đăng ký thất bại: " + (errorData.message || "Lỗi không xác định")
         );
+        setIsSubmitting(false);
       }
     } catch (error) {
       console.error("Registration error:", error);
       alert("Không thể kết nối tới máy chủ. Vui lòng thử lại sau.");
+      setIsSubmitting(false);
     }
   };
 
@@ -373,8 +377,12 @@ const Register: React.FC = () => {
             </div>
 
             <div className="form-footer">
-              <button type="submit" className="submit-btn">
-                Đăng kí
+              <button
+                type="submit"
+                className="submit-btn"
+                disabled={isSubmitting || showSuccess}
+              >
+                {isSubmitting ? "Đang xử lý..." : "Đăng ký"}
               </button>
               <Link to="/login" className="login-text">
                 Bạn đã có tài khoản ?
