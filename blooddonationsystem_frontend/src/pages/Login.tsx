@@ -1,7 +1,9 @@
 import React, { useState } from "react";
 
 import "./components/Login.css";
-import "./components/Register.css"; 
+
+import "./components/Register.css"; // Import toast style
+
 import loginImage from "./images/Banner/login_img.jpeg";
 import { useAuth } from "../layouts/header-footer/AuthContext";
 import { Link, useNavigate } from 'react-router-dom';
@@ -13,7 +15,10 @@ function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [showSuccess, setShowSuccess] = useState(false);
+
+  const [showSuccess, setShowSuccess] = useState(false); // Toast state
+
+
   const navigate = useNavigate();
 
   const { login } = useAuth();
