@@ -321,3 +321,38 @@ h1 {
 .modal-buttons .cancel-button-2:hover {
   background-color: #5a6268;
 }
+
+.admin-message-success {
+  background: #d4edda;
+  color: #155724;
+  padding: 12px 20px;
+  border-radius: 6px;
+  margin: 16px 0;
+  text-align: center;
+  font-weight: bold;
+  border: 1px solid #c3e6cb;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+  z-index: 100;
+}
+
+.admin-toast-success {
+  position: fixed;
+  top: 32px;
+  right: 32px;
+  background: #28a745;
+  color: #fff;
+  padding: 16px 32px;
+  border-radius: 8px;
+  font-size: 18px;
+  font-weight: bold;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+  z-index: 9999;
+  animation: fadeInOut 2.5s;
+}
+
+@keyframes fadeInOut {
+  0% { opacity: 0; transform: translateY(-20px); }
+  10% { opacity: 1; transform: translateY(0); }
+  90% { opacity: 1; transform: translateY(0); }
+  100% { opacity: 0; transform: translateY(-20px); }
+}

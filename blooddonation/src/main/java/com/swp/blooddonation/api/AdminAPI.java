@@ -2,12 +2,15 @@ package com.swp.blooddonation.api;
 
 import com.swp.blooddonation.enums.Role;
 import com.swp.blooddonation.service.AdminService;
+import com.swp.blooddonation.entity.User;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/admin")
@@ -46,6 +49,17 @@ public class AdminAPI {
     public ResponseEntity<String> deleteUser(@PathVariable Long userId) {
         adminService.deleteUser(userId);
         return ResponseEntity.ok("Tài khoản đã được xóa thành công.");
+    }
+
+    // Lấy danh sách user theo role hoặc tất cả user
+    @PreAuthorize("hasRole('ADMIN')")
+    @GetMapping("/users")
+    public ResponseEntity<List<User>> getUsersByRole(@RequestParam(required = false) Role role) {
+        if (role != null) {
+            return ResponseEntity.ok(adminService.getUsersByRole(role));
+        } else {
+            return ResponseEntity.ok(adminService.getAllUsers());
+        }
     }
 
 }

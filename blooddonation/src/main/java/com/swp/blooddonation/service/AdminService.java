@@ -62,4 +62,14 @@ public class AdminService {
         }
         accountRepository.deleteById(userId);
     }
+
+    // Lấy danh sách user theo role
+    public List<User> getUsersByRole(Role role) {
+        return userRepository.findByRole(role);
+    }
+
+    // Lấy tất cả user
+    public List<User> getAllUsers() {
+        return userRepository.findAll();
+    }
 }
