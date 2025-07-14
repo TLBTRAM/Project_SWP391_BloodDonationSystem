@@ -161,6 +161,52 @@ const Manager: React.FC = () => {
     }
   }, []);
 
+  // ====== API: Lấy danh sách túi máu từ backend ======
+  const fetchBloodUnits = async () => {
+    const token = localStorage.getItem("token");
+    try {
+      const res = await fetch("http://localhost:8080/api/blood/units", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      if (!res.ok) throw new Error("Lỗi khi lấy danh sách túi máu");
+      const data = await res.json();
+      setBloodUnits(data);
+    } catch (err) {
+      console.error(err);
+      // Có thể hiển thị thông báo lỗi nếu muốn
+    }
+  };
+
+  // ====== API: Thêm túi máu mới (POST) ======
+  const addBloodUnitAPI = async (unit: {
+    testId: number;
+    bloodType: string;
+    rhType: string;
+    totalVolume: number;
+  }) => {
+    const token = localStorage.getItem("token");
+    try {
+      const res = await fetch("http://localhost:8080/api/blood/collect", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(unit),
+      });
+      if (!res.ok) throw new Error("Lỗi khi thêm túi máu mới");
+      const data = await res.json();
+      // Sau khi thêm thành công, có thể gọi fetchBloodUnits() để cập nhật danh sách
+      return data;
+    } catch (err) {
+      console.error(err);
+      // Có thể hiển thị thông báo lỗi nếu muốn
+      throw err;
+    }
+  };
+
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {

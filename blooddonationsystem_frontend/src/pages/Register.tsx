@@ -36,6 +36,8 @@ const Register: React.FC = () => {
   const [selectedDistrict, setSelectedDistrict] = useState("");
   const [selectedWard, setSelectedWard] = useState("");
   const [street, setStreet] = useState("");
+  const [showSuccess, setShowSuccess] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
     if (!birthDate) {
@@ -84,6 +86,7 @@ const Register: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!validateForm()) return;
+    setIsSubmitting(true);
 
     const userData = {
       fullName,
@@ -93,9 +96,12 @@ const Register: React.FC = () => {
       email,
       username,
       password,
-      address: `${street}, ${pcVN.getWardByCode(selectedWard)?.name}, ${
-        pcVN.getDistrictByCode(selectedDistrict)?.name
-      }, ${pcVN.getProvinceByCode(selectedProvince)?.name}`,
+      address: {
+        street,
+        wardId: selectedWard,
+        districtId: selectedDistrict,
+        provinceId: selectedProvince,
+      },
     };
 
     try {
@@ -108,23 +114,32 @@ const Register: React.FC = () => {
       });
 
       if (response.ok) {
-        alert("Đăng ký thành công!");
-        navigate("/login");
+        setShowSuccess(true);
+        setTimeout(() => {
+          navigate("/login");
+        }, 2000);
       } else {
         const errorData = await response.json();
         alert(
           "Đăng ký thất bại: " + (errorData.message || "Lỗi không xác định")
         );
+        setIsSubmitting(false);
       }
     } catch (error) {
       console.error("Registration error:", error);
       alert("Không thể kết nối tới máy chủ. Vui lòng thử lại sau.");
+      setIsSubmitting(false);
     }
   };
 
   return (
     <>
       <Header />
+      {showSuccess && (
+        <div className="success-toast">
+          Đăng ký thành công! Đang chuyển đến trang đăng nhập...
+        </div>
+      )}
       <div
         className="register-bg"
         style={{
@@ -362,8 +377,12 @@ const Register: React.FC = () => {
             </div>
 
             <div className="form-footer">
-              <button type="submit" className="submit-btn">
-                Đăng kí
+              <button
+                type="submit"
+                className="submit-btn"
+                disabled={isSubmitting || showSuccess}
+              >
+                {isSubmitting ? "Đang xử lý..." : "Đăng ký"}
               </button>
               <Link to="/login" className="login-text">
                 Bạn đã có tài khoản ?
