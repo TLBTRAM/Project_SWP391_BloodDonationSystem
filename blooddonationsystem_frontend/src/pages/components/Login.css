@@ -82,3 +82,45 @@ body {
   text-decoration: none;
   font-size: 16px;
 }
+
+.login-error-toast {
+  position: fixed;
+  top: 20%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: #dc3545;
+  color: #fff;
+  padding: 16px 32px;
+  border-radius: 8px;
+  font-size: 18px;
+  font-weight: bold;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+  z-index: 9999;
+  animation: fadeInOut 2.5s;
+}
+
+.login-error-inline {
+  color: #dc3545;
+  font-size: 15px;
+  margin-top: 10px;
+  text-align: center;
+  font-weight: 500;
+}
+
+.login-success-inline {
+  background: #d4edda;
+  color: #155724;
+  padding: 10px 0;
+  border-radius: 6px;
+  margin-bottom: 12px;
+  text-align: center;
+  font-weight: 500;
+  font-size: 16px;
+}
+
+@keyframes fadeInOut {
+  0% { opacity: 0; transform: translateY(-20px); }
+  10% { opacity: 1; transform: translateY(0); }
+  90% { opacity: 1; transform: translateY(0); }
+  100% { opacity: 0; transform: translateY(-20px); }
+}

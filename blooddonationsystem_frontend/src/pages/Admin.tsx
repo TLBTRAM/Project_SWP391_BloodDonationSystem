@@ -119,7 +119,8 @@ const Admin: React.FC = () => {
 
   const handleLogout = () => {
     localStorage.removeItem("token");
-    navigate("/");
+    setAdminInfo(null);
+    navigate("/login");
   };
 
   const handleEdit = (id: number) => {

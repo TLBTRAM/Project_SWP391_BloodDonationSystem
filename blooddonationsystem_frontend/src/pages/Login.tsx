@@ -17,6 +17,7 @@ function Login() {
   const [isLoading, setIsLoading] = useState(false);
 
   const [showSuccess, setShowSuccess] = useState(false); // Toast state
+  const [error, setError] = useState("");
 
 
   const navigate = useNavigate();
@@ -25,6 +26,7 @@ function Login() {
   const handleLogin = async (e?: React.FormEvent) => {
     if (e) e.preventDefault();
     setIsLoading(true);
+    setError("");
     try {
       const res = await fetch("http://localhost:8080/api/auth/login", {
         method: "POST",
@@ -37,7 +39,7 @@ function Login() {
       if (!res.ok) {
         const errorText = await res.text();
         console.error("Lỗi đăng nhập:", errorText);
-        alert("Thông tin đăng nhập không chính xác");
+        setError("Sai tài khoản hoặc mật khẩu!");
         setIsLoading(false);
         return;
       }
@@ -62,12 +64,12 @@ function Login() {
             navigate("/user");
             break;
           default:
-            alert("Không xác định được vai trò người dùng");
+            setError("Không xác định được vai trò người dùng");
         }
       }, 1500); // Delay for toast
     } catch (error) {
       console.error("Lỗi kết nối tới server:", error);
-      alert("Không thể kết nối tới server");
+      setError("Không thể kết nối tới server");
     } finally {
       setIsLoading(false);
     }
@@ -76,21 +78,22 @@ function Login() {
   return (
     <div>
       <Header />
-      {showSuccess && (
-        <div className="success-toast">
-          Đăng nhập thành công! Đang chuyển hướng...
-        </div>
-      )}
       <main className="login-container">
         <div className="poster">
           <img src={loginImage} alt="Every Blood Donor is a Hero" />
         </div>
         <div className="login-form">
           <h2>Đăng nhập</h2>
+          {showSuccess && (
+            <div className="login-success-inline">Đăng nhập thành công! Đang chuyển hướng...</div>
+          )}
           <form onSubmit={handleLogin}>
             <input type="text" placeholder="Username hoặc email" required value={email} onChange={(e) => setEmail(e.target.value)} />
             <input type="password" placeholder="Mật khẩu" required value={password} onChange={(e) => setPassword(e.target.value)} />
             <button type="submit" disabled={isLoading || showSuccess}>{isLoading ? "Đang đăng nhập..." : "Đăng nhập"}</button>
+            {error && (
+              <div className="login-error-inline">{error}</div>
+            )}
           </form>
           <Link to="/forgot" className="forgot">Quên mật khẩu ?</Link>
         </div>
