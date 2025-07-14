@@ -6,6 +6,8 @@ import logoBlood from "./logo_blood.png";
 import { useAuth } from "./AuthContext";
 interface UserData {
   fullName: string;
+  email?: string;
+  phone?: string;
 }
 
 const Header: React.FC = () => {
@@ -22,6 +24,9 @@ const Header: React.FC = () => {
   const toggleDropdown = () => {
     setDropdownOpen(!dropdownOpen);
   };
+
+  // Thêm log để kiểm tra user lấy từ context
+  console.log("User in Header:", user);
 
   return (
     <header className="header">
@@ -43,15 +48,13 @@ const Header: React.FC = () => {
 
       {!user ? (
         <div className="auth-buttons">
-          <button className="btn-login" onClick={() => navigate("/login")}>
-            Đăng nhập
-          </button>
+          <button className="btn-login" onClick={() => navigate("/login")}>Đăng nhập</button>
         </div>
       ) : (
         <div className="user-avatar-status" ref={userInfoRef} onClick={toggleDropdown}>
           <img src={avatarImg} alt="Avatar" className="avatar" />
           <span className="user-fullname">
-            {user?.fullName || "Tên người dùng"}
+            {user?.fullName ? user.fullName : "Tên người dùng"}
           </span>
           {dropdownOpen && (
             <div className="dropdown">

@@ -2,10 +2,9 @@ import React, { createContext, useContext, useEffect, useState } from 'react';
 import axios from 'axios';
 
 interface User {
-  name: string;
-  avatarUrl: string;
-  fullName?: string;
+  fullName: string;
   email?: string;
+  phone?: string;
   // Thêm các trường khác nếu backend trả về
 }
 
