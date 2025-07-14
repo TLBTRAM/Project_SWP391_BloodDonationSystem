@@ -1,6 +1,9 @@
 import React, { useState } from "react";
 
 import "./components/Login.css";
+
+import "./components/Register.css"; // Import toast style
+
 import loginImage from "./images/Banner/login_img.jpeg";
 import { useAuth } from "../layouts/header-footer/AuthContext";
 import { Link, useNavigate } from 'react-router-dom';
@@ -11,10 +14,17 @@ import Footer from '../layouts/header-footer/Footer';
 function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+
+  const [showSuccess, setShowSuccess] = useState(false); // Toast state
+
+
   const navigate = useNavigate();
 
   const { login } = useAuth();
-  const handleLogin = async () => {
+  const handleLogin = async (e?: React.FormEvent) => {
+    if (e) e.preventDefault();
+    setIsLoading(true);
     try {
       const res = await fetch("http://localhost:8080/api/auth/login", {
         method: "POST",
@@ -25,71 +35,71 @@ function Login() {
       });
 
       if (!res.ok) {
-        // Đọc message nếu có
-        const errorText = await res.text(); // Không dùng res.json() ở đây
+        const errorText = await res.text();
         console.error("Lỗi đăng nhập:", errorText);
         alert("Thông tin đăng nhập không chính xác");
+        setIsLoading(false);
         return;
       }
 
-      const data = await res.json(); // ✅ nếu ok thì mới đọc JSON
-      console.log("Đăng nhập thành công:", data);
-      alert("Đăng nhập thành công");
-
-      const role = data.role?.toUpperCase(); // chuẩn hóa về in hoa
-      console.log("Role đã chuẩn hóa:", role);
+      const data = await res.json();
+      setShowSuccess(true); // Show toast
       localStorage.setItem("token", data.token);
       login(data);
-
-      // 🚀 Điều hướng theo role
-      switch (data.role) {
-        case "ADMIN":
-          navigate("/admin");
-          break;
-        case "MANAGER":
-          navigate("/manager");
-          break;
-        case "MEDICALSTAFF":
-          navigate("/med");
-          break;
-        case "CUSTOMER":
-          navigate("/user");
-          break;
-        default:
-          alert("Không xác định được vai trò người dùng");
-      }
+      setTimeout(() => {
+        // Điều hướng theo role
+        switch (data.role) {
+          case "ADMIN":
+            navigate("/admin");
+            break;
+          case "MANAGER":
+            navigate("/manager");
+            break;
+          case "MEDICALSTAFF":
+            navigate("/med");
+            break;
+          case "CUSTOMER":
+            navigate("/user");
+            break;
+          default:
+            alert("Không xác định được vai trò người dùng");
+        }
+      }, 1500); // Delay for toast
     } catch (error) {
       console.error("Lỗi kết nối tới server:", error);
       alert("Không thể kết nối tới server");
+    } finally {
+      setIsLoading(false);
     }
   };
-
 
   return (
     <div>
       <Header />
-
-      {/* Main Login Form */}
+      {showSuccess && (
+        <div className="success-toast">
+          Đăng nhập thành công! Đang chuyển hướng...
+        </div>
+      )}
       <main className="login-container">
         <div className="poster">
           <img src={loginImage} alt="Every Blood Donor is a Hero" />
         </div>
         <div className="login-form">
           <h2>Đăng nhập</h2>
-
-          <input type="text" placeholder="Username hoặc email" required value={email} onChange={(e) => setEmail(e.target.value)} />
-          <input type="password" placeholder="Mật khẩu" required value={password} onChange={(e) => setPassword(e.target.value)} />
-          <button onClick={handleLogin}>Đăng nhập</button>
+          <form onSubmit={handleLogin}>
+            <input type="text" placeholder="Username hoặc email" required value={email} onChange={(e) => setEmail(e.target.value)} />
+            <input type="password" placeholder="Mật khẩu" required value={password} onChange={(e) => setPassword(e.target.value)} />
+            <button type="submit" disabled={isLoading || showSuccess}>{isLoading ? "Đang đăng nhập..." : "Đăng nhập"}</button>
+          </form>
           <Link to="/forgot" className="forgot">Quên mật khẩu ?</Link>
-
         </div>
       </main>
-
       <footer id="contact">
         <Footer />
       </footer>
     </div>
   );
-};
+}
 
 export default Login;
