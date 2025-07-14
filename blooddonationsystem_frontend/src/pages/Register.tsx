@@ -36,6 +36,7 @@ const Register: React.FC = () => {
   const [selectedDistrict, setSelectedDistrict] = useState("");
   const [selectedWard, setSelectedWard] = useState("");
   const [street, setStreet] = useState("");
+  const [showSuccess, setShowSuccess] = useState(false);
 
   useEffect(() => {
     if (!birthDate) {
@@ -93,9 +94,12 @@ const Register: React.FC = () => {
       email,
       username,
       password,
-      address: `${street}, ${pcVN.getWardByCode(selectedWard)?.name}, ${
-        pcVN.getDistrictByCode(selectedDistrict)?.name
-      }, ${pcVN.getProvinceByCode(selectedProvince)?.name}`,
+      address: {
+        street,
+        wardId: selectedWard,
+        districtId: selectedDistrict,
+        provinceId: selectedProvince,
+      },
     };
 
     try {
@@ -108,8 +112,10 @@ const Register: React.FC = () => {
       });
 
       if (response.ok) {
-        alert("Đăng ký thành công!");
-        navigate("/login");
+        setShowSuccess(true);
+        setTimeout(() => {
+          navigate("/login");
+        }, 2000);
       } else {
         const errorData = await response.json();
         alert(
@@ -125,6 +131,11 @@ const Register: React.FC = () => {
   return (
     <>
       <Header />
+      {showSuccess && (
+        <div className="success-toast">
+          Đăng ký thành công! Đang chuyển đến trang đăng nhập...
+        </div>
+      )}
       <div
         className="register-bg"
         style={{
