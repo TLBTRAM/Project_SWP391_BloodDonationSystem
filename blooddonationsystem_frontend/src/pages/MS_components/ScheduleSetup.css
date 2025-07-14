@@ -1,82 +1,278 @@
+/* Wrapper chính */
 .schedule-setup-wrapper {
-  padding: 32px;
+  max-width: 900px;
+  margin: 40px auto;
+  padding: 28px;
   background-color: #ffffff;
   border-radius: 12px;
-  max-width: 900px;
-  margin: auto;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
-  font-family: "Segoe UI", sans-serif;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+  transition: all 0.3s ease;
 }
 
+/* Tiêu đề chính */
 .section-title {
-  font-size: 24px;
-  font-weight: 600;
-  margin-bottom: 24px;
-  color: #0f172a;
+  text-align: center;
+  margin-bottom: 50px;
+  color: #1e293b;
+  font-size: 26px;
+  font-weight: 700;
 }
 
+/* Phần form */
 .form-section {
+  display: flex;
+  flex-direction: column;
   margin-bottom: 24px;
 }
 
+/* Label */
 .form-label {
   display: block;
-  margin-bottom: 8px;
-  font-weight: 500;
+  font-weight: 600;
   color: #1e293b;
+  margin-bottom: 6px;
 }
 
+
+/* Input và Datepicker */
+.text-input,
+.textarea-input,
 .date-picker {
-  padding: 8px 12px;
-  border-radius: 6px;
+  padding: 10px 14px;
+  border-radius: 8px;
   border: 1px solid #cbd5e1;
+  font-size: 15px;
+  background-color: #ffffff;
+  color: #1e293b;
   width: 100%;
-  max-width: 250px;
+  height: 44px;
+  line-height: 1.5;
+  box-sizing: border-box;
+  transition: border-color 0.2s ease;
+  appearance: none; /* ẩn giao diện mặc định của select (nếu muốn tùy chỉnh icon) */
 }
 
+.text-input:focus,
+.textarea-input:focus,
+.date-picker:focus {
+  outline: none;
+  border-color: #3b82f6 !important;
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.3);
+}
+
+.form-section input:focus,
+.form-section select:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.3);
+}
+
+/* Textarea */
+.textarea-input {
+  min-height: 80px;
+  resize: vertical;
+}
+
+/* Lưới khung giờ */
 .slot-grid {
   display: flex;
   flex-wrap: wrap;
   gap: 12px;
+  margin-top: 8px;
 }
 
+/* Button khung giờ */
 .slot-btn {
   padding: 10px 16px;
   border-radius: 8px;
   background-color: #e2e8f0;
   border: none;
   cursor: pointer;
-  transition: 0.2s;
+  font-weight: 500;
+  transition: background-color 0.2s, transform 0.1s;
 }
 
 .slot-btn:hover {
   background-color: #cbd5e1;
+  transform: scale(1.03);
 }
 
 .slot-btn.selected {
-  background-color: #38bdf8;
+  background-color: #0ea5e9;
   color: #ffffff;
+  font-weight: 600;
 }
 
+/* Nút lưu */
 .save-btn {
-  background-color: #0ea5e9;
+  background-color: #10b981;
   color: white;
   padding: 12px 24px;
   border-radius: 8px;
   border: none;
   cursor: pointer;
+  font-size: 16px;
   font-weight: bold;
-  margin-top: 16px;
+  margin: 20px auto 0 auto; /* căn giữa theo chiều ngang */
+  transition: background-color 0.2s;
+  display: block; /* để margin auto có hiệu lực */
 }
 
+.save-btn:hover {
+  background-color: #059669;
+}
+
+/* Hiển thị preview lịch */
 .schedule-preview {
-  margin-top: 32px;
+  margin-top: 48px;
+  padding-top: 16px;
+  border-top: 2px solid #e2e8f0;
 }
 
+.schedule-preview h3 {
+  font-size: 20px;
+  color: #0f172a;
+  margin-bottom: 24px;
+  font-weight: 600;
+  text-align: left;
+}
+
+/* Một mục lịch đăng ký */
 .schedule-entry {
-  margin-bottom: 16px;
+  background-color: #f8fafc;
+  border-left: 5px solid #0ea5e9;
+  padding: 20px 24px;
+  border-radius: 10px;
+  margin-bottom: 24px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+  transition: background-color 0.3s ease;
 }
 
+.schedule-entry:hover {
+  background-color: #f1f5f9;
+}
+
+/* Ngày đăng ký */
+.schedule-entry > strong {
+  font-size: 17px;
+  font-weight: 600;
+  color: #1e293b;
+  margin-bottom: 12px;
+  display: inline-block;
+}
+
+/* Danh sách chi tiết */
 .schedule-entry ul {
-  margin-left: 20px;
+  padding-left: 0;
+  margin: 0;
+}
+
+.schedule-entry ul li {
+  margin-bottom: 10px;
+  font-size: 15px;
+  color: #334155;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background-color: #ffffff; /* màu nền trắng */
+  padding: 14px;
+  border-radius: 6px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+
+/* Định dạng emoji và nhãn */
+.schedule-entry ul li strong {
+  font-weight: 600;
+  color: #0f172a;
+  margin-right: 6px;
+  min-width: 120px;
+  display: inline-block;
+}
+
+
+/* Cảnh báo khi chỉnh sửa */
+.warning-text {
+  color: #dc2626;
+  font-size: 14px;
+  margin-top: 4px;
+  font-weight: bold;
+}
+
+/* DATEPICKER */
+.custom-datepicker {
+  font-family: 'Poppins', sans-serif;
+  border: none;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+  border-radius: 10px;
+  overflow: hidden;
+  margin-right: 30px;
+}
+
+.react-datepicker__header {
+  background-color: #ED232B;
+  color: white;
+  border: none;
+  padding-top: 10px;
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
+}
+
+.react-datepicker__current-month,
+.react-datepicker__day-name {
+  font-weight: 500;
+  color: white;
+}
+
+.react-datepicker__day {
+  color: #333;
+  font-weight: 500;
+  border-radius: 10px;
+  padding: 2px 0;
+  margin: 2px;
+  transition: all 0.2s ease-in-out;
+}
+
+.react-datepicker__day--selected,
+.react-datepicker__day--keyboard-selected {
+  background-color: #ED232B !important;
+  color: white !important;
+}
+
+.react-datepicker__day--today {
+  font-weight: bold;
+  color: #ED232B;
+  border-bottom: 2px solid #ED232B;
+}
+
+.react-datepicker__triangle {
+  display: none;
+}
+
+.react-datepicker__month-dropdown,
+.react-datepicker__year-dropdown {
+  background-color: white;
+  border: 1px solid #ddd;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.react-datepicker__navigation {
+  top: 16px;
+}
+
+.react-datepicker__today-button {
+  background: none;
+  border: none;
+  color: #ED232B;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.react-datepicker__current-month {
+  font-size: 28px !important;
+  color: #333333 !important;
+  font-weight: bold !important;
+  text-align: center;
+  width: 300px;
+  max-width: 100%;
 }
