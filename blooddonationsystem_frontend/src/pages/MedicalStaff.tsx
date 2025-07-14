@@ -51,7 +51,7 @@ const MedicalStaff = () => {
     console.log("FE token (staff):", token);
 
     if (token) {
-      fetch("http://localhost:8080/api/account/me", {
+      fetch("http://localhost:8080/api/user/profile", {
         method: "GET",
         headers: {
           "Authorization": `Bearer ${token}`,
@@ -148,12 +148,12 @@ const MedicalStaff = () => {
                 />
                 <div>
                   <div className="name-role">
-                    <h2>{staff?.fullName || "Tên nhân viên"}</h2> {/* ⬅️ thay */}
+                    <h2>{staff?.fullName || "Tên nhân viên"}</h2> 
                     <span className="role-tag">Nhân viên y tế</span>
                   </div>
-                  <p>Email: {staff?.email || "---"}</p> {/* ⬅️ thay */}
-                  <p>Số điện thoại: {staff?.phone || "---"}</p> {/* ⬅️ thay */}
-                  <p>Đơn vị: {staff?.address || "Trung tâm hiến máu"}</p> {/* ⬅️ thay */}
+                  <p>Email: {staff?.email || "---"}</p> 
+                  <p>Số điện thoại: {staff?.phone || "---"}</p> 
+                  <p>Đơn vị: {staff?.address || "Trung tâm hiến máu"}</p> 
                 </div>
                 <button className="edit-button">Chỉnh sửa hồ sơ</button>
               </div>
