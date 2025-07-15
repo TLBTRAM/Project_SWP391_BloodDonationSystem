@@ -45,7 +45,7 @@ public class ScheduleAPI {
     }
 
     // Lấy schedule theo trạng thái
-    @PreAuthorize("hasRole('ADMIN') or hasRole('MEDICALSTAFF')")
+    @PreAuthorize("isAuthenticated()")
     @GetMapping(params = "status")
     public ResponseEntity<java.util.List<ScheduleResponseDTO>> getSchedulesByStatus(@RequestParam("status") com.swp.blooddonation.enums.ScheduleStatus status) {
         return ResponseEntity.ok(scheduleService.getSchedulesByStatus(status));
