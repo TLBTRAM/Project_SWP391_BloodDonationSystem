@@ -78,12 +78,16 @@ public class RegisterService {
         Schedule schedule = scheduleRepository.findByScheduleDate(registerDate)
                 .orElseThrow(() -> new BadRequestException("Không có lịch làm việc cho ngày đã chọn."));
 
-        List<AccountSlot> workingStaff = accountSlotRepository
-                .findByDateAndUser_Account_Role(registerDate, Role.MEDICALSTAFF);
-
-        if (workingStaff.isEmpty()) {
-            throw new BadRequestException("Chưa có nhân viên y tế làm việc trong ngày đã chọn.");
+        if (schedule.getStatus() != com.swp.blooddonation.enums.ScheduleStatus.OPEN) {
+            throw new BadRequestException("Chỉ được đăng ký vào ngày có lịch làm việc OPEN.");
         }
+
+        // BỎ kiểm tra workingStaff
+        // List<AccountSlot> workingStaff = accountSlotRepository
+        //         .findByDateAndUser_Account_Role(registerDate, Role.MEDICALSTAFF);
+        // if (workingStaff.isEmpty()) {
+        //     throw new BadRequestException("Chưa có nhân viên y tế làm việc trong ngày đã chọn.");
+        // }
 
         boolean exists = registerRepository.existsByUserAndSlotAndRegisterDate(
                 currentUser, slot, registerDate); // 💡 Đổi lại method đúng theo field
@@ -248,10 +252,9 @@ public class RegisterService {
     }
 
 
-
-
-
-
+    public List<Register> getAllRegisters() {
+        return registerRepository.findAll();
+    }
 
 
 

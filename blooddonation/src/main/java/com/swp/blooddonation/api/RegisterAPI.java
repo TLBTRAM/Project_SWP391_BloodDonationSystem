@@ -13,6 +13,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/registers")
 @SecurityRequirement(name = "api")
@@ -23,10 +25,20 @@ public class RegisterAPI {
 
     private final RegisterService registerService;
 
-    @PostMapping("/createRegister")
-    public ResponseEntity<Register> createRegister(@RequestBody RegisterRequest request) {
+    @PostMapping("/donationRegister")
+    public ResponseEntity<Register> donationRegister(@RequestBody RegisterRequest request) {
         Register register = registerService.createRegister(request);
         return ResponseEntity.ok(register);
+    }
+
+    /**
+     * API cho phép MEDICALSTAFF xem tất cả đơn đăng ký
+     */
+    @PreAuthorize("hasRole('MEDICALSTAFF')")
+    @GetMapping("/all")
+    public ResponseEntity<List<Register>> getAllRegisters() {
+        List<Register> registers = registerService.getAllRegisters();
+        return ResponseEntity.ok(registers);
     }
 
     /**
