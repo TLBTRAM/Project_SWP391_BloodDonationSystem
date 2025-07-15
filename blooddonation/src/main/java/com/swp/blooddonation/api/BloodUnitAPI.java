@@ -3,7 +3,10 @@ package com.swp.blooddonation.api;
 import com.swp.blooddonation.dto.request.BloodComponentVolumeRequest;
 import com.swp.blooddonation.dto.request.CollectBloodRequest;
 import com.swp.blooddonation.dto.request.UpdateBloodUnitStatusRequest;
+import com.swp.blooddonation.dto.request.ManualBloodUnitRequest;
 import com.swp.blooddonation.entity.BloodUnit;
+import com.swp.blooddonation.enums.BloodType;
+import com.swp.blooddonation.enums.RhType;
 import com.swp.blooddonation.service.BloodTestService;
 import com.swp.blooddonation.service.BloodUnitService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -71,5 +74,19 @@ public class BloodUnitAPI {
     public ResponseEntity<Void> deleteBloodUnit(@PathVariable Long id) {
         bloodUnitService.deleteBloodUnit(id);
         return ResponseEntity.noContent().build();
+    }
+
+    // Thêm túi máu thủ công (không qua hiến máu)
+    @PreAuthorize("hasRole('MANAGER') or hasRole('ADMIN')")
+    @PostMapping("/manual")
+    public ResponseEntity<BloodUnit> addManualBloodUnit(@RequestBody ManualBloodUnitRequest request) {
+        BloodUnit unit = bloodUnitService.addManualBloodUnit(
+            BloodType.valueOf(request.getBloodType()),
+            RhType.valueOf(request.getRhType()),
+            request.getTotalVolume(),
+            request.getCollectedDate(),
+            request.getExpirationDate()
+        );
+        return ResponseEntity.ok(unit);
     }
 }
