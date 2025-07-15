@@ -22,7 +22,7 @@ function Login() {
 
   const navigate = useNavigate();
 
-  const { login } = useAuth();
+  const { login, refetchUser } = useAuth();
   const handleLogin = async (e?: React.FormEvent) => {
     if (e) e.preventDefault();
     setIsLoading(true);
@@ -48,6 +48,7 @@ function Login() {
       setShowSuccess(true); // Show toast
       localStorage.setItem("token", data.token);
       login(data);
+      await refetchUser(); // Cập nhật lại user cho context
       setTimeout(() => {
         // Điều hướng theo role
         switch (data.role) {
