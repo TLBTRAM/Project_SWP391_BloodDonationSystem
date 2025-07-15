@@ -97,17 +97,17 @@ const Booking = () => {
     try {
       const token = localStorage.getItem("token");
 
-      const res = await fetch(`http://localhost:8080/api/slot/getSlot`, {
+      // Gọi API lấy slot chung
+      const res = await fetch("http://localhost:8080/api/slot/getSlot", {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       });
-      const errorText = await res.text();
-      console.error("❌ Slot API lỗi:", res.status, res.statusText);
-      console.error("📥 Nội dung lỗi:", errorText);
+
       if (!res.ok) throw new Error("Lỗi lấy slot");
 
-      const data = await res.json();
+      const data = await res.json(); // Đọc 1 lần duy nhất
+      console.log("Nội dung slot:", data); // Log biến data, KHÔNG gọi lại res.json()
       setAvailableSlots(data);
     } catch (err) {
       console.error("Lỗi fetch slot:", err);
