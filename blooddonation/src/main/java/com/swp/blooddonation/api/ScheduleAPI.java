@@ -14,6 +14,7 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -130,6 +131,20 @@ public class ScheduleAPI {
             .flatMap(List::stream)
             .collect(Collectors.toList());
         return ResponseEntity.ok(result);
+    }
+
+    // API cho phép medical staff xóa lịch đã đăng ký của mình
+    @PreAuthorize("hasRole('MEDICALSTAFF')")
+    @DeleteMapping("/medicalstaff-registered/{accountScheduleId}")
+    public ResponseEntity<String> deleteRegisteredSchedule(@PathVariable Long accountScheduleId) {
+        User currentUser = userService.getCurrentUser();
+        AccountSchedule accSchedule = accountScheduleRepository.findById(accountScheduleId)
+            .orElseThrow(() -> new RuntimeException("Không tìm thấy lịch đăng ký!"));
+        if (!accSchedule.getUser().getId().equals(currentUser.getId())) {
+            return ResponseEntity.status(403).body("Bạn không có quyền xóa lịch này!");
+        }
+        accountScheduleRepository.deleteById(accountScheduleId);
+        return ResponseEntity.ok("Xóa lịch đăng ký thành công!");
     }
 
     // API mở lại schedule thủ công (reopen)
