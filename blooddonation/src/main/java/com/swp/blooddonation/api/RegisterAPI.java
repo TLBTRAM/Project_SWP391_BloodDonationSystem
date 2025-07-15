@@ -4,8 +4,11 @@ package com.swp.blooddonation.api;
 import com.swp.blooddonation.dto.request.CancelRegisterRequest;
 import com.swp.blooddonation.dto.request.RegisterRequest;
 import com.swp.blooddonation.dto.request.RejectRequest;
+import com.swp.blooddonation.dto.request.StatusUpdateRequest;
+import com.swp.blooddonation.dto.response.RegisterResponse;
 import com.swp.blooddonation.entity.Appointment;
 import com.swp.blooddonation.entity.Register;
+import com.swp.blooddonation.enums.RegisterStatus;
 import com.swp.blooddonation.service.RegisterService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
@@ -26,8 +29,8 @@ public class RegisterAPI {
     private final RegisterService registerService;
 
     @PostMapping("/donationRegister")
-    public ResponseEntity<Register> donationRegister(@RequestBody RegisterRequest request) {
-        Register register = registerService.createRegister(request);
+    public ResponseEntity<RegisterResponse> donationRegister(@RequestBody RegisterRequest request) {
+        RegisterResponse register = registerService.createRegisterAndReturn(request);
         return ResponseEntity.ok(register);
     }
 
@@ -36,8 +39,8 @@ public class RegisterAPI {
      */
     @PreAuthorize("hasRole('MEDICALSTAFF')")
     @GetMapping("/all")
-    public ResponseEntity<List<Register>> getAllRegisters() {
-        List<Register> registers = registerService.getAllRegisters();
+    public ResponseEntity<List<RegisterResponse>> getAllRegisters() {
+        List<RegisterResponse> registers = registerService.getAllRegisters();
         return ResponseEntity.ok(registers);
     }
 
@@ -74,6 +77,15 @@ public class RegisterAPI {
         return ResponseEntity.ok(register);
     }
 
+    @PreAuthorize("hasRole('MEDICALSTAFF')")
+    @PostMapping("/{id}/status-update")
+    public ResponseEntity<?> updateRegisterStatus(@PathVariable("id") Long id, @RequestBody StatusUpdateRequest request) {
+        if (request.getStatus() != RegisterStatus.APPROVED && request.getStatus() != RegisterStatus.REJECTED && request.getStatus() != RegisterStatus.PENDING) {
+            return ResponseEntity.badRequest().body("Chỉ được cập nhật sang trạng thái PENDING, APPROVED hoặc REJECTED.");
+        }
+        registerService.updateRegisterStatus(id, request.getStatus(), request.getReason());
+        return ResponseEntity.ok("Cập nhật trạng thái thành công.");
+    }
 
 
 }
