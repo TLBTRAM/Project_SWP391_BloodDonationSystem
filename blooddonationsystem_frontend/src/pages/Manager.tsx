@@ -26,6 +26,7 @@ interface BloodUnit {
   quantity: number;
   entryDate: string;
   expiryDate: string;
+  status?: string; // thêm trường status để fix lỗi typescript
 }
 
 interface UserData {
@@ -131,6 +132,18 @@ const Manager: React.FC = () => {
   const [view, setView] = useState<"dashboard" | "add" | "stats" | "requests">(
     "dashboard"
   );
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [selectedUnitId, setSelectedUnitId] = useState<number | null>(null);
+  const [selectedStatus, setSelectedStatus] = useState<string>("");
+
+  // Khi vào dashboard, tự động fetch dữ liệu kho máu từ API
+  React.useEffect(() => {
+    if (view === "dashboard") {
+      fetchBloodUnits();
+    }
+  }, [view]);
+
   React.useEffect(() => {
     const token = localStorage.getItem("token");
     console.log("FE token:", token); // debug
@@ -166,16 +179,22 @@ const Manager: React.FC = () => {
     const token = localStorage.getItem("token");
     try {
       const res = await fetch("http://localhost:8080/api/blood/units", {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+        headers: { Authorization: `Bearer ${token}` },
       });
       if (!res.ok) throw new Error("Lỗi khi lấy danh sách túi máu");
       const data = await res.json();
-      setBloodUnits(data);
+      // Map dữ liệu từ API về đúng format FE, bao gồm cả status
+      const mapped = data.map((item: any) => ({
+        id: item.id,
+        group: item.bloodType + (item.rhType === "POSITIVE" ? "+" : item.rhType === "NEGATIVE" ? "-" : ""),
+        quantity: item.totalVolume,
+        entryDate: item.collectedDate,
+        expiryDate: item.expirationDate,
+        status: item.status // lấy status từ backend
+      }));
+      setBloodUnits(mapped);
     } catch (err) {
       console.error(err);
-      // Có thể hiển thị thông báo lỗi nếu muốn
     }
   };
 
@@ -250,12 +269,45 @@ const Manager: React.FC = () => {
     setView("dashboard");
   };
 
-  const deleteUnit = (id: number) => {
-    setBloodUnits(bloodUnits.filter((unit) => unit.id !== id));
+  // Thay thế hàm deleteUnit
+  const deleteUnit = async (id: number) => {
+    if (!window.confirm("Bạn có chắc chắn muốn xóa túi máu này?")) return;
+    const token = localStorage.getItem("token");
+    try {
+      const res = await fetch(`http://localhost:8080/api/blood/units/${id}`, {
+        method: "DELETE",
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (!res.ok) throw new Error("Lỗi khi xóa túi máu");
+      fetchBloodUnits();
+    } catch (err) {
+      alert("Xóa túi máu thất bại!");
+      console.error(err);
+    }
   };
 
-  const editUnit = (id: number) => {
-    alert(`Chức năng sửa đơn vị máu có ID ${id} đang được phát triển.`);
+  // Thay thế hàm editUnit: Cho phép chọn trạng thái mới và gọi API PUT
+  const editUnit = async (id: number) => {
+    const newStatus = window.prompt(
+      "Nhập trạng thái mới cho túi máu (COLLECTED, SEPARATED, USED, EXPIRED):"
+    );
+    if (!newStatus) return;
+    const token = localStorage.getItem("token");
+    try {
+      const res = await fetch(`http://localhost:8080/api/blood/units/${id}/status`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ status: newStatus }),
+      });
+      if (!res.ok) throw new Error("Lỗi khi cập nhật trạng thái túi máu");
+      fetchBloodUnits();
+    } catch (err) {
+      alert("Cập nhật trạng thái thất bại!");
+      console.error(err);
+    }
   };
 
   const getStatusLabel = (
@@ -296,9 +348,7 @@ const Manager: React.FC = () => {
   };
 
   const filteredUnits = bloodUnits
-    .filter((unit) =>
-      unit.group.toLowerCase().includes(searchTerm.toLowerCase())
-    )
+    .filter((unit) => (unit.group || "").toLowerCase().includes(searchTerm.toLowerCase()))
     .filter((unit) => (filterGroup ? unit.group === filterGroup : true))
     .filter((unit) => {
       const status = getStatusLabel(unit.expiryDate);
@@ -328,6 +378,80 @@ const Manager: React.FC = () => {
   const chartDataByStatus = Object.entries(statusStats).map(
     ([status, quantity]) => ({ status, quantity })
   );
+
+  // Mapping trạng thái backend sang frontend
+  const statusMap: Record<string, string> = {
+    COLLECTED: "Còn hạn",
+    SEPARATED: "Đã tách",
+    USED: "Đã sử dụng",
+    EXPIRED: "Hết hạn",
+    NEARLY_EXPIRED: "Gần hết hạn"
+  };
+  const statusOptions = [
+    { value: "COLLECTED", label: "Còn hạn" },
+    { value: "SEPARATED", label: "Đã tách" },
+    { value: "USED", label: "Đã sử dụng" },
+    { value: "EXPIRED", label: "Hết hạn" },
+    { value: "NEARLY_EXPIRED", label: "Gần hết hạn" }
+  ];
+
+  // Mở modal xác nhận xóa
+  const handleDeleteClick = (id: number) => {
+    setSelectedUnitId(id);
+    setShowDeleteModal(true);
+  };
+  // Mở modal xác nhận cập nhật
+  const handleEditClick = (id: number) => {
+    setSelectedUnitId(id);
+    setShowEditModal(true);
+    setSelectedStatus("");
+  };
+
+  // Xác nhận xóa
+  const confirmDelete = async () => {
+    if (!selectedUnitId) return;
+    const token = localStorage.getItem("token");
+    try {
+      const res = await fetch(`http://localhost:8080/api/blood/units/${selectedUnitId}`, {
+        method: "DELETE",
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (!res.ok) throw new Error("Lỗi khi xóa túi máu");
+      fetchBloodUnits();
+      setShowDeleteModal(false);
+      setSelectedUnitId(null);
+    } catch (err) {
+      alert("Xóa túi máu thất bại!");
+      setShowDeleteModal(false);
+      setSelectedUnitId(null);
+    }
+  };
+
+  // Xác nhận cập nhật trạng thái
+  const confirmEdit = async () => {
+    if (!selectedUnitId || !selectedStatus) return;
+    const token = localStorage.getItem("token");
+    try {
+      const res = await fetch(`http://localhost:8080/api/blood/units/${selectedUnitId}/status`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ status: selectedStatus }),
+      });
+      if (!res.ok) throw new Error("Lỗi khi cập nhật trạng thái túi máu");
+      fetchBloodUnits();
+      setShowEditModal(false);
+      setSelectedUnitId(null);
+      setSelectedStatus("");
+    } catch (err) {
+      alert("Cập nhật trạng thái thất bại!");
+      setShowEditModal(false);
+      setSelectedUnitId(null);
+      setSelectedStatus("");
+    }
+  };
 
   // ========== Giao diện chính ==========
   return (
@@ -464,9 +588,9 @@ const Manager: React.FC = () => {
                           <td>{unit.expiryDate}</td>
                           <td>
                             <span
-                              className={`status-badge ${statusClassMap[status]}`}
+                              className={`status-badge status-${(unit.status || 'collected').toLowerCase()} ${statusClassMap[statusMap[unit.status || 'COLLECTED']]}`}
                             >
-                              {status}
+                              {statusMap[unit.status || 'COLLECTED']}
                             </span>
                           </td>
                           <td className="table-action-cell">
@@ -474,7 +598,7 @@ const Manager: React.FC = () => {
                               {/* Nút sửa */}
                               <button
                                 className="action-button-icon"
-                                onClick={() => editUnit(unit.id)}
+                                onClick={() => handleEditClick(unit.id)}
                               >
                                 <img src={EditImg} alt="Sửa" />
                               </button>
@@ -482,7 +606,7 @@ const Manager: React.FC = () => {
                               {/* Nút xoá */}
                               <button
                                 className="action-button-icon"
-                                onClick={() => deleteUnit(unit.id)}
+                                onClick={() => handleDeleteClick(unit.id)}
                               >
                                 <img src={DeleteImg} alt="Xóa" />
                               </button>
@@ -616,6 +740,70 @@ const Manager: React.FC = () => {
           )}
         </div>
       </div>
+
+      {/* Modal xác nhận xóa */}
+      {showDeleteModal && (
+        <div className="modal-overlay">
+          <div className="modal-content">
+            <h3>Xác nhận xóa túi máu</h3>
+            {(() => {
+              const unit = bloodUnits.find(u => u.id === selectedUnitId);
+              return unit ? (
+                <div style={{textAlign: 'left', marginBottom: 16}}>
+                  <div><strong>ID:</strong> {unit.id}</div>
+                  <div><strong>Nhóm máu:</strong> {unit.group}</div>
+                  <div><strong>Ngày nhập:</strong> {unit.entryDate}</div>
+                  <div><strong>Hạn sử dụng:</strong> {unit.expiryDate}</div>
+                  <div><strong>Trạng thái hiện tại:</strong> {statusMap[unit.status || 'COLLECTED']}</div>
+                </div>
+              ) : null;
+            })()}
+            <p>Bạn có chắc chắn muốn <span style={{color:'#FF204E', fontWeight:'bold'}}>xóa</span> túi máu này không?</p>
+            <div className="modal-actions">
+              <button onClick={confirmDelete} className="modal-confirm">Xóa</button>
+              <button onClick={() => setShowDeleteModal(false)} className="modal-cancel">Hủy</button>
+            </div>
+          </div>
+        </div>
+      )}
+      {/* Modal xác nhận cập nhật trạng thái */}
+      {showEditModal && (
+        <div className="modal-overlay">
+          <div className="modal-content">
+            <h3>Cập nhật trạng thái túi máu</h3>
+            {(() => {
+              const unit = bloodUnits.find(u => u.id === selectedUnitId);
+              return unit ? (
+                <div style={{textAlign: 'left', marginBottom: 16}}>
+                  <div><strong>ID:</strong> {unit.id}</div>
+                  <div><strong>Nhóm máu:</strong> {unit.group}</div>
+                  <div><strong>Ngày nhập:</strong> {unit.entryDate}</div>
+                  <div><strong>Hạn sử dụng:</strong> {unit.expiryDate}</div>
+                  <div><strong>Trạng thái hiện tại:</strong> {statusMap[unit.status || 'COLLECTED']}</div>
+                </div>
+              ) : null;
+            })()}
+            <select
+              value={selectedStatus}
+              onChange={e => setSelectedStatus(e.target.value)}
+            >
+              <option value="">-- Chọn trạng thái mới --</option>
+              {statusOptions.map(opt => (
+                <option key={opt.value} value={opt.value}>{opt.label}</option>
+              ))}
+            </select>
+            {selectedStatus && (
+              <p style={{marginTop: 10}}>
+                Bạn có chắc chắn muốn chuyển trạng thái túi máu <strong>{selectedUnitId}</strong> sang <strong>{statusMap[selectedStatus]}</strong> không?
+              </p>
+            )}
+            <div className="modal-actions">
+              <button onClick={confirmEdit} className="modal-confirm" disabled={!selectedStatus}>Cập nhật</button>
+              <button onClick={() => setShowEditModal(false)} className="modal-cancel">Hủy</button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
