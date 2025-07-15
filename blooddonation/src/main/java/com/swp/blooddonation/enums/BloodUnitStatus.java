@@ -7,5 +7,6 @@ public enum BloodUnitStatus {
     RESERVED,     // Đã được giữ cho 1 yêu cầu truyền máu
     USED,         // Đã sử dụng
     SEPARATED,    // Đã tách thành phần
-    EXPIRED       // Quá hạn
+    EXPIRED,      // Quá hạn
+    NEARLY_EXPIRED // Gần hết hạn
 }

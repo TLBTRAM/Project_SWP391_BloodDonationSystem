@@ -163,6 +163,19 @@ public class BloodUnitService {
         return component;
     }
 
+    @Transactional
+    public BloodUnit addManualBloodUnit(BloodType bloodType, RhType rhType, int totalVolume, LocalDate collectedDate, LocalDate expirationDate) {
+        BloodUnit unit = new BloodUnit();
+        unit.setBloodType(bloodType);
+        unit.setRhType(rhType);
+        unit.setTotalVolume(totalVolume);
+        unit.setCollectedDate(collectedDate);
+        unit.setExpirationDate(expirationDate);
+        unit.setStatus(BloodUnitStatus.COLLECTED);
+        // Không set donor, collectedBy
+        return bloodUnitRepository.save(unit);
+    }
+
     public void checkAndNotifyLowBloodVolume() {
         Integer total = bloodUnitRepository.getTotalUsableVolume();
         if (total == null) total = 0;
@@ -199,7 +212,19 @@ public class BloodUnitService {
 
     // Lấy danh sách túi máu (không phân trang)
     public List<BloodUnit> getAllBloodUnits() {
-        return bloodUnitRepository.findAll();
+        List<BloodUnit> units = bloodUnitRepository.findAll();
+        LocalDate today = LocalDate.now();
+        for (BloodUnit unit : units) {
+            if (unit.getExpirationDate() != null) {
+                long days = java.time.temporal.ChronoUnit.DAYS.between(today, unit.getExpirationDate());
+                if (days < 0) {
+                    unit.setStatus(BloodUnitStatus.EXPIRED);
+                } else if (days <= 7 && unit.getStatus() != BloodUnitStatus.EXPIRED) {
+                    unit.setStatus(BloodUnitStatus.NEARLY_EXPIRED);
+                }
+            }
+        }
+        return units;
     }
 
     // Lấy chi tiết túi máu
