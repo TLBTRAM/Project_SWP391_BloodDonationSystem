@@ -367,23 +367,45 @@ const Manager: React.FC = () => {
     "Hết hạn": "status-expired",
   };
 
+  const parseDate = (dateStr: string) => {
+    if (!dateStr) return new Date(0);
+    if (dateStr.includes("/")) {
+      const [day, month, year] = dateStr.split("/").map(Number);
+      return new Date(year, month - 1, day);
+    } else if (dateStr.includes("-")) {
+      return new Date(dateStr);
+    }
+    return new Date(dateStr);
+  };
+
+  // Mapping trạng thái backend sang frontend
+  const statusMap: Record<string, string> = {
+    COLLECTED: "Còn hạn",
+    SEPARATED: "Đã tách",
+    USED: "Đã sử dụng",
+    EXPIRED: "Hết hạn",
+    NEARLY_EXPIRED: "Gần hết hạn"
+  };
+  const statusOptions = [
+    { value: "COLLECTED", label: "Còn hạn" },
+    { value: "SEPARATED", label: "Đã tách" },
+    { value: "USED", label: "Đã sử dụng" },
+    { value: "EXPIRED", label: "Hết hạn" },
+    { value: "NEARLY_EXPIRED", label: "Gần hết hạn" }
+  ];
+
   const sortFunction = (a: BloodUnit, b: BloodUnit) => {
     const dateA = sortBy === "entry" ? a.entryDate : a.expiryDate;
     const dateB = sortBy === "entry" ? b.entryDate : b.expiryDate;
-    const [da, ma, ya] = dateA.split("/").map(Number);
-    const [db, mb, yb] = dateB.split("/").map(Number);
-    const d1 = new Date(ya, ma - 1, da);
-    const d2 = new Date(yb, mb - 1, db);
+    const d1 = parseDate(dateA);
+    const d2 = parseDate(dateB);
     return d1.getTime() - d2.getTime();
   };
 
   const filteredUnits = bloodUnits
     .filter((unit) => (unit.group || "").toLowerCase().includes(searchTerm.toLowerCase()))
     .filter((unit) => (filterGroup ? unit.group === filterGroup : true))
-    .filter((unit) => {
-      const status = getStatusLabel(unit.expiryDate);
-      return filterStatus ? status === filterStatus : true;
-    })
+    .filter((unit) => (filterStatus ? statusMap[unit.status || 'COLLECTED'] === filterStatus : true))
     .sort(sortBy ? sortFunction : undefined);
 
   const bloodGroupStats = bloodUnits.reduce<Record<string, number>>(
@@ -408,22 +430,6 @@ const Manager: React.FC = () => {
   const chartDataByStatus = Object.entries(statusStats).map(
     ([status, quantity]) => ({ status, quantity })
   );
-
-  // Mapping trạng thái backend sang frontend
-  const statusMap: Record<string, string> = {
-    COLLECTED: "Còn hạn",
-    SEPARATED: "Đã tách",
-    USED: "Đã sử dụng",
-    EXPIRED: "Hết hạn",
-    NEARLY_EXPIRED: "Gần hết hạn"
-  };
-  const statusOptions = [
-    { value: "COLLECTED", label: "Còn hạn" },
-    { value: "SEPARATED", label: "Đã tách" },
-    { value: "USED", label: "Đã sử dụng" },
-    { value: "EXPIRED", label: "Hết hạn" },
-    { value: "NEARLY_EXPIRED", label: "Gần hết hạn" }
-  ];
 
   // Mở modal xác nhận xóa
   const handleDeleteClick = (id: number) => {
