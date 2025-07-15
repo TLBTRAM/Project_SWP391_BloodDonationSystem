@@ -11,10 +11,12 @@ interface Schedule {
   status: string;
   userId: number;
 }
-
 interface Slot {
   id: number;
   label: string;
+  startTime: string;
+  endTime: string;
+  delete: boolean;
 }
 
 const Booking = () => {
@@ -86,7 +88,7 @@ const Booking = () => {
     fetchSchedules();
   }, []);
 
-  // Khi user chọn lịch khám (schedule), lấy list slot chung (do backend chưa có lọc theo scheduleId)
+
   const handleScheduleChange = async (e: React.ChangeEvent<HTMLSelectElement>) => {
     const id = parseInt(e.target.value);
     setSelectedScheduleId(id);
@@ -104,7 +106,8 @@ const Booking = () => {
 
       if (!res.ok) throw new Error("Lỗi lấy slot");
 
-      const data = await res.json();
+      const data = await res.json(); // Đọc 1 lần duy nhất
+      console.log("Nội dung slot:", data); // Log biến data, KHÔNG gọi lại res.json()
       setAvailableSlots(data);
     } catch (err) {
       console.error("Lỗi fetch slot:", err);

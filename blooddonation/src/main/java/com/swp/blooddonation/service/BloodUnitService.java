@@ -163,6 +163,19 @@ public class BloodUnitService {
         return component;
     }
 
+    @Transactional
+    public BloodUnit addManualBloodUnit(BloodType bloodType, RhType rhType, int totalVolume, LocalDate collectedDate, LocalDate expirationDate) {
+        BloodUnit unit = new BloodUnit();
+        unit.setBloodType(bloodType);
+        unit.setRhType(rhType);
+        unit.setTotalVolume(totalVolume);
+        unit.setCollectedDate(collectedDate);
+        unit.setExpirationDate(expirationDate);
+        unit.setStatus(BloodUnitStatus.COLLECTED);
+        // Không set donor, collectedBy
+        return bloodUnitRepository.save(unit);
+    }
+
     public void checkAndNotifyLowBloodVolume() {
         Integer total = bloodUnitRepository.getTotalUsableVolume();
         if (total == null) total = 0;

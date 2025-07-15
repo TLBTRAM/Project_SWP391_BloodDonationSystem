@@ -246,7 +246,8 @@ const Manager: React.FC = () => {
     }
   };
 
-  const addBloodUnit = () => {
+  // Thay thế hàm addBloodUnit
+  const addBloodUnit = async () => {
     const quantity = parseInt(formData.quantity);
     if (
       !formData.group ||
@@ -257,16 +258,45 @@ const Manager: React.FC = () => {
       alert("Vui lòng nhập đầy đủ thông tin.");
       return;
     }
-    const newUnit: BloodUnit = {
-      id: Date.now(),
-      group: formData.group.toUpperCase(),
-      quantity,
-      entryDate: formData.entryDate,
-      expiryDate: formData.expiryDate,
+    // Mapping group sang bloodType và rhType
+    const match = formData.group.match(/^(A|B|AB|O)([+-])$/);
+    if (!match) {
+      alert("Nhóm máu không hợp lệ!");
+      return;
+    }
+    const bloodType = match[1];
+    const rhType = match[2] === "+" ? "POSITIVE" : "NEGATIVE";
+    // Chuyển ngày sang yyyy-mm-dd
+    const toISO = (d: string) => {
+      const [day, month, year] = d.split("/");
+      return `${year}-${month.padStart(2, "0")}-${day.padStart(2, "0")}`;
     };
-    setBloodUnits([...bloodUnits, newUnit]);
-    setFormData({ group: "", quantity: "", entryDate: "", expiryDate: "" });
-    setView("dashboard");
+    const body = {
+      bloodType,
+      rhType,
+      totalVolume: quantity,
+      collectedDate: toISO(formData.entryDate),
+      expirationDate: toISO(formData.expiryDate)
+    };
+    const token = localStorage.getItem("token");
+    try {
+      const res = await fetch("http://localhost:8080/api/blood/manual", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(body),
+      });
+      if (!res.ok) throw new Error("Lỗi khi thêm túi máu mới");
+      await fetchBloodUnits();
+      setFormData({ group: "", quantity: "", entryDate: "", expiryDate: "" });
+      setView("dashboard");
+      alert("Thêm đơn vị máu thành công!");
+    } catch (err) {
+      alert("Thêm đơn vị máu thất bại!");
+      console.error(err);
+    }
   };
 
   // Thay thế hàm deleteUnit
@@ -337,23 +367,45 @@ const Manager: React.FC = () => {
     "Hết hạn": "status-expired",
   };
 
+  const parseDate = (dateStr: string) => {
+    if (!dateStr) return new Date(0);
+    if (dateStr.includes("/")) {
+      const [day, month, year] = dateStr.split("/").map(Number);
+      return new Date(year, month - 1, day);
+    } else if (dateStr.includes("-")) {
+      return new Date(dateStr);
+    }
+    return new Date(dateStr);
+  };
+
+  // Mapping trạng thái backend sang frontend
+  const statusMap: Record<string, string> = {
+    COLLECTED: "Còn hạn",
+    SEPARATED: "Đã tách",
+    USED: "Đã sử dụng",
+    EXPIRED: "Hết hạn",
+    NEARLY_EXPIRED: "Gần hết hạn"
+  };
+  const statusOptions = [
+    { value: "COLLECTED", label: "Còn hạn" },
+    { value: "SEPARATED", label: "Đã tách" },
+    { value: "USED", label: "Đã sử dụng" },
+    { value: "EXPIRED", label: "Hết hạn" },
+    { value: "NEARLY_EXPIRED", label: "Gần hết hạn" }
+  ];
+
   const sortFunction = (a: BloodUnit, b: BloodUnit) => {
     const dateA = sortBy === "entry" ? a.entryDate : a.expiryDate;
     const dateB = sortBy === "entry" ? b.entryDate : b.expiryDate;
-    const [da, ma, ya] = dateA.split("/").map(Number);
-    const [db, mb, yb] = dateB.split("/").map(Number);
-    const d1 = new Date(ya, ma - 1, da);
-    const d2 = new Date(yb, mb - 1, db);
+    const d1 = parseDate(dateA);
+    const d2 = parseDate(dateB);
     return d1.getTime() - d2.getTime();
   };
 
   const filteredUnits = bloodUnits
     .filter((unit) => (unit.group || "").toLowerCase().includes(searchTerm.toLowerCase()))
     .filter((unit) => (filterGroup ? unit.group === filterGroup : true))
-    .filter((unit) => {
-      const status = getStatusLabel(unit.expiryDate);
-      return filterStatus ? status === filterStatus : true;
-    })
+    .filter((unit) => (filterStatus ? statusMap[unit.status || 'COLLECTED'] === filterStatus : true))
     .sort(sortBy ? sortFunction : undefined);
 
   const bloodGroupStats = bloodUnits.reduce<Record<string, number>>(
@@ -378,22 +430,6 @@ const Manager: React.FC = () => {
   const chartDataByStatus = Object.entries(statusStats).map(
     ([status, quantity]) => ({ status, quantity })
   );
-
-  // Mapping trạng thái backend sang frontend
-  const statusMap: Record<string, string> = {
-    COLLECTED: "Còn hạn",
-    SEPARATED: "Đã tách",
-    USED: "Đã sử dụng",
-    EXPIRED: "Hết hạn",
-    NEARLY_EXPIRED: "Gần hết hạn"
-  };
-  const statusOptions = [
-    { value: "COLLECTED", label: "Còn hạn" },
-    { value: "SEPARATED", label: "Đã tách" },
-    { value: "USED", label: "Đã sử dụng" },
-    { value: "EXPIRED", label: "Hết hạn" },
-    { value: "NEARLY_EXPIRED", label: "Gần hết hạn" }
-  ];
 
   // Mở modal xác nhận xóa
   const handleDeleteClick = (id: number) => {
