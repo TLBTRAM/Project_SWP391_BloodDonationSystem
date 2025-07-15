@@ -31,6 +31,7 @@ const Register: React.FC = () => {
   const [email, setEmail] = useState("");
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
   const [selectedProvince, setSelectedProvince] = useState("");
   const [selectedDistrict, setSelectedDistrict] = useState("");
@@ -79,6 +80,8 @@ const Register: React.FC = () => {
     if (!username.trim()) newErrors.username = "Vui lòng nhập tên người dùng.";
     if (!password || password.length < 6)
       newErrors.password = "Mật khẩu phải từ 6 ký tự.";
+    if (!confirmPassword) newErrors.confirmPassword = "Vui lòng nhập lại mật khẩu.";
+    else if (password !== confirmPassword) newErrors.confirmPassword = "Mật khẩu xác nhận không khớp.";
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -376,6 +379,19 @@ const Register: React.FC = () => {
               />
               {errors.password && (
                 <div className="error-text">{errors.password}</div>
+              )}
+            </div>
+            <div className="form-group">
+              <label className="form-label">Xác nhận lại mật khẩu</label>
+              <input
+                type="password"
+                className="input-text"
+                placeholder="Nhập lại mật khẩu"
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+              />
+              {errors.confirmPassword && (
+                <div className="error-text">{errors.confirmPassword}</div>
               )}
             </div>
 

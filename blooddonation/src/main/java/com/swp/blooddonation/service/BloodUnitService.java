@@ -11,6 +11,9 @@ import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.swp.blooddonation.dto.request.NotificationRequest;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import java.util.Optional;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -192,5 +195,31 @@ public class BloodUnitService {
     public long countUnitsByUserId(Long userId) {
         Long sum = bloodUnitRepository.sumUnitsByUserId(userId);
         return sum != null ? sum : 0;
+    }
+
+    // Lấy danh sách túi máu (không phân trang)
+    public List<BloodUnit> getAllBloodUnits() {
+        return bloodUnitRepository.findAll();
+    }
+
+    // Lấy chi tiết túi máu
+    public Optional<BloodUnit> getBloodUnitById(Long id) {
+        return bloodUnitRepository.findById(id);
+    }
+
+    // Cập nhật trạng thái túi máu
+    public BloodUnit updateBloodUnitStatus(Long id, BloodUnitStatus status) {
+        BloodUnit unit = bloodUnitRepository.findById(id)
+                .orElseThrow(() -> new BadRequestException("Blood unit not found"));
+        unit.setStatus(status);
+        return bloodUnitRepository.save(unit);
+    }
+
+    // Thêm phương thức xóa túi máu
+    @Transactional
+    public void deleteBloodUnit(Long id) {
+        BloodUnit unit = bloodUnitRepository.findById(id)
+                .orElseThrow(() -> new BadRequestException("Blood unit not found"));
+        bloodUnitRepository.delete(unit);
     }
 }

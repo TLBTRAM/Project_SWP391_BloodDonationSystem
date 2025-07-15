@@ -27,18 +27,74 @@ const Admin: React.FC = () => {
   const [filterRole, setFilterRole] = useState<string>("Tất cả");
   const [editingAccount, setEditingAccount] = useState<Account | null>(null);
   const [selectedRole, setSelectedRole] = useState<string>("");
+  const [message, setMessage] = useState<string>("");
+  const [statusAccount, setStatusAccount] = useState<Account | null>(null);
+
+  // Tự động ẩn thông báo sau 2.5 giây
+  useEffect(() => {
+    if (message) {
+      const timer = setTimeout(() => setMessage("") , 2500);
+      return () => clearTimeout(timer);
+    }
+  }, [message]);
 
   const [deletingAccount, setDeletingAccount] = useState<Account | null>(null); // ✅ dùng để hiển thị modal xác nhận xoá
 
   const navigate = useNavigate();
 
-  const toggleEnabled = (id: number) => {
-    setAccounts((prev) =>
-      prev.map((acc) =>
-        acc.id === id ? { ...acc, enabled: !acc.enabled } : acc
-      )
-    );
+  // Thêm hàm loadAccounts để gọi API lấy danh sách tài khoản theo filterRole
+  const loadAccounts = () => {
+    const token = localStorage.getItem("token");
+    if (token) {
+      let url = "http://localhost:8080/api/admin/users";
+      if (filterRole !== "Tất cả") {
+        const roleMap: Record<string, string> = {
+          "Người dùng": "CUSTOMER",
+          "Nhân viên y tế": "MEDICALSTAFF",
+          "Quản lý kho máu": "MANAGER",
+          "Admin": "ADMIN"
+        };
+        url += `?role=${roleMap[filterRole]}`;
+      }
+      fetch(url, {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      })
+        .then((res) => {
+          if (!res.ok) throw new Error("Không thể tải danh sách tài khoản");
+          return res.json();
+        })
+        .then((data) => {
+          const mappedAccounts = data.map((acc: any) => ({
+            id: acc.id,
+            name: acc.fullName,
+            email: acc.account?.email || "",
+            enabled: acc.account?.enableStatus === "ENABLE",
+            role:
+              acc.account?.role === "CUSTOMER"
+                ? "Người dùng"
+                : acc.account?.role === "MEDICALSTAFF"
+                ? "Nhân viên y tế"
+                : acc.account?.role === "MANAGER"
+                ? "Quản lý kho máu"
+                : acc.account?.role === "ADMIN"
+                ? "Admin"
+                : "",
+          }));
+          setAccounts(mappedAccounts);
+        })
+        .catch((err) => console.error(err));
+    }
   };
+
+  // Gọi loadAccounts khi filterRole thay đổi
+  useEffect(() => {
+    loadAccounts();
+    // eslint-disable-next-line
+  }, [filterRole]);
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -61,44 +117,10 @@ const Admin: React.FC = () => {
     }
   }, []);
 
-  useEffect(() => {
-    const token = localStorage.getItem("token");
-    if (token) {
-      fetch("http://localhost:8080/api/admin/users", {
-        method: "GET",
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
-      })
-        .then((res) => {
-          if (!res.ok) throw new Error("Không thể tải danh sách tài khoản");
-          return res.json();
-        })
-        .then((data) => {
-          const mappedAccounts = data.map((acc: any) => ({
-            id: acc.id,
-            name: acc.fullName,
-            email: acc.email,
-            enabled: acc.enabled,
-            role:
-              acc.role === "CUSTOMER"
-                ? "Người dùng"
-                : acc.role === "MEDICALSTAFF"
-                ? "Nhân viên y tế"
-                : acc.role === "MANAGER"
-                ? "Quản lý kho máu"
-                : "Admin",
-          }));
-          setAccounts(mappedAccounts);
-        })
-        .catch((err) => console.error(err));
-    }
-  }, []);
-
   const handleLogout = () => {
     localStorage.removeItem("token");
-    navigate("/");
+    setAdminInfo(null);
+    navigate("/login");
   };
 
   const handleEdit = (id: number) => {
@@ -117,35 +139,63 @@ const Admin: React.FC = () => {
     }
   };
 
+  // Sau khi cập nhật role, xóa, hoặc kích hoạt/vô hiệu hóa, gọi lại loadAccounts
   const handleSaveRole = () => {
     if (editingAccount) {
-      setAccounts((prev) =>
-        prev.map((acc) =>
-          acc.id === editingAccount.id
-            ? {
-                ...acc,
-                role:
-                  selectedRole === "ADMIN"
-                    ? "Admin"
-                    : selectedRole === "MANAGER"
-                    ? "Quản lý kho máu"
-                    : selectedRole === "MEDICALSTAFF"
-                    ? "Nhân viên y tế"
-                    : "Người dùng",
-              }
-            : acc
-        )
-      );
-      setEditingAccount(null);
+      const token = localStorage.getItem("token");
+      fetch(`http://localhost:8080/api/admin/users/${editingAccount.id}/role?role=${selectedRole}`, {
+        method: "PUT",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      })
+        .then((res) => {
+          if (!res.ok) throw new Error("Không thể cập nhật vai trò");
+          setMessage("Cập nhật vai trò thành công!");
+          setEditingAccount(null);
+          loadAccounts();
+        })
+        .catch((err) => alert(err.message));
     }
+  };
+
+  const toggleEnabled = (id: number) => {
+    const account = accounts.find((acc) => acc.id === id);
+    if (!account) return;
+    const token = localStorage.getItem("token");
+    fetch(`http://localhost:8080/api/admin/users/${id}/status?enabled=${!account.enabled}`, {
+      method: "PUT",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+    })
+      .then((res) => {
+        if (!res.ok) throw new Error("Không thể cập nhật trạng thái");
+        setMessage(account.enabled ? "Vô hiệu hóa tài khoản thành công!" : "Kích hoạt tài khoản thành công!");
+        loadAccounts();
+      })
+      .catch((err) => alert(err.message));
   };
 
   const confirmDeleteAccount = () => {
     if (deletingAccount) {
-      setAccounts((prev) =>
-        prev.filter((acc) => acc.id !== deletingAccount.id)
-      );
-      setDeletingAccount(null);
+      const token = localStorage.getItem("token");
+      fetch(`http://localhost:8080/api/admin/users/${deletingAccount.id}`, {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      })
+        .then((res) => {
+          if (!res.ok) throw new Error("Không thể xóa tài khoản");
+          setMessage("Xóa tài khoản thành công!");
+          setDeletingAccount(null);
+          loadAccounts();
+        })
+        .catch((err) => alert(err.message));
     }
   };
 
@@ -157,12 +207,12 @@ const Admin: React.FC = () => {
     return matchesRole && matchesSearch;
   });
 
+  // Đếm số lượng tài khoản mỗi role dựa trên accounts mới nhất
   const roleCounts = {
     "Người dùng": accounts.filter((a) => a.role === "Người dùng").length,
-    "Nhân viên y tế": accounts.filter((a) => a.role === "Nhân viên y tế")
-      .length,
-    "Quản lý kho máu": accounts.filter((a) => a.role === "Quản lý kho máu")
-      .length,
+    "Nhân viên y tế": accounts.filter((a) => a.role === "Nhân viên y tế").length,
+    "Quản lý kho máu": accounts.filter((a) => a.role === "Quản lý kho máu").length,
+    "Admin": accounts.filter((a) => a.role === "Admin").length,
   };
 
   const roleIcons: Record<string, string> = {
@@ -192,6 +242,10 @@ const Admin: React.FC = () => {
 
       <div className="admin-container">
         <h1>Quản lý tài khoản</h1>
+
+        {message && (
+          <div className="admin-toast-success">{message}</div>
+        )}
 
         <div className="role-summary">
           {Object.entries(roleCounts).map(([role, count]) => (
@@ -253,7 +307,7 @@ const Admin: React.FC = () => {
                       </button>
                       <button
                         className="status-btn"
-                        onClick={() => toggleEnabled(account.id)}
+                        onClick={() => setStatusAccount(account)}
                       >
                         {account.enabled ? "Vô hiệu hóa" : "Kích hoạt"}
                       </button>
@@ -319,6 +373,35 @@ const Admin: React.FC = () => {
                 </button>
                 <button
                   onClick={() => setDeletingAccount(null)}
+                  className="cancel-button-2"
+                >
+                  Hủy
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Thêm modal xác nhận cho kích hoạt/vô hiệu hóa */}
+        {statusAccount && (
+          <div className="modal-overlay">
+            <div className="modal-content">
+              <h3>Xác nhận {statusAccount.enabled ? "vô hiệu hóa" : "kích hoạt"} tài khoản</h3>
+              <p>
+                Bạn có chắc chắn muốn {statusAccount.enabled ? "vô hiệu hóa" : "kích hoạt"} tài khoản <strong>{statusAccount.name}</strong> không?
+              </p>
+              <div className="modal-buttons">
+                <button
+                  onClick={() => {
+                    toggleEnabled(statusAccount.id);
+                    setStatusAccount(null);
+                  }}
+                  className="save-button-2"
+                >
+                  {statusAccount.enabled ? "Vô hiệu hóa" : "Kích hoạt"}
+                </button>
+                <button
+                  onClick={() => setStatusAccount(null)}
                   className="cancel-button-2"
                 >
                   Hủy

@@ -1,63 +1,146 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import "./components/Booking.css";
-import { Link, useNavigate } from 'react-router-dom';
-
+import { Link } from "react-router-dom";
 import Header from "../layouts/header-footer/Header";
 import Footer from "../layouts/header-footer/Footer";
+import axios from "axios";
 
-interface BookingFormData {
-  fullName: string;
-  dob: string;
-  gender: string;
-  phone: string;
-  email: string;
-  date: string;
-  time: string;
-  note: string;
+interface Schedule {
+  id: number;
+  scheduleDate: string;
+  status: string;
+  userId: number;
+}
+
+interface Slot {
+  id: number;
+  label: string;
 }
 
 const Booking = () => {
-  const navigate = useNavigate();
+  const [availableSchedules, setAvailableSchedules] = useState<Schedule[]>([]);
+  const [availableSlots, setAvailableSlots] = useState<Slot[]>([]);
 
-  // Giả định các thông tin lấy từ tài khoản đăng nhập
-  const [formData, setFormData] = useState<BookingFormData>({
-    fullName: "Nguyễn Văn A",
-    dob: "1995-06-01",
-    gender: "Nam",
-    phone: "0901234567",
-    email: "vana@example.com",
-    date: "",
-    time: "",
-    note: "",
-  });
-
+  const [selectedScheduleId, setSelectedScheduleId] = useState<number | null>(null);
+  const [selectedSlotId, setSelectedSlotId] = useState<number | null>(null);
+  const [note, setNote] = useState("");
   const [submitted, setSubmitted] = useState(false);
 
-  const handleChange = (
-    e: React.ChangeEvent<
-      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
-    >
-  ) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
+  const [userInfo, setUserInfo] = useState({
+    fullName: "",
+    dob: "",
+    gender: "",
+    phone: "",
+    email: ""
+  });
+
+  useEffect(() => {
+    console.log("Booking component mounted ✅");
+
+    // Lấy thông tin user
+    const fetchUserInfo = async () => {
+      const token = localStorage.getItem("token");
+      console.log("Token slot:", token);
+      try {
+        const res = await axios.get("http://localhost:8080/api/user/profile", {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        const user = res.data;
+        setUserInfo({
+          fullName: user.fullName || "",
+          dob: user.dob || "",
+          gender: user.gender || "",
+          phone: user.phone || "",
+          email: user.email || ""
+        });
+      } catch (error) {
+        console.error("Lỗi lấy thông tin người dùng:", error);
+      }
+    };
+
+    // Lấy danh sách schedule với trạng thái OPEN
+    const fetchSchedules = async () => {
+      const token = localStorage.getItem("token");
+      try {
+        const res = await fetch("http://localhost:8080/api/schedules?status=OPEN", {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        if (!res.ok) {
+          console.error("❌ API trả lỗi:", res.status, res.statusText);
+          const errText = await res.text();
+          console.error("📥 Nội dung lỗi:", errText);
+          return;
+        }
+
+        const data = await res.json();
+        setAvailableSchedules(data);
+      } catch (err) {
+        console.error("💥 Lỗi fetch schedules:", err);
+      }
+    };
+
+    fetchUserInfo();
+    fetchSchedules();
+  }, []);
+
+  // Khi user chọn lịch khám (schedule), lấy list slot chung (do backend chưa có lọc theo scheduleId)
+  const handleScheduleChange = async (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const id = parseInt(e.target.value);
+    setSelectedScheduleId(id);
+    setSelectedSlotId(null);
+
+    try {
+      const token = localStorage.getItem("token");
+
+      // Gọi API lấy slot chung
+      const res = await fetch("http://localhost:8080/api/slot/getSlot", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (!res.ok) throw new Error("Lỗi lấy slot");
+
+      const data = await res.json();
+      setAvailableSlots(data);
+    } catch (err) {
+      console.error("Lỗi fetch slot:", err);
+    }
   };
 
+  // Gửi đăng ký khám
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
+    if (!selectedScheduleId || !selectedSlotId) {
+      alert("Vui lòng chọn ngày và giờ khám.");
+      return;
+    }
+
     try {
-      const response = await fetch("http://localhost:8080/api/appointments", {
+      const token = localStorage.getItem("token");
+
+      const response = await fetch("http://localhost:8080/api/registers/createRegister", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify(formData), // Gửi dữ liệu JSON lên server
+        body: JSON.stringify({
+          scheduleId: selectedScheduleId,
+          slotId: selectedSlotId,
+          note,
+        }),
       });
 
       if (response.ok) {
         setSubmitted(true);
       } else {
         console.error("Gửi thất bại");
+        alert("Có lỗi khi đăng ký. Vui lòng thử lại.");
       }
     } catch (error) {
       console.error("Lỗi gửi:", error);
@@ -78,87 +161,38 @@ const Booking = () => {
           <form className="booking-form" onSubmit={handleSubmit}>
             <div className="form-group">
               <label>Họ và tên</label>
-              <input
-                className="input-text"
-                type="text"
-                name="fullName"
-                value={formData.fullName}
-                disabled
-              />
-            </div>
-
-            <div className="form-group">
-              <label>Ngày sinh</label>
-              <input
-                className="input-text"
-                type="date"
-                name="dob"
-                value={formData.dob}
-                disabled
-              />
-            </div>
-
-            <div className="form-group">
-              <label>Giới tính</label>
-              <input
-                className="input-text"
-                type="text"
-                name="gender"
-                value={formData.gender}
-                disabled
-              />
-            </div>
-
-            <div className="form-group">
-              <label>Số điện thoại</label>
-              <input
-                className="input-text"
-                type="text"
-                name="phone"
-                value={formData.phone}
-                disabled
-              />
-            </div>
-
-            <div className="form-group">
-              <label>Email</label>
-              <input
-                className="input-text"
-                type="email"
-                name="email"
-                value={formData.email}
-                disabled
-              />
+              <input className="input-text" type="text" value={userInfo.fullName} disabled />
             </div>
 
             <div className="form-group">
               <label>Chọn ngày khám</label>
-              <input
-                className="input-text"
-                type="date"
-                name="date"
-                value={formData.date}
-                onChange={handleChange}
-                required
-              />
+              <select value={selectedScheduleId ?? ""} onChange={handleScheduleChange} required>
+                <option value="">-- Chọn ngày --</option>
+                {availableSchedules.map(schedule => (
+                  <option key={schedule.id} value={schedule.id}>
+                    {new Date(schedule.scheduleDate).toLocaleDateString("vi-VN")}
+                  </option>
+                ))}
+              </select>
+              {availableSchedules.length === 0 && (
+                <p style={{ color: "red" }}>❌ Không tìm thấy lịch khám phù hợp.</p>
+              )}
             </div>
 
             <div className="form-group">
               <label>Chọn khung giờ</label>
               <select
                 className="input-text"
-                name="time"
-                value={formData.time}
-                onChange={handleChange}
+                value={selectedSlotId ?? ""}
+                onChange={e => setSelectedSlotId(parseInt(e.target.value))}
                 required
               >
                 <option value="">-- Chọn giờ --</option>
-                <option value="07:30 - 08:30">07:30 - 08:30</option>
-                <option value="08:30 - 09:30">08:30 - 09:30</option>
-                <option value="09:30 - 10:30">09:30 - 10:30</option>
-                <option value="13:30 - 14:30">13:30 - 14:30</option>
-                <option value="14:30 - 15:30">14:30 - 15:30</option>
-                <option value="15:30 - 16:30">15:30 - 16:30</option>
+                {availableSlots.map(slot => (
+                  <option key={slot.id} value={slot.id}>
+                    {slot.label}
+                  </option>
+                ))}
               </select>
             </div>
 
@@ -166,17 +200,14 @@ const Booking = () => {
               <label>Ghi chú thêm (nếu có)</label>
               <textarea
                 className="input-text"
-                name="note"
-                value={formData.note}
-                onChange={handleChange}
+                value={note}
+                onChange={e => setNote(e.target.value)}
                 rows={3}
                 placeholder="Ví dụ: Có tiền sử dị ứng, bệnh nền..."
               />
             </div>
 
-            <button type="submit" className="submit-btn">
-              Đăng ký khám
-            </button>
+            <button type="submit" className="submit-btn">Đăng ký khám</button>
             <Link to="/user" className="back">Quay trở lại</Link>
           </form>
         )}

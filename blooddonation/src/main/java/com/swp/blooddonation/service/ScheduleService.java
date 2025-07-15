@@ -11,6 +11,7 @@ import com.swp.blooddonation.repository.ScheduleRepository;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -59,5 +60,103 @@ public class ScheduleService {
         response.setCreatedBy(savedSchedule.getUser().getId());
 
         return response;
+    }
+
+    public List<ScheduleResponseDTO> getSchedulesByDate(LocalDate date) {
+        List<Schedule> schedules = scheduleRepository.findByScheduleDate(date).stream().toList();
+        return schedules.stream()
+                .map(s -> modelMapper.map(s, ScheduleResponseDTO.class))
+                .toList();
+    }
+
+    public List<ScheduleResponseDTO> getSchedulesByMonth(int month, int year) {
+        List<Schedule> schedules = scheduleRepository.findByMonthAndYear(month, year);
+        return schedules.stream()
+                .map(s -> modelMapper.map(s, ScheduleResponseDTO.class))
+                .toList();
+    }
+
+    public List<ScheduleResponseDTO> getSchedulesByStatus(ScheduleStatus status) {
+        List<Schedule> schedules = scheduleRepository.findByStatus(status);
+        return schedules.stream()
+                .map(s -> modelMapper.map(s, ScheduleResponseDTO.class))
+                .toList();
+    }
+
+    public List<ScheduleResponseDTO> createSchedulesForMonth(int month, int year) {
+        User currentUser = userService.getCurrentUser();
+        java.time.YearMonth yearMonth = java.time.YearMonth.of(year, month);
+        java.util.List<ScheduleResponseDTO> createdSchedules = new java.util.ArrayList<>();
+        for (int day = 1; day <= yearMonth.lengthOfMonth(); day++) {
+            LocalDate date = yearMonth.atDay(day);
+            if (!scheduleRepository.existsByScheduleDate(date)) {
+                Schedule schedule = new Schedule();
+                schedule.setScheduleDate(date);
+                schedule.setUser(currentUser);
+                schedule.setStatus(ScheduleStatus.OPEN);
+                Schedule saved = scheduleRepository.save(schedule);
+                ScheduleResponseDTO dto = modelMapper.map(saved, ScheduleResponseDTO.class);
+                dto.setCreatedBy(saved.getUser().getId());
+                createdSchedules.add(dto);
+            }
+        }
+        return createdSchedules;
+    }
+
+    public ScheduleResponseDTO closeSchedule(Long scheduleId) {
+        Schedule schedule = scheduleRepository.findById(scheduleId)
+                .orElseThrow(() -> new BadRequestException("Không tìm thấy schedule với id: " + scheduleId));
+        if (schedule.getStatus() != ScheduleStatus.OPEN) {
+            throw new BadRequestException("Chỉ có thể đóng schedule đang ở trạng thái OPEN.");
+        }
+        schedule.setStatus(ScheduleStatus.CLOSED);
+        Schedule saved = scheduleRepository.save(schedule);
+        ScheduleResponseDTO dto = modelMapper.map(saved, ScheduleResponseDTO.class);
+        dto.setCreatedBy(saved.getUser().getId());
+        return dto;
+    }
+
+    public ScheduleResponseDTO updateScheduleStatus(Long scheduleId, ScheduleStatus status) {
+        Schedule schedule = scheduleRepository.findById(scheduleId)
+                .orElseThrow(() -> new BadRequestException("Không tìm thấy schedule với id: " + scheduleId));
+        if (schedule.getStatus() == status) {
+            throw new BadRequestException("Schedule đã ở trạng thái " + status + ".");
+        }
+        schedule.setStatus(status);
+        Schedule saved = scheduleRepository.save(schedule);
+        ScheduleResponseDTO dto = modelMapper.map(saved, ScheduleResponseDTO.class);
+        dto.setCreatedBy(saved.getUser().getId());
+        return dto;
+    }
+
+    // Đóng các schedule đã qua ngày hôm nay
+    @Scheduled(cron = "0 0 0 * * *") // chạy mỗi ngày lúc 0h
+    public void closeExpiredSchedules() {
+        LocalDate today = LocalDate.now();
+        List<Schedule> openSchedules = scheduleRepository.findByStatus(ScheduleStatus.OPEN);
+        List<Schedule> toClose = openSchedules.stream()
+                .filter(s -> s.getScheduleDate().isBefore(today))
+                .toList();
+        for (Schedule s : toClose) {
+            s.setStatus(ScheduleStatus.CLOSED);
+        }
+        scheduleRepository.saveAll(toClose);
+    }
+
+    public int closeExpiredSchedulesManually() {
+        LocalDate today = LocalDate.now();
+        List<Schedule> openSchedules = scheduleRepository.findByStatus(ScheduleStatus.OPEN);
+        List<Schedule> toClose = openSchedules.stream()
+                .filter(s -> s.getScheduleDate().isBefore(today))
+                .toList();
+        int closedCount = 0;
+        for (Schedule s : toClose) {
+            if (s.getStatus() == ScheduleStatus.OPEN) {
+                s.setStatus(ScheduleStatus.CLOSED);
+                closedCount++;
+            }
+        }
+        scheduleRepository.saveAll(toClose);
+        return closedCount;
     }
 }
