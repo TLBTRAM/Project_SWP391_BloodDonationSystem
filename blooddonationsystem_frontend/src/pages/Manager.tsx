@@ -246,7 +246,8 @@ const Manager: React.FC = () => {
     }
   };
 
-  const addBloodUnit = () => {
+  // Thay thế hàm addBloodUnit
+  const addBloodUnit = async () => {
     const quantity = parseInt(formData.quantity);
     if (
       !formData.group ||
@@ -257,16 +258,45 @@ const Manager: React.FC = () => {
       alert("Vui lòng nhập đầy đủ thông tin.");
       return;
     }
-    const newUnit: BloodUnit = {
-      id: Date.now(),
-      group: formData.group.toUpperCase(),
-      quantity,
-      entryDate: formData.entryDate,
-      expiryDate: formData.expiryDate,
+    // Mapping group sang bloodType và rhType
+    const match = formData.group.match(/^(A|B|AB|O)([+-])$/);
+    if (!match) {
+      alert("Nhóm máu không hợp lệ!");
+      return;
+    }
+    const bloodType = match[1];
+    const rhType = match[2] === "+" ? "POSITIVE" : "NEGATIVE";
+    // Chuyển ngày sang yyyy-mm-dd
+    const toISO = (d: string) => {
+      const [day, month, year] = d.split("/");
+      return `${year}-${month.padStart(2, "0")}-${day.padStart(2, "0")}`;
     };
-    setBloodUnits([...bloodUnits, newUnit]);
-    setFormData({ group: "", quantity: "", entryDate: "", expiryDate: "" });
-    setView("dashboard");
+    const body = {
+      bloodType,
+      rhType,
+      totalVolume: quantity,
+      collectedDate: toISO(formData.entryDate),
+      expirationDate: toISO(formData.expiryDate)
+    };
+    const token = localStorage.getItem("token");
+    try {
+      const res = await fetch("http://localhost:8080/api/blood/manual", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(body),
+      });
+      if (!res.ok) throw new Error("Lỗi khi thêm túi máu mới");
+      await fetchBloodUnits();
+      setFormData({ group: "", quantity: "", entryDate: "", expiryDate: "" });
+      setView("dashboard");
+      alert("Thêm đơn vị máu thành công!");
+    } catch (err) {
+      alert("Thêm đơn vị máu thất bại!");
+      console.error(err);
+    }
   };
 
   // Thay thế hàm deleteUnit
