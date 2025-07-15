@@ -2,6 +2,7 @@ package com.swp.blooddonation.api;
 
 import com.swp.blooddonation.dto.request.ScheduleRequestDTO;
 import com.swp.blooddonation.dto.response.ScheduleResponseDTO;
+import com.swp.blooddonation.dto.response.MedicalStaffRegisteredScheduleDTO;
 import com.swp.blooddonation.entity.AccountSchedule;
 import com.swp.blooddonation.entity.Schedule;
 import com.swp.blooddonation.entity.User;
@@ -120,15 +121,19 @@ public class ScheduleAPI {
     // API cho medical staff lấy tất cả ngày đã đăng ký (chưa qua)
     @PreAuthorize("hasRole('MEDICALSTAFF')")
     @GetMapping("/medicalstaff-registered")
-    public ResponseEntity<List<ScheduleResponseDTO>> getMedicalStaffRegisteredSchedules() {
+    public ResponseEntity<List<MedicalStaffRegisteredScheduleDTO>> getMedicalStaffRegisteredSchedules() {
         User currentUser = userService.getCurrentUser();
         LocalDate today = LocalDate.now();
         List<AccountSchedule> registered = accountScheduleRepository.findAll().stream()
             .filter(a -> a.getUser().getId().equals(currentUser.getId()) && !a.getSchedule().getScheduleDate().isBefore(today))
             .collect(Collectors.toList());
-        List<ScheduleResponseDTO> result = registered.stream()
-            .map(a -> scheduleService.getSchedulesByDate(a.getSchedule().getScheduleDate()))
-            .flatMap(List::stream)
+        List<MedicalStaffRegisteredScheduleDTO> result = registered.stream()
+            .map(a -> new MedicalStaffRegisteredScheduleDTO(
+                a.getId(),
+                a.getSchedule().getScheduleDate().toString(),
+                a.getSchedule().getStatus().toString(),
+                a.getSchedule().getUser() != null ? a.getSchedule().getUser().getId() : null
+            ))
             .collect(Collectors.toList());
         return ResponseEntity.ok(result);
     }
