@@ -18,7 +18,7 @@ const Header: React.FC = () => {
   const userInfoRef = useRef<HTMLDivElement>(null);
   const handleLogout = () => {
     logout();
-    navigate("/");
+    navigate("/login"); // chuyển về trang đăng nhập sau khi logout
   };
 
   const toggleDropdown = () => {
@@ -46,6 +46,7 @@ const Header: React.FC = () => {
         )}
       </nav>
 
+      {/* Sửa logic hiển thị: nếu chưa đăng nhập thì chỉ hiện nút đăng nhập, nếu đã đăng nhập thì hiện avatar + tên + menu */}
       {!user ? (
         <div className="auth-buttons">
           <button className="btn-login" onClick={() => navigate("/login")}>Đăng nhập</button>
@@ -54,7 +55,7 @@ const Header: React.FC = () => {
         <div className="user-avatar-status" ref={userInfoRef} onClick={toggleDropdown}>
           <img src={avatarImg} alt="Avatar" className="avatar" />
           <span className="user-fullname">
-            {user?.fullName ? user.fullName : "Tên người dùng"}
+            {user.fullName || "Tên người dùng"}
           </span>
           {dropdownOpen && (
             <div className="dropdown">
