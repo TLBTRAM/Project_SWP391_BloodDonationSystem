@@ -157,7 +157,7 @@
   font-size: 17px;
   font-weight: 600;
   color: #1e293b;
-  margin-bottom: 12px;
+margin-bottom: 12px;
   display: inline-block;
 }
 
@@ -317,7 +317,6 @@
   cursor: pointer;
   transition: background 0.2s, color 0.2s;
 }
-
 .delete-btn:hover {
   background: #b71c1c;
   color: #fff;

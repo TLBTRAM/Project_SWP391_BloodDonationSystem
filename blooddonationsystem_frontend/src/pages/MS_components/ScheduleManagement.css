@@ -168,7 +168,7 @@
 }
 
 .status-đãkhám {
-  background-color: #22c55e;
+background-color: #22c55e;
 }
 
 .status-đangkham {
@@ -496,7 +496,7 @@ body.modal-open {
   padding: 10px 18px;
   font-size: 15px;
   margin-right: 8px;
-  border: none;
+border: none;
   display: inline-block;
   min-width: 110px;
   text-align: center;
@@ -589,4 +589,3 @@ body.modal-open {
   min-width: 120px;
   max-width: 300px;
 }
-

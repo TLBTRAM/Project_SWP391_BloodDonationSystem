@@ -83,8 +83,7 @@ const ScheduleManagement = () => {
       setAppointments([]);
     }
   };
-
-  useEffect(() => {
+useEffect(() => {
     fetchRegisters();
   }, []);
 
@@ -162,7 +161,7 @@ const ScheduleManagement = () => {
             <option value="Tất cả">Tất cả trạng thái</option>
             <option value="Chờ khám">Chờ khám</option>
             <option value="Đã phê duyệt">Đã phê duyệt</option>
-            <option value="Từ chối">Từ chối</option>
+<option value="Từ chối">Từ chối</option>
           </select>
           <input
             type="text"
@@ -228,7 +227,7 @@ const ScheduleManagement = () => {
       </ul>
       {/* Popup xác nhận phê duyệt */}
       {approveConfirmIdx !== null && (
-        <div className="modal-overlay">
+<div className="modal-overlay">
           <div className="screening-detail">
             <button
               className="screening-close-btn"
@@ -291,7 +290,7 @@ const ScheduleManagement = () => {
                   border: 'none',
                   color: '#b71c1c', // chữ đỏ đậm
                   fontWeight: 600,
-                  fontSize: 15,
+fontSize: 15,
                   cursor: rejectReason.trim() ? 'pointer' : 'not-allowed',
                   opacity: rejectReason.trim() ? 1 : 0.6,
                   transition: 'background 0.2s',
@@ -367,7 +366,7 @@ const ScheduleManagement = () => {
                   setSelectedAppointmentIndex(null);
                 }}
               >
-                Không đủ điều kiện
+Không đủ điều kiện
               </button>
             </div>
           </div>

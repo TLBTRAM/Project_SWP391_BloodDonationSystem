@@ -83,7 +83,7 @@ const ScheduleSetup: React.FC = () => {
       fetchRegistered();
       setDeleteId(null);
       setToastMsg("Xóa lịch làm việc thành công!");
-    } catch (error: any) {
+} catch (error: any) {
       setDeleteId(null);
       setToastMsg("Xóa lịch thất bại!");
     }
