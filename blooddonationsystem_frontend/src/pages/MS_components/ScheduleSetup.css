@@ -276,3 +276,49 @@
   width: 300px;
   max-width: 100%;
 }
+
+.closed-day {
+  background-color: #f1f5f9 !important;
+  color: #b0b0b0 !important;
+  text-decoration: line-through;
+  pointer-events: none;
+  opacity: 0.6;
+  border-radius: 10px;
+}
+
+.registered-schedule-list {
+  margin-top: 16px;
+}
+
+.registered-schedule-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #f5f8fa;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+  padding: 18px 24px;
+  margin-bottom: 16px;
+  font-size: 16px;
+  transition: box-shadow 0.2s;
+}
+
+.registered-schedule-item:hover {
+  box-shadow: 0 4px 16px rgba(0,0,0,0.07);
+}
+
+.delete-btn {
+  background: #e53935;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 4px 16px;
+  font-size: 15px;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+}
+
+.delete-btn:hover {
+  background: #b71c1c;
+  color: #fff;
+}
