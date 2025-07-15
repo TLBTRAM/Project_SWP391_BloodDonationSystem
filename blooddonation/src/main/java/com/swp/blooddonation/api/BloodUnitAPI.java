@@ -64,4 +64,12 @@ public class BloodUnitAPI {
         BloodUnit updated = bloodUnitService.updateBloodUnitStatus(id, request.getStatus());
         return ResponseEntity.ok(updated);
     }
+
+    // Xóa túi máu
+    @PreAuthorize("hasRole('MANAGER')")
+    @DeleteMapping("/units/{id}")
+    public ResponseEntity<Void> deleteBloodUnit(@PathVariable Long id) {
+        bloodUnitService.deleteBloodUnit(id);
+        return ResponseEntity.noContent().build();
+    }
 }

@@ -214,4 +214,12 @@ public class BloodUnitService {
         unit.setStatus(status);
         return bloodUnitRepository.save(unit);
     }
+
+    // Thêm phương thức xóa túi máu
+    @Transactional
+    public void deleteBloodUnit(Long id) {
+        BloodUnit unit = bloodUnitRepository.findById(id)
+                .orElseThrow(() -> new BadRequestException("Blood unit not found"));
+        bloodUnitRepository.delete(unit);
+    }
 }
