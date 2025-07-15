@@ -11,10 +11,12 @@ interface Schedule {
   status: string;
   userId: number;
 }
-
 interface Slot {
   id: number;
   label: string;
+  startTime: string;
+  endTime: string;
+  delete: boolean;
 }
 
 const Booking = () => {
@@ -86,7 +88,7 @@ const Booking = () => {
     fetchSchedules();
   }, []);
 
-  // Khi user chọn lịch khám (schedule), lấy list slot chung (do backend chưa có lọc theo scheduleId)
+
   const handleScheduleChange = async (e: React.ChangeEvent<HTMLSelectElement>) => {
     const id = parseInt(e.target.value);
     setSelectedScheduleId(id);
@@ -95,13 +97,14 @@ const Booking = () => {
     try {
       const token = localStorage.getItem("token");
 
-      // Gọi API lấy slot chung
-      const res = await fetch("http://localhost:8080/api/slot/getSlot", {
+      const res = await fetch(`http://localhost:8080/api/slot/getSlot`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       });
-
+      const errorText = await res.text();
+      console.error("❌ Slot API lỗi:", res.status, res.statusText);
+      console.error("📥 Nội dung lỗi:", errorText);
       if (!res.ok) throw new Error("Lỗi lấy slot");
 
       const data = await res.json();
