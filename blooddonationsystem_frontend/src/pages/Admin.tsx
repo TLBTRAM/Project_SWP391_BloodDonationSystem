@@ -218,6 +218,7 @@ const Admin: React.FC = () => {
     "Người dùng": "👤",
     "Nhân viên y tế": "🩺",
     "Quản lý kho máu": "🏥",
+    "Admin": "👨‍💻"
   };
 
   return (
