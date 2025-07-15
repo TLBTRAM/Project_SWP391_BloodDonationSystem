@@ -4,6 +4,7 @@ import { Link, useNavigate } from "react-router-dom";
 import logoBlood from "./images/Logo/logo_blood.png";
 import DeleteImg from "./images/Action/bin.png";
 import EditImg from "./images/Action/pen.png";
+import { useAuth } from "../layouts/header-footer/AuthContext";
 
 interface Account {
   id: number;
@@ -21,7 +22,7 @@ interface UserData {
 }
 
 const Admin: React.FC = () => {
-  const [adminInfo, setAdminInfo] = useState<UserData | null>(null);
+  const { user, logout } = useAuth();
   const [accounts, setAccounts] = useState<Account[]>([]);
   const [search, setSearch] = useState("");
   const [filterRole, setFilterRole] = useState<string>("Tất cả");
@@ -110,7 +111,6 @@ const Admin: React.FC = () => {
           if (!res.ok) throw new Error("Không thể lấy thông tin admin");
           return res.json();
         })
-        .then((data) => setAdminInfo(data))
         .catch(() => navigate("/login"));
     } else {
       navigate("/login");
@@ -118,8 +118,7 @@ const Admin: React.FC = () => {
   }, []);
 
   const handleLogout = () => {
-    localStorage.removeItem("token");
-    setAdminInfo(null);
+    logout();
     navigate("/login");
   };
 
@@ -232,7 +231,7 @@ const Admin: React.FC = () => {
         <div className="admin-greeting">
           Xin chào,{" "}
           <span className="admin-name">
-            <strong>{adminInfo?.fullName || "Admin"}</strong>
+            <strong>{user?.fullName || "Admin"}</strong>
           </span>
         </div>
         <button className="admin-logout-btn" onClick={handleLogout}>
