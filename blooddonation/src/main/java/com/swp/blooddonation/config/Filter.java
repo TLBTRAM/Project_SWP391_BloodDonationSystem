@@ -53,10 +53,6 @@ public class Filter extends OncePerRequestFilter {
             if (uri.startsWith("/api/blogs") && !uri.contains("/my-blogs")) {
                 return true;
             }
-            // Cho phép public slot info
-            if (uri.equals("/api/slot/getSlot")) {
-                return true;
-            }
             // Cho phép public blood compatibility endpoints
             if (uri.startsWith("/api/compatibility")) {
                 return true;

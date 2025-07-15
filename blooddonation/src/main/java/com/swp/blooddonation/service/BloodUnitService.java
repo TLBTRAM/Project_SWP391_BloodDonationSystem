@@ -199,7 +199,19 @@ public class BloodUnitService {
 
     // Lấy danh sách túi máu (không phân trang)
     public List<BloodUnit> getAllBloodUnits() {
-        return bloodUnitRepository.findAll();
+        List<BloodUnit> units = bloodUnitRepository.findAll();
+        LocalDate today = LocalDate.now();
+        for (BloodUnit unit : units) {
+            if (unit.getExpirationDate() != null) {
+                long days = java.time.temporal.ChronoUnit.DAYS.between(today, unit.getExpirationDate());
+                if (days < 0) {
+                    unit.setStatus(BloodUnitStatus.EXPIRED);
+                } else if (days <= 7 && unit.getStatus() != BloodUnitStatus.EXPIRED) {
+                    unit.setStatus(BloodUnitStatus.NEARLY_EXPIRED);
+                }
+            }
+        }
+        return units;
     }
 
     // Lấy chi tiết túi máu
