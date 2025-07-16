@@ -107,7 +107,8 @@ useEffect(() => {
       await axios.put(`http://localhost:8080/api/registers/${regId}/approve`, {}, {
         headers: { Authorization: `Bearer ${token}` }
       });
-      fetchRegisters(); // Cập nhật lại danh sách, không reload trang
+      // Xóa khỏi danh sách appointments thay vì fetch lại toàn bộ
+      setAppointments(prev => prev.filter((_, idx) => idx !== registerIdx));
       setApproveConfirmIdx(null); // Đóng popup nếu có
     } catch (err) {
       alert("Phê duyệt thất bại!");
@@ -122,7 +123,8 @@ useEffect(() => {
       await axios.post(`http://localhost:8080/api/registers/${regId}/reject`, { reason: rejectReason }, {
         headers: { Authorization: `Bearer ${token}` }
       });
-      fetchRegisters();
+      // Xóa khỏi danh sách appointments thay vì fetch lại toàn bộ
+      setAppointments(prev => prev.filter((_, idx) => idx !== registerIdx));
       setRejectConfirmIdx(null); // Đóng popup nếu có
       setRejectReason("");
     } catch (err) {
