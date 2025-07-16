@@ -1,0 +1,275 @@
+:root {
+    /* Colors */
+    --primary-red: #d90429;
+    --dark-red: #b3001f;
+    --light-red: #ffeaea;
+    --text-dark: #222;
+    --text-medium: #444;
+    --text-light: #666;
+    --bg-light: #f6f8fa;
+    --bg-white: #fff;
+    --bg-input: #f9fafb;
+    --border-light: #e0e0e0;
+    --shadow-base: rgba(0,0,0,0.07);
+    --shadow-card: rgba(0,0,0,0.06);
+    --shadow-hover: rgba(217,4,41,0.13);
+
+    /* Status Colors */
+    --status-pending-bg: #fffbe6;
+    --status-pending-text: #b45309;
+    --status-pending-border: #fde68a;
+    --status-donated-bg: #e6fbe6;
+    --status-donated-text: #16a34a;
+    --status-donated-border: #bbf7d0;
+    --status-absent-bg: #ffeaea;
+    --status-absent-text: #dc2626;
+    --status-absent-border: #fecaca;
+
+    /* Spacing */
+    --spacing-xs: 4px;
+    --spacing-sm: 8px;
+    --spacing-md: 12px;
+    --spacing-lg: 16px;
+    --spacing-xl: 20px;
+    --spacing-xxl: 24px;
+    --spacing-xxxl: 32px;
+
+    /* Border Radius */
+    --radius-sm: 7px;
+    --radius-md: 8px;
+    --radius-lg: 14px;
+    --radius-xl: 18px;
+
+    /* Transitions */
+    --transition-speed: 0.2s;
+}
+
+.donation-schedule-container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: var(--spacing-xxxl) var(--spacing-md) var(--spacing-xxl);
+    background: var(--bg-light);
+    border-radius: var(--radius-xl);
+    box-shadow: 0 4px 24px 0 var(--shadow-base);
+}
+
+.donation-schedule-title {
+    text-align: center;
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: var(--spacing-xxxl);
+    color: var(--primary-red);
+    letter-spacing: 1px;
+}
+
+.donation-schedule-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.donation-schedule-card {
+    background: var(--bg-white);
+    border-radius: var(--radius-lg);
+    box-shadow: 0 2px 12px 0 var(--shadow-card);
+    margin-bottom: var(--spacing-xl);
+    padding: 22px var(--spacing-xxl) 18px; /* Specific padding to maintain original look */
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    justify-content: space-between;
+    transition: box-shadow var(--transition-speed);
+}
+
+.donation-schedule-card:hover {
+    box-shadow: 0 6px 24px 0 var(--shadow-hover);
+}
+
+.donation-schedule-info {
+    flex: 1 1 320px;
+    min-width: 220px;
+}
+
+.donor-name {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--text-dark);
+    margin-bottom: var(--spacing-sm);
+    display: block;
+}
+
+.donation-schedule-fields {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--spacing-lg) 18px; /* Specific gap to maintain original look */
+    align-items: center;
+    margin-top: var(--spacing-sm);
+}
+
+.donation-field-group {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  min-width: 110px;
+  margin-right: 12px;
+  margin-bottom: 0;
+}
+.donation-label {
+  font-size: 0.98rem;
+  color: #444;
+  font-weight: 500;
+  margin-bottom: 4px;
+  margin-left: 2px;
+}
+
+.donation-select,
+.donation-input {
+    height: 36px;
+    min-width: 70px;
+    border-radius: var(--radius-sm);
+    border: 1.5px solid var(--border-light);
+    padding: 0 10px; /* Specific padding */
+    font-size: 1rem;
+    background: var(--bg-input);
+    margin-left: var(--spacing-xs);
+    transition: border var(--transition-speed);
+    -webkit-appearance: none; /* Remove default styling for selects */
+    -moz-appearance: none;
+    appearance: none;
+}
+
+.donation-select:focus,
+.donation-input:focus {
+    border-color: var(--primary-red);
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(217, 4, 41, 0.2); /* Subtle focus ring */
+    outline-offset: 2px; /* Ensure outline is visible outside the border */
+}
+
+.donation-input {
+    width: 90px;
+}
+
+.donation-date {
+    font-size: 0.98rem;
+    color: var(--text-light);
+    margin-left: var(--spacing-sm);
+}
+
+.donation-schedule-actions {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 10px; /* Specific gap */
+    min-width: 120px;
+}
+
+.donation-status {
+    font-size: 1rem;
+    font-weight: 600;
+    padding: var(--spacing-xs) 14px; /* Specific padding */
+    border-radius: var(--radius-md);
+    margin-bottom: var(--spacing-xs);
+    display: inline-block;
+    border: 1.5px solid; /* Use generic border for status */
+}
+
+.donation-status.pending {
+    background: var(--status-pending-bg);
+    color: var(--status-pending-text);
+    border-color: var(--status-pending-border);
+}
+
+.donation-status.donated {
+    background: var(--status-donated-bg);
+    color: var(--status-donated-text);
+    border-color: var(--status-donated-border);
+}
+
+.donation-status.absent {
+    background: var(--status-absent-bg);
+    color: var(--status-absent-text);
+    border-color: var(--status-absent-border);
+}
+
+.donation-btn {
+    border-radius: var(--radius-md);
+    padding: var(--spacing-sm) 18px; /* Specific padding */
+    font-size: 1rem;
+    font-weight: 600;
+    border: none;
+    cursor: pointer;
+    margin-right: 6px; /* Specific margin */
+    margin-bottom: 2px; /* Specific margin */
+    transition: background var(--transition-speed), color var(--transition-speed), border-color var(--transition-speed);
+}
+
+.donation-btn.confirm {
+    background: var(--primary-red);
+    color: var(--bg-white);
+}
+
+.donation-btn.confirm:hover {
+    background: var(--dark-red);
+}
+
+.donation-btn.absent {
+    background: #f3f4f6; /* Keeping original light grey as it contrasts well */
+    color: var(--primary-red);
+    border: 1.5px solid var(--status-absent-border); /* Using absent border color */
+}
+
+.donation-btn.absent:hover {
+    background: var(--light-red);
+}
+
+.donation-schedule-loading,
+.donation-schedule-error,
+.donation-schedule-empty {
+    text-align: center;
+    font-size: 1.1rem;
+    margin: var(--spacing-xxxl) 0;
+}
+
+.donation-schedule-loading,
+.donation-schedule-empty {
+    color: var(--text-light);
+}
+
+.donation-schedule-error {
+    color: var(--primary-red);
+}
+
+.donation-filter-row {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 24px;
+  gap: 12px;
+}
+
+@media (max-width: 600px) {
+    .donation-schedule-card {
+        flex-direction: column;
+        align-items: stretch;
+        padding: var(--spacing-lg) var(--spacing-sm);
+    }
+    .donation-schedule-fields {
+        flex-direction: column;
+        gap: 10px 0; /* Specific gap */
+    }
+    .donation-field-group {
+      min-width: unset;
+      width: 100%;
+      margin-right: 0;
+      margin-bottom: 8px;
+    }
+    .donation-schedule-actions {
+        align-items: flex-start;
+        min-width: unset;
+    }
+    .donation-date {
+        margin-left: 0; /* Remove left margin on smaller screens */
+        margin-top: var(--spacing-sm); /* Add top margin for separation */
+    }
+}
