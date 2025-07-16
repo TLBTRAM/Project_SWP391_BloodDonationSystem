@@ -5,6 +5,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="f6e151ab-d8d2-47af-8582-5b41bd590263" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/compiler.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/compiler.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -28,12 +29,12 @@
     &quot;assignee&quot;: &quot;TLBTRAM&quot;
   }
 }</component>
-  <component name="GithubPullRequestsUISettings">{
-  &quot;selectedUrlAndAccountId&quot;: {
-    &quot;url&quot;: &quot;https://github.com/TLBTRAM/Project_SWP391_BloodDonationSystem.git&quot;,
-    &quot;accountId&quot;: &quot;f57d2535-21c3-474e-91d8-0331298a2764&quot;
+  <component name="GithubPullRequestsUISettings"><![CDATA[{
+  "selectedUrlAndAccountId": {
+    "url": "https://github.com/TLBTRAM/Project_SWP391_BloodDonationSystem.git",
+    "accountId": "05bac4c9-3172-4565-bcff-f249e080da8f"
   }
-}</component>
+}]]></component>
   <component name="MavenImportPreferences">
     <option name="generalSettings">
       <MavenGeneralSettings>
@@ -75,7 +76,8 @@
   </component>
   <component name="RunManager" selected="Application.BlooddonationApplication">
     <configuration name="BlooddonationApplication" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
-      <option name="ALTERNATIVE_JRE_PATH" value="1.8" />
+      <option name="ALTERNATIVE_JRE_PATH" value="ms-21" />
+      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="true" />
       <option name="MAIN_CLASS_NAME" value="com.swp.blooddonation.BlooddonationApplication" />
       <module name="blooddonation" />
       <extension name="coverage">
@@ -109,6 +111,8 @@
     </list>
     <recent_temporary>
       <list>
+        <item itemvalue="Application.BlooddonationApplication" />
+        <item itemvalue="JUnit.BlooddonationApplicationTests" />
         <item itemvalue="Application.BlooddonationApplication" />
         <item itemvalue="JUnit.BlooddonationApplicationTests" />
       </list>
