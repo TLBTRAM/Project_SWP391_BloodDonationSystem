@@ -181,7 +181,7 @@ const MedicalStaff = () => {
                       showMonthDropdown
                       showYearDropdown
                       dropdownMode="select"
-                      popperPlacement="right"
+                      popperPlacement="bottom"
                       onKeyDown={(e) => {
                         const allowedKeys = [
                           "Backspace",

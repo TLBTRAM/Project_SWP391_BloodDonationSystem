@@ -28,20 +28,20 @@ const CustomDateInput = forwardRef(({ value, onClick }: any, ref: any) => (
     onClick={onClick}
     ref={ref}
     style={{
-      padding: '10px 14px',
+      padding: "10px 14px",
       borderRadius: 8,
-      border: '1px solid #d1d5db',
-      background: '#fff',
+      border: "1px solid #d1d5db",
+      background: "#fff",
       fontSize: 14,
       minWidth: 180,
       maxWidth: 180,
       width: 180,
       height: 42,
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'flex-start',
-      boxSizing: 'border-box',
-      transition: 'none',
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "flex-start",
+      boxSizing: "border-box",
+      transition: "none",
     }}
   >
     {value || "Lọc theo ngày"}
@@ -53,9 +53,13 @@ const ScheduleManagement = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [filterDate, setFilterDate] = useState<Date | null>(null);
   const [filterStatus, setFilterStatus] = useState<string>("Tất cả");
-  const [selectedAppointmentIndex, setSelectedAppointmentIndex] = useState<number | null>(null);
+  const [selectedAppointmentIndex, setSelectedAppointmentIndex] = useState<
+    number | null
+  >(null);
   // Thêm state cho popup xác nhận phê duyệt
-  const [approveConfirmIdx, setApproveConfirmIdx] = useState<number | null>(null);
+  const [approveConfirmIdx, setApproveConfirmIdx] = useState<number | null>(
+    null
+  );
   // Thêm state cho popup xác nhận từ chối và lý do
   const [rejectConfirmIdx, setRejectConfirmIdx] = useState<number | null>(null);
   const [rejectReason, setRejectReason] = useState<string>("");
@@ -65,25 +69,32 @@ const ScheduleManagement = () => {
     const token = localStorage.getItem("token");
     try {
       const res = await axios.get("http://localhost:8080/api/registers/all", {
-        headers: { Authorization: `Bearer ${token}` }
+        headers: { Authorization: `Bearer ${token}` },
       });
       // Mapping dữ liệu API sang Appointment[]
       const data = res.data;
       const mapped: Appointment[] = data.map((reg: any) => ({
         id: reg.id,
         date: reg.registerDate,
-        time: reg.slot?.startTime ? reg.slot.startTime.substring(0,5) : "",
+        time: reg.slot?.startTime ? reg.slot.startTime.substring(0, 5) : "",
         donor: reg.fullName || "(Không rõ tên)",
-        status: reg.status === "PENDING" ? "Chờ khám" : reg.status === "APPROVED" ? "Đã phê duyệt" : reg.status === "REJECTED" ? "Từ chối" : "Khác",
+        status:
+          reg.status === "PENDING"
+            ? "Chờ khám"
+            : reg.status === "APPROVED"
+            ? "Đã phê duyệt"
+            : reg.status === "REJECTED"
+            ? "Từ chối"
+            : "Khác",
         note: reg.note || "",
-        avatar: avatarImg
+        avatar: avatarImg,
       }));
       setAppointments(mapped);
     } catch (err) {
       setAppointments([]);
     }
   };
-useEffect(() => {
+  useEffect(() => {
     fetchRegisters();
   }, []);
 
@@ -104,9 +115,13 @@ useEffect(() => {
     const token = localStorage.getItem("token");
     const regId = appointments[registerIdx].id;
     try {
-      await axios.put(`http://localhost:8080/api/registers/${regId}/approve`, {}, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
+      await axios.put(
+        `http://localhost:8080/api/registers/${regId}/approve`,
+        {},
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
       fetchRegisters(); // Cập nhật lại danh sách, không reload trang
       setApproveConfirmIdx(null); // Đóng popup nếu có
     } catch (err) {
@@ -119,9 +134,13 @@ useEffect(() => {
     const token = localStorage.getItem("token");
     const regId = appointments[registerIdx].id;
     try {
-      await axios.post(`http://localhost:8080/api/registers/${regId}/reject`, { reason: rejectReason }, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
+      await axios.post(
+        `http://localhost:8080/api/registers/${regId}/reject`,
+        { reason: rejectReason },
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
       fetchRegisters();
       setRejectConfirmIdx(null); // Đóng popup nếu có
       setRejectReason("");
@@ -132,11 +151,15 @@ useEffect(() => {
 
   // Sửa lại filter: so sánh ngày bất kể định dạng, thêm filter theo trạng thái
   const filteredAppointments = appointments.filter((appt) => {
-    const matchName = appt.donor.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchName = appt.donor
+      .toLowerCase()
+      .includes(searchTerm.toLowerCase());
     let matchDate = true;
     if (filterDate) {
       // Chuyển cả hai về yyyy-MM-dd để so sánh
-      const apptDate = appt.date ? format(new Date(appt.date), "yyyy-MM-dd") : "";
+      const apptDate = appt.date
+        ? format(new Date(appt.date), "yyyy-MM-dd")
+        : "";
       const filterDateStr = format(filterDate, "yyyy-MM-dd");
       matchDate = apptDate === filterDateStr;
     }
@@ -155,20 +178,29 @@ useEffect(() => {
         <div className="filter-row">
           <select
             value={filterStatus}
-            onChange={e => setFilterStatus(e.target.value)}
-            style={{padding: '10px 14px', borderRadius: 8, border: '1px solid #d1d5db', background: 'white', fontSize: 14, minWidth: 120, maxWidth: 160}}
+            onChange={(e) => setFilterStatus(e.target.value)}
+            style={{
+              padding: "10px 14px",
+              borderRadius: 8,
+              border: "1px solid #d1d5db",
+              background: "white",
+              fontSize: 14,
+              minWidth: 120,
+              maxWidth: 160,
+              marginBottom: 0,
+            }}
           >
             <option value="Tất cả">Tất cả trạng thái</option>
             <option value="Chờ khám">Chờ khám</option>
             <option value="Đã phê duyệt">Đã phê duyệt</option>
-<option value="Từ chối">Từ chối</option>
+            <option value="Từ chối">Từ chối</option>
           </select>
           <input
             type="text"
             placeholder="Tìm kiếm theo tên"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            style={{minWidth: 220, maxWidth: 300}}
+            style={{ minWidth: 220, maxWidth: 300, marginBottom: 0 }}
           />
         </div>
         <ReactDatePicker
@@ -176,7 +208,7 @@ useEffect(() => {
           onChange={(date) => setFilterDate(date)}
           isClearable
           dateFormat="EEEE, dd/MM/yyyy"
-          locale="vi"
+          locale={vi}
           placeholderText="Lọc theo ngày"
           calendarClassName="custom-datepicker"
           customInput={<CustomDateInput />}
@@ -185,6 +217,15 @@ useEffect(() => {
           showYearDropdown
           dropdownMode="select"
           popperPlacement="bottom"
+          popperContainer={({ children }) => (
+            <div id="fixed-datepicker-container">{children}</div>
+          )}
+        />
+
+        {/* Cố định vị trí popup của DatePicker này */}
+        <div
+          id="fixed-datepicker-container"
+          className="fixed-datepicker-wrapper"
         />
       </div>
 
@@ -194,28 +235,76 @@ useEffect(() => {
         ) : (
           filteredAppointments.map((appt, idx) => (
             <li key={idx} className="card-container">
-              <div className="user-info" style={{background: appt.status === 'Chờ khám' ? '#fffbe6' : appt.status === 'Đã phê duyệt' ? '#e6fbe6' : appt.status === 'Từ chối' ? '#ffeaea' : '#fff', borderRadius: '12px', padding: '16px 28px 16px 20px', minWidth: '340px', display: 'flex', alignItems: 'center'}}>
-                <div className="user-avatar" style={{width: '56px', height: '56px', marginRight: '18px'}}>
-                  <img src={appt.avatar} alt="avatar" style={{width: '100%', height: '100%', borderRadius: '50%'}} />
+              <div
+                className="user-info"
+                style={{
+                  background:
+                    appt.status === "Chờ khám"
+                      ? "#fffbe6"
+                      : appt.status === "Đã phê duyệt"
+                      ? "#e6fbe6"
+                      : appt.status === "Từ chối"
+                      ? "#ffeaea"
+                      : "#fff",
+                  borderRadius: "12px",
+                  padding: "16px 28px 16px 20px",
+                  minWidth: "340px",
+                  display: "flex",
+                  alignItems: "center",
+                }}
+              >
+                <div
+                  className="user-avatar"
+                  style={{ width: "56px", height: "56px", marginRight: "18px" }}
+                >
+                  <img
+                    src={appt.avatar}
+                    alt="avatar"
+                    style={{
+                      width: "100%",
+                      height: "100%",
+                      borderRadius: "50%",
+                    }}
+                  />
                 </div>
                 <div className="user-details">
                   <div className="name">{appt.donor}</div>
-                  <div className="status-label-inline" style={{
-                    color: appt.status === 'Chờ khám' ? '#b45309' : appt.status === 'Đã phê duyệt' ? '#16a34a' : appt.status === 'Từ chối' ? '#dc2626' : '#333',
-                    fontWeight: 600,
-                    margin: '2px 0 4px 0',
-                    fontSize: '15px',
-                  }}>{appt.status}</div>
-                  <div className="reason">Ghi chú: {appt.note || "(Không có)"}</div>
+                  <div
+                    className="status-label-inline"
+                    style={{
+                      color:
+                        appt.status === "Chờ khám"
+                          ? "#b45309"
+                          : appt.status === "Đã phê duyệt"
+                          ? "#16a34a"
+                          : appt.status === "Từ chối"
+                          ? "#dc2626"
+                          : "#333",
+                      fontWeight: 600,
+                      margin: "2px 0 4px 0",
+                      fontSize: "15px",
+                    }}
+                  >
+                    {appt.status}
+                  </div>
+                  <div className="reason">
+                    Ghi chú: {appt.note || "(Không có)"}
+                  </div>
                 </div>
               </div>
               <div className="button-group">
                 {appt.status === "Chờ khám" && (
                   <>
-                    <button className="btn-approve" onClick={() => setApproveConfirmIdx(idx)}>
+                    <button
+                      className="btn-approve"
+                      onClick={() => setApproveConfirmIdx(idx)}
+                    >
                       Phê duyệt
                     </button>
-                    <button className="btn-reject" onClick={() => setRejectConfirmIdx(idx)}>
+                    <button
+                      className="btn-reject"
+                      onClick={() => setRejectConfirmIdx(idx)}
+                    >
                       Từ chối
                     </button>
                   </>
@@ -227,7 +316,7 @@ useEffect(() => {
       </ul>
       {/* Popup xác nhận phê duyệt */}
       {approveConfirmIdx !== null && (
-<div className="modal-overlay">
+        <div className="modal-overlay">
           <div className="screening-detail">
             <button
               className="screening-close-btn"
@@ -236,25 +325,47 @@ useEffect(() => {
               ×
             </button>
             <h3>Xác nhận phê duyệt</h3>
-            <p>Bạn có chắc chắn muốn <b>phê duyệt</b> đơn đăng ký của <b>{appointments[approveConfirmIdx].donor}</b> vào lúc <b>{appointments[approveConfirmIdx].date} - {appointments[approveConfirmIdx].time}</b>?</p>
-            <div style={{display: 'flex', gap: 16, marginTop: 24, justifyContent: 'center'}}>
-              <button className="btn-approve" onClick={() => handleApprove(approveConfirmIdx!)}>
+            <p>
+              Bạn có chắc chắn muốn <b>phê duyệt</b> đơn đăng ký của{" "}
+              <b>{appointments[approveConfirmIdx].donor}</b> vào lúc{" "}
+              <b>
+                {appointments[approveConfirmIdx].date} -{" "}
+                {appointments[approveConfirmIdx].time}
+              </b>
+              ?
+            </p>
+            <div
+              style={{
+                display: "flex",
+                gap: 16,
+                marginTop: 24,
+                justifyContent: "center",
+              }}
+            >
+              <button
+                className="btn-approve"
+                onClick={() => handleApprove(approveConfirmIdx!)}
+              >
                 Xác nhận
               </button>
               <button
                 style={{
                   borderRadius: 8,
-                  padding: '10px 18px',
-                  background: '#fee2e2', // đỏ nhạt
-                  border: '1.5px solid #fecaca', // viền đỏ nhạt
-                  color: '#dc2626', // chữ đỏ
+                  padding: "10px 18px",
+                  background: "#fee2e2", // đỏ nhạt
+                  border: "1.5px solid #fecaca", // viền đỏ nhạt
+                  color: "#dc2626", // chữ đỏ
                   fontWeight: 600,
                   fontSize: 15,
-                  cursor: 'pointer',
-                  transition: 'background 0.2s',
+                  cursor: "pointer",
+                  transition: "background 0.2s",
                 }}
-                onMouseOver={e => (e.currentTarget.style.background = '#fecaca')}
-                onMouseOut={e => (e.currentTarget.style.background = '#fee2e2')}
+                onMouseOver={(e) =>
+                  (e.currentTarget.style.background = "#fecaca")
+                }
+                onMouseOut={(e) =>
+                  (e.currentTarget.style.background = "#fee2e2")
+                }
                 onClick={() => setApproveConfirmIdx(null)}
               >
                 Hủy
@@ -269,31 +380,57 @@ useEffect(() => {
           <div className="screening-detail">
             <button
               className="screening-close-btn"
-              onClick={() => { setRejectConfirmIdx(null); setRejectReason(""); }}
+              onClick={() => {
+                setRejectConfirmIdx(null);
+                setRejectReason("");
+              }}
             >
               ×
             </button>
             <h3>Xác nhận từ chối</h3>
-            <p>Bạn có chắc chắn muốn <b>từ chối</b> đơn đăng ký của <b>{appointments[rejectConfirmIdx].donor}</b> vào lúc <b>{appointments[rejectConfirmIdx].date} - {appointments[rejectConfirmIdx].time}</b>?</p>
+            <p>
+              Bạn có chắc chắn muốn <b>từ chối</b> đơn đăng ký của{" "}
+              <b>{appointments[rejectConfirmIdx].donor}</b> vào lúc{" "}
+              <b>
+                {appointments[rejectConfirmIdx].date} -{" "}
+                {appointments[rejectConfirmIdx].time}
+              </b>
+              ?
+            </p>
             <textarea
               placeholder="Nhập lý do từ chối..."
               value={rejectReason}
-              onChange={e => setRejectReason(e.target.value)}
-              style={{width: '100%', minHeight: 60, marginTop: 16, borderRadius: 8, border: '1.5px solid #d1d5db', padding: 10, fontSize: 15}}
+              onChange={(e) => setRejectReason(e.target.value)}
+              style={{
+                width: "100%",
+                minHeight: 60,
+                marginTop: 16,
+                borderRadius: 8,
+                border: "1.5px solid #d1d5db",
+                padding: 10,
+                fontSize: 15,
+              }}
             />
-            <div style={{display: 'flex', gap: 16, marginTop: 24, justifyContent: 'center'}}>
+            <div
+              style={{
+                display: "flex",
+                gap: 16,
+                marginTop: 24,
+                justifyContent: "center",
+              }}
+            >
               <button
                 style={{
                   borderRadius: 8,
-                  padding: '10px 18px',
-                  background: '#ffcccc', // nền đỏ nhạt
-                  border: 'none',
-                  color: '#b71c1c', // chữ đỏ đậm
+                  padding: "10px 18px",
+                  background: "#ffcccc", // nền đỏ nhạt
+                  border: "none",
+                  color: "#b71c1c", // chữ đỏ đậm
                   fontWeight: 600,
-fontSize: 15,
-                  cursor: rejectReason.trim() ? 'pointer' : 'not-allowed',
+                  fontSize: 15,
+                  cursor: rejectReason.trim() ? "pointer" : "not-allowed",
                   opacity: rejectReason.trim() ? 1 : 0.6,
-                  transition: 'background 0.2s',
+                  transition: "background 0.2s",
                 }}
                 disabled={!rejectReason.trim()}
                 onClick={() => handleReject(rejectConfirmIdx!)}
@@ -303,16 +440,19 @@ fontSize: 15,
               <button
                 style={{
                   borderRadius: 8,
-                  padding: '10px 18px',
-                  background: '#f5f5f5', // nền xám nhạt
-                  border: 'none',
-                  color: '#616161', // chữ xám đậm
+                  padding: "10px 18px",
+                  background: "#f5f5f5", // nền xám nhạt
+                  border: "none",
+                  color: "#616161", // chữ xám đậm
                   fontWeight: 600,
                   fontSize: 15,
-                  cursor: 'pointer',
-                  transition: 'background 0.2s',
+                  cursor: "pointer",
+                  transition: "background 0.2s",
                 }}
-                onClick={() => { setRejectConfirmIdx(null); setRejectReason(""); }}
+                onClick={() => {
+                  setRejectConfirmIdx(null);
+                  setRejectReason("");
+                }}
               >
                 Hủy
               </button>
@@ -332,8 +472,15 @@ fontSize: 15,
             </button>
 
             <h3>Khám sàng lọc</h3>
-            <p><strong>Người hiến:</strong> {appointments[selectedAppointmentIndex].donor}</p>
-            <p><strong>Thời gian:</strong> {appointments[selectedAppointmentIndex].date} - {appointments[selectedAppointmentIndex].time}</p>
+            <p>
+              <strong>Người hiến:</strong>{" "}
+              {appointments[selectedAppointmentIndex].donor}
+            </p>
+            <p>
+              <strong>Thời gian:</strong>{" "}
+              {appointments[selectedAppointmentIndex].date} -{" "}
+              {appointments[selectedAppointmentIndex].time}
+            </p>
 
             <textarea
               placeholder="Nhập triệu chứng..."
@@ -345,9 +492,21 @@ fontSize: 15,
               }}
             />
 
-            <input type="text" placeholder="Mạch (lần/phút)" className="screening-input" />
-            <input type="text" placeholder="Huyết áp (mmHg)" className="screening-input" />
-            <input type="text" placeholder="Cân nặng (kg)" className="screening-input" />
+            <input
+              type="text"
+              placeholder="Mạch (lần/phút)"
+              className="screening-input"
+            />
+            <input
+              type="text"
+              placeholder="Huyết áp (mmHg)"
+              className="screening-input"
+            />
+            <input
+              type="text"
+              placeholder="Cân nặng (kg)"
+              className="screening-input"
+            />
 
             <div className="screening-actions">
               <button
@@ -366,7 +525,7 @@ fontSize: 15,
                   setSelectedAppointmentIndex(null);
                 }}
               >
-Không đủ điều kiện
+                Không đủ điều kiện
               </button>
             </div>
           </div>

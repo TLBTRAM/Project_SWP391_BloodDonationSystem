@@ -28,7 +28,7 @@
   align-items: center;
   justify-content: space-between;
   gap: 10px;
-  margin-bottom: 20px;
+  margin-bottom: 50px;
   overflow-x: auto;
   width: 100%;
   max-width: 900px;
@@ -583,6 +583,7 @@ border: none;
   align-items: center;
   gap: 10px;
   min-width: 350px;
+  margin-right: 290px;
 }
 
 .filter-row > * {
