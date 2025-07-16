@@ -1,3 +1,10 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Poppins', sans-serif;
+}
+
 /* Wrapper chính */
 .schedule-setup-wrapper {
   max-width: 900px;
@@ -31,6 +38,7 @@
   font-weight: 600;
   color: #1e293b;
   margin-bottom: 6px;
+  margin-right: 400px;
 }
 
 
@@ -307,6 +315,17 @@ margin-bottom: 12px;
   box-shadow: 0 4px 16px rgba(0,0,0,0.07);
 }
 
+.fixed-datepicker-wrapper {
+  position: absolute;
+  top: 180px; /* chỉnh tùy theo vị trí input */
+  right: 80px; /* chỉnh sang bên phải */
+  z-index: 9999;
+}
+
+.react-datepicker-popper {
+  z-index: 9999 !important;
+}
+
 .delete-btn {
   background: #e53935;
   color: #fff;
@@ -321,3 +340,4 @@ margin-bottom: 12px;
   background: #b71c1c;
   color: #fff;
 }
+

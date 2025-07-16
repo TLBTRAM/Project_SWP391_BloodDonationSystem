@@ -212,7 +212,7 @@ body {
   color: var(--primary);
   font-weight: 600;
   margin: 0;
-  padding-right: 175px;
+  padding-right: 190px;
 }
 
 .appointment-header input[type="date"] {
