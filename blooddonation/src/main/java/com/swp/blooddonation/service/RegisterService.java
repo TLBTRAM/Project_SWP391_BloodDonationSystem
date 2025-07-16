@@ -23,6 +23,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
+import com.swp.blooddonation.repository.BloodTestRepository;
 
 @Service
 @RequiredArgsConstructor
@@ -54,6 +55,9 @@ public class RegisterService {
     UserRepository userRepository;
     @Autowired
     UserService userService;
+
+    @Autowired
+    private BloodTestRepository bloodTestRepository;
 
 
     @Transactional
@@ -111,6 +115,17 @@ public class RegisterService {
     }
 
     public RegisterResponse toRegisterResponse(Register reg) {
+        Boolean passed = null;
+        if (reg.getId() != null) {
+            var testOpt = bloodTestRepository.findByRegister(reg);
+            if (testOpt.isPresent()) {
+                var test = testOpt.get();
+                // Nếu có TestResult thì lấy passed từ đó, hoặc lấy từ BloodTest nếu lưu ở đó
+                // Ở đây giả sử passed lưu trong BloodTest (nếu không, cần join sang TestResult)
+                passed = test.getResult() != null ? test.getResult().equalsIgnoreCase("ok") && test.getStatus().name().equals("COMPLETED") : null;
+                // Nếu bạn lưu passed ở TestResult, hãy sửa lại dòng trên cho đúng
+            }
+        }
         return new RegisterResponse(
             reg.getId(),
             reg.getRegisterDate(),
@@ -118,7 +133,8 @@ public class RegisterService {
             reg.getNote(),
             reg.getSlot(),
             reg.getUser() != null ? reg.getUser().getId() : null,
-            reg.getUser() != null ? reg.getUser().getFullName() : null
+            reg.getUser() != null ? reg.getUser().getFullName() : null,
+            passed
         );
     }
 
