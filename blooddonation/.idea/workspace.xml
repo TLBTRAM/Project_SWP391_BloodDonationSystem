@@ -4,9 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="f6e151ab-d8d2-47af-8582-5b41bd590263" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-    </list>
+    <list default="true" id="f6e151ab-d8d2-47af-8582-5b41bd590263" name="Changes" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -54,20 +52,20 @@
     <option name="showLibraryContents" value="true" />
   </component>
   <component name="PropertiesComponent"><![CDATA[{
-    "keyToString": {
-      "Application.BlooddonationApplication.executor": "Run",
-      "ModuleVcsDetector.initialDetectionPerformed": "true",
-      "RunOnceActivity.ShowReadmeOnStart": "true",
-      "RunOnceActivity.git.unshallow": "true",
-      "git-widget-placeholder": "main",
-      "ignore.virus.scanning.warn.message": "true",
-      "last_opened_file_path": "C:/Users/Admin/Documents/GitHub/Project_SWP391_BloodDonationSystem/blooddonation",
-      "project.structure.last.edited": "SDKs",
-      "project.structure.proportion": "0.0",
-      "project.structure.side.proportion": "0.2",
-      "settings.editor.selected.configurable": "preferences.pluginManager"
-    }
-  }]]></component>
+  "keyToString": {
+    "Application.BlooddonationApplication.executor": "Run",
+    "ModuleVcsDetector.initialDetectionPerformed": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "git-widget-placeholder": "main",
+    "ignore.virus.scanning.warn.message": "true",
+    "last_opened_file_path": "C:/Users/Admin/Documents/GitHub/Project_SWP391_BloodDonationSystem/blooddonation",
+    "project.structure.last.edited": "SDKs",
+    "project.structure.proportion": "0.0",
+    "project.structure.side.proportion": "0.2",
+    "settings.editor.selected.configurable": "preferences.pluginManager"
+  }
+}]]></component>
   <component name="RunManager">
     <configuration name="BlooddonationApplication" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <option name="ALTERNATIVE_JRE_PATH" value="ms-21" />
