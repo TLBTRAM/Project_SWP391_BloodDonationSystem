@@ -63,10 +63,10 @@ public class BloodTestService {
         Appointment appointment = appointmentRepository
                 .findByCustomer_IdAndAppointmentDateAndStatus(customerId, today, AppointmentEnum.SCHEDULED)
                 .orElseThrow(() -> new BadRequestException("No scheduled appointment found for this customer today"));
-        //Kiểm tra đúng MedicalStaff
-        if (appointment.getMedicalStaff() == null || appointment.getMedicalStaff().getId() != currentUser.getId()) {
-            throw new BadRequestException("Bạn không có quyền tạo xét nghiệm cho cuộc hẹn này");
-        }
+//        //Kiểm tra đúng MedicalStaff
+//        if (appointment.getMedicalStaff() == null || appointment.getMedicalStaff().getId() != currentUser.getId()) {
+//            throw new BadRequestException("Bạn không có quyền tạo xét nghiệm cho cuộc hẹn này");
+//        }
 
         if (bloodTestRepository.findByAppointment(appointment).isPresent()) {
             throw new BadRequestException("Blood test already exists for this appointment");

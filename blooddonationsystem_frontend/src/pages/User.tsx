@@ -6,7 +6,7 @@ import Header from '../layouts/header-footer/Header';
 import avatarImg from './images/User/Avatar.png';
 import calendarIcon from './images/User/Calendar.png';
 import notificationIcon from './images/User/notifications.png';
-import donateIcon from './images/User/blooddonation.png';
+import orderIcon from './images/User/order.png';
 
 interface UserData {
   id: number;
@@ -264,7 +264,7 @@ const User = () => {
               <div className="booking-text">
                 <h4>Xem đơn đã gửi</h4>
                 <p>Chức năng mới đang được cập nhật và sẽ ra mắt trong thời gian tới.</p>
-                <img src={calendarIcon} alt="Xem đơn đã gửi" />
+                <img src={orderIcon} alt="Xem đơn đã gửi" />
                 <button onClick={() => navigate('/my-registrations')}>Xem ngay</button>
               </div>
             </div>
