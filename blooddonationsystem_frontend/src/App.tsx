@@ -27,7 +27,7 @@ import UserPage from "./pages/User";
 import EditPage from "./pages/Edit";
 
 import BookingPage from "./pages/Booking";
-import Donatepage from "./pages/Donate";
+import MyRegistrationspage from "./pages/MyRegistrations";
 
 import TestFormpage from "./pages/Bloodtestform";
 
@@ -69,7 +69,7 @@ function App() {
 				<Route path="/edit" element={<EditPage />} />
 
 				<Route path="/booking" element={<BookingPage />} />
-				<Route path="/donate" element={<Donatepage />} />
+				<Route path="/my-registrations" element={<MyRegistrationspage />} />
 
 				<Route path="/bloodtest" element={<TestFormpage />} />
 

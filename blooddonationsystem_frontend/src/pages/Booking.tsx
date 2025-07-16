@@ -200,7 +200,7 @@ const Booking = () => {
     <>
       <Header />
       <div className="booking-container">
-        <h2 id="register-title">Đăng ký khám sàng lọc</h2>
+        <h2 id="register-title">Đăng ký lịch hiến máu</h2>
         {submitted ? (
           <div className="success-message">
             ✅ Bạn đã đăng ký thành công! Chúng tôi sẽ liên hệ để xác nhận lịch khám.

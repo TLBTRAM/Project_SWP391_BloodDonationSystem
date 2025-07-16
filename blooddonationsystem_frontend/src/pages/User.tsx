@@ -209,23 +209,21 @@ const User = () => {
             <div className="booking-item">
               <div className="booking-text">
                 <h4>Đăng ký lịch hẹn</h4>
-                <p>Chọn loại lịch phù hợp để được phục vụ nhanh chóng và thuận tiện hơn.</p>
+                <p>Chọn ngày và giờ phù hợp để được phục vụ nhanh chóng và thuận tiện hơn.</p>
                 <img src={calendarIcon} alt="Đặt lịch" />
-                <button onClick={() => setShowPopup(true)}>Đăng ký</button>
+                <button onClick={() => navigate('/booking')}>Đăng ký</button>
               </div>
             </div>
 
-            {showPopup && (
-              <div className="popup-overlay" onClick={() => setShowPopup(false)}>
-                <div className="popup-content" onClick={(e) => e.stopPropagation()}>
-                  <h3>Bạn muốn đăng ký loại lịch nào?</h3>
-                  <div className="popup-buttons">
-                    <button onClick={() => navigate('/booking')}>Khám sàng lọc</button>
-                    <button onClick={() => navigate('/donate')}>Hiến máu</button>
-                  </div>
-                </div>
+            <div className="booking-item">
+              <div className="booking-text">
+                <h4>Xem đơn đã gửi</h4>
+                <p>Chức năng mới đang được cập nhật và sẽ ra mắt trong thời gian tới.</p>
+                <img src={calendarIcon} alt="Xem đơn đã gửi" />
+                <button onClick={() => navigate('/my-registrations')}>Xem ngay</button>
               </div>
-            )}
+            </div>
+
             <div className="booking-item">
               <div className="booking-text">
                 <h4>Thông báo</h4>
@@ -234,12 +232,7 @@ const User = () => {
                 <button onClick={() => setShowNotificationPopup(true)}>Xem ngay</button>
               </div>
             </div>
-            <div className="booking-item">
-              <div className="booking-text">
-                <h4>Đang phát triển</h4>
-                <p>Chức năng mới đang được cập nhật và sẽ ra mắt trong thời gian tới.</p>
-              </div>
-            </div>
+            
           </div>
         </main>
       </div>
