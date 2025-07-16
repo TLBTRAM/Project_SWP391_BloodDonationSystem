@@ -9,6 +9,7 @@ import com.swp.blooddonation.enums.BloodType;
 import com.swp.blooddonation.enums.RhType;
 import com.swp.blooddonation.service.BloodTestService;
 import com.swp.blooddonation.service.BloodUnitService;
+import com.swp.blooddonation.dto.response.BloodUnitSimpleResponse;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -88,5 +89,11 @@ public class BloodUnitAPI {
             request.getExpirationDate()
         );
         return ResponseEntity.ok(unit);
+    }
+
+    @PreAuthorize("hasRole('MEDICALSTAFF')")
+    @GetMapping("/collect/completed")
+    public ResponseEntity<List<BloodUnitSimpleResponse>> getCollectedBloodUnits() {
+        return ResponseEntity.ok(bloodUnitService.getCollectedBloodUnits());
     }
 }
