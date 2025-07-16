@@ -18,4 +18,5 @@ public class RegisterResponse {
     private Slot slot;
     private Long userId;
     private String fullName;
+    private Boolean passed; // Thêm field này
 }
