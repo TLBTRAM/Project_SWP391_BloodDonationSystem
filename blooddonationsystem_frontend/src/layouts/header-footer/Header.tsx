@@ -6,14 +6,34 @@ import logoBlood from "./logo_blood.png";
 import { useAuth } from "./AuthContext";
 interface UserData {
   fullName: string;
-  email?: string;
-  phone?: string;
+  role: 'CUSTOMER' | 'ADMIN' | 'MANAGER' | 'MEDICALSTAFF';
 }
 
 const Header: React.FC = () => {
   const navigate = useNavigate();
+  const handleProfileNavigate = () => {
+    console.log("Navigating with role:", user?.role);
+    switch (user?.role) {
+      case 'CUSTOMER':
+        navigate('/user');
+        break;
+      case 'ADMIN':
+        navigate('/admin');
+        break;
+      case 'MANAGER':
+        navigate('/manager');
+        break;
+      case 'MEDICALSTAFF':
+        navigate('/med');
+        break;
+      default:
+        console.warn("Không xác định role:", user?.role);
+        navigate('/');
+    }
+  };
 
   const { user, logout } = useAuth() as { user: UserData | null, logout: () => void };
+  console.log("User info:", user);
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const userInfoRef = useRef<HTMLDivElement>(null);
   const handleLogout = () => {
@@ -24,10 +44,7 @@ const Header: React.FC = () => {
   const toggleDropdown = () => {
     setDropdownOpen(!dropdownOpen);
   };
-
-  // Thêm log để kiểm tra user lấy từ context
-  console.log("User in Header:", user);
-
+  
   return (
     <header className="header">
       <Link to="/" className="logo">
@@ -59,9 +76,9 @@ const Header: React.FC = () => {
           </span>
           {dropdownOpen && (
             <div className="dropdown">
-              <button onClick={() => navigate('/user')}>👤 Hồ sơ cá nhân</button>
+              <button onClick={handleProfileNavigate}>👤 Hồ sơ cá nhân</button>
               <button onClick={() => navigate('/settings')}>⚙️ Cài đặt</button>
-              <button onClick={() => navigate('/booking-list')}>📅 Lịch hẹn đã đặt</button>
+              <button onClick={() => navigate('/notification')}>📅 Lịch hẹn đã đặt</button>
               <button onClick={handleLogout}>🚪 Đăng xuất</button>
             </div>
           )}

@@ -25,9 +25,16 @@ import Reset3Page from "./pages/ResetPass";
 // Tài khoản người dùng và quản trị viên
 import UserPage from "./pages/User";
 import EditPage from "./pages/Edit";
-import BookingPage from "./pages/Booking";
 
+import BookingPage from "./pages/Booking";
+import Donatepage from "./pages/Donate";
+
+import TestFormpage from "./pages/Bloodtestform";
+
+// Tài khoản người quản lí kho máu
 import MedPage from "./pages/MedicalStaff";
+
+// Tài khoản admin
 import AdminPage from "./pages/Admin";
 
 // Tài khoản người quản lí kho máu
@@ -57,11 +64,20 @@ function App() {
 				<Route path="/forgot2" element={<Reset2Page />} />
 				<Route path="/forgot3" element={<Reset3Page />} />
 
-				{/* Tài khoản người dùng và quản trị viên */}
+				{/* Tài khoản người dùng*/}
 				<Route path="/user" element={<UserPage />} />
 				<Route path="/edit" element={<EditPage />} />
+
 				<Route path="/booking" element={<BookingPage />} />
+				<Route path="/donate" element={<Donatepage />} />
+
+				<Route path="/bloodtest" element={<TestFormpage />} />
+
+
+				{/* Tài khoản người nhân viên y tế */}
 				<Route path="/med" element={<MedPage />} />
+
+				{/* Tài khoản admin */}
 				<Route path="/admin" element={<AdminPage />} />
 
 				{/* Tài khoản người quản lí kho máu */}

@@ -4,8 +4,7 @@ import axios from 'axios';
 interface User {
   fullName: string;
   email?: string;
-  phone?: string;
-  // Thêm các trường khác nếu backend trả về
+  role?: 'CUSTOMER' | 'ADMIN' | 'MANAGER' | 'MEDICALSTAFF'; 
 }
 
 interface AuthContextType {

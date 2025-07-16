@@ -5,7 +5,6 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="f6e151ab-d8d2-47af-8582-5b41bd590263" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/compiler.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/compiler.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -29,12 +28,12 @@
     &quot;assignee&quot;: &quot;TLBTRAM&quot;
   }
 }</component>
-  <component name="GithubPullRequestsUISettings"><![CDATA[{
-  "selectedUrlAndAccountId": {
-    "url": "https://github.com/TLBTRAM/Project_SWP391_BloodDonationSystem.git",
-    "accountId": "05bac4c9-3172-4565-bcff-f249e080da8f"
+  <component name="GithubPullRequestsUISettings">{
+  &quot;selectedUrlAndAccountId&quot;: {
+    &quot;url&quot;: &quot;https://github.com/TLBTRAM/Project_SWP391_BloodDonationSystem.git&quot;,
+    &quot;accountId&quot;: &quot;f57d2535-21c3-474e-91d8-0331298a2764&quot;
   }
-}]]></component>
+}</component>
   <component name="MavenImportPreferences">
     <option name="generalSettings">
       <MavenGeneralSettings>
@@ -46,9 +45,10 @@
     <option name="selectedTabId" value="CurrentFile" />
   </component>
   <component name="ProjectColorInfo">{
+  &quot;customColor&quot;: &quot;b83b3bff&quot;,
   &quot;associatedIndex&quot;: 3
 }</component>
-  <component name="ProjectId" id="2yZEsNXk3EkCV3ALsyisHtA33Y1" />
+  <component name="ProjectId" id="2yb7k5wJ6wk8WXUzeWWOv0V5vn7" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
@@ -56,25 +56,17 @@
   <component name="PropertiesComponent">{
   &quot;keyToString&quot;: {
     &quot;Application.BlooddonationApplication.executor&quot;: &quot;Run&quot;,
-    &quot;JUnit.BlooddonationApplicationTests.executor&quot;: &quot;Run&quot;,
     &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
     &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;C:/Users/Admin/Documents/GitHub/Project_SWP391_BloodDonationSystem/blooddonation&quot;,
-    &quot;project.structure.last.edited&quot;: &quot;Modules&quot;,
-    &quot;project.structure.proportion&quot;: &quot;0.15&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/Admin/Documents/GitHub/React/blooddonation&quot;,
+    &quot;project.structure.last.edited&quot;: &quot;SDKs&quot;,
+    &quot;project.structure.proportion&quot;: &quot;0.0&quot;,
     &quot;project.structure.side.proportion&quot;: &quot;0.2&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;reference.settingsdialog.project.grazie&quot;
+    &quot;settings.editor.selected.configurable&quot;: &quot;reference.projectsettings.compiler.annotationProcessors&quot;
   }
 }</component>
-  <component name="RecentsManager">
-    <key name="CopyFile.RECENT_KEYS">
-      <recent name="C:\Users\Admin\Documents\GitHub\Project_SWP391_BloodDonationSystem\blooddonation\src\main\java\com\swp\blooddonation\enums" />
-    </key>
-  </component>
-  <component name="RunManager" selected="Application.BlooddonationApplication">
+  <component name="RunManager">
     <configuration name="BlooddonationApplication" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <option name="ALTERNATIVE_JRE_PATH" value="ms-21" />
       <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="true" />
@@ -90,42 +82,33 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
-    <configuration name="BlooddonationApplicationTests" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
-      <module name="blooddonation" />
-      <extension name="coverage">
-        <pattern>
-          <option name="PATTERN" value="com.swp.blooddonation.*" />
-          <option name="ENABLED" value="true" />
-        </pattern>
-      </extension>
-      <option name="PACKAGE_NAME" value="com.swp.blooddonation" />
-      <option name="MAIN_CLASS_NAME" value="com.swp.blooddonation.BlooddonationApplicationTests" />
-      <option name="TEST_OBJECT" value="class" />
-      <method v="2">
-        <option name="Make" enabled="true" />
-      </method>
-    </configuration>
-    <list>
-      <item itemvalue="Application.BlooddonationApplication" />
-      <item itemvalue="JUnit.BlooddonationApplicationTests" />
-    </list>
     <recent_temporary>
       <list>
         <item itemvalue="Application.BlooddonationApplication" />
         <item itemvalue="JUnit.BlooddonationApplicationTests" />
         <item itemvalue="Application.BlooddonationApplication" />
-        <item itemvalue="JUnit.BlooddonationApplicationTests" />
       </list>
     </recent_temporary>
   </component>
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
-      <changelist id="f6e151ab-d8d2-47af-8582-5b41bd590263" name="Changes" comment="" />
-      <created>1750033900234</created>
+      <changelist id="01d31487-f424-41b9-8e40-b2943ef3ddb3" name="Changes" comment="" />
+      <created>1750091558181</created>
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
-      <updated>1750033900234</updated>
+      <updated>1750091558181</updated>
     </task>
     <servers />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/blooddonation/src/test/java/com/swp/blooddonation/BlooddonationApplicationTests.java</url>
+          <line>6</line>
+          <option name="timeStamp" value="1" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
   </component>
 </project>
