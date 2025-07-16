@@ -20,6 +20,15 @@ interface UserData {
   birthDate?: string;
 }
 
+interface DonationHistoryItem {
+  id: number;
+  donation_date: string;
+  location: string;
+  notes: string;
+  volume: number;
+  customer_id: number;
+}
+
 interface NotificationItem {
   id: number;
   title: string;
@@ -54,6 +63,8 @@ const User = () => {
   const [bloodTest, setBloodTest] = useState<BloodTestResult | null>(null);
   const userInfoRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
+  const [donationHistory, setDonationHistory] = useState<DonationHistoryItem[]>([]);
+
 
   const toggleDropdown = () => setDropdownOpen(prev => !prev);
 
@@ -102,6 +113,29 @@ const User = () => {
     } else {
       navigate("/login");
     }
+  }, []);
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (!token) return;
+
+    fetch("http://localhost:8080/api/user/donation-history", {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+    })
+      .then((res) => {
+        if (!res.ok) throw new Error("Không thể lấy lịch sử hiến máu");
+        return res.json();
+      })
+      .then((data: DonationHistoryItem[]) => {
+        setDonationHistory(data);
+      })
+      .catch((err) => {
+        console.error("Lỗi khi lấy lịch sử hiến máu:", err);
+      });
   }, []);
 
   useEffect(() => {
@@ -190,13 +224,24 @@ const User = () => {
               <h4>Lịch sử hiến máu</h4>
               <table>
                 <thead>
-                  <tr><th>Ngày</th><th>Lượng máu (ml)</th></tr>
+                  <tr>
+                    <th>Ngày</th>
+                    <th>Lượng máu (ml)</th>
+                  </tr>
                 </thead>
                 <tbody>
-                  <tr><td>13 Tháng 12 2020</td><td>120</td></tr>
-                  <tr><td>28 Tháng 11 2020</td><td>20</td></tr>
-                  <tr><td>04 Tháng 11 2020</td><td>40</td></tr>
-                  <tr><td>15 Tháng 11 2020</td><td>310</td></tr>
+                  {donationHistory.length > 0 ? (
+                    donationHistory.map((item, idx) => (
+                      <tr key={idx}>
+                        <td>{new Date(item.donation_date).toLocaleDateString("vi-VN")}</td>
+                        <td>{item.volume}</td>
+                      </tr>
+                    ))
+                  ) : (
+                    <tr>
+                      <td colSpan={2}>Không có lịch sử hiến máu.</td>
+                    </tr>
+                  )}
                 </tbody>
               </table>
             </div>
@@ -232,7 +277,7 @@ const User = () => {
                 <button onClick={() => setShowNotificationPopup(true)}>Xem ngay</button>
               </div>
             </div>
-            
+
           </div>
         </main>
       </div>
