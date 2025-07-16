@@ -4,6 +4,12 @@ import { Link } from "react-router-dom";
 import Header from "../layouts/header-footer/Header";
 import Footer from "../layouts/header-footer/Footer";
 import axios from "axios";
+import ReactDatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
+import { vi } from "date-fns/locale";
+import { registerLocale } from "react-datepicker";
+import { addDays, startOfWeek, format as formatDate, isSameDay, isBefore, addWeeks, subWeeks } from "date-fns";
+registerLocale("vi", vi);
 
 interface Schedule {
   id: number;
@@ -27,6 +33,8 @@ const Booking = () => {
   const [selectedSlotId, setSelectedSlotId] = useState<number | null>(null);
   const [note, setNote] = useState("");
   const [submitted, setSubmitted] = useState(false);
+  const [selectedDate, setSelectedDate] = useState<Date | null>(null);
+  const [weekStart, setWeekStart] = useState(startOfWeek(new Date(), { weekStartsOn: 1 }));
 
   const [userInfo, setUserInfo] = useState({
     fullName: "",
@@ -88,52 +96,68 @@ const Booking = () => {
     fetchSchedules();
   }, []);
 
+  // Thay đổi: khi chọn ngày trên DatePicker, tự động chọn scheduleId tương ứng
+  useEffect(() => {
+    if (selectedDate && availableSchedules.length > 0) {
+      const dateStr = selectedDate.toISOString().split("T")[0];
+      const found = availableSchedules.find(sch => sch.scheduleDate.startsWith(dateStr));
+      setSelectedScheduleId(found ? found.id : null);
+      setSelectedSlotId(null);
+    }
+  }, [selectedDate, availableSchedules]);
+
+  // Fetch slot mỗi khi selectedScheduleId thay đổi
+  useEffect(() => {
+    if (!selectedScheduleId) {
+      setAvailableSlots([]);
+      return;
+    }
+    const fetchSlots = async () => {
+      try {
+        const token = localStorage.getItem("token");
+        const res = await fetch("http://localhost:8080/api/slot/getSlot", {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        if (!res.ok) throw new Error("Lỗi lấy slot");
+        const data = await res.json();
+        setAvailableSlots(data);
+      } catch (err) {
+        setAvailableSlots([]);
+        console.error("Lỗi fetch slot:", err);
+      }
+    };
+    fetchSlots();
+  }, [selectedScheduleId]);
+
 
   const handleScheduleChange = async (e: React.ChangeEvent<HTMLSelectElement>) => {
     const id = parseInt(e.target.value);
     setSelectedScheduleId(id);
     setSelectedSlotId(null);
-
-    try {
-      const token = localStorage.getItem("token");
-
-      // Gọi API lấy slot chung
-      const res = await fetch("http://localhost:8080/api/slot/getSlot", {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-
-      if (!res.ok) throw new Error("Lỗi lấy slot");
-
-      const data = await res.json(); // Đọc 1 lần duy nhất
-      console.log("Nội dung slot:", data); // Log biến data, KHÔNG gọi lại res.json()
-      setAvailableSlots(data);
-    } catch (err) {
-      console.error("Lỗi fetch slot:", err);
-    }
   };
 
   // Gửi đăng ký khám
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!selectedScheduleId || !selectedSlotId) {
+    if (!selectedDate || !selectedSlotId) {
       alert("Vui lòng chọn ngày và giờ khám.");
       return;
     }
 
     try {
       const token = localStorage.getItem("token");
-
-      const response = await fetch("http://localhost:8080/api/registers/createRegister", {
+      const date = selectedDate.toISOString().split("T")[0];
+      const response = await fetch("http://localhost:8080/api/registers/donationRegister", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({
-          scheduleId: selectedScheduleId,
+          date,
           slotId: selectedSlotId,
           note,
         }),
@@ -150,12 +174,32 @@ const Booking = () => {
     }
   };
 
+  // Khi chọn ngày, chỉ cho phép chọn slot nếu đã chọn ngày hợp lệ
+  const slotsForSelectedDate = selectedScheduleId ? availableSlots : [];
+
+  const weekDays = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
+
+  // Hàm lấy mảng 7 ngày của tuần hiện tại
+  function getWeekDates(startDate: Date) {
+    return Array.from({ length: 7 }, (_, i) => {
+      const d = addDays(startDate, i);
+      return {
+        iso: d.toISOString().split("T")[0],
+        day: d.getDay() === 0 ? 6 : d.getDay() - 1, // 0: CN -> 6
+        dayNum: d.getDate(),
+        monthShort: d.toLocaleString("vi-VN", { month: "short" }),
+        dateObj: d
+      };
+    });
+  }
+
+  const weekDates = getWeekDates(weekStart);
+
   return (
     <>
       <Header />
       <div className="booking-container">
         <h2 id="register-title">Đăng ký khám sàng lọc</h2>
-
         {submitted ? (
           <div className="success-message">
             ✅ Bạn đã đăng ký thành công! Chúng tôi sẽ liên hệ để xác nhận lịch khám.
@@ -169,34 +213,58 @@ const Booking = () => {
 
             <div className="form-group">
               <label>Chọn ngày khám</label>
-              <select value={selectedScheduleId ?? ""} onChange={handleScheduleChange} required>
-                <option value="">-- Chọn ngày --</option>
-                {availableSchedules.map(schedule => (
-                  <option key={schedule.id} value={schedule.id}>
-                    {new Date(schedule.scheduleDate).toLocaleDateString("vi-VN")}
-                  </option>
-                ))}
-              </select>
-              {availableSchedules.length === 0 && (
-                <p style={{ color: "red" }}>❌ Không tìm thấy lịch khám phù hợp.</p>
-              )}
+              <div className="week-row">
+                <button type="button" className="week-arrow" onClick={() => setWeekStart(subWeeks(weekStart, 1))}>&lt;</button>
+                {weekDates.map(dateObj => {
+                  const sch = availableSchedules.find(s => s.scheduleDate.startsWith(dateObj.iso));
+                  const isPast = isBefore(dateObj.dateObj, new Date(new Date().toDateString()));
+                  const isClosed = sch && sch.status === "CLOSED";
+                  const isOpen = sch && sch.status === "OPEN" && !isPast;
+                  let dayClass = "day-btn";
+                  if (isPast) dayClass += " past";
+                  else if (isClosed) dayClass += " closed";
+                  else if (isOpen) dayClass += " open";
+                  if (selectedDate && isSameDay(dateObj.dateObj, selectedDate)) dayClass += " selected";
+                  return (
+                    <button
+                      type="button"
+                      key={dateObj.iso}
+                      className={dayClass}
+                      disabled={!isOpen}
+                      onClick={() => {
+                        setSelectedDate(dateObj.dateObj);
+                        setSelectedScheduleId(sch ? sch.id : null);
+                        setSelectedSlotId(null);
+                      }}
+                    >
+                      <div>{weekDays[dateObj.day]}</div>
+                      <div style={{ fontWeight: 600 }}>{dateObj.dayNum}</div>
+                      <div style={{ fontSize: 12 }}>{dateObj.monthShort}</div>
+                    </button>
+                  );
+                })}
+                <button type="button" className="week-arrow" onClick={() => setWeekStart(addWeeks(weekStart, 1))}>&gt;</button>
+              </div>
             </div>
 
             <div className="form-group">
               <label>Chọn khung giờ</label>
-              <select
-                className="input-text"
-                value={selectedSlotId ?? ""}
-                onChange={e => setSelectedSlotId(parseInt(e.target.value))}
-                required
-              >
-                <option value="">-- Chọn giờ --</option>
-                {availableSlots.map(slot => (
-                  <option key={slot.id} value={slot.id}>
-                    {slot.label}
-                  </option>
-                ))}
-              </select>
+              <div className="slot-row">
+                {selectedScheduleId && availableSlots.length > 0 ? (
+                  availableSlots.map(slot => (
+                    <button
+                      type="button"
+                      key={slot.id}
+                      className={`slot-btn${selectedSlotId === slot.id ? " selected" : ""}`}
+                      onClick={() => setSelectedSlotId(slot.id)}
+                    >
+                      {slot.label}
+                    </button>
+                  ))
+                ) : (
+                  <span style={{ color: '#888', fontSize: 14 }}>Chọn ngày để xem khung giờ</span>
+                )}
+              </div>
             </div>
 
             <div className="form-group">
