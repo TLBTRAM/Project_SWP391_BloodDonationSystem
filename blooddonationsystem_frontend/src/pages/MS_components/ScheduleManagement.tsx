@@ -165,10 +165,10 @@ useEffect(() => {
           </select>
           <input
             type="text"
-            placeholder="Tìm kiếm theo tên người hiến..."
+            placeholder="Tìm kiếm theo tên"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            style={{minWidth: 180, maxWidth: 220}}
+            style={{minWidth: 220, maxWidth: 300}}
           />
         </div>
         <ReactDatePicker
@@ -206,7 +206,7 @@ useEffect(() => {
                     margin: '2px 0 4px 0',
                     fontSize: '15px',
                   }}>{appt.status}</div>
-                  <div className="reason">Lý do khám: {appt.note || "(Không có)"}</div>
+                  <div className="reason">Ghi chú: {appt.note || "(Không có)"}</div>
                 </div>
               </div>
               <div className="button-group">
