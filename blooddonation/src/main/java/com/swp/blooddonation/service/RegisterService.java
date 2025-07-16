@@ -214,6 +214,13 @@ public class RegisterService {
             .collect(Collectors.toList());
     }
 
+    public List<RegisterResponse> getApprovedRegisters() {
+        return registerRepository.findByStatus(RegisterStatus.APPROVED)
+            .stream()
+            .map(this::toRegisterResponse)
+            .collect(Collectors.toList());
+    }
+
     public RegisterResponse createRegisterAndReturn(RegisterRequest request) {
         Register reg = createRegister(request);
         return toRegisterResponse(reg);

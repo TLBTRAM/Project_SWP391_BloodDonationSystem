@@ -87,5 +87,15 @@ public class RegisterAPI {
         return ResponseEntity.ok("Cập nhật trạng thái thành công.");
     }
 
+    /**
+     * API cho phép MEDICALSTAFF xem tất cả đơn đăng ký đã được duyệt (APPROVED)
+     */
+    @PreAuthorize("hasRole('MEDICALSTAFF')")
+    @GetMapping("/approved")
+    public ResponseEntity<List<RegisterResponse>> getApprovedRegisters() {
+        List<RegisterResponse> registers = registerService.getApprovedRegisters();
+        return ResponseEntity.ok(registers);
+    }
+
 
 }

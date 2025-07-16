@@ -27,4 +27,5 @@ public interface RegisterRepository extends JpaRepository<Register, Long> {
 
     List<Register> findBySlotAndRegisterDateOrderByCreatedAt(Slot slot, LocalDate registerDate);
 
+    List<Register> findByStatus(RegisterStatus status);
 }
