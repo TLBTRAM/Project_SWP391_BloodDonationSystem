@@ -125,16 +125,16 @@ public class ScheduleAPI {
         User currentUser = userService.getCurrentUser();
         LocalDate today = LocalDate.now();
         List<AccountSchedule> registered = accountScheduleRepository.findAll().stream()
-            .filter(a -> a.getUser().getId().equals(currentUser.getId()) && !a.getSchedule().getScheduleDate().isBefore(today))
-            .collect(Collectors.toList());
+                .filter(a -> a.getUser().getId().equals(currentUser.getId()) && !a.getSchedule().getScheduleDate().isBefore(today))
+                .collect(Collectors.toList());
         List<MedicalStaffRegisteredScheduleDTO> result = registered.stream()
-            .map(a -> new MedicalStaffRegisteredScheduleDTO(
-                a.getId(),
-                a.getSchedule().getScheduleDate().toString(),
-                a.getSchedule().getStatus().toString(),
-                a.getSchedule().getUser() != null ? a.getSchedule().getUser().getId() : null
-            ))
-            .collect(Collectors.toList());
+                .map(a -> new MedicalStaffRegisteredScheduleDTO(
+                        a.getId(),
+                        a.getSchedule().getScheduleDate().toString(),
+                        a.getSchedule().getStatus().toString(),
+                        a.getSchedule().getUser() != null ? a.getSchedule().getUser().getId() : null
+                ))
+                .collect(Collectors.toList());
         return ResponseEntity.ok(result);
     }
 
@@ -144,7 +144,7 @@ public class ScheduleAPI {
     public ResponseEntity<String> deleteRegisteredSchedule(@PathVariable Long accountScheduleId) {
         User currentUser = userService.getCurrentUser();
         AccountSchedule accSchedule = accountScheduleRepository.findById(accountScheduleId)
-            .orElseThrow(() -> new RuntimeException("Không tìm thấy lịch đăng ký!"));
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy lịch đăng ký!"));
         if (!accSchedule.getUser().getId().equals(currentUser.getId())) {
             return ResponseEntity.status(403).body("Bạn không có quyền xóa lịch này!");
         }
@@ -164,8 +164,8 @@ public class ScheduleAPI {
         schedule.setStatus(ScheduleStatus.OPEN);
         Schedule saved = scheduleRepository.save(schedule);
         ScheduleResponseDTO dto = scheduleService.getSchedulesByDate(saved.getScheduleDate()).stream()
-            .filter(s -> s.getId().equals(saved.getId()))
-            .findFirst().orElse(null);
+                .filter(s -> s.getId().equals(saved.getId()))
+                .findFirst().orElse(null);
         return ResponseEntity.ok(dto);
     }
 }
