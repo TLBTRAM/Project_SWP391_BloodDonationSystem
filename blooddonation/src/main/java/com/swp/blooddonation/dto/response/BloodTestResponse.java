@@ -21,4 +21,6 @@ public class BloodTestResponse {
     private BloodTestStatus status;
     private BloodType bloodType;
     private RhType rhType;
+    private Long customerId; // id người hiến máu
+    private String customerName; // tên người hiến máu
 }

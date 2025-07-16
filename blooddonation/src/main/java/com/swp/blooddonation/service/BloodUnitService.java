@@ -19,6 +19,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import com.swp.blooddonation.dto.response.BloodUnitSimpleResponse;
 
 
 @Service
@@ -78,9 +79,8 @@ public class BloodUnitService {
         }
 
 
-        // Lấy người hiến từ appointment
-        Appointment appointment = test.getAppointment();
-        User donor = appointment.getCustomer();
+        // Lấy người hiến từ register
+        User donor = test.getRegister().getUser();
 
         // Validate thể tích
         if (request.getTotalVolume() <= 0 || request.getTotalVolume() > 500) {
@@ -225,6 +225,24 @@ public class BloodUnitService {
             }
         }
         return units;
+    }
+
+    public List<BloodUnitSimpleResponse> getCollectedBloodUnits() {
+        return bloodUnitRepository.findByStatus(BloodUnitStatus.COLLECTED)
+            .stream()
+            .map(unit -> {
+                BloodUnitSimpleResponse dto = new BloodUnitSimpleResponse();
+                dto.setId(unit.getId());
+                dto.setBloodType(unit.getBloodType() != null ? unit.getBloodType().name() : null);
+                dto.setCollectedDate(unit.getCollectedDate());
+                dto.setExpirationDate(unit.getExpirationDate());
+                dto.setRhType(unit.getRhType() != null ? unit.getRhType().name() : null);
+                dto.setTotalVolume(unit.getTotalVolume());
+                dto.setCollectedById(unit.getCollectedBy() != null ? unit.getCollectedBy().getId() : null);
+                dto.setDonorId(unit.getDonor() != null ? unit.getDonor().getId() : null);
+                return dto;
+            })
+            .toList();
     }
 
     // Lấy chi tiết túi máu
