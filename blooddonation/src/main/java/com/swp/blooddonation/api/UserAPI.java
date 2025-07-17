@@ -35,8 +35,8 @@ public class UserAPI {
     // Lịch sử hiến máu (chỉ cho CUSTOMER)
     @PreAuthorize("hasRole('CUSTOMER')")
     @GetMapping("/donation-history")
-    public ResponseEntity<List<DonationHistoryDTO>> getDonationHistory(@AuthenticationPrincipal Account account) {
-        return ResponseEntity.ok(userService.getDonationHistory(account));
+    public ResponseEntity<List<DonationHistoryDTO>> getDonationHistory() {
+        return ResponseEntity.ok(userService.getDonationHistory());
     }
 
     // Gợi ý ngày hiến máu tiếp theo (chỉ cho CUSTOMER)
