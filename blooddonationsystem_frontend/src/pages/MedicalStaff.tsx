@@ -277,22 +277,22 @@ const MedicalStaff = () => {
 
     return (
       <div style={{padding:32}}>
-        <h2 style={{color:'#ED232B', marginBottom:24}}>Lịch sử lấy máu</h2>
+        <div className="collect-history-title">LỊCH SỬ LẤY MÁU</div>
         {loading ? <div>Đang tải dữ liệu...</div> : error ? <div style={{color:'#dc2626'}}>{error}</div> : (
-          <ul style={{listStyle:'none', padding:0}}>
+          <div className="collect-history-list">
             {history.length === 0 ? (
-              <li>Không có dữ liệu.</li>
+              <div>Không có dữ liệu.</div>
             ) : (
               history.map((item, idx) => (
-                <li key={item.id || idx} style={{marginBottom:16, border:'1px solid #e5e7eb', borderRadius:10, padding:16, background:'#fff'}}>
-                  <div><b>Người hiến:</b> {item.customerName || '---'}</div>
-                  <div><b>Ngày lấy máu:</b> {item.collectedDate || '---'}</div>
-                  <div><b>Nhóm máu:</b> {item.bloodType || '---'} {item.rhType || ''}</div>
-                  <div><b>Thể tích:</b> {item.totalVolume || '---'} ml</div>
-                </li>
+                <div key={item.id || idx} className="collect-history-card">
+                  <div><span className="collect-history-label">Người hiến:</span> <span className="collect-history-value">{item.customerName || '---'}</span></div>
+                  <div><span className="collect-history-label">Ngày lấy máu:</span> <span className="collect-history-value">{item.collectedDate || '---'}</span></div>
+                  <div><span className="collect-history-label">Nhóm máu:</span> <span className="collect-history-value">{item.bloodType || '---'} {item.rhType || ''}</span></div>
+                  <div><span className="collect-history-label">Thể tích:</span> <span className="collect-history-value">{item.totalVolume || '---'} ml</span></div>
+                </div>
               ))
             )}
-          </ul>
+          </div>
         )}
       </div>
     );
