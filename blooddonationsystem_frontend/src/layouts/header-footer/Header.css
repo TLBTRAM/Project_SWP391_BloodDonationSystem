@@ -137,18 +137,3 @@ header {
 .dropdown-register-button:hover {
   background-color: #f1f5f9;
 }
-
-/* Nút đăng ký nếu cần */
-.btn-register {
-  background-color: transparent;
-  border: none;
-  color: #334155;
-  font-weight: 500;
-  cursor: pointer;
-  text-decoration: underline;
-  font-size: 14px;
-}
-
-.btn-register:hover {
-  color: #ff204e;
-}
