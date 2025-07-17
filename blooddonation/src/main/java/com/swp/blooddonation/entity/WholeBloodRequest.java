@@ -1,5 +1,6 @@
 package com.swp.blooddonation.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.swp.blooddonation.enums.BloodRequestStatus;
 import com.swp.blooddonation.enums.BloodType;
 import com.swp.blooddonation.enums.RhType;
@@ -21,9 +22,11 @@ public class WholeBloodRequest {
     private Long id;
 
     @ManyToOne
+    @JsonIgnore
     private User requester; // người gửi yêu cầu (Donor / Medical Staff)
 
     @ManyToOne
+    @JsonIgnore
     private Patient patient;   // bệnh nhân cần máu
 
     @Enumerated(EnumType.STRING)
@@ -45,6 +48,7 @@ public class WholeBloodRequest {
     private BloodRequestStatus status;; // PENDING, APPROVED, FULFILLED
 
     @OneToMany(mappedBy = "wholeBloodRequest", cascade = CascadeType.ALL)
+    @JsonIgnore
     private List<BloodUnit> providedBloodUnits = new ArrayList<>();
 
 
