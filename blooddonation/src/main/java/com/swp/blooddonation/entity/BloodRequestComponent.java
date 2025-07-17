@@ -1,5 +1,5 @@
 package com.swp.blooddonation.entity;
-
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.swp.blooddonation.enums.BloodRequestStatus;
 import com.swp.blooddonation.enums.BloodType;
 import com.swp.blooddonation.enums.ComponentType;
@@ -18,9 +18,11 @@ public class BloodRequestComponent {
     private Long id;
 
     @ManyToOne
+    @JsonIgnore
     private User requester;
 
     @ManyToOne
+    @JsonIgnore
     private Patient patient;
 
     @Enumerated(EnumType.STRING)
