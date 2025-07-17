@@ -5,115 +5,182 @@ import "./components/MyRegistrations.css";
 import { useNavigate } from "react-router-dom";
 interface Registration {
     id: number;
-    type: "MEDICAL" | "DONATION";
+    registerDate: string;
     status: string;
-    createdAt: string;
-    scheduleDate: string;
-    slot: string;
     note: string;
+    slot: {
+        id: number;
+        label: string;
+        startTime: string;
+        endTime: string;
+        delete: boolean;
+    };
+    userId: number;
+    fullName: string;
+    passed: boolean | null;
 }
 
 const MyRegistrations = () => {
     const [registrations, setRegistrations] = useState<Registration[]>([]);
-    const [selected, setSelected] = useState<Registration | null>(null);
     const [loading, setLoading] = useState(true);
+    const [tabIndex, setTabIndex] = useState<0 | 1 | 2>(0); // 0: PENDING, 1: APPROVED, 2: CANCELLED
+    const [pagePending, setPagePending] = useState(1);
+    const [pageApproved, setPageApproved] = useState(1);
+    const [pageCancelled, setPageCancelled] = useState(1);
+    const PAGE_SIZE = 5;
     const navigate = useNavigate();
-    useEffect(() => {
-        // fetchRegistrations();
-        // Tạm thời gán 1 đơn đăng ký giả định:
-        const fakeData: Registration[] = [
-            {
-                id: 1,
-                type: "MEDICAL",
-                status: "Đã đăng ký",
-                createdAt: "2025-07-15T10:00:00Z",
-                scheduleDate: "2025-07-20",
-                slot: "08:00 - 09:00",
-                note: "Khám định kỳ",
-            },
-            {
-                id: 1,
-                type: "MEDICAL",
-                status: "Đã đăng ký",
-                createdAt: "2025-07-15T10:00:00Z",
-                scheduleDate: "2025-07-20",
-                slot: "08:00 - 09:00",
-                note: "Khám định kỳ",
-            },
-            {
-                id: 1,
-                type: "MEDICAL",
-                status: "Đã đăng ký",
-                createdAt: "2025-07-15T10:00:00Z",
-                scheduleDate: "2025-07-20",
-                slot: "08:00 - 09:00",
-                note: "Khám định kỳ",
-            },
-            {
-                id: 1,
-                type: "MEDICAL",
-                status: "Đã đăng ký",
-                createdAt: "2025-07-15T10:00:00Z",
-                scheduleDate: "2025-07-20",
-                slot: "08:00 - 09:00",
-                note: "Khám định kỳ",
-            },
-            {
-                id: 1,
-                type: "MEDICAL",
-                status: "Đã đăng ký",
-                createdAt: "2025-07-15T10:00:00Z",
-                scheduleDate: "2025-07-20",
-                slot: "08:00 - 09:00",
-                note: "Khám định kỳ",
-            },
+    // State for cancel modal
+    const [cancelId, setCancelId] = useState<number | null>(null);
+    const [cancelReason, setCancelReason] = useState("");
+    const [cancelLoading, setCancelLoading] = useState(false);
 
-        ];
-        setRegistrations(fakeData);
-        setLoading(false);
+    useEffect(() => {
+        fetchRegistrations();
     }, []);
+
+    // Reset trang về 1 khi chuyển tab
+    useEffect(() => {
+        if (tabIndex === 0) setPagePending(1);
+        else if (tabIndex === 1) setPageApproved(1);
+        else setPageCancelled(1);
+    }, [tabIndex]);
 
     const fetchRegistrations = async () => {
         try {
+            const token = localStorage.getItem("token");
             const res = await fetch("/api/registers/my", {
                 method: "GET",
                 headers: {
                     "Content-Type": "application/json",
+                    "Authorization": token ? `Bearer ${token}` : "",
                 },
             });
-
-            if (!res.ok) {
-                throw new Error("Lỗi khi lấy danh sách đơn");
+            const text = await res.text();
+            try {
+                const data = JSON.parse(text);
+                setRegistrations(data);
+            } catch (e) {
+                console.error("JSON parse error:", e, text);
             }
-
-            const data = await res.json();
-            setRegistrations(data);
         } catch (err) {
-            console.error("Lỗi:", err);
+            console.error("API fetch error:", err);
         } finally {
             setLoading(false);
         }
     };
 
-    const handleCancel = async (id: number) => {
-        const confirmCancel = window.confirm("Bạn có chắc muốn hủy đơn này?");
-        if (!confirmCancel) return;
+    // Lọc đơn theo trạng thái
+    const pendingRegs = registrations.filter(r => r.status === "PENDING");
+    const approvedRegs = registrations.filter(r => r.status === "APPROVED");
+    const cancelledRegs = registrations.filter(r => r.status === "CANCELED");
 
+    // Lấy dữ liệu phân trang
+    const pagedPending = pendingRegs.slice((pagePending-1)*PAGE_SIZE, pagePending*PAGE_SIZE);
+    const pagedApproved = approvedRegs.slice((pageApproved-1)*PAGE_SIZE, pageApproved*PAGE_SIZE);
+    const pagedCancelled = cancelledRegs.slice((pageCancelled-1)*PAGE_SIZE, pageCancelled*PAGE_SIZE);
+
+    // Cancel registration handler
+    const handleCancel = async () => {
+        if (!cancelId) return;
+        setCancelLoading(true);
         try {
-            const res = await fetch(`/api/registers/${id}`, {
-                method: "DELETE",
+            const token = localStorage.getItem("token");
+            const res = await fetch(`/api/registers/${cancelId}/cancel`, {
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: token ? `Bearer ${token}` : "",
+                },
+                body: JSON.stringify({ reason: cancelReason }),
             });
-
-            if (!res.ok) {
-                throw new Error("Hủy đơn thất bại");
+            if (res.ok) {
+                setRegistrations((prev) => prev.filter((r) => r.id !== cancelId));
+                setCancelId(null);
+                setCancelReason("");
+            } else {
+                alert("Hủy đơn thất bại!");
             }
-
-            alert("Đơn đã được hủy");
-            fetchRegistrations();
         } catch (err) {
-            console.error("Lỗi khi hủy:", err);
-            alert("Không thể hủy đơn. Vui lòng thử lại.");
+            alert("Lỗi khi hủy đơn!");
+        } finally {
+            setCancelLoading(false);
         }
+    };
+
+    // Component hiển thị bảng đơn đăng ký (moved inside to access setCancelId/setCancelReason)
+    const TableRegistrations: React.FC<{ regs: Registration[]; emptyMsg: string }> = ({ regs, emptyMsg }) => (
+        regs.length === 0 ? (
+            <p>{emptyMsg}</p>
+        ) : (
+            <table className="registration-table">
+                <thead>
+                    <tr>
+                        <th>Ngày đăng ký</th>
+                        <th>Khung giờ</th>
+                        <th>Trạng thái</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {regs.map((item) => (
+                        <tr key={item.id}>
+                            <td>{item.registerDate}</td>
+                            <td>{item.slot.label}</td>
+                            <td>
+                              {item.status === 'PENDING' ? (
+                                <span className="status-pending">ĐANG CHỜ</span>
+                              ) : item.status === 'APPROVED' ? (
+                                <span className="status-approved">ĐÃ LÊN LỊCH</span>
+                              ) : item.status === 'CANCELED' ? (
+                                <span style={{color:'#b22b2b', fontWeight:'bold'}}>ĐÃ HỦY</span>
+                              ) : (
+                                item.status
+                              )}
+                            </td>
+                            <td>
+                              {item.status === 'PENDING' && (
+                                <button className="cancel-button" onClick={() => { setCancelId(item.id); setCancelReason(""); }}>Hủy đơn</button>
+                              )}
+                            </td>
+                        </tr>
+                    ))}
+                </tbody>
+            </table>
+        )
+    );
+
+    // Component phân trang
+    const Pagination: React.FC<{ current: number; total: number; pageSize: number; onChange: (p: number) => void }> = ({ current, total, pageSize, onChange }) => {
+        const totalPages = Math.ceil(total / pageSize);
+        if (totalPages <= 1) return null;
+        return (
+            <div style={{ display: 'flex', justifyContent: 'center', margin: '18px 0' }}>
+                <button
+                    onClick={() => onChange(current - 1)}
+                    disabled={current === 1}
+                    style={{ marginRight: 8 }}
+                >
+                    &lt;
+                </button>
+                {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => (
+                    <button
+                        key={page}
+                        onClick={() => onChange(page)}
+                        className={page === current ? 'tab-btn active' : 'tab-btn'}
+                        style={{ margin: '0 2px', minWidth: 36 }}
+                    >
+                        {page}
+                    </button>
+                ))}
+                <button
+                    onClick={() => onChange(current + 1)}
+                    disabled={current === totalPages}
+                    style={{ marginLeft: 8 }}
+                >
+                    &gt;
+                </button>
+            </div>
+        );
     };
 
     return (
@@ -122,50 +189,119 @@ const MyRegistrations = () => {
             <div className="registration-wrapper">
                 <button className="back-button" onClick={() => navigate("/user")}>← Quay lại</button>
                 <h2>Danh sách đơn đã đăng ký</h2>
+                <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 24 }}>
+                    <button
+                        className={tabIndex === 0 ? "tab-btn active" : "tab-btn"}
+                        onClick={() => setTabIndex(0)}
+                    >
+                        Đơn chờ duyệt
+                    </button>
+                    <button
+                        className={tabIndex === 1 ? "tab-btn active" : "tab-btn"}
+                        onClick={() => setTabIndex(1)}
+                        style={{ marginLeft: 12 }}
+                    >
+                        Đơn đã duyệt
+                    </button>
+                    <button
+                        className={tabIndex === 2 ? "tab-btn active" : "tab-btn"}
+                        onClick={() => setTabIndex(2)}
+                        style={{ marginLeft: 12 }}
+                    >
+                        Đơn đã hủy
+                    </button>
+                </div>
                 {loading ? (
                     <p>Đang tải dữ liệu...</p>
-                ) : registrations.length === 0 ? (
-                    <p>Không có đơn nào được đăng ký.</p>
                 ) : (
-                    <ul className="registration-list">
-                        {registrations.map((reg) => (
-                            <li key={reg.id} className="registration-item">
-                                <div>
-                                    <strong>Loại:</strong> {reg.type === "MEDICAL" ? "Khám sàng lọc" : "Hiến máu"}<br />
-                                    <strong>Ngày:</strong> {reg.scheduleDate}<br />
-                                    <strong>Khung giờ:</strong> {reg.slot}<br />
-                                    <strong>Trạng thái:</strong> {reg.status}<br />
-                                    <strong>Ghi chú:</strong> {reg.note || "Không có"}
-                                </div>
-                                <div className="button-group">
-                                    <button onClick={() => setSelected(reg)}>Xem chi tiết</button>
-                                    <button onClick={() => handleCancel(reg.id)} className="cancel-button">
-                                        Hủy đơn
-                                    </button>
-                                </div>
-                            </li>
-                        ))}
-                    </ul>
+                    <>
+                        {tabIndex === 0 ? (
+                            <>
+                                <TableRegistrations regs={pagedPending} emptyMsg="Không có đơn chờ duyệt." />
+                                <Pagination
+                                    current={pagePending}
+                                    total={pendingRegs.length}
+                                    pageSize={PAGE_SIZE}
+                                    onChange={setPagePending}
+                                />
+                            </>
+                        ) : tabIndex === 1 ? (
+                            <>
+                                <TableRegistrations regs={pagedApproved} emptyMsg="Không có đơn đã duyệt." />
+                                <Pagination
+                                    current={pageApproved}
+                                    total={approvedRegs.length}
+                                    pageSize={PAGE_SIZE}
+                                    onChange={setPageApproved}
+                                />
+                            </>
+                        ) : (
+                            <>
+                                <TableRegistrations regs={pagedCancelled} emptyMsg="Không có đơn đã hủy." />
+                                <Pagination
+                                    current={pageCancelled}
+                                    total={cancelledRegs.length}
+                                    pageSize={PAGE_SIZE}
+                                    onChange={setPageCancelled}
+                                />
+                            </>
+                        )}
+                    </>
                 )}
-
-                {selected && (
-                    <div className="popup-overlay" onClick={() => setSelected(null)}>
-                        <div className="popup-content" onClick={(e) => e.stopPropagation()}>
-                            <h3>Chi tiết đơn đăng ký</h3>
-                            <p><strong>ID:</strong> {selected.id}</p>
-                            <p><strong>Loại:</strong> {selected.type === "MEDICAL" ? "Khám sàng lọc" : "Hiến máu"}</p>
-                            <p><strong>Ngày:</strong> {selected.scheduleDate}</p>
-                            <p><strong>Khung giờ:</strong> {selected.slot}</p>
-                            <p><strong>Trạng thái:</strong> {selected.status}</p>
-                            <p><strong>Ngày tạo:</strong> {selected.createdAt}</p>
-                            <p><strong>Ghi chú:</strong> {selected.note || "Không có"}</p>
-                            <button onClick={() => setSelected(null)}>Đóng</button>
-                        </div>
-                    </div>
-                )}
-                <button className="back-button" onClick={() => navigate("/user")}>← Quay lại</button>
             </div>
             <Footer />
+            {cancelId && (
+              <div className="popup-overlay">
+                <div className="popup-content">
+                  <h3>Xác nhận hủy đơn đăng ký</h3>
+                  <p>Bạn có chắc chắn muốn <span style={{color:'#FF204E', fontWeight:'bold'}}>hủy</span> đơn này không?</p>
+                  <textarea
+                    placeholder="Lý do hủy (không bắt buộc)"
+                    value={cancelReason}
+                    onChange={e => setCancelReason(e.target.value)}
+                    style={{width:'100%', minHeight:60, marginBottom:12, borderRadius:6, border:'1px solid #ccc', padding:8}}
+                  />
+                  <div style={{display:'flex', justifyContent:'flex-end', gap:12}}>
+                    <button className="cancel-button" onClick={handleCancel} disabled={cancelLoading}>{cancelLoading ? 'Đang hủy...' : 'Xác nhận hủy'}</button>
+                    <button onClick={()=>{setCancelId(null); setCancelReason("");}} style={{padding:'6px 12px', borderRadius:4, border:'none', background:'#eee', color:'#333', cursor:'pointer'}}>Hủy bỏ</button>
+                  </div>
+                </div>
+              </div>
+            )}
+        </div>
+    );
+};
+
+// Component phân trang
+const Pagination: React.FC<{ current: number; total: number; pageSize: number; onChange: (p: number) => void }> = ({ current, total, pageSize, onChange }) => {
+    const totalPages = Math.ceil(total / pageSize);
+    if (totalPages <= 1) return null;
+    return (
+        <div style={{ display: 'flex', justifyContent: 'center', margin: '18px 0' }}>
+            <button
+                onClick={() => onChange(current - 1)}
+                disabled={current === 1}
+                style={{ marginRight: 8 }}
+            >
+                &lt;
+            </button>
+            {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => (
+                <button
+                    key={page}
+                    onClick={() => onChange(page)}
+                    className={page === current ? 'tab-btn active' : 'tab-btn'}
+                    style={{ margin: '0 2px', minWidth: 36 }}
+                >
+                    {page}
+                </button>
+            ))}
+            <button
+                onClick={() => onChange(current + 1)}
+                disabled={current === totalPages}
+                style={{ marginLeft: 8 }}
+            >
+                &gt;
+            </button>
         </div>
     );
 };
