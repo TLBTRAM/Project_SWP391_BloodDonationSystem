@@ -89,7 +89,7 @@ function Login() {
             <div className="login-success-inline">Đăng nhập thành công! Đang chuyển hướng...</div>
           )}
           <form onSubmit={handleLogin}>
-            <input type="text" placeholder="Username hoặc email" required value={email} onChange={(e) => setEmail(e.target.value)} />
+            <input type="text" placeholder="Email" required value={email} onChange={(e) => setEmail(e.target.value)} />
             <input type="password" placeholder="Mật khẩu" required value={password} onChange={(e) => setPassword(e.target.value)} />
             <button type="submit" disabled={isLoading || showSuccess}>{isLoading ? "Đang đăng nhập..." : "Đăng nhập"}</button>
             {error && (

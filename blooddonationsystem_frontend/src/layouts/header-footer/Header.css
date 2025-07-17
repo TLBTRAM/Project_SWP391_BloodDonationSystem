@@ -1,117 +1,132 @@
-
+/* Reset và font */
 * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-      font-family: 'Poppins', sans-serif;
-    }
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Poppins", sans-serif;
+}
 
-    header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 20px 10%;
-      background: #fff;
-      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    }
+/* Header chính */
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 10%;
+  background: #fff;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  position: relative;
+  z-index: 10;
+}
 
-    header {
-      position: relative !important;
-      z-index: 10;
-    }
+/* Logo */
+.logo {
+  display: flex;
+  align-items: center;
+}
 
-    /* Logo */
-    .logo {
-      display: flex;
-      align-items: center;
-    }
+.logo img {
+  height: 70px;
+}
 
-    /* Logo */
-    .logo img {
-      height: 70px;
-    }
+/* Navigation links */
+.nav-links {
+  list-style: none;
+  display: flex;
+  gap: 40px;
+  margin: 0;
+  padding: 0;
+}
 
-    /* Navigation links */
-    .nav-links {
-      list-style: none;
-      display: flex;
-      gap: 70px;
-      margin: 0;
-      padding: 0;
-    }
-    
-    .nav-links a {
-      margin-left: 24px;
-      color: #334155;
-      text-decoration: none;
-      font-weight: 500;
-      transition: color 0.3s;
-    }
+.nav-links a {
+  color: #334155;
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.3s;
+}
 
-    .nav-links a:hover {
-      color: #FF204E;
-    }
+.nav-links a:hover {
+  color: #ff204e;
+}
 
+/* Nút đăng nhập */
+.btn-login {
+  background-color: #ff204e;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 8px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
 
-    /* Nút đăng nhập bên phải */
-    .btn-login {
-      background-color: #FF204E;
-      color: white;
-      padding: 10px 20px;
-      border: none;           /* Bỏ viền */
-      border-radius: 6px;
-      font-weight: bold;
-      text-decoration: none;
-      cursor: pointer;        /* Thêm con trỏ tay khi hover */
-    }
+.btn-login:hover {
+  background-color: #d91b41;
+}
 
-    .btn-login:hover {
-      background-color: #d91b41;
-    }
+/* Auth-buttons container */
+.auth-buttons {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
 
-
-  /* Avatar và tên người dùng */
-.user-info {
+/* Avatar + tên người dùng */
+.user-avatar-status {
   display: flex;
   align-items: center;
   position: relative;
   cursor: pointer;
+  width: 220px;
+  padding: 10px 15px;
+  background-color: #f9fafb;
+  border-radius: 50px;
+  border: 1px solid #e2e8f0;
+  transition: background-color 0.2s;
 }
 
-.user-info .avatar {
+.user-avatar-status:hover {
+  background-color: #f1f5f9;
+}
+
+.user-avatar-status .avatar {
   width: 36px;
   height: 36px;
   border-radius: 50%;
   object-fit: cover;
-  margin-right: 8px;
-  border: 2px solid #FF204E;
+  margin-right: 10px;
 }
 
-.user-info .username {
-  font-weight: 500;
+.user-avatar-status .user-fullname {
+  font-size: 16px;
+  font-weight: 600;
   color: #334155;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  flex: 1;
 }
 
-/* Menu xổ xuống */
-.dropdown-menu {
+/* Dropdown menu */
+.dropdown-register {
   position: absolute;
-  top: 120%;
+  top: 115%;
   right: 0;
+  width: 220px;
   background-color: white;
-  border: 1px solid #e2e8f0;
-  border-radius: 8px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  padding: 8px 0;
-  width: 150px;
-  display: flex;
-  flex-direction: column;
-  z-index: 1000;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  overflow: hidden;
+  z-index: 999;
+  animation: fadeIn 0.2s ease-in-out;
 }
 
-.dropdown-menu button {
+.dropdown-register-button {
+  display: block;
+  width: 100%;
   background: none;
   border: none;
-  padding: 10px 16px;
+  padding: 12px 16px;
   text-align: left;
   font-size: 14px;
   color: #334155;
@@ -119,27 +134,6 @@
   transition: background 0.2s;
 }
 
-.dropdown-menu button:hover {
+.dropdown-register-button:hover {
   background-color: #f1f5f9;
-}
-
-/* Đăng ký và đăng nhập khi chưa đăng nhập */
-.auth-buttons {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-}
-
-.btn-register {
-  background-color: transparent;
-  border: none;
-  color: #334155;
-  font-weight: 500;
-  cursor: pointer;
-  text-decoration: underline;
-  font-size: 14px;
-}
-
-.btn-register:hover {
-  color: #FF204E;
 }

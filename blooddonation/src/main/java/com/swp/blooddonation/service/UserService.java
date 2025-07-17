@@ -68,15 +68,27 @@ public class UserService {
 
 
     // 2. Lịch sử hiến máu (chỉ cho CUSTOMER)
-    public List<DonationHistoryDTO> getDonationHistory(Account account) {
-        User user = getUser(account);
-        if (account.getRole() != Role.CUSTOMER) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Chỉ customer mới có thể xem lịch sử hiến máu");
-        }
-        return donationHistoryRepository.findByCustomerOrderByDonationDateDesc(user).stream()
-                .map(dh -> modelMapper.map(dh, DonationHistoryDTO.class))
-                .collect(Collectors.toList());
-    }
+//    public List<DonationHistoryDTO> getDonationHistory() {
+//        User user = getCurrentUser();
+////        if (user.getAccount().getRole() != Role.CUSTOMER) {
+////            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Chỉ customer mới có thể xem lịch sử hiến máu");
+////        }
+//        return donationHistoryRepository.findByCustomerOrderByDonationDateDesc(user).stream()
+//                .map(dh -> modelMapper.map(dh, DonationHistoryDTO.class))
+//                .collect(Collectors.toList());
+//    }
+
+    public List<DonationHistoryDTO> getDonationHistory() {
+    User user = getCurrentUser();
+
+    return donationHistoryRepository.findByCustomerOrderByDonationDateDesc(user).stream()
+            .map(dh -> {
+                DonationHistoryDTO dto = modelMapper.map(dh, DonationHistoryDTO.class);
+                dto.setDonorName(dh.getCustomer().getFullName());
+                return dto;
+            })
+            .collect(Collectors.toList());
+}
 
     // 3. Gợi ý ngày hiến máu tiếp theo (chỉ cho CUSTOMER)
     public String getDonationRecommendation(Account account) {
