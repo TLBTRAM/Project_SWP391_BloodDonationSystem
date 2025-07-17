@@ -267,12 +267,12 @@ const User = () => {
                   <h3>Bạn muốn thao tác gì?</h3>
                   <div className="popup-options">
                     <div className="popup-option" onClick={() => navigate("/booking")}>
+                      <h4>Đăng ký hiến máu</h4>
+                      <p>Chọn lịch và cung cấp thông tin để tham gia hiến máu</p>
+                    </div>
+                    <div className="popup-option" onClick={() => navigate("/create-blood-request")}>
                       <h4>Tạo yêu cầu máu</h4>
                       <p>Gửi thông tin bệnh nhân cần truyền máu</p>
-                    </div>
-                    <div className="popup-option" onClick={() => navigate("/blood-request-history")}>
-                      <h4>Lịch sử yêu cầu</h4>
-                      <p>Xem các yêu cầu máu đã gửi</p>
                     </div>
                   </div>
                   <button className="popup-close" onClick={() => setShowBloodRequestPopup(false)}>Đóng</button>
@@ -295,12 +295,12 @@ const User = () => {
                   <h3>Bạn muốn xem thông tin nào?</h3>
                   <div className="popup-options">
                     <div className="popup-option" onClick={() => navigate("/my-registrations")}>
-                      <img src={orderIcon} alt="Đơn đã đăng ký" />
+                     
                       <h4>Đơn đã đăng ký</h4>
                       <p>Xem các đơn hiến máu hoặc khám sàng lọc bạn đã gửi.</p>
                     </div>
                     <div className="popup-option" onClick={() => navigate("/blood-request-history")}>
-                      <img src={orderIcon} alt="Lịch sử yêu cầu máu" />
+
                       <h4>Lịch sử yêu cầu máu</h4>
                       <p>Xem lại các yêu cầu máu toàn phần bạn đã gửi.</p>
                     </div>
