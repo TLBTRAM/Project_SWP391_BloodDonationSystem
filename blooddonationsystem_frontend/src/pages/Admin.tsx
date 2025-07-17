@@ -230,7 +230,7 @@ const Admin: React.FC = () => {
           </Link>
         </div>
         <div className="admin-greeting">
-          Xin chào,{" "}
+          Xin chào, {" "} 
           <span className="admin-name">
             <strong>{user?.fullName || "Admin"}</strong>
           </span>

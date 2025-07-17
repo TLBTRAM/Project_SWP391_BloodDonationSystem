@@ -265,9 +265,29 @@ const User = () => {
                 <h4>Xem đơn đã gửi</h4>
                 <p>Chức năng mới đang được cập nhật và sẽ ra mắt trong thời gian tới.</p>
                 <img src={orderIcon} alt="Xem đơn đã gửi" />
-                <button onClick={() => navigate('/my-registrations')}>Xem ngay</button>
+                <button onClick={() => setShowPopup(true)}>📋 Xem thông tin đã gửi</button>
               </div>
             </div>
+            {showPopup && (
+              <div className="popup-overlay" onClick={() => setShowPopup(false)}>
+                <div className="popup-content" onClick={(e) => e.stopPropagation()}>
+                  <h3>Bạn muốn xem thông tin nào?</h3>
+                  <div className="popup-options">
+                    <div className="popup-option" onClick={() => navigate("/my-registrations")}>
+                      <img src={orderIcon} alt="Đơn đã đăng ký" />
+                      <h4>Đơn đã đăng ký</h4>
+                      <p>Xem các đơn hiến máu hoặc khám sàng lọc bạn đã gửi.</p>
+                    </div>
+                    <div className="popup-option" onClick={() => navigate("/blood-request-history")}>
+                      <img src={orderIcon} alt="Lịch sử yêu cầu máu" />
+                      <h4>Lịch sử yêu cầu máu</h4>
+                      <p>Xem lại các yêu cầu máu toàn phần bạn đã gửi.</p>
+                    </div>
+                  </div>
+                  <button className="popup-close" onClick={() => setShowPopup(false)}>Đóng</button>
+                </div>
+              </div>
+            )}
 
             <div className="booking-item">
               <div className="booking-text">
