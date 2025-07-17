@@ -89,6 +89,7 @@ const ScheduleManagement = () => {
         note: reg.note || "",
         avatar: avatarImg,
       }));
+      
       setAppointments(mapped);
     } catch (err) {
       setAppointments([]);

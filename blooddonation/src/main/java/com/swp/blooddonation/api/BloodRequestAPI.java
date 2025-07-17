@@ -4,6 +4,8 @@ import com.swp.blooddonation.dto.request.BloodRequestRequest;
 import com.swp.blooddonation.dto.request.ComponentBloodRequestRequest;
 import com.swp.blooddonation.entity.WholeBloodRequest;
 import com.swp.blooddonation.service.BloodRequestService;
+import com.swp.blooddonation.entity.BloodRequestComponent;
+import com.swp.blooddonation.repository.BloodRequestComponentRepository;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -11,6 +13,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @SecurityRequirement(name = "api")
@@ -20,6 +24,9 @@ public class BloodRequestAPI {
 
     @Autowired
     BloodRequestService bloodRequestService;
+
+    @Autowired
+    BloodRequestComponentRepository bloodRequestComponentRepository;
 
 
     @PreAuthorize("hasRole('CUSTOMER') or hasRole('MEDICALSTAFF')")
@@ -61,6 +68,34 @@ public class BloodRequestAPI {
     public ResponseEntity<?> rejectRequest(@PathVariable Long id, @RequestParam String reason) {
         bloodRequestService.rejectWholeBloodRequest(id, reason);
         return ResponseEntity.ok("Đã từ chối yêu cầu truyền máu.");
+    }
+
+    @PreAuthorize("hasAnyRole('MANAGER', 'MEDICALSTAFF')")
+    @PutMapping("/component/{id}/complete")
+    public ResponseEntity<?> completeComponentRequest(@PathVariable Long id) {
+        bloodRequestService.completeComponentBloodRequest(id);
+        return ResponseEntity.ok("Đã hoàn tất yêu cầu truyền máu thành phần.");
+    }
+
+    @PreAuthorize("hasAnyRole('MANAGER', 'MEDICALSTAFF')")
+    @PutMapping("/component/{id}/reject")
+    public ResponseEntity<?> rejectComponentRequest(@PathVariable Long id, @RequestParam String reason) {
+        bloodRequestService.rejectComponentBloodRequest(id, reason);
+        return ResponseEntity.ok("Đã từ chối yêu cầu truyền máu thành phần.");
+    }
+
+    @PreAuthorize("hasAnyRole('MANAGER', 'MEDICALSTAFF')")
+    @GetMapping("/all")
+    public ResponseEntity<List<WholeBloodRequest>> getAllBloodRequests() {
+        List<WholeBloodRequest> requests = bloodRequestService.getAllBloodRequests();
+        return ResponseEntity.ok(requests);
+    }
+
+    @PreAuthorize("hasAnyRole('MANAGER', 'MEDICALSTAFF')")
+    @GetMapping("/component/all")
+    public ResponseEntity<List<BloodRequestComponent>> getAllComponentBloodRequests() {
+        List<BloodRequestComponent> requests = bloodRequestComponentRepository.findAll();
+        return ResponseEntity.ok(requests);
     }
 
 

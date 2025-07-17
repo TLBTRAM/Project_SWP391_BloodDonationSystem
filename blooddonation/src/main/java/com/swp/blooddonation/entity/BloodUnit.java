@@ -1,5 +1,6 @@
 package com.swp.blooddonation.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.swp.blooddonation.enums.BloodType;
 import com.swp.blooddonation.enums.BloodUnitStatus;
 import com.swp.blooddonation.enums.RhType;
@@ -34,13 +35,16 @@ public class BloodUnit {
     private BloodUnitStatus status; // COLLECTED, SEPARATED, EXPIRED
 
     @ManyToOne
+    @JsonIgnore
     private User donor;
 
     @ManyToOne
+    @JsonIgnore
     private User collectedBy;
 
     @ManyToOne
     @JoinColumn(name = "whole_blood_request_id")
+    @JsonIgnore
     private WholeBloodRequest wholeBloodRequest;
 
 }

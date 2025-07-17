@@ -28,4 +28,8 @@ public interface RegisterRepository extends JpaRepository<Register, Long> {
     List<Register> findBySlotAndRegisterDateOrderByCreatedAt(Slot slot, LocalDate registerDate);
 
     List<Register> findByStatus(RegisterStatus status);
+
+    List<Register> findByUser(User user);
+
+    List<Register> findByUserAndStatus(User user, com.swp.blooddonation.enums.RegisterStatus status);
 }

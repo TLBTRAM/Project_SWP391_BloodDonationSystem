@@ -7,7 +7,7 @@ import ReactDatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { registerLocale } from "react-datepicker";
 import { vi } from "date-fns/locale/vi";
-import { Locale , format } from "date-fns";
+import { Locale, format } from "date-fns";
 
 
 import Header from "../layouts/header-footer/Header";
@@ -384,12 +384,12 @@ const MedicalStaff = () => {
                 />
                 <div>
                   <div className="name-role">
-                    <h2>{staff?.fullName || "Tên nhân viên"}</h2> 
+                    <h2>{staff?.fullName || "Tên nhân viên"}</h2>
                     <span className="role-tag">Nhân viên y tế</span>
                   </div>
-                  <p>Email: {staff?.email || "---"}</p> 
-                  <p>Số điện thoại: {staff?.phone || "---"}</p> 
-                  <p>Đơn vị: {staff?.address || "Trung tâm hiến máu"}</p> 
+                  <p>Email: {staff?.email || "---"}</p>
+                  <p>Số điện thoại: {staff?.phone || "---"}</p>
+                  <p>Đơn vị: {staff?.address || "Trung tâm hiến máu"}</p>
                 </div>
                 <button className="edit-button">Chỉnh sửa hồ sơ</button>
               </div>
@@ -398,10 +398,11 @@ const MedicalStaff = () => {
                 <div className="appointment-list">
                   <div className="appointment-header">
                     <h3>
-                      Lịch khám -{" "}
+                      Danh sách đăng ký khám ngày{" "}
                       {format(selectedDate, "dd/MM/yyyy", {
                         locale: vi as unknown as Locale,
-                      })}
+                      })}{" "}
+                      ({filteredAppointments.length} lượt)
                     </h3>
                     <ReactDatePicker
                       selected={selectedDate}
@@ -434,19 +435,19 @@ const MedicalStaff = () => {
                       }}
                     />
                   </div>
+
                   {filteredAppointments.length > 0 ? (
                     <ul>
                       {filteredAppointments.map((item, idx) => (
                         <li key={idx}>
-                          {item.time} - {item.donor}
+                          🕒 <b>{item.time}</b> – 👤 <b>{item.donor}</b> ({item.status})
                         </li>
                       ))}
                     </ul>
                   ) : (
-                    <p>Không có lịch hẹn nào.</p>
+                    <p>Không có ai đăng ký vào ngày này.</p>
                   )}
                 </div>
-
                 <div className="calendar">
                   <h3>Hôm nay</h3>
                   <Calendar />

@@ -442,7 +442,57 @@ public class BloodRequestService {
         }
     }
 
+    public List<WholeBloodRequest> getAllBloodRequests() {
+        return wholeBloodRequestRepository.findAll();
+    }
 
+    @Transactional
+    public void completeComponentBloodRequest(Long requestId) {
+        BloodRequestComponent request = bloodRequestComponentRepository.findById(requestId)
+                .orElseThrow(() -> new BadRequestException("Không tìm thấy yêu cầu truyền máu thành phần."));
 
+        if (request.getStatus() != BloodRequestStatus.READY) {
+            throw new BadRequestException("Yêu cầu chưa sẵn sàng để hoàn thành.");
+        }
+
+        // TODO: Nếu có logic cập nhật trạng thái các thành phần máu, thực hiện ở đây
+        request.setStatus(BloodRequestStatus.COMPLETED);
+        bloodRequestComponentRepository.save(request);
+
+        // Gửi thông báo
+        notificationService.sendNotification(NotificationRequest.builder()
+                .receiverIds(List.of(request.getRequester().getId()))
+                .title("Yêu cầu truyền máu thành phần đã hoàn tất")
+                .content("Yêu cầu truyền máu thành phần cho bệnh nhân đã được hoàn thành.")
+                .type(NotificationType.BLOOD_REQUEST)
+                .build());
+    }
+
+    @Transactional
+    public void rejectComponentBloodRequest(Long requestId, String reason) {
+        BloodRequestComponent request = bloodRequestComponentRepository.findById(requestId)
+                .orElseThrow(() -> new BadRequestException("Không tìm thấy yêu cầu truyền máu thành phần."));
+
+        if (request.getStatus() != BloodRequestStatus.PENDING) {
+            throw new BadRequestException("Chỉ được từ chối yêu cầu đang chờ xử lý.");
+        }
+
+        request.setStatus(BloodRequestStatus.REJECTED);
+        bloodRequestComponentRepository.save(request);
+
+        // Cập nhật trạng thái pending patient (nếu có)
+        pendingPatientRequestRepository.findByBloodRequestComponent(request).ifPresent(pending -> {
+            pending.setStatus(BloodRequestStatus.REJECTED);
+            pendingPatientRequestRepository.save(pending);
+        });
+
+        // Gửi thông báo từ chối
+        notificationService.sendNotification(NotificationRequest.builder()
+                .receiverIds(List.of(request.getRequester().getId()))
+                .title("Yêu cầu truyền máu thành phần bị từ chối")
+                .content("Yêu cầu truyền máu thành phần đã bị từ chối. Lý do: " + reason)
+                .type(NotificationType.BLOOD_REQUEST)
+                .build());
+    }
 
 }
