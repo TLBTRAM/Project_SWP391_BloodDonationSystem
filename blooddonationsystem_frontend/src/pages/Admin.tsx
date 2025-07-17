@@ -6,6 +6,8 @@ import DeleteImg from "./images/Action/bin.png";
 import EditImg from "./images/Action/pen.png";
 import { useAuth } from "../layouts/header-footer/AuthContext";
 
+import AdminNotifications from "./AdminNotifications";
+
 interface Account {
   id: number;
   name: string;
@@ -34,7 +36,7 @@ const Admin: React.FC = () => {
   // Tự động ẩn thông báo sau 2.5 giây
   useEffect(() => {
     if (message) {
-      const timer = setTimeout(() => setMessage("") , 2500);
+      const timer = setTimeout(() => setMessage(""), 2500);
       return () => clearTimeout(timer);
     }
   }, [message]);
@@ -42,6 +44,11 @@ const Admin: React.FC = () => {
   const [deletingAccount, setDeletingAccount] = useState<Account | null>(null); // ✅ dùng để hiển thị modal xác nhận xoá
 
   const navigate = useNavigate();
+
+  // Thêm state chọn tab
+  const [activeTab, setActiveTab] = useState<"accounts" | "notifications">(
+    "accounts"
+  );
 
   // Thêm hàm loadAccounts để gọi API lấy danh sách tài khoản theo filterRole
   const loadAccounts = () => {
@@ -53,7 +60,7 @@ const Admin: React.FC = () => {
           "Người dùng": "CUSTOMER",
           "Nhân viên y tế": "MEDICALSTAFF",
           "Quản lý kho máu": "MANAGER",
-          "Admin": "ADMIN"
+          Admin: "ADMIN",
         };
         url += `?role=${roleMap[filterRole]}`;
       }
@@ -142,13 +149,16 @@ const Admin: React.FC = () => {
   const handleSaveRole = () => {
     if (editingAccount) {
       const token = localStorage.getItem("token");
-      fetch(`http://localhost:8080/api/admin/users/${editingAccount.id}/role?role=${selectedRole}`, {
-        method: "PUT",
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
-      })
+      fetch(
+        `http://localhost:8080/api/admin/users/${editingAccount.id}/role?role=${selectedRole}`,
+        {
+          method: "PUT",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        }
+      )
         .then((res) => {
           if (!res.ok) throw new Error("Không thể cập nhật vai trò");
           setMessage("Cập nhật vai trò thành công!");
@@ -163,16 +173,23 @@ const Admin: React.FC = () => {
     const account = accounts.find((acc) => acc.id === id);
     if (!account) return;
     const token = localStorage.getItem("token");
-    fetch(`http://localhost:8080/api/admin/users/${id}/status?enabled=${!account.enabled}`, {
-      method: "PUT",
-      headers: {
-        Authorization: `Bearer ${token}`,
-        "Content-Type": "application/json",
-      },
-    })
+    fetch(
+      `http://localhost:8080/api/admin/users/${id}/status?enabled=${!account.enabled}`,
+      {
+        method: "PUT",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      }
+    )
       .then((res) => {
         if (!res.ok) throw new Error("Không thể cập nhật trạng thái");
-        setMessage(account.enabled ? "Vô hiệu hóa tài khoản thành công!" : "Kích hoạt tài khoản thành công!");
+        setMessage(
+          account.enabled
+            ? "Vô hiệu hóa tài khoản thành công!"
+            : "Kích hoạt tài khoản thành công!"
+        );
         loadAccounts();
       })
       .catch((err) => alert(err.message));
@@ -209,16 +226,18 @@ const Admin: React.FC = () => {
   // Đếm số lượng tài khoản mỗi role dựa trên accounts mới nhất
   const roleCounts = {
     "Người dùng": accounts.filter((a) => a.role === "Người dùng").length,
-    "Nhân viên y tế": accounts.filter((a) => a.role === "Nhân viên y tế").length,
-    "Quản lý kho máu": accounts.filter((a) => a.role === "Quản lý kho máu").length,
-    "Admin": accounts.filter((a) => a.role === "Admin").length,
+    "Nhân viên y tế": accounts.filter((a) => a.role === "Nhân viên y tế")
+      .length,
+    "Quản lý kho máu": accounts.filter((a) => a.role === "Quản lý kho máu")
+      .length,
+    Admin: accounts.filter((a) => a.role === "Admin").length,
   };
 
   const roleIcons: Record<string, string> = {
     "Người dùng": "👤",
     "Nhân viên y tế": "🩺",
     "Quản lý kho máu": "🏥",
-    "Admin": "👨‍💻"
+    Admin: "👨‍💻",
   };
 
   return (
@@ -230,7 +249,7 @@ const Admin: React.FC = () => {
           </Link>
         </div>
         <div className="admin-greeting">
-          Xin chào, {" "} 
+          Xin chào,{" "}
           <span className="admin-name">
             <strong>{user?.fullName || "Admin"}</strong>
           </span>
@@ -241,175 +260,228 @@ const Admin: React.FC = () => {
       </header>
 
       <div className="admin-container">
-        <h1>Quản lý tài khoản</h1>
-
-        {message && (
-          <div className="admin-toast-success">{message}</div>
-        )}
-
-        <div className="role-summary">
-          {Object.entries(roleCounts).map(([role, count]) => (
-            <div className="summary-box" key={role}>
-              <div className="summary-icon">{roleIcons[role] || "👤"}</div>
-              <div className="summary-role">{role}</div>
-              <div className="summary-count">{count}</div>
-            </div>
-          ))}
-        </div>
-
-        <div className="admin-controls">
-          <input
-            type="text"
-            placeholder="Tìm theo tên..."
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-          />
-          <select
-            value={filterRole}
-            onChange={(e) => setFilterRole(e.target.value)}
+        <div style={{ textAlign: "center", marginBottom: "20px" }}>
+          <button
+            className="status-btn"
+            style={{
+              padding: "12px 20px",
+              marginRight: "30px",
+              fontSize: "16px",
+              borderRadius: "8px",
+              border: "none",
+              color: "white",
+              cursor: "pointer",
+              backgroundColor: activeTab === "accounts" ? "#FF204E" : "#aad8f2",
+              fontWeight: activeTab === "accounts" ? "600" : "normal",
+              transform: activeTab === "accounts" ? "scale(1.05)" : "none",
+            }}
+            onClick={() => setActiveTab("accounts")}
           >
-            <option value="Tất cả">Tất cả</option>
-            <option value="Người dùng">Người dùng</option>
-            <option value="Nhân viên y tế">Nhân viên y tế</option>
-            <option value="Quản lý kho máu">Quản lý kho máu</option>
-          </select>
+            Quản lý tài khoản
+          </button>
+          <button
+            className="status-btn"
+            style={{
+              marginLeft: "10px",
+              padding: "12px 20px",
+              marginRight: "30px",
+              fontSize: "16px",
+              borderRadius: "8px",
+              border: "none",
+              color: "white",
+              cursor: "pointer",
+              backgroundColor:
+                activeTab === "notifications" ? "#FF204E" : "#aad8f2",
+              fontWeight: activeTab === "notifications" ? "600" : "normal",
+              transform: activeTab === "notifications" ? "scale(1.05)" : "none",
+            }}
+            onClick={() => setActiveTab("notifications")}
+          >
+            Quản lý thông báo
+          </button>
         </div>
 
-        <table className="admin-table">
-          <thead>
-            <tr>
-              <th>Tên</th>
-              <th>Email</th>
-              <th>Vai trò</th>
-              <th>Hành động</th>
-            </tr>
-          </thead>
-          <tbody>
-            {filteredAccounts.length > 0 ? (
-              filteredAccounts.map((account) => (
-                <tr key={account.id}>
-                  <td>{account.name}</td>
-                  <td>{account.email}</td>
-                  <td>{account.role}</td>
-                  <td className="table-action-cell">
-                    <div className="table-action-buttons">
-                      <button
-                        className="action-button-icon"
-                        onClick={() => handleEdit(account.id)}
-                      >
-                        <img src={EditImg} alt="Sửa" />
-                      </button>
-                      <button
-                        className="action-button-icon"
-                        onClick={() => setDeletingAccount(account)} // ✅ mở modal xác nhận
-                      >
-                        <img src={DeleteImg} alt="Xóa" />
-                      </button>
-                      <button
-                        className="status-btn"
-                        onClick={() => setStatusAccount(account)}
-                      >
-                        {account.enabled ? "Vô hiệu hóa" : "Kích hoạt"}
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-              ))
-            ) : (
-              <tr>
-                <td colSpan={4}>Không tìm thấy tài khoản phù hợp.</td>
-              </tr>
-            )}
-          </tbody>
-        </table>
+        {/* ✅ TAB QUẢN LÝ TÀI KHOẢN */}
+        {activeTab === "accounts" && (
+          <>
+            <h1>Quản lý tài khoản</h1>
 
-        {/* ✅ MODAL CHỈNH SỬA ROLE */}
-        {editingAccount && (
-          <div className="modal-overlay">
-            <div className="modal-content">
-              <h3>Chỉnh sửa vai trò</h3>
-              <p>
-                Tài khoản: <strong>{editingAccount.name}</strong>
-              </p>
+            {message && <div className="admin-toast-success">{message}</div>}
+
+            <div className="role-summary">
+              {Object.entries(roleCounts).map(([role, count]) => (
+                <div className="summary-box" key={role}>
+                  <div className="summary-icon">{roleIcons[role] || "👤"}</div>
+                  <div className="summary-role">{role}</div>
+                  <div className="summary-count">{count}</div>
+                </div>
+              ))}
+            </div>
+
+            <div className="admin-controls">
+              <input
+                type="text"
+                placeholder="Tìm theo tên..."
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+              />
               <select
-                value={selectedRole}
-                onChange={(e) => setSelectedRole(e.target.value)}
+                value={filterRole}
+                onChange={(e) => setFilterRole(e.target.value)}
               >
-                <option value="ADMIN">Quản trị viên</option>
-                <option value="MANAGER">Quản lý kho máu</option>
-                <option value="MEDICALSTAFF">Nhân viên y tế</option>
-                <option value="CUSTOMER">Người dùng</option>
+                <option value="Tất cả">Tất cả</option>
+                <option value="Người dùng">Người dùng</option>
+                <option value="Nhân viên y tế">Nhân viên y tế</option>
+                <option value="Quản lý kho máu">Quản lý kho máu</option>
               </select>
-              <div className="modal-buttons">
-                <button onClick={handleSaveRole} className="save-button">
-                  Lưu
-                </button>
-                <button
-                  onClick={() => setEditingAccount(null)}
-                  className="cancel-button"
-                >
-                  Hủy
-                </button>
-              </div>
             </div>
-          </div>
+
+            <table className="admin-table">
+              <thead>
+                <tr>
+                  <th>Tên</th>
+                  <th>Email</th>
+                  <th>Vai trò</th>
+                  <th>Hành động</th>
+                </tr>
+              </thead>
+              <tbody>
+                {filteredAccounts.length > 0 ? (
+                  filteredAccounts.map((account) => (
+                    <tr key={account.id}>
+                      <td>{account.name}</td>
+                      <td>{account.email}</td>
+                      <td>{account.role}</td>
+                      <td className="table-action-cell">
+                        <div className="table-action-buttons">
+                          <button
+                            className="action-button-icon"
+                            onClick={() => handleEdit(account.id)}
+                          >
+                            <img src={EditImg} alt="Sửa" />
+                          </button>
+                          <button
+                            className="action-button-icon"
+                            onClick={() => setDeletingAccount(account)}
+                          >
+                            <img src={DeleteImg} alt="Xóa" />
+                          </button>
+                          <button
+                            className="status-btn"
+                            onClick={() => setStatusAccount(account)}
+                          >
+                            {account.enabled ? "Vô hiệu hóa" : "Kích hoạt"}
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))
+                ) : (
+                  <tr>
+                    <td colSpan={4}>Không tìm thấy tài khoản phù hợp.</td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+
+            {/* ✅ MODAL CHỈNH SỬA ROLE */}
+            {editingAccount && (
+              <div className="modal-overlay">
+                <div className="modal-content">
+                  <h3>Chỉnh sửa vai trò</h3>
+                  <p>
+                    Tài khoản: <strong>{editingAccount.name}</strong>
+                  </p>
+                  <select
+                    value={selectedRole}
+                    onChange={(e) => setSelectedRole(e.target.value)}
+                  >
+                    <option value="ADMIN">Quản trị viên</option>
+                    <option value="MANAGER">Quản lý kho máu</option>
+                    <option value="MEDICALSTAFF">Nhân viên y tế</option>
+                    <option value="CUSTOMER">Người dùng</option>
+                  </select>
+                  <div className="modal-buttons">
+                    <button onClick={handleSaveRole} className="save-button">
+                      Lưu
+                    </button>
+                    <button
+                      onClick={() => setEditingAccount(null)}
+                      className="cancel-button"
+                    >
+                      Hủy
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* ✅ MODAL XÁC NHẬN XÓA */}
+            {deletingAccount && (
+              <div className="modal-overlay">
+                <div className="modal-content">
+                  <h3>Xác nhận xóa</h3>
+                  <p>
+                    Bạn có chắc chắn muốn xóa tài khoản{" "}
+                    <strong>{deletingAccount.name}</strong> không?
+                  </p>
+                  <div className="modal-buttons">
+                    <button
+                      onClick={confirmDeleteAccount}
+                      className="save-button-2"
+                    >
+                      Xóa
+                    </button>
+                    <button
+                      onClick={() => setDeletingAccount(null)}
+                      className="cancel-button-2"
+                    >
+                      Hủy
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* ✅ MODAL KÍCH HOẠT / VÔ HIỆU HÓA */}
+            {statusAccount && (
+              <div className="modal-overlay">
+                <div className="modal-content">
+                  <h3>
+                    Xác nhận{" "}
+                    {statusAccount.enabled ? "vô hiệu hóa" : "kích hoạt"} tài
+                    khoản
+                  </h3>
+                  <p>
+                    Bạn có chắc chắn muốn{" "}
+                    {statusAccount.enabled ? "vô hiệu hóa" : "kích hoạt"} tài
+                    khoản <strong>{statusAccount.name}</strong> không?
+                  </p>
+                  <div className="modal-buttons">
+                    <button
+                      onClick={() => {
+                        toggleEnabled(statusAccount.id);
+                        setStatusAccount(null);
+                      }}
+                      className="save-button-2"
+                    >
+                      {statusAccount.enabled ? "Vô hiệu hóa" : "Kích hoạt"}
+                    </button>
+                    <button
+                      onClick={() => setStatusAccount(null)}
+                      className="cancel-button-2"
+                    >
+                      Hủy
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
+          </>
         )}
 
-        {/* ✅ MODAL XÁC NHẬN XÓA */}
-        {deletingAccount && (
-          <div className="modal-overlay">
-            <div className="modal-content">
-              <h3>Xác nhận xóa</h3>
-              <p>
-                Bạn có chắc chắn muốn xóa tài khoản{" "}
-                <strong>{deletingAccount.name}</strong> không?
-              </p>
-              <div className="modal-buttons">
-                <button
-                  onClick={confirmDeleteAccount}
-                  className="save-button-2"
-                >
-                  Xóa
-                </button>
-                <button
-                  onClick={() => setDeletingAccount(null)}
-                  className="cancel-button-2"
-                >
-                  Hủy
-                </button>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* Thêm modal xác nhận cho kích hoạt/vô hiệu hóa */}
-        {statusAccount && (
-          <div className="modal-overlay">
-            <div className="modal-content">
-              <h3>Xác nhận {statusAccount.enabled ? "vô hiệu hóa" : "kích hoạt"} tài khoản</h3>
-              <p>
-                Bạn có chắc chắn muốn {statusAccount.enabled ? "vô hiệu hóa" : "kích hoạt"} tài khoản <strong>{statusAccount.name}</strong> không?
-              </p>
-              <div className="modal-buttons">
-                <button
-                  onClick={() => {
-                    toggleEnabled(statusAccount.id);
-                    setStatusAccount(null);
-                  }}
-                  className="save-button-2"
-                >
-                  {statusAccount.enabled ? "Vô hiệu hóa" : "Kích hoạt"}
-                </button>
-                <button
-                  onClick={() => setStatusAccount(null)}
-                  className="cancel-button-2"
-                >
-                  Hủy
-                </button>
-              </div>
-            </div>
-          </div>
-        )}
+        {/* ✅ TAB QUẢN LÝ THÔNG BÁO */}
+        {activeTab === "notifications" && <AdminNotifications />}
       </div>
     </>
   );
