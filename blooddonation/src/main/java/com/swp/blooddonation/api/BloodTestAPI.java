@@ -25,19 +25,25 @@ public class BloodTestAPI {
         return ResponseEntity.ok(bloodTest);
     }
 
-    @PreAuthorize("hasRole('MEDICALSTAFF')")
-    @PutMapping("/{id}/start")
-    public ResponseEntity<BloodTest> start(@PathVariable Long id) {
-        return ResponseEntity.ok(bloodTestService.startBloodTest(id));
-    }
+//    @PreAuthorize("hasRole('MEDICALSTAFF')")
+//    @PutMapping("/{id}/start")
+//    public ResponseEntity<BloodTest> start(@PathVariable Long id) {
+//        return ResponseEntity.ok(bloodTestService.startBloodTest(id));
+//    }
     
     @PreAuthorize("hasRole('MEDICALSTAFF')")
     @PutMapping("/{id}/complete")
     public ResponseEntity<BloodTestResponse> complete(
-            @PathVariable Long id,
+            @PathVariable Long id, // id này là registerId
             @RequestBody CompleteBloodTest request
     ) {
-        BloodTestResponse response = bloodTestService.completeBloodTest(id, request);
+        BloodTestResponse response = bloodTestService.completeBloodTestByRegister(id, request);
         return ResponseEntity.ok(response);
+    }
+
+    @PreAuthorize("hasRole('MEDICALSTAFF')")
+    @GetMapping("/completed")
+    public ResponseEntity<java.util.List<BloodTestResponse>> getCompletedBloodTests() {
+        return ResponseEntity.ok(bloodTestService.getAllCompletedBloodTests());
     }
 }

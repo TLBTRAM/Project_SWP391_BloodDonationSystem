@@ -19,7 +19,8 @@ public class BloodTest {
     private Long id;
 
     @OneToOne
-    private Appointment appointment;
+    @JoinColumn(name = "register_id")
+    private Register register;
 
     private String result;
 

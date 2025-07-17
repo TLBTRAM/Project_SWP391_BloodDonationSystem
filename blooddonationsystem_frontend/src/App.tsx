@@ -29,7 +29,8 @@ import EditPage from "./pages/Edit";
 import BookingPage from "./pages/Booking";
 import MyRegistrationspage from "./pages/MyRegistrations";
 
-import TestFormpage from "./pages/Bloodtestform";
+import BloodRequestHistorypage from "./pages/BloodRequestHistory";
+import CreateBloodRequestpage from "./pages/CreateBloodRequest";
 
 // Tài khoản người quản lí kho máu
 import MedPage from "./pages/MedicalStaff";
@@ -71,7 +72,8 @@ function App() {
 				<Route path="/booking" element={<BookingPage />} />
 				<Route path="/my-registrations" element={<MyRegistrationspage />} />
 
-				<Route path="/bloodtest" element={<TestFormpage />} />
+				<Route path="/blood-request-history" element={<BloodRequestHistorypage />} />
+				<Route path="/createbloodrequestpage" element={<CreateBloodRequestpage />} />
 
 
 				{/* Tài khoản người nhân viên y tế */}

@@ -1,0 +1,47 @@
+.blood-request-history {
+  padding: 40px;
+  max-width: 1000px;
+  margin: auto;
+  background-color: #fff;
+}
+
+.blood-request-history h2 {
+  margin-bottom: 20px;
+  text-align: center;
+  color: #b22222;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+
+th, td {
+  padding: 12px;
+  border-bottom: 1px solid #ddd;
+  text-align: center;
+}
+
+.status {
+  padding: 4px 8px;
+  border-radius: 6px;
+  font-weight: bold;
+  color: #fff;
+}
+
+.status.pending {
+  background-color: #f0ad4e;
+}
+
+.status.ready {
+  background-color: #5bc0de;
+}
+
+.status.complete {
+  background-color: #5cb85c;
+}
+
+.status.rejected {
+  background-color: #d9534f;
+}

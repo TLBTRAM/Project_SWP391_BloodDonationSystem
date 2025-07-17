@@ -8,6 +8,9 @@ import calendarIcon from './images/User/Calendar.png';
 import notificationIcon from './images/User/notifications.png';
 import orderIcon from './images/User/order.png';
 
+import blood_request_historyIcon from './images/User/blood_request_history.png';
+import clipboard_listIcon from './images/User/clipboard_list.png';
+
 interface UserData {
   id: number;
   fullName: string;
@@ -56,6 +59,7 @@ const User = () => {
     return age;
   };
   const [showPopup, setShowPopup] = useState(false);
+  const [showBloodRequestPopup, setShowBloodRequestPopup] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [user, setUser] = useState<UserData | null>(null);
   const [showNotificationPopup, setShowNotificationPopup] = useState(false);
@@ -250,24 +254,65 @@ const User = () => {
             </div>
           </div>
 
+
+          {/* Đăng ký hiến máu */}
           <div className="third-panel">
             <div className="booking-item">
               <div className="booking-text">
                 <h4>Đăng ký lịch hẹn</h4>
                 <p>Chọn ngày và giờ phù hợp để được phục vụ nhanh chóng và thuận tiện hơn.</p>
                 <img src={calendarIcon} alt="Đặt lịch" />
-                <button onClick={() => navigate('/booking')}>Đăng ký</button>
+                <button onClick={() => setShowBloodRequestPopup(true)}>Đăng ký</button>
               </div>
             </div>
+            {showBloodRequestPopup && (
+              <div className="popup-overlay" onClick={() => setShowBloodRequestPopup(false)}>
+                <div className="popup-content" onClick={(e) => e.stopPropagation()}>
+                  <h3>Bạn muốn thao tác gì?</h3>
+                  <div className="popup-options">
+                    <div className="popup-option" onClick={() => navigate("/booking")}>
+                      <h4>Đăng ký hiến máu</h4>
+                      <p>Chọn lịch và cung cấp thông tin để tham gia hiến máu</p>
+                    </div>
+                    <div className="popup-option" onClick={() => navigate("/create-blood-request")}>
+                      <h4>Tạo yêu cầu máu</h4>
+                      <p>Gửi thông tin bệnh nhân cần truyền máu</p>
+                    </div>
+                  </div>
+                  <button className="popup-close" onClick={() => setShowBloodRequestPopup(false)}>Đóng</button>
+                </div>
+              </div>
+            )}
 
+            {/* Xem các loại đơn */}
             <div className="booking-item">
               <div className="booking-text">
                 <h4>Xem đơn đã gửi</h4>
                 <p>Chức năng mới đang được cập nhật và sẽ ra mắt trong thời gian tới.</p>
                 <img src={orderIcon} alt="Xem đơn đã gửi" />
-                <button onClick={() => navigate('/my-registrations')}>Xem ngay</button>
+                <button onClick={() => setShowPopup(true)}>Xem thông tin đã gửi</button>
               </div>
             </div>
+            {showPopup && (
+              <div className="popup-overlay" onClick={() => setShowPopup(false)}>
+                <div className="popup-content" onClick={(e) => e.stopPropagation()}>
+                  <h3>Bạn muốn xem thông tin nào?</h3>
+                  <div className="popup-options">
+                    <div className="popup-option" onClick={() => navigate("/my-registrations")}>
+                      <img src={clipboard_listIcon} alt="Đơn đã đăng ký" />
+                      <h4>Đơn đã đăng ký</h4>
+                      <p>Xem các đơn hiến máu hoặc khám sàng lọc bạn đã gửi.</p>
+                    </div>
+                    <div className="popup-option" onClick={() => navigate("/blood-request-history")}>
+                      <img src={blood_request_historyIcon} alt="Lịch sử yêu cầu máu" />
+                      <h4>Lịch sử yêu cầu máu</h4>
+                      <p>Xem lại các yêu cầu máu toàn phần bạn đã gửi.</p>
+                    </div>
+                  </div>
+                  <button className="popup-close" onClick={() => setShowPopup(false)}>Đóng</button>
+                </div>
+              </div>
+            )}
 
             <div className="booking-item">
               <div className="booking-text">

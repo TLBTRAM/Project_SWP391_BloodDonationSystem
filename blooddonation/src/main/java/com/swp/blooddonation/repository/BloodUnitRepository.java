@@ -21,6 +21,7 @@ public interface BloodUnitRepository extends JpaRepository<BloodUnit, Long> {
         List<BloodUnit> findUsableBloodUnits(@Param("bloodType") BloodType bloodType,
                                              @Param("rhType") RhType rhType);
         List<BloodUnit> findByWholeBloodRequest(WholeBloodRequest request);
+        List<BloodUnit> findByStatus(BloodUnitStatus status);
 
 
         @Query("SELECT SUM(u.totalVolume) FROM BloodUnit u WHERE u.status = com.swp.blooddonation.enums.BloodUnitStatus.COLLECTED AND u.expirationDate >= CURRENT_DATE")

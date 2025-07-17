@@ -312,162 +312,70 @@ html, body {
 .booking-text button:hover {
   background-color: #d32f2f;
 }
-
-/* Nền mờ phía sau */
 .popup-overlay {
   position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.4);
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.5);
+  z-index: 1000;
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 999;
 }
 
-/* Hộp nội dung popup */
 .popup-content {
-  background: white;
-  padding: 24px;
+  background: #fff;
+  padding: 30px;
   border-radius: 12px;
+  width: 90%;
+  max-width: 600px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.2);
   text-align: center;
-  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.2);
-  animation: fadeIn 0.3s ease;
-}
-
-/* Các nút lựa chọn */
-.popup-buttons {
-  display: flex;
-  justify-content: space-around;
-  margin-top: 20px;
-}
-
-.popup-buttons button {
-  padding: 10px 20px;
-  border: none;
-  background-color: #e53935;
-  color: white;
-  font-weight: bold;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: background-color 0.2s;
-}
-
-.popup-buttons button:hover {
-  background-color: #c62828;
-}
-
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: scale(0.95);
-  }
-  to {
-    opacity: 1;
-    transform: scale(1);
-  }
-}
-
-/* Popup overlay */
-.popup-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: rgba(0, 0, 0, 0.35);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 9999;
-}
-
-/* Popup nội dung */
-.popup-content {
-  background: #ffffff;
-  padding: 40px;
-  border-radius: 20px;
-  max-width: 750px;
-  width: 95%;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
   position: relative;
-  animation: fadeIn 0.3s ease;
 }
 
-.popup-content h2 {
-  text-align: center;
-  color: #d32f2f;
-  margin-bottom: 30px;
-  font-size: 24px;
-  font-weight: bold;
-  letter-spacing: 0.5px;
-}
-
-.popup-cards {
+.popup-options {
   display: flex;
-  flex-wrap: wrap;
   gap: 20px;
-  justify-content: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
 }
 
-.popup-card {
-  flex: 1 1 300px;
+.popup-option {
+  flex: 1 1 45%;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  padding: 16px;
+  cursor: pointer;
   background-color: #f9f9f9;
-  border-radius: 16px;
-  padding: 20px 24px;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
-  border: 1px solid #e0e0e0;
-  transition: all 0.2s ease-in-out;
+  transition: all 0.3s ease;
 }
 
-.popup-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+.popup-option:hover {
+  background-color: #fff2f2;
+  border-color: #b30000;
 }
 
-.popup-card h3 {
+.popup-option img {
+  width: 50px;
+  margin-bottom: 10px;
+}
+
+.popup-option h4 {
+  margin: 10px 0 6px;
   font-size: 18px;
-  margin-bottom: 12px;
-  color: #333;
-  display: flex;
-  align-items: center;
-  gap: 8px;
 }
 
-.popup-card p {
+.popup-option p {
   font-size: 14px;
   color: #555;
-  margin: 6px 0;
 }
 
-.popup-card p strong {
-  color: #2c3e50;
-}
-
-.popup-content button {
-  margin-top: 30px;
-  padding: 10px 24px;
-  font-size: 14px;
-  font-weight: 600;
-  background-color: #1976d2;
+.popup-close {
+  margin-top: 20px;
+  padding: 10px 20px;
+  background: #b30000;
   color: white;
   border: none;
   border-radius: 8px;
   cursor: pointer;
-  display: block;
-  margin-left: auto;
-  margin-right: auto;
-  transition: background 0.3s ease;
-}
-
-.popup-content button:hover {
-  background-color: #115293;
-}
-
-/* Fade-in animation */
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(-20px); }
-  to { opacity: 1; transform: translateY(0); }
 }

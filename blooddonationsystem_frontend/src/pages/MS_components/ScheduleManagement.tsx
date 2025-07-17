@@ -89,6 +89,7 @@ const ScheduleManagement = () => {
         note: reg.note || "",
         avatar: avatarImg,
       }));
+      
       setAppointments(mapped);
     } catch (err) {
       setAppointments([]);
@@ -115,14 +116,11 @@ const ScheduleManagement = () => {
     const token = localStorage.getItem("token");
     const regId = appointments[registerIdx].id;
     try {
-      await axios.put(
-        `http://localhost:8080/api/registers/${regId}/approve`,
-        {},
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
-      );
-      fetchRegisters(); // Cập nhật lại danh sách, không reload trang
+      await axios.put(`http://localhost:8080/api/registers/${regId}/approve`, {}, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      // Xóa khỏi danh sách appointments thay vì fetch lại toàn bộ
+      setAppointments(prev => prev.filter((_, idx) => idx !== registerIdx));
       setApproveConfirmIdx(null); // Đóng popup nếu có
     } catch (err) {
       alert("Phê duyệt thất bại!");
@@ -134,14 +132,11 @@ const ScheduleManagement = () => {
     const token = localStorage.getItem("token");
     const regId = appointments[registerIdx].id;
     try {
-      await axios.post(
-        `http://localhost:8080/api/registers/${regId}/reject`,
-        { reason: rejectReason },
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
-      );
-      fetchRegisters();
+      await axios.post(`http://localhost:8080/api/registers/${regId}/reject`, { reason: rejectReason }, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      // Xóa khỏi danh sách appointments thay vì fetch lại toàn bộ
+      setAppointments(prev => prev.filter((_, idx) => idx !== registerIdx));
       setRejectConfirmIdx(null); // Đóng popup nếu có
       setRejectReason("");
     } catch (err) {
