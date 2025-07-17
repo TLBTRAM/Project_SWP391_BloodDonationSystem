@@ -3,9 +3,13 @@ import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import logoBlood from "./images/Logo/logo_blood.png";
 import "./components/Manager.css";
+import { useAuth } from "../layouts/header-footer/AuthContext";
 
 import DeleteImg from "./images/Action/bin.png";
 import EditImg from "./images/Action/pen.png";
+
+import WholeBloodRequestList from "./Manager_components/WholeBloodRequestList";
+import ComponentBloodRequestList from "./Manager_components/ComponentBloodRequestList";
 
 import {
   BarChart,
@@ -121,7 +125,7 @@ const Manager: React.FC = () => {
   const [filterStatus, setFilterStatus] = useState("");
   const [sortBy, setSortBy] = useState("");
   const navigate = useNavigate();
-  const [user, setUser] = useState<UserData | null>(null);
+  const { user, logout } = useAuth();
 
   const [formData, setFormData] = useState({
     group: "",
@@ -129,9 +133,13 @@ const Manager: React.FC = () => {
     entryDate: "",
     expiryDate: "",
   });
-  const [view, setView] = useState<"dashboard" | "add" | "stats" | "requests">(
-    "dashboard"
-  );
+  const [view, setView] = useState<
+    | "dashboard"
+    | "add"
+    | "stats"
+    | "wholeBloodRequestList"
+    | "componentBloodRequestList"
+  >("dashboard");
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
   const [selectedUnitId, setSelectedUnitId] = useState<number | null>(null);
@@ -162,7 +170,6 @@ const Manager: React.FC = () => {
         })
         .then((data) => {
           console.log("Manager info from BE:", data);
-          setUser(data);
         })
         .catch((err) => {
           console.error("Lỗi lấy thông tin:", err);
@@ -186,11 +193,17 @@ const Manager: React.FC = () => {
       // Map dữ liệu từ API về đúng format FE, bao gồm cả status
       const mapped = data.map((item: any) => ({
         id: item.id,
-        group: item.bloodType + (item.rhType === "POSITIVE" ? "+" : item.rhType === "NEGATIVE" ? "-" : ""),
+        group:
+          item.bloodType +
+          (item.rhType === "POSITIVE"
+            ? "+"
+            : item.rhType === "NEGATIVE"
+            ? "-"
+            : ""),
         quantity: item.totalVolume,
         entryDate: item.collectedDate,
         expiryDate: item.expirationDate,
-        status: item.status // lấy status từ backend
+        status: item.status, // lấy status từ backend
       }));
       setBloodUnits(mapped);
     } catch (err) {
@@ -276,7 +289,7 @@ const Manager: React.FC = () => {
       rhType,
       totalVolume: quantity,
       collectedDate: toISO(formData.entryDate),
-      expirationDate: toISO(formData.expiryDate)
+      expirationDate: toISO(formData.expiryDate),
     };
     const token = localStorage.getItem("token");
     try {
@@ -324,14 +337,17 @@ const Manager: React.FC = () => {
     if (!newStatus) return;
     const token = localStorage.getItem("token");
     try {
-      const res = await fetch(`http://localhost:8080/api/blood/units/${id}/status`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({ status: newStatus }),
-      });
+      const res = await fetch(
+        `http://localhost:8080/api/blood/units/${id}/status`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({ status: newStatus }),
+        }
+      );
       if (!res.ok) throw new Error("Lỗi khi cập nhật trạng thái túi máu");
       fetchBloodUnits();
     } catch (err) {
@@ -384,14 +400,14 @@ const Manager: React.FC = () => {
     SEPARATED: "Đã tách",
     USED: "Đã sử dụng",
     EXPIRED: "Hết hạn",
-    NEARLY_EXPIRED: "Gần hết hạn"
+    NEARLY_EXPIRED: "Gần hết hạn",
   };
   const statusOptions = [
     { value: "COLLECTED", label: "Còn hạn" },
     { value: "SEPARATED", label: "Đã tách" },
     { value: "USED", label: "Đã sử dụng" },
     { value: "EXPIRED", label: "Hết hạn" },
-    { value: "NEARLY_EXPIRED", label: "Gần hết hạn" }
+    { value: "NEARLY_EXPIRED", label: "Gần hết hạn" },
   ];
 
   const sortFunction = (a: BloodUnit, b: BloodUnit) => {
@@ -403,9 +419,15 @@ const Manager: React.FC = () => {
   };
 
   const filteredUnits = bloodUnits
-    .filter((unit) => (unit.group || "").toLowerCase().includes(searchTerm.toLowerCase()))
+    .filter((unit) =>
+      (unit.group || "").toLowerCase().includes(searchTerm.toLowerCase())
+    )
     .filter((unit) => (filterGroup ? unit.group === filterGroup : true))
-    .filter((unit) => (filterStatus ? statusMap[unit.status || 'COLLECTED'] === filterStatus : true))
+    .filter((unit) =>
+      filterStatus
+        ? statusMap[unit.status || "COLLECTED"] === filterStatus
+        : true
+    )
     .sort(sortBy ? sortFunction : undefined);
 
   const bloodGroupStats = bloodUnits.reduce<Record<string, number>>(
@@ -448,10 +470,13 @@ const Manager: React.FC = () => {
     if (!selectedUnitId) return;
     const token = localStorage.getItem("token");
     try {
-      const res = await fetch(`http://localhost:8080/api/blood/units/${selectedUnitId}`, {
-        method: "DELETE",
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      const res = await fetch(
+        `http://localhost:8080/api/blood/units/${selectedUnitId}`,
+        {
+          method: "DELETE",
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
       if (!res.ok) throw new Error("Lỗi khi xóa túi máu");
       fetchBloodUnits();
       setShowDeleteModal(false);
@@ -468,14 +493,17 @@ const Manager: React.FC = () => {
     if (!selectedUnitId || !selectedStatus) return;
     const token = localStorage.getItem("token");
     try {
-      const res = await fetch(`http://localhost:8080/api/blood/units/${selectedUnitId}/status`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({ status: selectedStatus }),
-      });
+      const res = await fetch(
+        `http://localhost:8080/api/blood/units/${selectedUnitId}/status`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({ status: selectedStatus }),
+        }
+      );
       if (!res.ok) throw new Error("Lỗi khi cập nhật trạng thái túi máu");
       fetchBloodUnits();
       setShowEditModal(false);
@@ -501,14 +529,15 @@ const Manager: React.FC = () => {
         </div>
         <div className="manager-greeting">
           Xin chào,{" "}
-          <span className="manager-name">{user?.fullName || "Quản lí kho máu"}</span>
+          <span className="manager-name">
+            {user?.fullName || "Quản lí kho máu"}
+          </span>
         </div>
         <button
           className="manager-logout-btn"
           onClick={() => {
-            localStorage.removeItem("token"); 
-            alert("Đăng xuất thành công!");
-            navigate("/login"); 
+            logout();
+            navigate("/login");
           }}
         >
           Đăng xuất
@@ -538,9 +567,22 @@ const Manager: React.FC = () => {
                 Thống kê kho máu
               </button>
             </li>
-            <li className={view === "requests" ? "active" : ""}>
-              <button className="menu-item" onClick={() => setView("requests")}>
-                Yêu cầu giao nhận máu
+            <li className={view === "wholeBloodRequestList" ? "active" : ""}>
+              <button
+                className="menu-item"
+                onClick={() => setView("wholeBloodRequestList")}
+              >
+                Yêu cầu máu toàn phần
+              </button>
+            </li>
+            <li
+              className={view === "componentBloodRequestList" ? "active" : ""}
+            >
+              <button
+                className="menu-item"
+                onClick={() => setView("componentBloodRequestList")}
+              >
+                Yêu cầu máu thành phần
               </button>
             </li>
           </ul>
@@ -624,9 +666,15 @@ const Manager: React.FC = () => {
                           <td>{unit.expiryDate}</td>
                           <td>
                             <span
-                              className={`status-badge status-${(unit.status || 'collected').toLowerCase()} ${statusClassMap[statusMap[unit.status || 'COLLECTED']]}`}
+                              className={`status-badge status-${(
+                                unit.status || "collected"
+                              ).toLowerCase()} ${
+                                statusClassMap[
+                                  statusMap[unit.status || "COLLECTED"]
+                                ]
+                              }`}
                             >
-                              {statusMap[unit.status || 'COLLECTED']}
+                              {statusMap[unit.status || "COLLECTED"]}
                             </span>
                           </td>
                           <td className="table-action-cell">
@@ -767,12 +815,9 @@ const Manager: React.FC = () => {
             </>
           )}
 
-          {/* --- Trang yêu cầu cần máu --- */}
-          {view === "requests" && (
-            <>
-              <h2>Yêu cầu giao nhận máu</h2>
-              <p>Chức năng này đang được phát triển...</p>
-            </>
+          {view === "wholeBloodRequestList" && <WholeBloodRequestList />}
+          {view === "componentBloodRequestList" && (
+            <ComponentBloodRequestList />
           )}
         </div>
       </div>
@@ -783,21 +828,43 @@ const Manager: React.FC = () => {
           <div className="modal-content">
             <h3>Xác nhận xóa túi máu</h3>
             {(() => {
-              const unit = bloodUnits.find(u => u.id === selectedUnitId);
+              const unit = bloodUnits.find((u) => u.id === selectedUnitId);
               return unit ? (
-                <div style={{textAlign: 'left', marginBottom: 16}}>
-                  <div><strong>ID:</strong> {unit.id}</div>
-                  <div><strong>Nhóm máu:</strong> {unit.group}</div>
-                  <div><strong>Ngày nhập:</strong> {unit.entryDate}</div>
-                  <div><strong>Hạn sử dụng:</strong> {unit.expiryDate}</div>
-                  <div><strong>Trạng thái hiện tại:</strong> {statusMap[unit.status || 'COLLECTED']}</div>
+                <div style={{ textAlign: "left", marginBottom: 16 }}>
+                  <div>
+                    <strong>ID:</strong> {unit.id}
+                  </div>
+                  <div>
+                    <strong>Nhóm máu:</strong> {unit.group}
+                  </div>
+                  <div>
+                    <strong>Ngày nhập:</strong> {unit.entryDate}
+                  </div>
+                  <div>
+                    <strong>Hạn sử dụng:</strong> {unit.expiryDate}
+                  </div>
+                  <div>
+                    <strong>Trạng thái hiện tại:</strong>{" "}
+                    {statusMap[unit.status || "COLLECTED"]}
+                  </div>
                 </div>
               ) : null;
             })()}
-            <p>Bạn có chắc chắn muốn <span style={{color:'#FF204E', fontWeight:'bold'}}>xóa</span> túi máu này không?</p>
+            <p>
+              Bạn có chắc chắn muốn{" "}
+              <span style={{ color: "#FF204E", fontWeight: "bold" }}>xóa</span>{" "}
+              túi máu này không?
+            </p>
             <div className="modal-actions">
-              <button onClick={confirmDelete} className="modal-confirm">Xóa</button>
-              <button onClick={() => setShowDeleteModal(false)} className="modal-cancel">Hủy</button>
+              <button onClick={confirmDelete} className="modal-confirm">
+                Xóa
+              </button>
+              <button
+                onClick={() => setShowDeleteModal(false)}
+                className="modal-cancel"
+              >
+                Hủy
+              </button>
             </div>
           </div>
         </div>
@@ -808,34 +875,60 @@ const Manager: React.FC = () => {
           <div className="modal-content">
             <h3>Cập nhật trạng thái túi máu</h3>
             {(() => {
-              const unit = bloodUnits.find(u => u.id === selectedUnitId);
+              const unit = bloodUnits.find((u) => u.id === selectedUnitId);
               return unit ? (
-                <div style={{textAlign: 'left', marginBottom: 16}}>
-                  <div><strong>ID:</strong> {unit.id}</div>
-                  <div><strong>Nhóm máu:</strong> {unit.group}</div>
-                  <div><strong>Ngày nhập:</strong> {unit.entryDate}</div>
-                  <div><strong>Hạn sử dụng:</strong> {unit.expiryDate}</div>
-                  <div><strong>Trạng thái hiện tại:</strong> {statusMap[unit.status || 'COLLECTED']}</div>
+                <div style={{ textAlign: "left", marginBottom: 16 }}>
+                  <div>
+                    <strong>ID:</strong> {unit.id}
+                  </div>
+                  <div>
+                    <strong>Nhóm máu:</strong> {unit.group}
+                  </div>
+                  <div>
+                    <strong>Ngày nhập:</strong> {unit.entryDate}
+                  </div>
+                  <div>
+                    <strong>Hạn sử dụng:</strong> {unit.expiryDate}
+                  </div>
+                  <div>
+                    <strong>Trạng thái hiện tại:</strong>{" "}
+                    {statusMap[unit.status || "COLLECTED"]}
+                  </div>
                 </div>
               ) : null;
             })()}
             <select
               value={selectedStatus}
-              onChange={e => setSelectedStatus(e.target.value)}
+              onChange={(e) => setSelectedStatus(e.target.value)}
             >
               <option value="">-- Chọn trạng thái mới --</option>
-              {statusOptions.map(opt => (
-                <option key={opt.value} value={opt.value}>{opt.label}</option>
+              {statusOptions.map((opt) => (
+                <option key={opt.value} value={opt.value}>
+                  {opt.label}
+                </option>
               ))}
             </select>
             {selectedStatus && (
-              <p style={{marginTop: 10}}>
-                Bạn có chắc chắn muốn chuyển trạng thái túi máu <strong>{selectedUnitId}</strong> sang <strong>{statusMap[selectedStatus]}</strong> không?
+              <p style={{ marginTop: 10 }}>
+                Bạn có chắc chắn muốn chuyển trạng thái túi máu{" "}
+                <strong>{selectedUnitId}</strong> sang{" "}
+                <strong>{statusMap[selectedStatus]}</strong> không?
               </p>
             )}
             <div className="modal-actions">
-              <button onClick={confirmEdit} className="modal-confirm" disabled={!selectedStatus}>Cập nhật</button>
-              <button onClick={() => setShowEditModal(false)} className="modal-cancel">Hủy</button>
+              <button
+                onClick={confirmEdit}
+                className="modal-confirm"
+                disabled={!selectedStatus}
+              >
+                Cập nhật
+              </button>
+              <button
+                onClick={() => setShowEditModal(false)}
+                className="modal-cancel"
+              >
+                Hủy
+              </button>
             </div>
           </div>
         </div>
