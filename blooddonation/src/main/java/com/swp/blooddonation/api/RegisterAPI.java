@@ -97,5 +97,19 @@ public class RegisterAPI {
         return ResponseEntity.ok(registers);
     }
 
+    @PreAuthorize("hasRole('CUSTOMER')")
+    @GetMapping("/my")
+    public ResponseEntity<List<RegisterResponse>> getMyRegisters(@org.springframework.security.core.annotation.AuthenticationPrincipal com.swp.blooddonation.entity.Account account) {
+        List<RegisterResponse> registers = registerService.getRegistersByAccount(account);
+        return ResponseEntity.ok(registers);
+    }
+
+    @PreAuthorize("hasRole('CUSTOMER')")
+    @GetMapping("/my-pending")
+    public ResponseEntity<List<RegisterResponse>> getMyPendingRegisters(@org.springframework.security.core.annotation.AuthenticationPrincipal com.swp.blooddonation.entity.Account account) {
+        List<RegisterResponse> registers = registerService.getPendingRegistersByAccount(account);
+        return ResponseEntity.ok(registers);
+    }
+
 
 }
