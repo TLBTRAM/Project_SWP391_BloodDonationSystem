@@ -437,7 +437,13 @@ const User = () => {
   }, [showBloodRequestForm]);
 
 
+
   // Thêm hàm đánh dấu tất cả thông báo là đã đọc
+
+  const PAGE_SIZE = 4;
+  const [page, setPage] = useState(1);
+// Thêm hàm đánh dấu tất cả thông báo là đã đọc
+
   const markAllAsRead = async () => {
     const token = localStorage.getItem("token");
     if (!token) return;
@@ -457,6 +463,7 @@ const User = () => {
 
   const PAGE_SIZE = 4;
   const [page, setPage] = useState(1);
+
 
 
   return (
