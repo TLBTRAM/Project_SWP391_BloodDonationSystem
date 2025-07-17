@@ -70,45 +70,66 @@ const AdminNotifications: React.FC = () => {
     }
   };
 
-  const sendSystemNotification = () => {
+  const sendSystemNotification = async () => {
     if (!systemTitle || !systemContent) return;
-
-    const newNotification: Notification = {
-      id: Date.now(),
-      title: systemTitle,
-      content: systemContent,
-      type: systemType,
-      receiver_id: null,
-      created_at: new Date().toISOString(),
-    };
-
-    setNotifications([newNotification, ...notifications]);
-
-    // Reset form hệ thống
-    setSystemTitle("");
-    setSystemContent("");
-    setSystemType("SYSTEM");
+    const token = localStorage.getItem("token");
+    try {
+      const res = await fetch("http://localhost:8080/api/notifications/send-system", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`
+        },
+        body: JSON.stringify({
+          title: systemTitle,
+          content: systemContent,
+          type: systemType
+        })
+      });
+      if (res.ok) {
+        alert("Gửi thông báo hệ thống thành công!");
+        setSystemTitle("");
+        setSystemContent("");
+        setSystemType("SYSTEM");
+      } else {
+        const data = await res.json();
+        alert(data.message || "Gửi thông báo hệ thống thất bại!");
+      }
+    } catch (err) {
+      alert("Lỗi gửi thông báo hệ thống!");
+    }
   };
 
-  const sendUserNotification = () => {
+  const sendUserNotification = async () => {
     if (!userTitle || !userContent || !receiverId) return;
-
-    const newNotification: Notification = {
-      id: Date.now(),
-      title: userTitle,
-      content: userContent,
-      type: userType,
-      receiver_id: parseInt(receiverId),
-      created_at: new Date().toISOString(),
-    };
-
-    setNotifications([newNotification, ...notifications]);
-
-    // Reset form người dùng
-    setUserTitle("");
-    setUserContent("");
-    setUserType("BLOOD_REQUEST");
-    setReceiverId("");
+    const token = localStorage.getItem("token");
+    try {
+      const res = await fetch("http://localhost:8080/api/notifications/send", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`
+        },
+        body: JSON.stringify({
+          receiverIds: [Number(receiverId)],
+          title: userTitle,
+          content: userContent,
+          type: userType
+        })
+      });
+      if (res.ok) {
+        alert("Gửi thông báo người dùng thành công!");
+        setUserTitle("");
+        setUserContent("");
+        setUserType("BLOOD_REQUEST");
+        setReceiverId("");
+      } else {
+        const data = await res.json();
+        alert(data.message || "Gửi thông báo người dùng thất bại!");
+      }
+    } catch (err) {
+      alert("Lỗi gửi thông báo người dùng!");
+    }
   };
 
   return (

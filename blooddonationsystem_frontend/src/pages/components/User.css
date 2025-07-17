@@ -415,3 +415,208 @@ body {
   transform: scale(1.03);
   box-shadow: 0 4px 12px rgba(214, 40, 40, 0.3);
 }
+
+.noti-popup {
+  background: #fff;
+  border-radius: 18px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.18);
+  padding: 36px 32px 24px 32px;
+  max-width: 420px;
+  width: 95vw;
+  margin: auto;
+  position: relative;
+  text-align: left;
+  animation: popup-fade-in 0.2s;
+}
+.noti-popup-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-bottom: 18px;
+  text-align: center;
+  color: #FF204E;
+  letter-spacing: 1px;
+}
+.noti-popup-content {
+  font-size: 1.08rem;
+  margin-bottom: 18px;
+  white-space: pre-line;
+}
+.noti-popup-meta {
+  font-size: 0.98rem;
+  color: #555;
+  margin-bottom: 8px;
+}
+.noti-popup-close {
+  display: block;
+  margin: 24px auto 0 auto;
+  padding: 10px 32px;
+  background: #FF204E;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-size: 1.08rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.noti-popup-close:hover {
+  background: #d91b41;
+}
+.noti-popup-x {
+  position: absolute;
+  top: 18px;
+  right: 18px;
+  font-size: 1.5rem;
+  color: #888;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+@keyframes popup-fade-in {
+  from { opacity: 0; transform: translateY(40px);}
+  to { opacity: 1; transform: translateY(0);}
+}
+.noti-card-modern {
+  display: flex;
+  align-items: flex-start;
+  gap: 20px;
+  background: #fff;
+  border-radius: 18px;
+  box-shadow: 0 2px 16px rgba(0,0,0,0.08);
+  padding: 28px 32px;
+  margin-bottom: 24px;
+  position: relative;
+  cursor: pointer;
+  border: 2px solid #fff;
+  transition: box-shadow 0.18s, border 0.18s, transform 0.18s;
+  min-height: 100px;
+  font-size: 18px;
+  max-width: 100%;
+}
+.noti-card-modern:hover {
+  box-shadow: 0 6px 24px rgba(214,40,40,0.13);
+  border: 2px solid #FF204E22;
+  transform: translateY(-2px) scale(1.01);
+}
+.noti-unread {
+  border: 2.5px solid #FF204E55;
+  background: #fff7f7;
+}
+.noti-card-modern .noti-icon {
+  width: 54px;
+  height: 54px;
+  border-radius: 50%;
+  background: #fffbe6;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 32px;
+  color: #FFB800;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+.noti-card-modern .noti-title {
+  font-weight: 700;
+  font-size: 21px;
+  color: #222;
+  margin-bottom: 2px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  text-align: left;
+  line-height: 1.3;
+  word-break: break-word;
+  white-space: normal;
+  max-width: 100%;
+}
+.noti-card-modern .noti-type {
+  background: #FF204E22;
+  color: #FF204E;
+  border-radius: 12px;
+  font-size: 15px;
+  font-weight: 600;
+  padding: 3px 14px;
+  margin-left: 8px;
+  display: inline-block;
+}
+.noti-card-modern .noti-dot {
+  width: 12px;
+  height: 12px;
+  background: #e74c3c;
+  border-radius: 50%;
+  display: inline-block;
+  margin-left: 8px;
+}
+.noti-card-modern .noti-content {
+  color: #444;
+  font-size: 16px;
+  margin: 6px 0 2px 0;
+  text-align: left;
+  white-space: pre-line;
+  word-break: break-word;
+}
+.noti-card-modern .noti-time {
+  color: #888;
+  font-size: 14px;
+  margin-top: 2px;
+}
+.noti-tabs {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 18px;
+  margin-bottom: 18px;
+}
+.noti-tab-btn {
+  padding: 16px 38px 10px 38px;
+  border: none;
+  background: none;
+  color: #FF204E;
+  font-weight: 700;
+  font-size: 22px;
+  border-bottom: 4px solid #FF204E;
+  outline: none;
+  cursor: pointer;
+  position: relative;
+  min-width: 120px;
+  border-radius: 0;
+  transition: background 0.18s;
+}
+.noti-tab-btn.inactive {
+  color: #888;
+  border-bottom: 4px solid #eee;
+}
+.noti-tab-badge {
+  background: #FF204E;
+  color: #fff;
+  border-radius: 14px;
+  font-size: 15px;
+  font-weight: 700;
+  padding: 2px 10px;
+  margin-left: 10px;
+  position: relative;
+  top: -2px;
+}
+.noti-list-scroll {
+  flex: 1;
+  overflow-y: auto;
+  padding: 0 32px 32px 32px;
+  min-height: 0;
+}
+.noti-close-btn {
+  display: block;
+  margin: 28px auto 0 auto;
+  padding: 12px 48px;
+  background: #FF204E;
+  color: #fff;
+  border: none;
+  border-radius: 12px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.noti-close-btn:hover {
+  background: #d91b41;
+}

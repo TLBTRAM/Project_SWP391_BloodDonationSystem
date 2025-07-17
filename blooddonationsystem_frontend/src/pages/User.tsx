@@ -323,36 +323,30 @@ const User = () => {
     return () => document.removeEventListener('click', handleClickOutside);
   }, []);
 
+  // useEffect lấy profile user
   useEffect(() => {
     const token = localStorage.getItem("token");
-    console.log("FE token:", token);
-
-    if (token) {
-      fetch("http://localhost:8080/api/user/profile", {
-        method: "GET",
-        headers: {
-          "Authorization": `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
+    if (!token) return;
+    fetch("http://localhost:8080/api/user/profile", {
+      method: "GET",
+      headers: {
+        "Authorization": `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+    })
+      .then((res) => {
+        if (!res.ok) {
+          throw new Error("Không lấy được thông tin người dùng");
+        }
+        return res.json();
       })
-        .then((res) => {
-          if (!res.ok) {
-            throw new Error("Không lấy được thông tin người dùng");
-          }
-          return res.json();
-        })
-        .then((data) => {
-          console.log("User info from BE:", data);
-          setUser(data);
-        })
-        .catch((error) => {
-          console.error("Lỗi khi gọi API /me:", error);
-          alert("Không thể tải thông tin người dùng. Vui lòng đăng nhập lại.");
-          navigate("/login");
-        });
-    } else {
-      navigate("/login");
-    }
+      .then((data) => {
+        setUser(data);
+      })
+      .catch((error) => {
+        alert("Không thể tải thông tin người dùng. Vui lòng đăng nhập lại.");
+        navigate("/login");
+      });
   }, []);
 
   useEffect(() => {
@@ -378,15 +372,13 @@ const User = () => {
       });
   }, []);
 
+  // useEffect fetch notification & test result khi mở popup và user đã có id
   useEffect(() => {
     const fetchNotificationAndTest = async () => {
       const token = localStorage.getItem("token");
-      // Sử dụng userId cố định là 6 để test
-      const userId = "6";
-      if (!token || !userId) return;
-
+      if (!token || !user?.id) return;
       try {
-        const notiRes = await fetch(`http://localhost:8080/api/notifications/${userId}`, {
+        const notiRes = await fetch(`http://localhost:8080/api/notifications/${user.id}`, {
           method: "GET",
           headers: {
             Authorization: `Bearer ${token}`,
@@ -395,12 +387,9 @@ const User = () => {
         });
         if (notiRes.ok) {
           const notiData = await notiRes.json();
-          console.log("Notification data:", notiData); // Log để debug
           setNotifications(notiData);
         }
-
-        // Nếu có API test result thì giữ nguyên, không thay đổi đoạn này
-        const testRes = await fetch(`http://localhost:8080/api/medical-staff/test-results?customerId=${userId}`, {
+        const testRes = await fetch(`http://localhost:8080/api/medical-staff/test-results?customerId=${user.id}`, {
           method: "GET",
           headers: {
             Authorization: `Bearer ${token}`,
@@ -419,12 +408,11 @@ const User = () => {
           }
         }
       } catch (err) {
-        console.error("Lỗi khi lấy thông báo hoặc xét nghiệm:", err);
+        // Có thể log lỗi nếu cần
       }
     };
-
-    if (showNotificationPopup) fetchNotificationAndTest();
-  }, [showNotificationPopup]);
+    if (showNotificationPopup && user?.id) fetchNotificationAndTest();
+  }, [showNotificationPopup, user]);
 
   // Khi mở form, nếu có dữ liệu cũ thì set lại các combo box
   useEffect(() => {
@@ -461,9 +449,10 @@ const User = () => {
     }
   };
 
-  const PAGE_SIZE = 4;
-  const [page, setPage] = useState(1);
-
+  // Đếm số thông báo chưa đọc theo từng loại
+  const unreadCountByType = NOTI_TYPES.map(typeObj =>
+    notifications.filter(n => n.type === typeObj.key && !n.isRead).length
+  );
 
 
   return (
@@ -673,8 +662,9 @@ const User = () => {
         </main>
       </div>
 
+      {/* Popup tổng hợp thông báo */}
       {showNotificationPopup && (
-        <div className="popup-overlay">
+        <div className="popup-overlay" onClick={() => { setShowNotificationPopup(false); markAllAsRead(); }}>
           <div className="popup-content" style={{
             width: 'min(700px, 95vw)',
             maxWidth: '95vw',
@@ -687,88 +677,42 @@ const User = () => {
             boxSizing: 'border-box',
             display: 'flex',
             flexDirection: 'column',
-          }}>
+          }} onClick={e => e.stopPropagation()}>
             {/* Header + Tabs */}
             <div style={{ padding: '0 40px', flexShrink: 0 }}>
               <h2 style={{ fontSize: 40, fontWeight: 800, marginBottom: 12, letterSpacing: 1, display: 'flex', alignItems: 'center', gap: 16 }}>
                 <span role="img" aria-label="bell">🔔</span> THÔNG BÁO <span role="img" aria-label="bell">🔔</span>
               </h2>
-              {/* Tabs chuyển bằng nút trái/phải */}
-              <div style={{ display: 'flex', alignItems: 'center', marginBottom: 32, justifyContent: 'center', gap: 0 }}>
+              <div className="noti-tabs">
                 <button
-                  onClick={() => setTabIndex(i => Math.max(0, i - 1))}
+                  className={`noti-tab-btn${tabIndex === 0 ? '' : ' inactive'}`}
+                  onClick={e => { e.stopPropagation(); setTabIndex(Math.max(0, tabIndex - 1)); }}
                   disabled={tabIndex === 0}
-                  style={{ fontSize: 28, background: 'none', border: 'none', cursor: tabIndex === 0 ? 'not-allowed' : 'pointer', color: '#b22b2b', marginRight: 8, padding: 0, width: 40, height: 40, borderRadius: '50%' }}
-                  aria-label="Tab trước"
+                  style={{ cursor: tabIndex === 0 ? 'not-allowed' : 'pointer' }}
                 >&#60;</button>
-                <button
-                  key={NOTI_TYPES[tabIndex].key}
-                  style={{
-                    padding: '22px 60px 16px 60px',
-                    border: 'none',
-                    background: 'none',
-                    color: '#b22b2b',
-                    fontWeight: 700,
-                    fontSize: 26,
-                    borderBottom: '5px solid #b22b2b',
-                    outline: 'none',
-                    cursor: 'pointer',
-                    position: 'relative',
-                    minWidth: 180
-                  }}
-                >
+                <button className="noti-tab-btn" onClick={e => e.stopPropagation()}>
                   {NOTI_TYPES[tabIndex].label}
-                  {(() => {
-                    const count = notifications.filter(noti => noti.type === NOTI_TYPES[tabIndex].key).length;
-                    return count > 0 && (
-                      <span style={{
-                        background: '#b22b2b',
-                        color: '#fff',
-                        borderRadius: 14,
-                        fontSize: 18,
-                        fontWeight: 700,
-                        padding: '3px 16px',
-                        marginLeft: 12,
-                        position: 'relative',
-                        top: -2
-                      }}>{count}</span>
-                    );
-                  })()}
+                  <span className="noti-tab-badge">
+                    {unreadCountByType[tabIndex]}
+                  </span>
                 </button>
                 <button
-                  onClick={() => setTabIndex(i => Math.min(NOTI_TYPES.length - 1, i + 1))}
+                  className={`noti-tab-btn${tabIndex === NOTI_TYPES.length - 1 ? ' inactive' : ''}`}
+                  onClick={e => { e.stopPropagation(); setTabIndex(Math.min(NOTI_TYPES.length - 1, tabIndex + 1)); }}
                   disabled={tabIndex === NOTI_TYPES.length - 1}
-                  style={{ fontSize: 28, background: 'none', border: 'none', cursor: tabIndex === NOTI_TYPES.length - 1 ? 'not-allowed' : 'pointer', color: '#b22b2b', marginLeft: 8, padding: 0, width: 40, height: 40, borderRadius: '50%' }}
-                  aria-label="Tab sau"
+                  style={{ cursor: tabIndex === NOTI_TYPES.length - 1 ? 'not-allowed' : 'pointer' }}
                 >&#62;</button>
               </div>
             </div>
             {/* Danh sách thông báo cuộn dọc */}
-            <div style={{ flex: 1, overflowY: 'auto', padding: '0 40px 40px 40px', minHeight: 0 }}>
+            <div className="noti-list-scroll">
               {notifications.filter(noti => noti.type === activeNotiType).length > 0 ? (
-                notifications.filter(noti => noti.type === activeNotiType).map((noti) => (
+                notifications.filter(noti => noti.type === activeNotiType).map(noti => (
                   <div
                     key={noti.id}
-                    className={`noti-card-modern ${!noti.isRead ? "noti-unread" : ""}`}
-                    style={{
-                      display: 'flex',
-                      alignItems: 'flex-start',
-                      gap: 28,
-                      background: '#fff',
-                      borderRadius: 20,
-                      boxShadow: '0 2px 16px rgba(0,0,0,0.08)',
-                      padding: '32px 40px',
-                      marginBottom: 28,
-                      position: 'relative',
-                      cursor: 'pointer',
-                      border: !noti.isRead ? '2.5px solid #b22b2b22' : '1.5px solid #eee',
-                      minHeight: 110,
-                      fontSize: 20,
-                      maxWidth: '100%',
-                    }}
-                    title={noti.title}
-                    onClick={async () => {
-                      setSelectedNotification(noti);
+                    className={`noti-card-modern${!noti.isRead ? ' noti-unread' : ''}`}
+                    onClick={async (e) => {
+                      e.stopPropagation();
                       if (!noti.isRead) {
                         const token = localStorage.getItem("token");
                         await fetch(`http://localhost:8080/api/notifications/${noti.id}/read`, {
@@ -779,32 +723,20 @@ const User = () => {
                           prev.map((n) => n.id === noti.id ? { ...n, isRead: true } : n)
                         );
                       }
+                      setSelectedNotification(noti);
                     }}
                   >
-                    {/* Avatar hoặc icon */}
-                    <div style={{ width: 64, height: 64, borderRadius: '50%', background: '#f5f5f5', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 38, fontWeight: 700, color: '#b22b2b', flexShrink: 0 }}>
+                    <div className="noti-icon">
                       <span role="img" aria-label="noti">🔔</span>
                     </div>
                     <div style={{ flex: 1 }}>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
-                        <span style={{ fontWeight: 700, fontSize: 24, color: '#222', marginRight: 12 }}>{noti.title}</span>
-                        {/* Tag loại thông báo */}
-                        <span style={{
-                          background: '#f5f5f5',
-                          color: '#b22b2b',
-                          borderRadius: 10,
-                          fontSize: 17,
-                          fontWeight: 600,
-                          padding: '4px 16px',
-                          marginLeft: 0
-                        }}>{noti.type}</span>
-                        {/* Chấm đỏ nếu chưa đọc */}
-                        {!noti.isRead && <span style={{ width: 14, height: 14, background: '#e74c3c', borderRadius: '50%', display: 'inline-block', marginLeft: 8 }}></span>}
+                      <div className="noti-title">
+                        {noti.title}
+                        <span className="noti-type">{noti.type}</span>
+                        {!noti.isRead && <span className="noti-dot"></span>}
                       </div>
-                      <div style={{ color: '#444', fontSize: 17, marginTop: 8, marginBottom: 4, textAlign: 'left', whiteSpace: 'pre-line' }}>{noti.content}</div>
-                      <div style={{ color: '#888', fontSize: 16, marginTop: 4 }}>
-                        {formatTimeAgo(noti.createdAt)}
-                      </div>
+                      <div className="noti-content">{noti.content}</div>
+                      <div className="noti-time">{formatTimeAgo(noti.createdAt)}</div>
                     </div>
                   </div>
                 ))
@@ -814,9 +746,10 @@ const User = () => {
             </div>
             {/* Nút đóng ngoài cùng dưới */}
             <div style={{ textAlign: 'center', padding: 32 }}>
-              <button className="back-button" style={{ fontSize: 22, padding: '14px 48px', borderRadius: 12 }} onClick={async () => {
-                await markAllAsRead();
-                setShowNotificationPopup(false);
+              <button className="noti-close-btn" onClick={e => {
+                e.stopPropagation();
+                setShowNotificationPopup(false); // Đóng popup ngay lập tức
+                markAllAsRead(); // Đánh dấu đã đọc, không cần await
               }}>Đóng</button>
             </div>
           </div>
@@ -826,12 +759,21 @@ const User = () => {
       {/* Popup chi tiết thông báo */}
       {selectedNotification && (
         <div className="popup-overlay" onClick={() => setSelectedNotification(null)}>
-          <div className="popup-content" onClick={e => e.stopPropagation()}>
-            <h2>{selectedNotification.title}</h2>
-            <p><strong>Nội dung:</strong> {selectedNotification.content}</p>
-            <p><strong>Loại:</strong> {selectedNotification.type}</p>
-            <p><strong>Ngày:</strong> {new Date(selectedNotification.createdAt).toLocaleString("vi-VN")}</p>
-            <button onClick={() => setSelectedNotification(null)}>Đóng</button>
+          <div className="noti-popup" onClick={e => e.stopPropagation()}>
+            <button className="noti-popup-x" onClick={() => setSelectedNotification(null)}>&times;</button>
+            <div className="noti-popup-title">
+              <span role="img" aria-label="bell">🔔</span> {selectedNotification.title}
+            </div>
+            <div className="noti-popup-content">
+              <b>Nội dung:</b> {selectedNotification.content}
+            </div>
+            <div className="noti-popup-meta">
+              <b>Loại:</b> {selectedNotification.type}
+            </div>
+            <div className="noti-popup-meta">
+              <b>Ngày:</b> {new Date(selectedNotification.createdAt).toLocaleString("vi-VN")}
+            </div>
+            <button className="noti-popup-close" onClick={() => setSelectedNotification(null)}>Đóng</button>
           </div>
         </div>
       )}
