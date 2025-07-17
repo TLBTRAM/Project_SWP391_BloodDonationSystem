@@ -1,0 +1,135 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Poppins", sans-serif;
+}
+
+.blood-request-container {
+  background: #ffffff;
+  color: #333333;
+  padding: 20px;
+  border-radius: 10px;
+  max-width: 1200px;
+  margin: auto;
+}
+
+/* === Bảng === */
+.blood-request-table {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: #ffffff;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  margin-top: 30px;
+}
+
+.blood-request-table th,
+.blood-request-table td {
+  border: 1px solid #e0e0e0;
+  padding: 14px 10px;
+  text-align: center;
+  font-size: 15px;
+  color: #000000;
+}
+
+.blood-request-table th {
+  background-color: #ff204e; /* đỏ chủ đạo */
+  color: #ffffff;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+
+.blood-request-table tr:nth-child(even) {
+  background-color: #fafafa;
+}
+
+.blood-request-table tr:hover {
+  background-color: #fff4f6; /* nhạt đỏ khi hover */
+  transition: background-color 0.2s ease-in-out;
+}
+
+/* === Trạng thái === */
+.request-status-pending {
+  background-color: #fef08a; /* vàng nhạt */
+  font-weight: 600;
+}
+
+.request-status-approved,
+.request-status-ready,
+.request-status-completed {
+  background-color: #86efac; /* xanh lá nhạt */
+  font-weight: 600;
+}
+
+.request-status-rejected,
+.request-status-cancelled {
+  background-color: #fca5a5; /* đỏ nhạt */
+  font-weight: 600;
+}
+
+.request-status-processing {
+  background-color: #93c5fd; /* xanh dương nhạt */
+  font-weight: 600;
+}
+
+.request-action-processed {
+  background-color: #93c5fd; /* xanh dương nhạt */
+  color: #1e3a8a; /* xanh đậm để dễ đọc */
+  padding: 10px 15px;
+  border-radius: 5px;
+  font-weight: 600;
+  font-size: 14px;
+  display: inline-block;
+}
+
+/* === Button === */
+
+.btn-approve-manager {
+  background-color: #28a745;
+  color: white;
+  margin-right: 5px;
+  padding: 7px 12px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-weight: bold;
+  font-size: 14px;
+  transition: all 0.2s ease-in-out;
+}
+
+.btn-reject-manager {
+  padding: 7px 12px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-weight: bold;
+  font-size: 14px;
+  transition: all 0.2s ease-in-out;
+  background-color: #dc3545;
+  color: white;
+}
+
+.btn-process {
+  background-color: #007bff;
+  color: white;
+}
+
+
+.filter-container {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+  align-items: center;
+}
+
+.filter-container input[type="text"],
+.filter-container select,
+.filter-container input[type="date"] {
+  padding: 6px 10px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  margin: 0;
+}
