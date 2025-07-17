@@ -158,16 +158,46 @@ const MyRegistrations = () => {
                 <button
                     onClick={() => onChange(current - 1)}
                     disabled={current === 1}
-                    style={{ marginRight: 8 }}
+                    style={{
+                        marginRight: 8,
+                        fontSize: 20,
+                        borderRadius: 6,
+                        width: 36,
+                        height: 36,
+                        border: '1px solid #b22b2b',
+                        background: current === 1 ? '#eee' : '#fff',
+                        color: '#b22b2b',
+                        cursor: current === 1 ? 'not-allowed' : 'pointer',
+                        transition: 'background 0.2s',
+                        boxShadow: current === 1 ? 'none' : '0 1px 4px #eee',
+                        display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    }}
+                    onMouseOver={e => { if(current !== 1) e.currentTarget.style.background = '#ffeaea'; }}
+                    onMouseOut={e => { if(current !== 1) e.currentTarget.style.background = '#fff'; }}
                 >
-                    &lt;
+                    {'\u25C0'}
                 </button>
                 {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => (
                     <button
                         key={page}
                         onClick={() => onChange(page)}
                         className={page === current ? 'tab-btn active' : 'tab-btn'}
-                        style={{ margin: '0 2px', minWidth: 36 }}
+                        style={{
+                            margin: '0 2px',
+                            width: 36,
+                            height: 36,
+                            borderRadius: 6,
+                            background: page === current ? '#b22b2b' : '#fff',
+                            color: page === current ? '#fff' : '#b22b2b',
+                            border: '1px solid #b22b2b',
+                            fontWeight: 500,
+                            cursor: 'pointer',
+                            fontSize: 16,
+                            display: 'flex', alignItems: 'center', justifyContent: 'center',
+                            transition: 'background 0.2s',
+                        }}
+                        onMouseOver={e => { if(page !== current) e.currentTarget.style.background = '#ffeaea'; }}
+                        onMouseOut={e => { if(page !== current) e.currentTarget.style.background = '#fff'; }}
                     >
                         {page}
                     </button>
@@ -175,9 +205,24 @@ const MyRegistrations = () => {
                 <button
                     onClick={() => onChange(current + 1)}
                     disabled={current === totalPages}
-                    style={{ marginLeft: 8 }}
+                    style={{
+                        marginLeft: 8,
+                        fontSize: 20,
+                        borderRadius: 6,
+                        width: 36,
+                        height: 36,
+                        border: '1px solid #b22b2b',
+                        background: current === totalPages ? '#eee' : '#fff',
+                        color: '#b22b2b',
+                        cursor: current === totalPages ? 'not-allowed' : 'pointer',
+                        transition: 'background 0.2s',
+                        boxShadow: current === totalPages ? 'none' : '0 1px 4px #eee',
+                        display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    }}
+                    onMouseOver={e => { if(current !== totalPages) e.currentTarget.style.background = '#ffeaea'; }}
+                    onMouseOut={e => { if(current !== totalPages) e.currentTarget.style.background = '#fff'; }}
                 >
-                    &gt;
+                    {'\u25B6'}
                 </button>
             </div>
         );
@@ -281,16 +326,46 @@ const Pagination: React.FC<{ current: number; total: number; pageSize: number; o
             <button
                 onClick={() => onChange(current - 1)}
                 disabled={current === 1}
-                style={{ marginRight: 8 }}
+                style={{
+                    marginRight: 8,
+                    fontSize: 20,
+                    borderRadius: 6,
+                    width: 36,
+                    height: 36,
+                    border: '1px solid #b22b2b',
+                    background: current === 1 ? '#eee' : '#fff',
+                    color: '#b22b2b',
+                    cursor: current === 1 ? 'not-allowed' : 'pointer',
+                    transition: 'background 0.2s',
+                    boxShadow: current === 1 ? 'none' : '0 1px 4px #eee',
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                }}
+                onMouseOver={e => { if(current !== 1) e.currentTarget.style.background = '#ffeaea'; }}
+                onMouseOut={e => { if(current !== 1) e.currentTarget.style.background = '#fff'; }}
             >
-                &lt;
+                {'\u25C0'}
             </button>
             {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => (
                 <button
                     key={page}
                     onClick={() => onChange(page)}
                     className={page === current ? 'tab-btn active' : 'tab-btn'}
-                    style={{ margin: '0 2px', minWidth: 36 }}
+                    style={{
+                        margin: '0 2px',
+                        width: 36,
+                        height: 36,
+                        borderRadius: 6,
+                        background: page === current ? '#b22b2b' : '#fff',
+                        color: page === current ? '#fff' : '#b22b2b',
+                        border: '1px solid #b22b2b',
+                        fontWeight: 500,
+                        cursor: 'pointer',
+                        fontSize: 16,
+                        display: 'flex', alignItems: 'center', justifyContent: 'center',
+                        transition: 'background 0.2s',
+                    }}
+                    onMouseOver={e => { if(page !== current) e.currentTarget.style.background = '#ffeaea'; }}
+                    onMouseOut={e => { if(page !== current) e.currentTarget.style.background = '#fff'; }}
                 >
                     {page}
                 </button>
@@ -298,9 +373,24 @@ const Pagination: React.FC<{ current: number; total: number; pageSize: number; o
             <button
                 onClick={() => onChange(current + 1)}
                 disabled={current === totalPages}
-                style={{ marginLeft: 8 }}
+                style={{
+                    marginLeft: 8,
+                    fontSize: 20,
+                    borderRadius: 6,
+                    width: 36,
+                    height: 36,
+                    border: '1px solid #b22b2b',
+                    background: current === totalPages ? '#eee' : '#fff',
+                    color: '#b22b2b',
+                    cursor: current === totalPages ? 'not-allowed' : 'pointer',
+                    transition: 'background 0.2s',
+                    boxShadow: current === totalPages ? 'none' : '0 1px 4px #eee',
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                }}
+                onMouseOver={e => { if(current !== totalPages) e.currentTarget.style.background = '#ffeaea'; }}
+                onMouseOut={e => { if(current !== totalPages) e.currentTarget.style.background = '#fff'; }}
             >
-                &gt;
+                {'\u25B6'}
             </button>
         </div>
     );
