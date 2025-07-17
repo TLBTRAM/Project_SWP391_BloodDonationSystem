@@ -5,6 +5,7 @@ import com.swp.blooddonation.dto.request.CollectBloodRequest;
 import com.swp.blooddonation.dto.request.UpdateBloodUnitStatusRequest;
 import com.swp.blooddonation.dto.request.ManualBloodUnitRequest;
 import com.swp.blooddonation.entity.BloodUnit;
+import com.swp.blooddonation.entity.BloodComponent;
 import com.swp.blooddonation.enums.BloodType;
 import com.swp.blooddonation.enums.RhType;
 import com.swp.blooddonation.service.BloodTestService;
@@ -35,7 +36,7 @@ public class BloodUnitAPI {
         return ResponseEntity.ok(bloodUnitService.collectBlood(request));
     }
 
-    @PreAuthorize("hasRole('MEDICALSTAFF')")
+    @PreAuthorize("hasRole('MANAGER') or hasRole('MEDICALSTAFF')")
     @PostMapping("/separate/{id}")
     public ResponseEntity<BloodUnit> separateBlood(@PathVariable Long id,
                                                    @RequestBody BloodComponentVolumeRequest request) {
@@ -95,5 +96,11 @@ public class BloodUnitAPI {
     @GetMapping("/collect/completed")
     public ResponseEntity<List<BloodUnitSimpleResponse>> getCollectedBloodUnits() {
         return ResponseEntity.ok(bloodUnitService.getCollectedBloodUnits());
+    }
+
+    @PreAuthorize("hasRole('MANAGER')")
+    @GetMapping("/components")
+    public ResponseEntity<List<BloodComponent>> getAllBloodComponents() {
+        return ResponseEntity.ok(bloodUnitService.getAllBloodComponents());
     }
 }
