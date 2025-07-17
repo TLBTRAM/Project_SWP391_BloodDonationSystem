@@ -154,81 +154,81 @@ const initialData: BloodUnit[] = [
 ];
 
 // Dữ liệu mẫu yêu cầu nhận máu
-const sampleBloodRequests: BloodRequest[] = [
-  {
-    id: 1,
-    requestDate: "2025-07-17",
-    patientName: "Nguyễn Văn A",
-    bloodType: "A+",
-    requiredVolume: 350,
-    status: "PENDING",
-    hospitalName: "Bệnh viện Chợ Rẫy",
-    phone: "0909123456",
-    gender: "MALE",
-    medicalCondition: "Thiếu máu cấp",
-    address: "12 Lê Lợi, Q.1, TP.HCM"
-  },
-  {
-    id: 2,
-    requestDate: "2025-07-16",
-    patientName: "Trần Thị B",
-    bloodType: "O-",
-    requiredVolume: 450,
-    status: "APPROVED",
-    hospitalName: "Bệnh viện 115",
-    phone: "0912345678",
-    gender: "FEMALE",
-    medicalCondition: "Xuất huyết tiêu hóa",
-    address: "45 Nguyễn Huệ, Q.1, TP.HCM"
-  },
-  {
-    id: 3,
-    requestDate: "2025-07-15",
-    patientName: "Lê Văn C",
-    bloodType: "B+",
-    requiredVolume: 250,
-    status: "REJECTED",
-    hospitalName: "Bệnh viện Nhi Đồng",
-    phone: "0987654321",
-    gender: "MALE",
-    medicalCondition: "Tan máu bẩm sinh",
-    address: "78 Trần Hưng Đạo, Q.5, TP.HCM"
-  }
-];
+// const sampleBloodRequests: BloodRequest[] = [
+//   {
+//     id: 1,
+//     requestDate: "2025-07-17",
+//     patientName: "Nguyễn Văn A",
+//     bloodType: "A+",
+//     requiredVolume: 350,
+//     status: "PENDING",
+//     hospitalName: "Bệnh viện Chợ Rẫy",
+//     phone: "0909123456",
+//     gender: "MALE",
+//     medicalCondition: "Thiếu máu cấp",
+//     address: "12 Lê Lợi, Q.1, TP.HCM"
+//   },
+//   {
+//     id: 2,
+//     requestDate: "2025-07-16",
+//     patientName: "Trần Thị B",
+//     bloodType: "O-",
+//     requiredVolume: 450,
+//     status: "APPROVED",
+//     hospitalName: "Bệnh viện 115",
+//     phone: "0912345678",
+//     gender: "FEMALE",
+//     medicalCondition: "Xuất huyết tiêu hóa",
+//     address: "45 Nguyễn Huệ, Q.1, TP.HCM"
+//   },
+//   {
+//     id: 3,
+//     requestDate: "2025-07-15",
+//     patientName: "Lê Văn C",
+//     bloodType: "B+",
+//     requiredVolume: 250,
+//     status: "REJECTED",
+//     hospitalName: "Bệnh viện Nhi Đồng",
+//     phone: "0987654321",
+//     gender: "MALE",
+//     medicalCondition: "Tan máu bẩm sinh",
+//     address: "78 Trần Hưng Đạo, Q.5, TP.HCM"
+//   }
+// ];
 
 // Dữ liệu mẫu yêu cầu nhận máu thành phần
-const sampleComponentRequests: ComponentBloodRequest[] = [
-  {
-    id: 1,
-    requestDate: "2025-07-17",
-    patientName: "Nguyễn Văn D",
-    bloodType: "A+",
-    redCellQuantity: 250,
-    plasmaQuantity: 200,
-    plateletQuantity: 100,
-    status: "PENDING",
-    hospitalName: "Bệnh viện Chợ Rẫy",
-    phone: "0909123456",
-    gender: "MALE",
-    medicalCondition: "Thiếu máu mạn",
-    address: "12 Lê Lợi, Q.1, TP.HCM"
-  },
-  {
-    id: 2,
-    requestDate: "2025-07-16",
-    patientName: "Trần Thị E",
-    bloodType: "O-",
-    redCellQuantity: 300,
-    plasmaQuantity: 0,
-    plateletQuantity: 150,
-    status: "APPROVED",
-    hospitalName: "Bệnh viện 115",
-    phone: "0912345678",
-    gender: "FEMALE",
-    medicalCondition: "Xuất huyết",
-    address: "45 Nguyễn Huệ, Q.1, TP.HCM"
-  }
-];
+// const sampleComponentRequests: ComponentBloodRequest[] = [
+//   {
+//     id: 1,
+//     requestDate: "2025-07-17",
+//     patientName: "Nguyễn Văn D",
+//     bloodType: "A+",
+//     redCellQuantity: 250,
+//     plasmaQuantity: 200,
+//     plateletQuantity: 100,
+//     status: "PENDING",
+//     hospitalName: "Bệnh viện Chợ Rẫy",
+//     phone: "0909123456",
+//     gender: "MALE",
+//     medicalCondition: "Thiếu máu mạn",
+//     address: "12 Lê Lợi, Q.1, TP.HCM"
+//   },
+//   {
+//     id: 2,
+//     requestDate: "2025-07-16",
+//     patientName: "Trần Thị E",
+//     bloodType: "O-",
+//     redCellQuantity: 300,
+//     plasmaQuantity: 0,
+//     plateletQuantity: 150,
+//     status: "APPROVED",
+//     hospitalName: "Bệnh viện 115",
+//     phone: "0912345678",
+//     gender: "FEMALE",
+//     medicalCondition: "Xuất huyết",
+//     address: "45 Nguyễn Huệ, Q.1, TP.HCM"
+//   }
+// ];
 
 // ========== Component chính ==========
 const Manager: React.FC = () => {
@@ -254,7 +254,8 @@ const { user, logout } = useAuth();
   const [selectedUnitId, setSelectedUnitId] = useState<number | null>(null);
   const [selectedStatus, setSelectedStatus] = useState<string>("");
 
-  const [bloodRequests, setBloodRequests] = useState<BloodRequest[]>(sampleBloodRequests);
+  // KHỞI TẠO LÀ MẢNG RỖNG, KHÔNG DÙNG SAMPLE DATA
+  const [bloodRequests, setBloodRequests] = useState<BloodRequest[]>([]);
   const [loadingRequests, setLoadingRequests] = useState(false);
   const [requestTab, setRequestTab] = useState("ALL");
   const [page, setPage] = useState(1);
@@ -262,13 +263,18 @@ const { user, logout } = useAuth();
   const [showDetail, setShowDetail] = useState(false);
   const [selectedRequest, setSelectedRequest] = useState<BloodRequest | null>(null);
 
-  const [componentRequests, setComponentRequests] = useState<ComponentBloodRequest[]>(sampleComponentRequests);
+  // KHỞI TẠO LÀ MẢNG RỖNG, KHÔNG DÙNG SAMPLE DATA
+  const [componentRequests, setComponentRequests] = useState<ComponentBloodRequest[]>([]);
   const [loadingComponentRequests, setLoadingComponentRequests] = useState(false);
   const [componentRequestTab, setComponentRequestTab] = useState("ALL");
   const [componentPage, setComponentPage] = useState(1);
   const COMPONENT_PAGE_SIZE = 5;
   const [showComponentDetail, setShowComponentDetail] = useState(false);
   const [selectedComponentRequest, setSelectedComponentRequest] = useState<ComponentBloodRequest | null>(null);
+
+  // Thêm state cho popup lỗi
+  const [showErrorPopup, setShowErrorPopup] = useState(false);
+  const [errorPopupMessage, setErrorPopupMessage] = useState("");
 
   // Các biến phân trang và filter cho component requests (đặt ngoài JSX)
   const filteredComponentRequests = componentRequestTab === "ALL" ? componentRequests : componentRequests.filter(r => r.status === componentRequestTab);
@@ -536,14 +542,16 @@ const { user, logout } = useAuth();
     SEPARATED: "Đã tách",
     USED: "Đã sử dụng",
     EXPIRED: "Hết hạn",
-    NEARLY_EXPIRED: "Gần hết hạn"
+    NEARLY_EXPIRED: "Gần hết hạn",
+    READY: "Đã duyệt"
   };
   const statusOptions = [
     { value: "COLLECTED", label: "Còn hạn" },
     { value: "SEPARATED", label: "Đã tách" },
     { value: "USED", label: "Đã sử dụng" },
     { value: "EXPIRED", label: "Hết hạn" },
-    { value: "NEARLY_EXPIRED", label: "Gần hết hạn" }
+    { value: "NEARLY_EXPIRED", label: "Gần hết hạn" },
+    { value: "READY", label: "Đã duyệt" }
   ];
 
   const sortFunction = (a: BloodUnit, b: BloodUnit) => {
@@ -585,11 +593,11 @@ const { user, logout } = useAuth();
 
   // Tab filter cho 4 trạng thái + tất cả
   const requestTabs = [
-    { key: "ALL", label: "Tất cả" },
     { key: "PENDING", label: "Chờ duyệt" },
-    { key: "APPROVED", label: "Đã duyệt" },
+    { key: "READY", label: "Đã duyệt" },
     { key: "REJECTED", label: "Đã từ chối" },
-    { key: "COMPLETED", label: "Đã hoàn tất" }
+    { key: "COMPLETED", label: "Đã hoàn tất" },
+    { key: "ALL", label: "Tất cả" }
   ];
 
   // Lọc và phân trang
@@ -597,7 +605,7 @@ const { user, logout } = useAuth();
   const pagedRequests = filteredRequests.slice((page-1)*PAGE_SIZE, page*PAGE_SIZE);
   const totalPages = Math.ceil(filteredRequests.length / PAGE_SIZE);
 
-  // Fetch blood requests khi vào tab 'requests'
+  // FETCH DỮ LIỆU YÊU CẦU MÁU TOÀN PHẦN TỪ BACKEND KHI VÀO TAB 'requests'
   useEffect(() => {
     if (view === "requests") {
       setLoadingRequests(true);
@@ -612,7 +620,8 @@ const { user, logout } = useAuth();
             id: item.id,
             requestDate: item.requestDate || (item.createdAt ? item.createdAt.split('T')[0] : ""),
             patientName: item.patientName || (item.pendingPatientRequest ? item.pendingPatientRequest.fullName : ""),
-            bloodType: item.bloodType + (item.rhType === "POSITIVE" ? "+" : item.rhType === "NEGATIVE" ? "-" : ""),
+            bloodType: item.bloodType, // chỉ lấy string gốc
+            rhType: item.rhType,       // chỉ lấy string gốc
             requiredVolume: item.requiredVolume || 0,
             status: item.status,
             hospitalName: item.hospitalName || "",
@@ -621,8 +630,7 @@ const { user, logout } = useAuth();
             medicalCondition: item.medicalCondition || "",
             address: item.address || (item.pendingPatientRequest ? item.pendingPatientRequest.address : ""),
             createdAt: item.createdAt || "",
-            fullName: item.fullName || (item.pendingPatientRequest ? item.pendingPatientRequest.fullName : ""),
-            rhType: item.rhType || ""
+            fullName: item.fullName || (item.pendingPatientRequest ? item.pendingPatientRequest.fullName : "")
           }));
           setBloodRequests(mapped);
           setLoadingRequests(false);
@@ -632,7 +640,7 @@ const { user, logout } = useAuth();
     // eslint-disable-next-line
   }, [view]);
 
-  // Fetch component requests khi vào tab 'componentRequests'
+  // FETCH DỮ LIỆU YÊU CẦU MÁU THÀNH PHẦN TỪ BACKEND KHI VÀO TAB 'componentRequests'
   useEffect(() => {
     if (view === "componentRequests") {
       setLoadingComponentRequests(true);
@@ -669,18 +677,46 @@ const { user, logout } = useAuth();
   // ====== API thao tác yêu cầu whole blood ======
   const approveWholeRequest = async (id: number) => {
     const token = localStorage.getItem("token");
+    // Tìm thông tin nhóm máu của yêu cầu này
+    const req = bloodRequests.find(r => r.id === id);
+    const bloodGroupLabel = req ? `${req.bloodType}${req.rhType === 'POSITIVE' ? '+' : req.rhType === 'NEGATIVE' ? '-' : ''}` : '';
     try {
       const res = await fetch(`http://localhost:8080/api/blood-requests/${id}/approve`, {
         method: "PUT",
         headers: { Authorization: `Bearer ${token}` }
       });
-      if (!res.ok) throw new Error("Lỗi duyệt yêu cầu");
+      if (!res.ok) {
+        if (res.status === 400) {
+          // Lấy message chi tiết nếu có
+          let msg = '';
+          try { msg = (await res.json()).message; } catch {}
+          if (msg && (msg.includes('không đủ') || msg.includes('Không tìm thấy đơn vị máu phù hợp'))) {
+            setErrorPopupMessage(`Nhóm máu ${bloodGroupLabel} trong kho không đủ để hiến.`);
+          } else {
+            setErrorPopupMessage(msg || `Nhóm máu ${bloodGroupLabel} trong kho không đủ để hiến.`);
+          }
+          setShowErrorPopup(true);
+          setTimeout(() => setShowErrorPopup(false), 3000);
+        } else {
+          setErrorPopupMessage("Duyệt thất bại!");
+          setShowErrorPopup(true);
+          setTimeout(() => setShowErrorPopup(false), 3000);
+        }
+        return;
+      }
+      setErrorPopupMessage("");
+      setShowErrorPopup(false);
       alert("Duyệt thành công!");
       setLoadingRequests(true);
       await fetchBloodUnits();
+      // Gọi lại fetch blood requests
+      const res2 = await fetch("http://localhost:8080/api/blood-requests/all", { headers: { Authorization: `Bearer ${token}` } });
+      setBloodRequests(await res2.json());
       setLoadingRequests(false);
     } catch (err) {
-      alert("Duyệt thất bại!");
+      setErrorPopupMessage("Duyệt thất bại!");
+      setShowErrorPopup(true);
+      setTimeout(() => setShowErrorPopup(false), 3000);
     }
   };
   const rejectWholeRequest = async (id: number) => {
@@ -1150,19 +1186,81 @@ const { user, logout } = useAuth();
                           <tr key={req.id}>
                             <td>{req.requestDate || req.createdAt || ""}</td>
                             <td>{req.patientName || req.fullName || ""}</td>
-                            <td>{req.bloodType ? (req.bloodType + (req.rhType === 'POSITIVE' ? '+' : req.rhType === 'NEGATIVE' ? '-' : '')) : ''}</td>
+                            <td>{req.bloodType}{req.rhType === 'POSITIVE' ? '+' : req.rhType === 'NEGATIVE' ? '-' : ''}</td>
                             <td>{req.requiredVolume}</td>
                             <td>
                               {req.status === 'PENDING' && <span className="status-pending">CHỜ DUYỆT</span>}
-                              {req.status === 'APPROVED' && <span className="status-approved">ĐÃ DUYỆT</span>}
+                              {req.status === 'READY' && <span className="status-approved">ĐÃ DUYỆT</span>}
                               {req.status === 'REJECTED' && <span style={{color:'#b22b2b', fontWeight:'bold'}}>ĐÃ TỪ CHỐI</span>}
                               {req.status === 'COMPLETED' && <span style={{color:'#43a047', fontWeight:'bold'}}>ĐÃ HOÀN TẤT</span>}
                             </td>
                             <td className="table-action-cell" style={{display:'flex', justifyContent:'flex-end', alignItems:'center', gap:6}}>
-                              <button className="action-button" style={{display: req.status === 'PENDING' ? 'inline-block' : 'none', width:110, padding:'6px 0', flexShrink:0}} onClick={() => approveWholeRequest(req.id)}>Duyệt</button>
-                              <button className="action-button" style={{display: req.status === 'PENDING' ? 'inline-block' : 'none', width:110, padding:'6px 0', flexShrink:0}} onClick={() => rejectWholeRequest(req.id)}>Từ chối</button>
-                              <button className="action-button" style={{display: req.status === 'READY' ? 'inline-block' : 'none', width:110, padding:'6px 0', flexShrink:0}} onClick={() => completeWholeRequest(req.id)}>Hoàn tất</button>
-                              <button className="cancel-button" style={{fontWeight:500, padding:'6px 18px', flex:'0 0 auto'}} onClick={()=>{setSelectedRequest(req); setShowDetail(true);}}>Xem chi tiết</button>
+                              <button
+                                className="action-button"
+                                style={{
+                                  display: req.status === 'PENDING' ? 'inline-block' : 'none',
+                                  width:110,
+                                  padding:'6px 0',
+                                  flexShrink:0,
+                                  background:'#43a047', // xanh lá cây
+                                  color:'#fff',
+                                  border:'none',
+                                  borderRadius:6,
+                                  fontWeight:600,
+                                  cursor:'pointer',
+                                  transition:'background 0.2s'
+                                }}
+                                onClick={() => approveWholeRequest(req.id)}
+                              >Duyệt</button>
+                              <button
+                                className="action-button"
+                                style={{
+                                  display: req.status === 'PENDING' ? 'inline-block' : 'none',
+                                  width:110,
+                                  padding:'6px 0',
+                                  flexShrink:0,
+                                  background:'#e53935', // đỏ
+                                  color:'#fff',
+                                  border:'none',
+                                  borderRadius:6,
+                                  fontWeight:600,
+                                  cursor:'pointer',
+                                  transition:'background 0.2s'
+                                }}
+                                onClick={() => rejectWholeRequest(req.id)}
+                              >Từ chối</button>
+                              <button
+                                className="action-button"
+                                style={{
+                                  display: req.status === 'READY' ? 'inline-block' : 'none',
+                                  width:110,
+                                  padding:'6px 0',
+                                  flexShrink:0,
+                                  background:'#43a047',
+                                  color:'#fff',
+                                  border:'none',
+                                  borderRadius:6,
+                                  fontWeight:600,
+                                  cursor:'pointer',
+                                  transition:'background 0.2s'
+                                }}
+                                onClick={() => completeWholeRequest(req.id)}
+                              >Hoàn tất</button>
+                              <button
+                                className="cancel-button"
+                                style={{
+                                  fontWeight:500,
+                                  padding:'6px 18px',
+                                  flex:'0 0 auto',
+                                  background:'#1976d2', // xanh dương
+                                  color:'#fff',
+                                  border:'none',
+                                  borderRadius:6,
+                                  cursor:'pointer',
+                                  transition:'background 0.2s'
+                                }}
+                                onClick={()=>{setSelectedRequest(req); setShowDetail(true);}}
+                              >Xem chi tiết</button>
                             </td>
                           </tr>
                         ))
@@ -1188,9 +1286,14 @@ const { user, logout } = useAuth();
                     <h3>Chi tiết yêu cầu nhận máu</h3>
                     <div style={{marginBottom:10}}><b>Ngày yêu cầu:</b> {selectedRequest.requestDate || selectedRequest.createdAt || ""}</div>
                     <div style={{marginBottom:10}}><b>Bệnh nhân:</b> {selectedRequest.patientName || selectedRequest.fullName || ""}</div>
-                    <div style={{marginBottom:10}}><b>Nhóm máu:</b> {selectedRequest.bloodType ? (selectedRequest.bloodType + (selectedRequest.rhType === 'POSITIVE' ? '+' : selectedRequest.rhType === 'NEGATIVE' ? '-' : '')) : ''}</div>
+                    <div style={{marginBottom:10}}><b>Nhóm máu:</b> {selectedRequest.bloodType}{selectedRequest.rhType === 'POSITIVE' ? '+' : selectedRequest.rhType === 'NEGATIVE' ? '-' : ''}</div>
                     <div style={{marginBottom:10}}><b>Thể tích:</b> {selectedRequest.requiredVolume} ml</div>
-                    <div style={{marginBottom:10}}><b>Trạng thái:</b> {selectedRequest.status === 'PENDING' ? 'Chờ duyệt' : selectedRequest.status === 'APPROVED' ? 'Đã duyệt' : selectedRequest.status === 'REJECTED' ? 'Đã từ chối' : 'Đã hoàn tất'}</div>
+                    <div style={{marginBottom:10}}><b>Trạng thái:</b> {
+                      selectedRequest.status === 'PENDING' ? 'Chờ duyệt' :
+                      selectedRequest.status === 'READY' ? 'Đã duyệt' :
+                      selectedRequest.status === 'REJECTED' ? 'Đã từ chối' :
+                      'Đã hoàn tất'
+                    }</div>
                     <div style={{marginBottom:10}}><b>Bệnh viện:</b> {selectedRequest.hospitalName}</div>
                     <div style={{marginBottom:10}}><b>Số điện thoại:</b> {selectedRequest.phone}</div>
                     <div style={{marginBottom:10}}><b>Giới tính:</b> {selectedRequest.gender === 'MALE' ? 'Nam' : selectedRequest.gender === 'FEMALE' ? 'Nữ' : 'Khác'}</div>
@@ -1365,6 +1468,41 @@ const { user, logout } = useAuth();
               <button onClick={confirmEdit} className="modal-confirm" disabled={!selectedStatus}>Cập nhật</button>
               <button onClick={() => setShowEditModal(false)} className="modal-cancel">Hủy</button>
             </div>
+          </div>
+        </div>
+      )}
+      {/* Popup báo lỗi */}
+      {showErrorPopup && (
+        <div style={{
+          position: 'fixed',
+          top: 40,
+          left: 0,
+          right: 0,
+          zIndex: 9999,
+          display: 'flex',
+          justifyContent: 'center',
+          pointerEvents: 'none',
+        }}>
+          <div style={{
+            background: '#fff',
+            color: '#222', // chữ đen
+            border: '1.5px solid #ffa726', // cam nhạt
+            borderRadius: 10,
+            padding: '16px 32px',
+            fontSize: 17,
+            fontWeight: 500,
+            boxShadow: '0 2px 16px rgba(0,0,0,0.10)',
+            pointerEvents: 'auto',
+            display: 'flex',
+            alignItems: 'center',
+            gap: 18,
+            minWidth: 320,
+            maxWidth: '90%',
+            textAlign: 'center',
+            justifyContent: 'center',
+          }}>
+            <span style={{flex:1}}>{errorPopupMessage}</span>
+            <button style={{marginLeft: 16, background: '#ffa726', color: '#222', border: 'none', borderRadius: 5, padding: '7px 18px', cursor: 'pointer', fontWeight: 500}} onClick={()=>setShowErrorPopup(false)}>Đóng</button>
           </div>
         </div>
       )}

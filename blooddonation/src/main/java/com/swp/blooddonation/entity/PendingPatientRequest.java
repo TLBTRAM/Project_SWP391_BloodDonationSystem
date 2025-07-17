@@ -1,5 +1,5 @@
 package com.swp.blooddonation.entity;
-
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.swp.blooddonation.enums.Gender;
 import com.swp.blooddonation.enums.BloodRequestStatus;
 import jakarta.persistence.*;
@@ -55,6 +55,7 @@ public class PendingPatientRequest {
     private LocalDateTime createdAt;
 
     @ManyToOne
+    @JsonIgnore
     @JoinColumn(name = "blood_request_component_id")
     private BloodRequestComponent bloodRequestComponent;
 
