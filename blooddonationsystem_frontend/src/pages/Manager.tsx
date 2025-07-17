@@ -246,7 +246,7 @@ const { user, logout } = useAuth();
     entryDate: "",
     expiryDate: "",
   });
-  const [view, setView] = useState<"dashboard" | "add" | "stats" | "requests" | "componentRequests">(
+  const [view, setView] = useState<"dashboard" | "add" | "stats" | "requests" | "componentRequests" | "componentStock">(
     "dashboard"
   );
   const [showDeleteModal, setShowDeleteModal] = useState(false);
@@ -281,6 +281,21 @@ const { user, logout } = useAuth();
   const pagedComponentRequests = filteredComponentRequests.slice((componentPage-1)*COMPONENT_PAGE_SIZE, componentPage*COMPONENT_PAGE_SIZE);
   const totalComponentPages = Math.ceil(filteredComponentRequests.length / COMPONENT_PAGE_SIZE);
 
+  // Thêm state cho tab kho máu
+  const [bloodUnitTab, setBloodUnitTab] = useState("ALL");
+
+  // Tab trạng thái kho máu
+  const bloodUnitTabs = [
+    { key: "ALL", label: "Tất cả" },
+    { key: "COLLECTED", label: "Đã thu thập" },
+    { key: "SEPARATED", label: "Đã tách" },
+    { key: "USED", label: "Đã sử dụng" },
+    { key: "EXPIRED", label: "Hết hạn" }
+  ];
+
+  // Thêm state lưu id túi máu được chọn (nếu cần)
+  const [selectedBloodUnitId, setSelectedBloodUnitId] = useState<number | null>(null);
+
   // Thêm hàm kiểm tra định dạng ngày dd/mm/yyyy
   function isValidDate(dateStr: string): boolean {
     // Kiểm tra đúng định dạng dd/mm/yyyy
@@ -290,6 +305,107 @@ const { user, logout } = useAuth();
     // Kiểm tra ngày thực tế
     return date.getFullYear() === year && date.getMonth() === month - 1 && date.getDate() === day;
   }
+
+  // Thêm hàm kiểm tra máu gần hết hạn
+  function isNearlyExpired(expiryDate: string) {
+    if (!expiryDate) return false;
+    // Đảm bảo expiryDate là yyyy-MM-dd
+    const parts = expiryDate.split("-");
+    if (parts.length !== 3) return false;
+    const exp = new Date(Date.UTC(Number(parts[0]), Number(parts[1]) - 1, Number(parts[2])));
+    const today = new Date();
+    const todayUTC = new Date(Date.UTC(today.getFullYear(), today.getMonth(), today.getDate()));
+    const diff = (exp.getTime() - todayUTC.getTime()) / (1000 * 60 * 60 * 24);
+    return diff > 0 && diff <= 3;
+  }
+
+  // State cho popup phân tách máu
+  const [showSeparateForm, setShowSeparateForm] = useState(false);
+  const [separateFormId, setSeparateFormId] = useState<number | null>(null);
+  const [separateForm, setSeparateForm] = useState({ redCellVolume: '', plasmaVolume: '', plateletVolume: '' });
+  const [separateError, setSeparateError] = useState('');
+
+  const openSeparateForm = (id: number) => {
+    setSeparateFormId(id);
+    setSeparateForm({ redCellVolume: '', plasmaVolume: '', plateletVolume: '' });
+    setSeparateError('');
+    setShowSeparateForm(true);
+  };
+  const closeSeparateForm = () => {
+    setShowSeparateForm(false);
+    setSeparateFormId(null);
+    setSeparateError('');
+  };
+
+  const handleSeparateInput = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSeparateForm({ ...separateForm, [e.target.name]: e.target.value });
+  };
+
+  const handleSeparateSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const redCellVolume = Number(separateForm.redCellVolume);
+    const plasmaVolume = Number(separateForm.plasmaVolume);
+    const plateletVolume = Number(separateForm.plateletVolume);
+    if (
+      isNaN(redCellVolume) || isNaN(plasmaVolume) || isNaN(plateletVolume) ||
+      redCellVolume < 0 || plasmaVolume < 0 || plateletVolume < 0
+    ) {
+      setSeparateError('Vui lòng nhập số hợp lệ!');
+      return;
+    }
+    const token = localStorage.getItem("token");
+    try {
+      const res = await fetch(`http://localhost:8080/api/blood/separate/${separateFormId}`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`
+        },
+        body: JSON.stringify({ redCellVolume, plasmaVolume, plateletVolume })
+      });
+      if (!res.ok) throw new Error("Lỗi phân tách máu");
+      alert("Phân tách thành công!");
+      await fetchBloodUnits();
+      closeSeparateForm();
+    } catch (err) {
+      setSeparateError('Phân tách thất bại!');
+    }
+  };
+
+  // Hàm phân tách máu
+  const separateBloodUnit = async (id: number) => {
+    // Hỏi người dùng nhập số ml cho từng thành phần
+    const redCellVolume = Number(prompt("Nhập thể tích Hồng cầu (ml):", "0"));
+    const plasmaVolume = Number(prompt("Nhập thể tích Huyết tương (ml):", "0"));
+    const plateletVolume = Number(prompt("Nhập thể tích Tiểu cầu (ml):", "0"));
+    if (
+      isNaN(redCellVolume) || isNaN(plasmaVolume) || isNaN(plateletVolume)
+      || redCellVolume < 0 || plasmaVolume < 0 || plateletVolume < 0
+    ) {
+      alert("Vui lòng nhập số hợp lệ!");
+      return;
+    }
+    const token = localStorage.getItem("token");
+    try {
+      const res = await fetch(`http://localhost:8080/api/blood/separate/${id}`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`
+        },
+        body: JSON.stringify({
+          redCellVolume,
+          plasmaVolume,
+          plateletVolume
+        })
+      });
+      if (!res.ok) throw new Error("Lỗi phân tách máu");
+      alert("Phân tách thành công!");
+      await fetchBloodUnits();
+    } catch (err) {
+      alert("Phân tách thất bại!");
+    }
+  };
 
   // Khi vào dashboard, tự động fetch dữ liệu kho máu từ API
   React.useEffect(() => {
@@ -756,13 +872,22 @@ const { user, logout } = useAuth();
 
   // ====== API thao tác yêu cầu máu thành phần ======
   const approveComponentRequest = async (id: number) => {
+    console.log("Approve component request id:", id);
     const token = localStorage.getItem("token");
     try {
       const res = await fetch(`http://localhost:8080/api/blood-requests/component/${id}/approve`, {
         method: "PUT",
         headers: { Authorization: `Bearer ${token}` }
       });
-      if (!res.ok) throw new Error("Lỗi duyệt yêu cầu thành phần");
+      if (!res.ok) {
+        let msg = "Duyệt thất bại!";
+        try {
+          const data = await res.json();
+          if (data && data.message) msg = data.message;
+        } catch {}
+        alert(msg);
+        return;
+      }
       alert("Duyệt thành công!");
       setLoadingComponentRequests(true);
       // reload
@@ -793,13 +918,22 @@ const { user, logout } = useAuth();
     }
   };
   const completeComponentRequest = async (id: number) => {
+    console.log("Complete component request id:", id);
     const token = localStorage.getItem("token");
     try {
       const res = await fetch(`http://localhost:8080/api/blood-requests/component/${id}/complete`, {
         method: "PUT",
         headers: { Authorization: `Bearer ${token}` }
       });
-      if (!res.ok) throw new Error("Lỗi hoàn tất yêu cầu thành phần");
+      if (!res.ok) {
+        let msg = "Hoàn tất thất bại!";
+        try {
+          const data = await res.json();
+          if (data && data.message) msg = data.message;
+        } catch {}
+        alert(msg);
+        return;
+      }
       alert("Hoàn tất thành công!");
       setLoadingComponentRequests(true);
       const res2 = await fetch("http://localhost:8080/api/blood-requests/component/all", { headers: { Authorization: `Bearer ${token}` } });
@@ -869,6 +1003,51 @@ const { user, logout } = useAuth();
     }
   };
 
+  // State cho kho máu phân tích
+  const [componentView, setComponentView] = useState<'list'>('list');
+  const [bloodComponents, setBloodComponents] = useState<any[]>([]);
+  const [loadingComponents, setLoadingComponents] = useState(false);
+  const [componentTab, setComponentTab] = useState('ALL');
+  const [componentSearch, setComponentSearch] = useState('');
+  const [componentTypeFilter, setComponentTypeFilter] = useState('');
+  const [componentStatusFilter, setComponentStatusFilter] = useState('');
+  const [componentStockPage, setComponentStockPage] = useState(1);
+  const COMPONENT_STOCK_PAGE_SIZE = 10;
+
+  const componentTabs = [
+    { key: 'ALL', label: 'Tất cả' },
+    { key: 'RED_CELL', label: 'Hồng cầu' },
+    { key: 'PLASMA', label: 'Huyết tương' },
+    { key: 'PLATELET', label: 'Tiểu cầu' }
+  ];
+  const componentStatusTabs = [
+    { key: '', label: 'Tất cả trạng thái' },
+    { key: 'AVAILABLE', label: 'Còn hạn' },
+    { key: 'USED', label: 'Đã sử dụng' },
+    { key: 'EXPIRED', label: 'Hết hạn' }
+  ];
+
+  // Fetch máu phân tích khi vào tab
+  React.useEffect(() => {
+    if (view === 'componentStock') {
+      setLoadingComponents(true);
+      const token = localStorage.getItem('token');
+      fetch('http://localhost:8080/api/blood/components', {
+        headers: { Authorization: `Bearer ${token}` }
+      })
+        .then(res => res.json())
+        .then(data => {
+          setBloodComponents(data);
+          setLoadingComponents(false);
+        })
+        .catch(() => setLoadingComponents(false));
+    }
+  }, [view]);
+
+  // State phân trang cho kho máu
+  const [bloodPage, setBloodPage] = useState(1);
+  const BLOOD_PAGE_SIZE = 5;
+
   // ========== Giao diện chính ==========
   return (
     <div>
@@ -908,6 +1087,9 @@ const { user, logout } = useAuth();
                 Kho máu
               </button>
             </li>
+            <li className={view === "componentStock" ? "active" : ""}>
+              <button className="menu-item" onClick={() => setView("componentStock")}>Kho máu phân tích</button>
+            </li>
             <li className={view === "add" ? "active" : ""}>
               <button className="menu-item" onClick={() => setView("add")}>
                 Thêm máu
@@ -933,6 +1115,18 @@ const { user, logout } = useAuth();
           {view === "dashboard" && (
             <>
               <h2>Quản lý kho máu</h2>
+              {/* Tab phân loại trạng thái kho máu */}
+              <div style={{display:'flex', justifyContent:'center', gap:12, marginBottom:18}}>
+                {bloodUnitTabs.map(tab => (
+                  <button
+                    key={tab.key}
+                    className={bloodUnitTab === tab.key ? "tab-btn active" : "tab-btn"}
+                    onClick={()=>{setBloodUnitTab(tab.key);}}
+                  >
+                    {tab.label}
+                  </button>
+                ))}
+              </div>
               <div className="filter-container">
                 <input
                   type="text"
@@ -959,9 +1153,10 @@ const { user, logout } = useAuth();
                   onChange={(e) => setFilterStatus(e.target.value)}
                 >
                   <option value="">Tất cả trạng thái</option>
-                  <option value="Còn hạn">Còn hạn</option>
-                  <option value="Gần hết hạn">Gần hết hạn</option>
-                  <option value="Hết hạn">Hết hạn</option>
+                  <option value="COLLECTED">Đã thu thập</option>
+                  <option value="SEPARATED">Đã tách</option>
+                  <option value="USED">Đã sử dụng</option>
+                  <option value="EXPIRED">Hết hạn</option>
                 </select>
                 <select
                   value={sortBy}
@@ -972,8 +1167,7 @@ const { user, logout } = useAuth();
                   <option value="expiry">Hạn sử dụng</option>
                 </select>
               </div>
-
-              <table className="blood-table">
+              <table className="registration-table">
                 <thead>
                   <tr>
                     <th>ID</th>
@@ -986,55 +1180,97 @@ const { user, logout } = useAuth();
                   </tr>
                 </thead>
                 <tbody>
-                  {filteredUnits.length === 0 ? (
-                    <tr>
-                      <td colSpan={7}>Không có dữ liệu</td>
-                    </tr>
-                  ) : (
-                    filteredUnits.map((unit, index) => {
-                      const status = getStatusLabel(unit.expiryDate);
-                      return (
-                        <tr
-                          key={unit.id}
-                          className={getRowClass(unit.expiryDate)}
-                        >
-                          <td>{index + 1}</td>
-                          <td>{unit.group}</td>
-                          <td>{unit.quantity}</td>
-                          <td>{unit.entryDate}</td>
-                          <td>{unit.expiryDate}</td>
-                          <td>
-                            <span
-                              className={`status-badge status-${(unit.status || 'collected').toLowerCase()} ${statusClassMap[statusMap[unit.status || 'COLLECTED']]}`}
+                  {/* Lọc kho máu theo tab trạng thái */}
+                  {(() => {
+                    const filtered = bloodUnitTab === "ALL" ? filteredUnits : filteredUnits.filter(unit => (unit.status || "COLLECTED") === bloodUnitTab);
+                    const paged = filtered.slice((bloodPage-1)*BLOOD_PAGE_SIZE, bloodPage*BLOOD_PAGE_SIZE);
+                    if (paged.length === 0) return <tr><td colSpan={7}>Không có dữ liệu</td></tr>;
+                    return paged.map((unit, index) => (
+                      <tr key={unit.id} className={getRowClass(unit.expiryDate)}>
+                        <td>{unit.id}</td>
+                        <td>{unit.group}</td>
+                        <td>{unit.quantity}</td>
+                        <td>{unit.entryDate}</td>
+                        <td>{unit.expiryDate}</td>
+                        <td>
+                          <span
+                            className={`status-badge status-${(unit.status || 'collected').toLowerCase()} ${statusClassMap[statusMap[unit.status || 'COLLECTED']]}`}
+                            style={{ cursor: bloodUnitTab === 'COLLECTED' ? 'pointer' : undefined, border: selectedBloodUnitId === unit.id ? '2px solid #1976d2' : undefined }}
+                            onClick={() => {
+                              if (bloodUnitTab === 'COLLECTED') setSelectedBloodUnitId(unit.id);
+                            }}
+                          >
+                            {statusMap[unit.status || 'COLLECTED']}
+                            {bloodUnitTab === 'COLLECTED' && unit.status === 'COLLECTED' && isNearlyExpired(unit.expiryDate) && (
+                              <span style={{
+                                background: "#ff9800",
+                                color: "#fff",
+                                borderRadius: "8px",
+                                padding: "2px 8px",
+                                marginLeft: 8,
+                                fontSize: 12,
+                                fontWeight: 600
+                              }}>Gần hết hạn</span>
+                            )}
+                          </span>
+                          {bloodUnitTab === 'COLLECTED' && unit.status === 'COLLECTED' && (
+                            <button
+                              style={{
+                                marginLeft: 10,
+                                background: '#1976d2',
+                                color: '#fff',
+                                border: 'none',
+                                borderRadius: 6,
+                                padding: '4px 12px',
+                                fontWeight: 600,
+                                cursor: 'pointer',
+                                fontSize: 13
+                              }}
+                              onClick={() => openSeparateForm(unit.id)}
                             >
-                              {statusMap[unit.status || 'COLLECTED']}
-                            </span>
-                          </td>
-                          <td className="table-action-cell">
-                            <div className="table-action-buttons">
-                              {/* Nút sửa */}
-                              <button
-                                className="action-button-icon"
-                                onClick={() => handleEditClick(unit.id)}
-                              >
-                                <img src={EditImg} alt="Sửa" />
-                              </button>
+                              Phân tách
+                            </button>
+                          )}
+                        </td>
+                        <td className="table-action-cell">
+                          <div className="table-action-buttons">
+                            {/* Nút sửa */}
+                            <button
+                              className="action-button-icon"
+                              onClick={() => handleEditClick(unit.id)}
+                            >
+                              <img src={EditImg} alt="Sửa" />
+                            </button>
 
-                              {/* Nút xoá */}
-                              <button
-                                className="action-button-icon"
-                                onClick={() => handleDeleteClick(unit.id)}
-                              >
-                                <img src={DeleteImg} alt="Xóa" />
-                              </button>
-                            </div>
-                          </td>
-                        </tr>
-                      );
-                    })
-                  )}
+                            {/* Nút xoá */}
+                            <button
+                              className="action-button-icon"
+                              onClick={() => handleDeleteClick(unit.id)}
+                            >
+                              <img src={DeleteImg} alt="Xóa" />
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    ));
+                  })()}
                 </tbody>
               </table>
+              {/* Phân trang cho kho máu */}
+              {(() => {
+                const filtered = bloodUnitTab === "ALL" ? filteredUnits : filteredUnits.filter(unit => (unit.status || "COLLECTED") === bloodUnitTab);
+                const totalPages = Math.ceil(filtered.length / BLOOD_PAGE_SIZE);
+                if (totalPages <= 1) return null;
+                return (
+                  <div style={{ display: 'flex', justifyContent: 'center', margin: '18px 0' }}>
+                    <button onClick={() => setBloodPage(bloodPage - 1)} disabled={bloodPage === 1} style={{ marginRight: 8 }}>&lt;</button>
+                    {Array.from({ length: totalPages }, (_, i) => i + 1).map(p => (
+                      <button key={p} onClick={() => setBloodPage(p)} className={p === bloodPage ? 'tab-btn active' : 'tab-btn'} style={{ margin: '0 2px', minWidth: 36 }}>{p}</button>
+                    ))}
+                    <button onClick={() => setBloodPage(bloodPage + 1)} disabled={bloodPage === totalPages} style={{ marginLeft: 8 }}>&gt;</button>
+                  </div>
+                );
+              })()}
             </>
           )}
 
@@ -1356,11 +1592,12 @@ const { user, logout } = useAuth();
                               {req.status === 'APPROVED' && <span className="status-approved">ĐÃ DUYỆT</span>}
                               {req.status === 'REJECTED' && <span style={{color:'#b22b2b', fontWeight:'bold'}}>ĐÃ TỪ CHỐI</span>}
                               {req.status === 'COMPLETED' && <span style={{color:'#43a047', fontWeight:'bold'}}>ĐÃ HOÀN TẤT</span>}
+                              {req.status === 'READY' && <span className="status-ready">SẴN SÀNG</span>}
                             </td>
                             <td className="table-action-cell" style={{display:'flex', justifyContent:'flex-end', alignItems:'center', gap:6}}>
                               <button className="action-button" style={{display: req.status === 'PENDING' ? 'inline-block' : 'none', width:110, padding:'6px 0', flexShrink:0}} onClick={() => approveComponentRequest(req.id)}>Duyệt</button>
                               <button className="action-button" style={{display: req.status === 'PENDING' ? 'inline-block' : 'none', width:110, padding:'6px 0', flexShrink:0}} onClick={() => rejectComponentRequest(req.id)}>Từ chối</button>
-                              <button className="action-button" style={{display: req.status === 'READY' ? 'inline-block' : 'none', width:110, padding:'6px 0', flexShrink:0}} onClick={() => completeComponentRequest(req.id)}>Hoàn tất</button>
+                              <button className="action-button" style={{display: req.status === 'READY' ? 'inline-block' : 'none', width:110, padding:'6px 0', flexShrink:0, background:'#43a047', color:'#fff', border:'none', borderRadius:6, fontWeight:600, cursor:'pointer', transition:'background 0.2s'}} onClick={() => completeComponentRequest(req.id)}>Hoàn tất</button>
                               <button className="cancel-button" style={{fontWeight:500, padding:'6px 18px', flex:'0 0 auto'}} onClick={()=>{setSelectedComponentRequest(req); setShowComponentDetail(true);}}>Xem chi tiết</button>
                             </td>
                           </tr>
@@ -1403,6 +1640,95 @@ const { user, logout } = useAuth();
                   </div>
                 </div>
               )}
+            </>
+          )}
+          {view === 'componentStock' && (
+            <>
+              <h2>Kho máu phân tích</h2>
+              <div style={{display:'flex', justifyContent:'center', gap:12, marginBottom:18}}>
+                {componentTabs.map(tab => (
+                  <button
+                    key={tab.key}
+                    className={componentTab === tab.key ? "tab-btn active" : "tab-btn"}
+                    onClick={()=>{setComponentTab(tab.key); setComponentStockPage(1);}}
+                  >
+                    {tab.label}
+                  </button>
+                ))}
+              </div>
+              <div className="filter-container">
+                <input
+                  type="text"
+                  placeholder="Tìm nhóm máu..."
+                  value={componentSearch}
+                  onChange={e => setComponentSearch(e.target.value)}
+                />
+                <select value={componentTypeFilter} onChange={e => setComponentTypeFilter(e.target.value)}>
+                  <option value="">Tất cả thành phần</option>
+                  <option value="RED_CELL">Hồng cầu</option>
+                  <option value="PLASMA">Huyết tương</option>
+                  <option value="PLATELET">Tiểu cầu</option>
+                </select>
+                <select value={componentStatusFilter} onChange={e => setComponentStatusFilter(e.target.value)}>
+                  {componentStatusTabs.map(tab => (
+                    <option key={tab.key} value={tab.key}>{tab.label}</option>
+                  ))}
+                </select>
+              </div>
+              <table className="registration-table">
+                <thead>
+                  <tr>
+                    <th>ID</th>
+                    <th>Thành phần</th>
+                    <th>Nhóm máu</th>
+                    <th>Thể tích (ml)</th>
+                    <th>Ngày nhập</th>
+                    <th>Hạn sử dụng</th>
+                    <th>Trạng thái</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {(() => {
+                    let filtered = bloodComponents;
+                    if (componentTab !== 'ALL') filtered = filtered.filter(c => c.componentType === componentTab);
+                    if (componentTypeFilter) filtered = filtered.filter(c => c.componentType === componentTypeFilter);
+                    if (componentStatusFilter) filtered = filtered.filter(c => c.status === componentStatusFilter);
+                    if (componentSearch) filtered = filtered.filter(c => (c.bloodType + (c.rhType === 'POSITIVE' ? '+' : c.rhType === 'NEGATIVE' ? '-' : '')).toLowerCase().includes(componentSearch.toLowerCase()));
+                    const paged = filtered.slice((componentStockPage-1)*COMPONENT_STOCK_PAGE_SIZE, componentStockPage*COMPONENT_STOCK_PAGE_SIZE);
+                    if (paged.length === 0) return <tr><td colSpan={7}>Không có dữ liệu</td></tr>;
+                    return paged.map((c, idx) => (
+                      <tr key={c.id}>
+                        <td>{c.id}</td>
+                        <td>{c.componentType === 'RED_CELL' ? 'Hồng cầu' : c.componentType === 'PLASMA' ? 'Huyết tương' : 'Tiểu cầu'}</td>
+                        <td>{c.bloodType}{c.rhType === 'POSITIVE' ? '+' : c.rhType === 'NEGATIVE' ? '-' : ''}</td>
+                        <td>{c.volume}</td>
+                        <td>{c.collectedDate}</td>
+                        <td>{c.expirationDate}</td>
+                        <td>{c.status === 'AVAILABLE' ? 'Còn hạn' : c.status === 'USED' ? 'Đã sử dụng' : 'Hết hạn'}</td>
+                      </tr>
+                    ));
+                  })()}
+                </tbody>
+              </table>
+              {/* Phân trang */}
+              {(() => {
+                let filtered = bloodComponents;
+                if (componentTab !== 'ALL') filtered = filtered.filter(c => c.componentType === componentTab);
+                if (componentTypeFilter) filtered = filtered.filter(c => c.componentType === componentTypeFilter);
+                if (componentStatusFilter) filtered = filtered.filter(c => c.status === componentStatusFilter);
+                if (componentSearch) filtered = filtered.filter(c => (c.bloodType + (c.rhType === 'POSITIVE' ? '+' : c.rhType === 'NEGATIVE' ? '-' : '')).toLowerCase().includes(componentSearch.toLowerCase()));
+                const totalPages = Math.ceil(filtered.length / COMPONENT_STOCK_PAGE_SIZE);
+                if (totalPages <= 1) return null;
+                return (
+                  <div style={{ display: 'flex', justifyContent: 'center', margin: '18px 0' }}>
+                    <button onClick={() => setComponentStockPage(componentStockPage - 1)} disabled={componentStockPage === 1} style={{ marginRight: 8 }}>&lt;</button>
+                    {Array.from({ length: totalPages }, (_, i) => i + 1).map(p => (
+                      <button key={p} onClick={() => setComponentStockPage(p)} className={p === componentStockPage ? 'tab-btn active' : 'tab-btn'} style={{ margin: '0 2px', minWidth: 36 }}>{p}</button>
+                    ))}
+                    <button onClick={() => setComponentStockPage(componentStockPage + 1)} disabled={componentStockPage === totalPages} style={{ marginLeft: 8 }}>&gt;</button>
+                  </div>
+                );
+              })()}
             </>
           )}
         </div>
@@ -1503,6 +1829,48 @@ const { user, logout } = useAuth();
           }}>
             <span style={{flex:1}}>{errorPopupMessage}</span>
             <button style={{marginLeft: 16, background: '#ffa726', color: '#222', border: 'none', borderRadius: 5, padding: '7px 18px', cursor: 'pointer', fontWeight: 500}} onClick={()=>setShowErrorPopup(false)}>Đóng</button>
+          </div>
+        </div>
+      )}
+      {/* Popup form phân tách máu */}
+      {showSeparateForm && (
+        <div className="popup-overlay">
+          <div className="popup-content" style={{maxWidth:400}}>
+            <h3>Phân tách máu</h3>
+            <form onSubmit={handleSeparateSubmit} className="blood-form">
+              <label>Hồng cầu (ml)</label>
+              <input
+                type="number"
+                name="redCellVolume"
+                min="0"
+                value={separateForm.redCellVolume}
+                onChange={handleSeparateInput}
+                placeholder="Nhập số ml hồng cầu"
+              />
+              <label>Huyết tương (ml)</label>
+              <input
+                type="number"
+                name="plasmaVolume"
+                min="0"
+                value={separateForm.plasmaVolume}
+                onChange={handleSeparateInput}
+                placeholder="Nhập số ml huyết tương"
+              />
+              <label>Tiểu cầu (ml)</label>
+              <input
+                type="number"
+                name="plateletVolume"
+                min="0"
+                value={separateForm.plateletVolume}
+                onChange={handleSeparateInput}
+                placeholder="Nhập số ml tiểu cầu"
+              />
+              {separateError && <div style={{color:'red', marginTop:8}}>{separateError}</div>}
+              <div style={{display:'flex', justifyContent:'flex-end', gap:10, marginTop:18}}>
+                <button type="button" onClick={closeSeparateForm} style={{padding:'8px 18px', borderRadius:6, border:'none', background:'#eee', color:'#333', cursor:'pointer'}}>Đóng</button>
+                <button type="submit" style={{padding:'8px 18px', borderRadius:6, border:'none', background:'#1976d2', color:'#fff', fontWeight:600, cursor:'pointer'}}>Xác nhận</button>
+              </div>
+            </form>
           </div>
         </div>
       )}

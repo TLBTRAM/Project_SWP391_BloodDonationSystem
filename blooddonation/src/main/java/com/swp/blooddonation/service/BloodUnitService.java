@@ -20,39 +20,33 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import com.swp.blooddonation.dto.response.BloodUnitSimpleResponse;
+import com.swp.blooddonation.repository.BloodComponentRepository;
+import com.swp.blooddonation.entity.BloodComponent;
+import lombok.RequiredArgsConstructor;
 
 
 @Service
+@RequiredArgsConstructor
 public class BloodUnitService {
-    @Autowired
-    BloodUnitRepository bloodUnitRepository;
+    private final BloodUnitRepository bloodUnitRepository;
 
-    @Autowired
-    BloodTestRepository bloodTestRepository;
+    private final BloodTestRepository bloodTestRepository;
 
-    @Autowired
-    AuthenticationService authenticationService;
+    private final AuthenticationService authenticationService;
 
 
 
-    @Autowired
-    UserRepository userRepository;
+    private final UserRepository userRepository;
 
-    @Autowired
-    BloodComponentRepository bloodComponentRepository;
+    private final BloodComponentRepository bloodComponentRepository;
 
-    @Autowired
-    private NotificationService notificationService;
+    private final NotificationService notificationService;
 
-    @Autowired
-    private AccountRepository accountRepository;
-    @Autowired
-    TestResultRepository testResultRepository;
+    private final AccountRepository accountRepository;
+    private final TestResultRepository testResultRepository;
 
-    @Autowired
-    private DonationHistoryRepository donationHistoryRepository;
-    @Autowired
-    UserService userService;
+    private final DonationHistoryRepository donationHistoryRepository;
+    private final UserService userService;
 
 
     @Transactional
@@ -264,5 +258,10 @@ public class BloodUnitService {
         BloodUnit unit = bloodUnitRepository.findById(id)
                 .orElseThrow(() -> new BadRequestException("Blood unit not found"));
         bloodUnitRepository.delete(unit);
+    }
+
+    // Lấy tất cả máu thành phần (phân tích)
+    public List<BloodComponent> getAllBloodComponents() {
+        return bloodComponentRepository.findAll();
     }
 }

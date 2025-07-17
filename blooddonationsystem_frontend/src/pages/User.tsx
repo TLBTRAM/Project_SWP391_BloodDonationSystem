@@ -4,7 +4,7 @@ import Calendar from './Calendar';
 import './components/User.css';
 import Header from '../layouts/header-footer/Header';
 import avatarImg from './images/User/Avatar.png';
-import calendarIcon from './images/User/Calendar.png';
+import calendarIcon from './images/User/calendar.png';
 import notificationIcon from './images/User/notifications.png';
 import blood_request_historyIcon from './images/User/blood_request_history.png';
 import orderIcon from './images/User/order.png';
@@ -108,6 +108,17 @@ const User = () => {
   const [componentLoading, setComponentLoading] = useState(false);
   const [componentSuccess, setComponentSuccess] = useState("");
   const [componentError, setComponentError] = useState("");
+  const [selectedNotification, setSelectedNotification] = useState<NotificationItem | null>(null);
+
+  const NOTI_TYPES = [
+    { key: 'SYSTEM', label: 'Hệ thống' },
+    { key: 'BLOOD_REQUEST', label: 'Yêu cầu máu' },
+    { key: 'APPOINTMENT', label: 'Lịch hẹn' },
+    { key: 'TEST_RESULT', label: 'Kết quả xét nghiệm' },
+    { key: 'GENERAL', label: 'Chung' },
+  ];
+  const [tabIndex, setTabIndex] = useState(0);
+  const activeNotiType = NOTI_TYPES[tabIndex].key;
 
   const handleFormChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
@@ -370,7 +381,8 @@ const User = () => {
   useEffect(() => {
     const fetchNotificationAndTest = async () => {
       const token = localStorage.getItem("token");
-      const userId = localStorage.getItem("userId");
+      // Sử dụng userId cố định là 6 để test
+      const userId = "6";
       if (!token || !userId) return;
 
       try {
@@ -382,10 +394,12 @@ const User = () => {
           },
         });
         if (notiRes.ok) {
-          const notiData: NotificationItem[] = await notiRes.json();
+          const notiData = await notiRes.json();
+          console.log("Notification data:", notiData); // Log để debug
           setNotifications(notiData);
         }
 
+        // Nếu có API test result thì giữ nguyên, không thay đổi đoạn này
         const testRes = await fetch(`http://localhost:8080/api/medical-staff/test-results?customerId=${userId}`, {
           method: "GET",
           headers: {
@@ -421,6 +435,24 @@ const User = () => {
     }
     // eslint-disable-next-line
   }, [showBloodRequestForm]);
+
+  // Thêm hàm đánh dấu tất cả thông báo là đã đọc
+  const markAllAsRead = async () => {
+    const token = localStorage.getItem("token");
+    if (!token) return;
+    for (const noti of notifications) {
+      if (!noti.isRead) {
+        try {
+          await fetch(`http://localhost:8080/api/notifications/${noti.id}/read`, {
+            method: "PATCH",
+            headers: { Authorization: `Bearer ${token}` }
+          });
+        } catch (err) {
+          // Có thể log lỗi nếu cần
+        }
+      }
+    }
+  };
 
   return (
     <div>
@@ -554,35 +586,163 @@ const User = () => {
 
       {showNotificationPopup && (
         <div className="popup-overlay">
-          <div className="popup-content">
-            <h2>🔔 thông báo 🔔</h2>
-            <div className="noti-grid noti-list-scroll">
-              {notifications.length > 0 ? (
-                notifications.map((noti) => (
-                  <div key={noti.id} className="noti-card">
-                    <h3>{noti.title}</h3>
-                    <p><strong>Nội dung:</strong> {noti.content}</p>
-                    <p><strong>Loại:</strong> {noti.type}</p>
-                    <p><strong>Ngày:</strong> {new Date(noti.createdAt).toLocaleString("vi-VN")}</p>
+          <div className="popup-content" style={{
+            width: 'min(700px, 95vw)',
+            maxWidth: '95vw',
+            minWidth: 0,
+            minHeight: 600,
+            maxHeight: 800,
+            padding: 0,
+            borderRadius: 18,
+            overflow: 'hidden',
+            boxSizing: 'border-box',
+            display: 'flex',
+            flexDirection: 'column',
+          }}>
+            {/* Header + Tabs */}
+            <div style={{ padding: '0 40px', flexShrink: 0 }}>
+              <h2 style={{ fontSize: 40, fontWeight: 800, marginBottom: 12, letterSpacing: 1, display: 'flex', alignItems: 'center', gap: 16 }}>
+                <span role="img" aria-label="bell">🔔</span> THÔNG BÁO <span role="img" aria-label="bell">🔔</span>
+              </h2>
+              {/* Tabs chuyển bằng nút trái/phải */}
+              <div style={{ display: 'flex', alignItems: 'center', marginBottom: 32, justifyContent: 'center', gap: 0 }}>
+                <button
+                  onClick={() => setTabIndex(i => Math.max(0, i - 1))}
+                  disabled={tabIndex === 0}
+                  style={{ fontSize: 28, background: 'none', border: 'none', cursor: tabIndex === 0 ? 'not-allowed' : 'pointer', color: '#b22b2b', marginRight: 8, padding: 0, width: 40, height: 40, borderRadius: '50%' }}
+                  aria-label="Tab trước"
+                >&#60;</button>
+                <button
+                  key={NOTI_TYPES[tabIndex].key}
+                  style={{
+                    padding: '22px 60px 16px 60px',
+                    border: 'none',
+                    background: 'none',
+                    color: '#b22b2b',
+                    fontWeight: 700,
+                    fontSize: 26,
+                    borderBottom: '5px solid #b22b2b',
+                    outline: 'none',
+                    cursor: 'pointer',
+                    position: 'relative',
+                    minWidth: 180
+                  }}
+                >
+                  {NOTI_TYPES[tabIndex].label}
+                  {(() => {
+                    const count = notifications.filter(noti => noti.type === NOTI_TYPES[tabIndex].key).length;
+                    return count > 0 && (
+                      <span style={{
+                        background: '#b22b2b',
+                        color: '#fff',
+                        borderRadius: 14,
+                        fontSize: 18,
+                        fontWeight: 700,
+                        padding: '3px 16px',
+                        marginLeft: 12,
+                        position: 'relative',
+                        top: -2
+                      }}>{count}</span>
+                    );
+                  })()}
+                </button>
+                <button
+                  onClick={() => setTabIndex(i => Math.min(NOTI_TYPES.length - 1, i + 1))}
+                  disabled={tabIndex === NOTI_TYPES.length - 1}
+                  style={{ fontSize: 28, background: 'none', border: 'none', cursor: tabIndex === NOTI_TYPES.length - 1 ? 'not-allowed' : 'pointer', color: '#b22b2b', marginLeft: 8, padding: 0, width: 40, height: 40, borderRadius: '50%' }}
+                  aria-label="Tab sau"
+                >&#62;</button>
+              </div>
+            </div>
+            {/* Danh sách thông báo cuộn dọc */}
+            <div style={{ flex: 1, overflowY: 'auto', padding: '0 40px 40px 40px', minHeight: 0 }}>
+              {notifications.filter(noti => noti.type === activeNotiType).length > 0 ? (
+                notifications.filter(noti => noti.type === activeNotiType).map((noti) => (
+                  <div
+                    key={noti.id}
+                    className={`noti-card-modern ${!noti.isRead ? "noti-unread" : ""}`}
+                    style={{
+                      display: 'flex',
+                      alignItems: 'flex-start',
+                      gap: 28,
+                      background: '#fff',
+                      borderRadius: 20,
+                      boxShadow: '0 2px 16px rgba(0,0,0,0.08)',
+                      padding: '32px 40px',
+                      marginBottom: 28,
+                      position: 'relative',
+                      cursor: 'pointer',
+                      border: !noti.isRead ? '2.5px solid #b22b2b22' : '1.5px solid #eee',
+                      minHeight: 110,
+                      fontSize: 20,
+                      maxWidth: '100%',
+                    }}
+                    title={noti.title}
+                    onClick={async () => {
+                      setSelectedNotification(noti);
+                      if (!noti.isRead) {
+                        const token = localStorage.getItem("token");
+                        await fetch(`http://localhost:8080/api/notifications/${noti.id}/read`, {
+                          method: "PATCH",
+                          headers: { Authorization: `Bearer ${token}` }
+                        });
+                        setNotifications((prev) =>
+                          prev.map((n) => n.id === noti.id ? { ...n, isRead: true } : n)
+                        );
+                      }
+                    }}
+                  >
+                    {/* Avatar hoặc icon */}
+                    <div style={{ width: 64, height: 64, borderRadius: '50%', background: '#f5f5f5', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 38, fontWeight: 700, color: '#b22b2b', flexShrink: 0 }}>
+                      <span role="img" aria-label="noti">🔔</span>
+                    </div>
+                    <div style={{ flex: 1 }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
+                        <span style={{ fontWeight: 700, fontSize: 24, color: '#222', marginRight: 12 }}>{noti.title}</span>
+                        {/* Tag loại thông báo */}
+                        <span style={{
+                          background: '#f5f5f5',
+                          color: '#b22b2b',
+                          borderRadius: 10,
+                          fontSize: 17,
+                          fontWeight: 600,
+                          padding: '4px 16px',
+                          marginLeft: 0
+                        }}>{noti.type}</span>
+                        {/* Chấm đỏ nếu chưa đọc */}
+                        {!noti.isRead && <span style={{ width: 14, height: 14, background: '#e74c3c', borderRadius: '50%', display: 'inline-block', marginLeft: 8 }}></span>}
+                      </div>
+                      <div style={{ color: '#444', fontSize: 17, marginTop: 8, marginBottom: 4, textAlign: 'left', whiteSpace: 'pre-line' }}>{noti.content}</div>
+                      <div style={{ color: '#888', fontSize: 16, marginTop: 4 }}>
+                        {formatTimeAgo(noti.createdAt)}
+                      </div>
+                    </div>
                   </div>
                 ))
               ) : (
-                <p>   Không có thông báo nào.</p>
+                <div style={{ textAlign: 'center', color: '#888', fontSize: 22, marginTop: 80 }}>Không có thông báo nào.</div>
               )}
-              <div className="noti-card">
-                <h3>🧪 Kết quả xét nghiệm máu</h3>
-                {bloodTest ? (
-                  <>
-                    <p><strong>Kết quả:</strong> {bloodTest.result}</p>
-                    <p><strong>Ngày xét nghiệm:</strong> {bloodTest.testDate}</p>
-                    <p><strong>Ghi chú:</strong> {bloodTest.note}</p>
-                  </>
-                ) : (
-                  <p>📭 Không có kết quả xét nghiệm máu.</p>
-                )}
-              </div>
             </div>
-            <button className="back-button" onClick={() => setShowNotificationPopup(false)}>Đóng</button>
+            {/* Nút đóng ngoài cùng dưới */}
+            <div style={{ textAlign: 'center', padding: 32 }}>
+              <button className="back-button" style={{ fontSize: 22, padding: '14px 48px', borderRadius: 12 }} onClick={async () => {
+                await markAllAsRead();
+                setShowNotificationPopup(false);
+              }}>Đóng</button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Popup chi tiết thông báo */}
+      {selectedNotification && (
+        <div className="popup-overlay" onClick={() => setSelectedNotification(null)}>
+          <div className="popup-content" onClick={e => e.stopPropagation()}>
+            <h2>{selectedNotification.title}</h2>
+            <p><strong>Nội dung:</strong> {selectedNotification.content}</p>
+            <p><strong>Loại:</strong> {selectedNotification.type}</p>
+            <p><strong>Ngày:</strong> {new Date(selectedNotification.createdAt).toLocaleString("vi-VN")}</p>
+            <button onClick={() => setSelectedNotification(null)}>Đóng</button>
           </div>
         </div>
       )}
@@ -800,5 +960,17 @@ const User = () => {
     </div>
   );
 };
+
+// Hàm format thời gian kiểu "x phút trước"
+function formatTimeAgo(dateString: string) {
+  const now = new Date();
+  const date = new Date(dateString);
+  const diff = Math.floor((now.getTime() - date.getTime()) / 1000);
+  if (diff < 60) return `${diff} giây trước`;
+  if (diff < 3600) return `${Math.floor(diff / 60)} phút trước`;
+  if (diff < 86400) return `${Math.floor(diff / 3600)} giờ trước`;
+  if (diff < 2592000) return `${Math.floor(diff / 86400)} ngày trước`;
+  return date.toLocaleDateString('vi-VN');
+}
 
 export default User;
