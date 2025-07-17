@@ -546,7 +546,7 @@ const User = () => {
                   </div>
                 ))
               ) : (
-                <p>�� Không có thông báo nào.</p>
+                <p>   Không có thông báo nào.</p>
               )}
               <div className="noti-card">
                 <h3>🧪 Kết quả xét nghiệm máu</h3>

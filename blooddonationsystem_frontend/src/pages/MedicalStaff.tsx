@@ -7,7 +7,7 @@ import ReactDatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { registerLocale } from "react-datepicker";
 import { vi } from "date-fns/locale/vi";
-import { Locale , format } from "date-fns";
+import { Locale, format } from "date-fns";
 
 
 import Header from "../layouts/header-footer/Header";
@@ -277,22 +277,22 @@ const MedicalStaff = () => {
 
     return (
       <div style={{padding:32}}>
-        <h2 style={{color:'#ED232B', marginBottom:24}}>Lịch sử lấy máu</h2>
+        <div className="collect-history-title">LỊCH SỬ LẤY MÁU</div>
         {loading ? <div>Đang tải dữ liệu...</div> : error ? <div style={{color:'#dc2626'}}>{error}</div> : (
-          <ul style={{listStyle:'none', padding:0}}>
+          <div className="collect-history-list">
             {history.length === 0 ? (
-              <li>Không có dữ liệu.</li>
+              <div>Không có dữ liệu.</div>
             ) : (
               history.map((item, idx) => (
-                <li key={item.id || idx} style={{marginBottom:16, border:'1px solid #e5e7eb', borderRadius:10, padding:16, background:'#fff'}}>
-                  <div><b>Người hiến:</b> {item.customerName || '---'}</div>
-                  <div><b>Ngày lấy máu:</b> {item.collectedDate || '---'}</div>
-                  <div><b>Nhóm máu:</b> {item.bloodType || '---'} {item.rhType || ''}</div>
-                  <div><b>Thể tích:</b> {item.totalVolume || '---'} ml</div>
-                </li>
+                <div key={item.id || idx} className="collect-history-card">
+                  <div><span className="collect-history-label">Người hiến:</span> <span className="collect-history-value">{item.customerName || '---'}</span></div>
+                  <div><span className="collect-history-label">Ngày lấy máu:</span> <span className="collect-history-value">{item.collectedDate || '---'}</span></div>
+                  <div><span className="collect-history-label">Nhóm máu:</span> <span className="collect-history-value">{item.bloodType || '---'} {item.rhType || ''}</span></div>
+                  <div><span className="collect-history-label">Thể tích:</span> <span className="collect-history-value">{item.totalVolume || '---'} ml</span></div>
+                </div>
               ))
             )}
-          </ul>
+          </div>
         )}
       </div>
     );
@@ -384,12 +384,12 @@ const MedicalStaff = () => {
                 />
                 <div>
                   <div className="name-role">
-                    <h2>{staff?.fullName || "Tên nhân viên"}</h2> 
+                    <h2>{staff?.fullName || "Tên nhân viên"}</h2>
                     <span className="role-tag">Nhân viên y tế</span>
                   </div>
-                  <p>Email: {staff?.email || "---"}</p> 
-                  <p>Số điện thoại: {staff?.phone || "---"}</p> 
-                  <p>Đơn vị: {staff?.address || "Trung tâm hiến máu"}</p> 
+                  <p>Email: {staff?.email || "---"}</p>
+                  <p>Số điện thoại: {staff?.phone || "---"}</p>
+                  <p>Đơn vị: {staff?.address || "Trung tâm hiến máu"}</p>
                 </div>
                 <button className="edit-button">Chỉnh sửa hồ sơ</button>
               </div>
@@ -398,10 +398,11 @@ const MedicalStaff = () => {
                 <div className="appointment-list">
                   <div className="appointment-header">
                     <h3>
-                      Lịch khám -{" "}
+                      Danh sách đăng ký khám ngày{" "}
                       {format(selectedDate, "dd/MM/yyyy", {
                         locale: vi as unknown as Locale,
-                      })}
+                      })}{" "}
+                      ({filteredAppointments.length} lượt)
                     </h3>
                     <ReactDatePicker
                       selected={selectedDate}
@@ -434,19 +435,19 @@ const MedicalStaff = () => {
                       }}
                     />
                   </div>
+
                   {filteredAppointments.length > 0 ? (
                     <ul>
                       {filteredAppointments.map((item, idx) => (
                         <li key={idx}>
-                          {item.time} - {item.donor}
+                          🕒 <b>{item.time}</b> – 👤 <b>{item.donor}</b> ({item.status})
                         </li>
                       ))}
                     </ul>
                   ) : (
-                    <p>Không có lịch hẹn nào.</p>
+                    <p>Không có ai đăng ký vào ngày này.</p>
                   )}
                 </div>
-
                 <div className="calendar">
                   <h3>Hôm nay</h3>
                   <Calendar />

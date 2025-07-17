@@ -368,4 +368,70 @@ li {
 }
 
 
+/* Lịch sử lấy máu - nâng cấp UI */
+.collect-history-list {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  margin-top: 18px;
+}
+
+/* Hiệu ứng động cho card lịch sử lấy máu */
+.collect-history-card {
+  background: #fff;
+  border-radius: 14px;
+  box-shadow: 0 2px 12px rgba(237,35,43,0.08);
+  padding: 22px 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  transition: box-shadow 0.25s, transform 0.18s, border-color 0.18s;
+  border-left: 6px solid #ED232B;
+  opacity: 0;
+  transform: translateY(24px) scale(0.98);
+  animation: fadeInCard 0.5s ease forwards;
+}
+.collect-history-card:hover {
+  box-shadow: 0 8px 32px rgba(237,35,43,0.18);
+  transform: scale(1.025) translateY(-2px);
+  border-left: 6px solid #d81b3a;
+}
+
+@keyframes fadeInCard {
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.collect-history-title {
+  color: #ED232B;
+  font-size: 2rem;
+  font-weight: 700;
+  text-align: center;
+  margin-bottom: 24px;
+  letter-spacing: 1px;
+}
+
+.collect-history-label {
+  font-weight: 600;
+  color: #333;
+  min-width: 120px;
+  display: inline-block;
+}
+.collect-history-value {
+  color: #222;
+  font-size: 1.08rem;
+}
+
+@media (max-width: 700px) {
+  .collect-history-card {
+    padding: 14px 8px;
+  }
+  .collect-history-title {
+    font-size: 1.3rem;
+  }
+}
+
+
 
