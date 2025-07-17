@@ -1,363 +1,1367 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import Calendar from './Calendar';
-import './components/User.css';
-import Header from '../layouts/header-footer/Header';
-import avatarImg from './images/User/Avatar.png';
-import calendarIcon from './images/User/calendar.png';
-import notificationIcon from './images/User/notifications.png';
-import orderIcon from './images/User/order.png';
+// ========== Import thư viện & thành phần cần thiết ==========
+import React, { useState, useEffect } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import logoBlood from "./images/Logo/logo_blood.png";
+import "./components/Manager.css";
 
-import blood_request_historyIcon from './images/User/blood_request_history.png';
-import clipboard_listIcon from './images/User/clipboard_list.png';
+import DeleteImg from "./images/Action/bin.png";
+import EditImg from "./images/Action/pen.png";
+
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  Tooltip,
+  CartesianGrid,
+  ResponsiveContainer,
+  Legend,
+  Cell,
+} from "recharts";
+
+
+// ========== Định nghĩa kiểu dữ liệu đơn vị máu ==========
+interface BloodUnit {
+  id: number;
+  group: string;
+  quantity: number;
+  entryDate: string;
+  expiryDate: string;
+  status?: string; // thêm trường status để fix lỗi typescript
+}
 
 interface UserData {
   id: number;
   fullName: string;
   email: string;
   phone: string;
-  age?: number;
-  bloodGroup?: string;
-  address?: string;
-  lastDonationDate?: string;
   birthDate?: string;
+  address?: string;
+  bloodGroup?: string;
 }
 
-interface DonationHistoryItem {
+// Định nghĩa kiểu dữ liệu cho yêu cầu nhận máu
+interface BloodRequest {
   id: number;
-  donationDate: string;
-  location: string;
-  notes: string;
-  volume: number;
-  customer_id: number;
+  requestDate: string;
+  patientName: string;
+  bloodType: string;
+  requiredVolume: number;
+  status: string;
+  hospitalName: string;
+  phone: string;
+  gender: string;
+  medicalCondition: string;
+  address: string;
+  createdAt?: string; // Thêm trường createdAt
+  fullName?: string; // Thêm trường fullName
+  rhType?: string; // Thêm trường rhType
 }
 
-interface NotificationItem {
+// Định nghĩa kiểu dữ liệu cho yêu cầu nhận máu thành phần
+interface ComponentBloodRequest {
   id: number;
-  title: string;
-  content: string;
-  createdAt: string;
-  type: string;
-  isRead: boolean;
+  requestDate: string;
+  patientName: string;
+  bloodType: string;
+  redCellQuantity: number;
+  plasmaQuantity: number;
+  plateletQuantity: number;
+  status: string;
+  hospitalName: string;
+  phone: string;
+  gender: string;
+  medicalCondition: string;
+  address: string;
 }
 
-interface BloodTestResult {
-  result: string;
-  testDate: string;
-  note: string;
-}
+// ========== Dữ liệu mẫu khởi tạo ==========
+const initialData: BloodUnit[] = [
+  {
+    id: 1,
+    group: "A+",
+    quantity: 10,
+    entryDate: "01/06/2025",
+    expiryDate: "01/08/2025",
+  },
+  {
+    id: 2,
+    group: "B-",
+    quantity: 5,
+    entryDate: "05/06/2025",
+    expiryDate: "05/08/2025",
+  },
+  {
+    id: 3,
+    group: "O+",
+    quantity: 3,
+    entryDate: "10/06/2025",
+    expiryDate: "20/06/2025",
+  },
+  {
+    id: 4,
+    group: "AB-",
+    quantity: 7,
+    entryDate: "15/05/2025",
+    expiryDate: "5/07/2025",
+  },
+  {
+    id: 5,
+    group: "A-",
+    quantity: 8,
+    entryDate: "02/06/2025",
+    expiryDate: "02/08/2025",
+  },
+  {
+    id: 6,
+    group: "B+",
+    quantity: 4,
+    entryDate: "08/06/2025",
+    expiryDate: "08/08/2025",
+  },
+  {
+    id: 7,
+    group: "O-",
+    quantity: 6,
+    entryDate: "12/06/2025",
+    expiryDate: "22/06/2025",
+  },
+  {
+    id: 8,
+    group: "AB+",
+    quantity: 9,
+    entryDate: "20/05/2025",
+    expiryDate: "15/07/2025",
+  },
+  {
+    id: 9,
+    group: "A+",
+    quantity: 2,
+    entryDate: "01/05/2025",
+    expiryDate: "18/06/2025",
+  },
+  {
+    id: 10,
+    group: "O+",
+    quantity: 11,
+    entryDate: "03/06/2025",
+    expiryDate: "03/08/2025",
+  },
+];
 
-const User = () => {
-  const calculateAge = (birthDateString: string): number => {
-    const birthDate = new Date(birthDateString);
-    const today = new Date();
-    let age = today.getFullYear() - birthDate.getFullYear();
-    const m = today.getMonth() - birthDate.getMonth();
-    if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
-      age--;
-    }
-    return age;
-  };
-  const [showPopup, setShowPopup] = useState(false);
-  const [showBloodRequestPopup, setShowBloodRequestPopup] = useState(false);
-  const [dropdownOpen, setDropdownOpen] = useState(false);
-  const [user, setUser] = useState<UserData | null>(null);
-  const [showNotificationPopup, setShowNotificationPopup] = useState(false);
-  const [notifications, setNotifications] = useState<NotificationItem[]>([]);
-  const [bloodTest, setBloodTest] = useState<BloodTestResult | null>(null);
-  const userInfoRef = useRef<HTMLDivElement>(null);
+// Dữ liệu mẫu yêu cầu nhận máu
+const sampleBloodRequests: BloodRequest[] = [
+  {
+    id: 1,
+    requestDate: "2025-07-17",
+    patientName: "Nguyễn Văn A",
+    bloodType: "A+",
+    requiredVolume: 350,
+    status: "PENDING",
+    hospitalName: "Bệnh viện Chợ Rẫy",
+    phone: "0909123456",
+    gender: "MALE",
+    medicalCondition: "Thiếu máu cấp",
+    address: "12 Lê Lợi, Q.1, TP.HCM"
+  },
+  {
+    id: 2,
+    requestDate: "2025-07-16",
+    patientName: "Trần Thị B",
+    bloodType: "O-",
+    requiredVolume: 450,
+    status: "APPROVED",
+    hospitalName: "Bệnh viện 115",
+    phone: "0912345678",
+    gender: "FEMALE",
+    medicalCondition: "Xuất huyết tiêu hóa",
+    address: "45 Nguyễn Huệ, Q.1, TP.HCM"
+  },
+  {
+    id: 3,
+    requestDate: "2025-07-15",
+    patientName: "Lê Văn C",
+    bloodType: "B+",
+    requiredVolume: 250,
+    status: "REJECTED",
+    hospitalName: "Bệnh viện Nhi Đồng",
+    phone: "0987654321",
+    gender: "MALE",
+    medicalCondition: "Tan máu bẩm sinh",
+    address: "78 Trần Hưng Đạo, Q.5, TP.HCM"
+  }
+];
+
+// Dữ liệu mẫu yêu cầu nhận máu thành phần
+const sampleComponentRequests: ComponentBloodRequest[] = [
+  {
+    id: 1,
+    requestDate: "2025-07-17",
+    patientName: "Nguyễn Văn D",
+    bloodType: "A+",
+    redCellQuantity: 250,
+    plasmaQuantity: 200,
+    plateletQuantity: 100,
+    status: "PENDING",
+    hospitalName: "Bệnh viện Chợ Rẫy",
+    phone: "0909123456",
+    gender: "MALE",
+    medicalCondition: "Thiếu máu mạn",
+    address: "12 Lê Lợi, Q.1, TP.HCM"
+  },
+  {
+    id: 2,
+    requestDate: "2025-07-16",
+    patientName: "Trần Thị E",
+    bloodType: "O-",
+    redCellQuantity: 300,
+    plasmaQuantity: 0,
+    plateletQuantity: 150,
+    status: "APPROVED",
+    hospitalName: "Bệnh viện 115",
+    phone: "0912345678",
+    gender: "FEMALE",
+    medicalCondition: "Xuất huyết",
+    address: "45 Nguyễn Huệ, Q.1, TP.HCM"
+  }
+];
+
+// ========== Component chính ==========
+const Manager: React.FC = () => {
+  const [bloodUnits, setBloodUnits] = useState<BloodUnit[]>(initialData);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [filterGroup, setFilterGroup] = useState("");
+  const [filterStatus, setFilterStatus] = useState("");
+  const [sortBy, setSortBy] = useState("");
   const navigate = useNavigate();
-  const [donationHistory, setDonationHistory] = useState<DonationHistoryItem[]>([]);
+  const [user, setUser] = useState<UserData | null>(null);
 
+  const [formData, setFormData] = useState({
+    group: "",
+    quantity: "",
+    entryDate: "",
+    expiryDate: "",
+  });
+  const [view, setView] = useState<"dashboard" | "add" | "stats" | "requests" | "componentRequests">(
+    "dashboard"
+  );
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [selectedUnitId, setSelectedUnitId] = useState<number | null>(null);
+  const [selectedStatus, setSelectedStatus] = useState<string>("");
 
-  const toggleDropdown = () => setDropdownOpen(prev => !prev);
+  const [bloodRequests, setBloodRequests] = useState<BloodRequest[]>(sampleBloodRequests);
+  const [loadingRequests, setLoadingRequests] = useState(false);
+  const [requestTab, setRequestTab] = useState("ALL");
+  const [page, setPage] = useState(1);
+  const PAGE_SIZE = 5;
+  const [showDetail, setShowDetail] = useState(false);
+  const [selectedRequest, setSelectedRequest] = useState<BloodRequest | null>(null);
 
-  const handleLogout = () => {
-    localStorage.clear();
-    navigate('/login');
-  };
+  const [componentRequests, setComponentRequests] = useState<ComponentBloodRequest[]>(sampleComponentRequests);
+  const [loadingComponentRequests, setLoadingComponentRequests] = useState(false);
+  const [componentRequestTab, setComponentRequestTab] = useState("ALL");
+  const [componentPage, setComponentPage] = useState(1);
+  const COMPONENT_PAGE_SIZE = 5;
+  const [showComponentDetail, setShowComponentDetail] = useState(false);
+  const [selectedComponentRequest, setSelectedComponentRequest] = useState<ComponentBloodRequest | null>(null);
 
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (userInfoRef.current && !userInfoRef.current.contains(event.target as Node)) {
-        setDropdownOpen(false);
-      }
-    };
-    document.addEventListener('click', handleClickOutside);
-    return () => document.removeEventListener('click', handleClickOutside);
-  }, []);
+  // Các biến phân trang và filter cho component requests (đặt ngoài JSX)
+  const filteredComponentRequests = componentRequestTab === "ALL" ? componentRequests : componentRequests.filter(r => r.status === componentRequestTab);
+  const pagedComponentRequests = filteredComponentRequests.slice((componentPage-1)*COMPONENT_PAGE_SIZE, componentPage*COMPONENT_PAGE_SIZE);
+  const totalComponentPages = Math.ceil(filteredComponentRequests.length / COMPONENT_PAGE_SIZE);
 
-  useEffect(() => {
+  // Thêm hàm kiểm tra định dạng ngày dd/mm/yyyy
+  function isValidDate(dateStr: string): boolean {
+    // Kiểm tra đúng định dạng dd/mm/yyyy
+    if (!/^(0[1-9]|[12][0-9]|3[01])\/(0[1-9]|1[0-2])\/\d{4}$/.test(dateStr)) return false;
+    const [day, month, year] = dateStr.split('/').map(Number);
+    const date = new Date(year, month - 1, day);
+    // Kiểm tra ngày thực tế
+    return date.getFullYear() === year && date.getMonth() === month - 1 && date.getDate() === day;
+  }
+
+  // Khi vào dashboard, tự động fetch dữ liệu kho máu từ API
+  React.useEffect(() => {
+    if (view === "dashboard") {
+      fetchBloodUnits();
+    }
+  }, [view]);
+
+  React.useEffect(() => {
     const token = localStorage.getItem("token");
-    console.log("FE token:", token);
+    console.log("FE token:", token); // debug
 
     if (token) {
       fetch("http://localhost:8080/api/user/profile", {
         method: "GET",
         headers: {
-          "Authorization": `Bearer ${token}`,
+          Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
         },
       })
         .then((res) => {
-          if (!res.ok) {
-            throw new Error("Không lấy được thông tin người dùng");
-          }
+          if (!res.ok) throw new Error("Lỗi khi gọi API");
           return res.json();
         })
         .then((data) => {
-          console.log("User info from BE:", data);
+          console.log("Manager info from BE:", data);
           setUser(data);
         })
-        .catch((error) => {
-          console.error("Lỗi khi gọi API /me:", error);
+        .catch((err) => {
+          console.error("Lỗi lấy thông tin:", err);
           alert("Không thể tải thông tin người dùng. Vui lòng đăng nhập lại.");
-          navigate("/login");
+          window.location.href = "/login";
         });
     } else {
-      navigate("/login");
+      window.location.href = "/login";
     }
   }, []);
 
-  useEffect(() => {
+  // ====== API: Lấy danh sách túi máu từ backend ======
+  const fetchBloodUnits = async () => {
     const token = localStorage.getItem("token");
-    if (!token) return;
-
-    fetch("http://localhost:8080/api/user/donation-history", {
-      method: "GET",
-      headers: {
-        Authorization: `Bearer ${token}`,
-        "Content-Type": "application/json",
-      },
-    })
-      .then((res) => {
-        if (!res.ok) throw new Error("Không thể lấy lịch sử hiến máu");
-        return res.json();
-      })
-      .then((data: DonationHistoryItem[]) => {
-        setDonationHistory(data);
-      })
-      .catch((err) => {
-        console.error("Lỗi khi lấy lịch sử hiến máu:", err);
+    try {
+      const res = await fetch("http://localhost:8080/api/blood/units", {
+        headers: { Authorization: `Bearer ${token}` },
       });
-  }, []);
+      if (!res.ok) throw new Error("Lỗi khi lấy danh sách túi máu");
+      const data = await res.json();
+      // Map dữ liệu từ API về đúng format FE, bao gồm cả status
+      const mapped = data.map((item: any) => ({
+        id: item.id,
+        group: item.bloodType + (item.rhType === "POSITIVE" ? "+" : item.rhType === "NEGATIVE" ? "-" : ""),
+        quantity: item.totalVolume,
+        entryDate: item.collectedDate,
+        expiryDate: item.expirationDate,
+        status: item.status // lấy status từ backend
+      }));
+      setBloodUnits(mapped);
+    } catch (err) {
+      console.error(err);
+    }
+  };
 
-  useEffect(() => {
-    const fetchNotificationAndTest = async () => {
-      const token = localStorage.getItem("token");
-      const userId = localStorage.getItem("userId");
-      if (!token || !userId) return;
+  // ====== API: Thêm túi máu mới (POST) ======
+  const addBloodUnitAPI = async (unit: {
+    testId: number;
+    bloodType: string;
+    rhType: string;
+    totalVolume: number;
+  }) => {
+    const token = localStorage.getItem("token");
+    try {
+      const res = await fetch("http://localhost:8080/api/blood/collect", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(unit),
+      });
+      if (!res.ok) throw new Error("Lỗi khi thêm túi máu mới");
+      const data = await res.json();
+      // Sau khi thêm thành công, có thể gọi fetchBloodUnits() để cập nhật danh sách
+      return data;
+    } catch (err) {
+      console.error(err);
+      // Có thể hiển thị thông báo lỗi nếu muốn
+      throw err;
+    }
+  };
 
-      try {
-        const notiRes = await fetch(`http://localhost:8080/api/notifications/${userId}`, {
-          method: "GET",
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
-        });
-        if (notiRes.ok) {
-          const notiData: NotificationItem[] = await notiRes.json();
-          setNotifications(notiData);
-        }
-
-        const testRes = await fetch(`http://localhost:8080/api/medical-staff/test-results?customerId=${userId}`, {
-          method: "GET",
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
-        });
-        if (testRes.ok) {
-          const testData = await testRes.json();
-          const latestResult = testData[0];
-          if (latestResult) {
-            setBloodTest({
-              result: latestResult.result === "PASSED" ? "✅ ĐẠT" : "❌ KHÔNG ĐẠT",
-              testDate: new Date(latestResult.testDate).toLocaleDateString("vi-VN"),
-              note: latestResult.note || "Không có ghi chú.",
-            });
-          }
-        }
-      } catch (err) {
-        console.error("Lỗi khi lấy thông báo hoặc xét nghiệm:", err);
+  const handleInputChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  ) => {
+    const { name, value } = e.target;
+    if (name === "entryDate" || name === "expiryDate") {
+      let formatted = value.replace(/\D/g, "").slice(0, 8);
+      if (formatted.length >= 5) {
+        formatted = `${formatted.slice(0, 2)}/${formatted.slice(
+          2,
+          4
+        )}/${formatted.slice(4, 8)}`;
+      } else if (formatted.length >= 3) {
+        formatted = `${formatted.slice(0, 2)}/${formatted.slice(2, 4)}`;
       }
+      setFormData((prev) => ({ ...prev, [name]: formatted }));
+    } else {
+      setFormData((prev) => ({ ...prev, [name]: value }));
+    }
+  };
+
+  // Thay thế hàm addBloodUnit
+  const addBloodUnit = async () => {
+    const quantity = parseInt(formData.quantity);
+    if (
+      !formData.group ||
+      isNaN(quantity) ||
+      !formData.entryDate ||
+      !formData.expiryDate
+    ) {
+      alert("Vui lòng nhập đầy đủ thông tin.");
+      return;
+    }
+    // Kiểm tra định dạng ngày
+    if (!isValidDate(formData.entryDate) || !isValidDate(formData.expiryDate)) {
+      alert("Ngày nhập hoặc hạn sử dụng không hợp lệ. Định dạng phải là dd/mm/yyyy.");
+      return;
+    }
+    // Mapping group sang bloodType và rhType
+    const match = formData.group.match(/^(A|B|AB|O)([+-])$/);
+    if (!match) {
+      alert("Nhóm máu không hợp lệ!");
+      return;
+    }
+    const bloodType = match[1];
+    const rhType = match[2] === "+" ? "POSITIVE" : "NEGATIVE";
+    // Chuyển ngày sang yyyy-mm-dd
+    const toISO = (d: string) => {
+      const [day, month, year] = d.split("/");
+      return `${year}-${month.padStart(2, "0")}-${day.padStart(2, "0")}`;
     };
+    const body = {
+      bloodType,
+      rhType,
+      totalVolume: quantity,
+      collectedDate: toISO(formData.entryDate),
+      expirationDate: toISO(formData.expiryDate)
+    };
+    const token = localStorage.getItem("token");
+    try {
+      const res = await fetch("http://localhost:8080/api/blood/manual", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(body),
+      });
+      if (!res.ok) throw new Error("Lỗi khi thêm túi máu mới");
+      await fetchBloodUnits();
+      setFormData({ group: "", quantity: "", entryDate: "", expiryDate: "" });
+      setView("dashboard");
+      alert("Thêm đơn vị máu thành công!");
+    } catch (err) {
+      alert("Thêm đơn vị máu thất bại!");
+      console.error(err);
+    }
+  };
 
-    if (showNotificationPopup) fetchNotificationAndTest();
-  }, [showNotificationPopup]);
+  // Thay thế hàm deleteUnit
+  const deleteUnit = async (id: number) => {
+    if (!window.confirm("Bạn có chắc chắn muốn xóa túi máu này?")) return;
+    const token = localStorage.getItem("token");
+    try {
+      const res = await fetch(`http://localhost:8080/api/blood/units/${id}`, {
+        method: "DELETE",
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (!res.ok) throw new Error("Lỗi khi xóa túi máu");
+      fetchBloodUnits();
+    } catch (err) {
+      alert("Xóa túi máu thất bại!");
+      console.error(err);
+    }
+  };
 
+  // Thay thế hàm editUnit: Cho phép chọn trạng thái mới và gọi API PUT
+  const editUnit = async (id: number) => {
+    const newStatus = window.prompt(
+      "Nhập trạng thái mới cho túi máu (COLLECTED, SEPARATED, USED, EXPIRED):"
+    );
+    if (!newStatus) return;
+    const token = localStorage.getItem("token");
+    try {
+      const res = await fetch(`http://localhost:8080/api/blood/units/${id}/status`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ status: newStatus }),
+      });
+      if (!res.ok) throw new Error("Lỗi khi cập nhật trạng thái túi máu");
+      fetchBloodUnits();
+    } catch (err) {
+      alert("Cập nhật trạng thái thất bại!");
+      console.error(err);
+    }
+  };
+
+  const getStatusLabel = (
+    expiryDate: string
+  ): "Hết hạn" | "Gần hết hạn" | "Còn hạn" => {
+    const [day, month, year] = expiryDate.split("/").map(Number);
+    const expiry = new Date(year, month - 1, day);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    expiry.setHours(0, 0, 0, 0);
+    const diff = (expiry.getTime() - today.getTime()) / (1000 * 60 * 60 * 24);
+    if (diff < 0) return "Hết hạn";
+    if (diff <= 7) return "Gần hết hạn";
+    return "Còn hạn";
+  };
+
+  const getRowClass = (expiryDate: string) => {
+    const status = getStatusLabel(expiryDate);
+    if (status === "Hết hạn") return "expired";
+    if (status === "Gần hết hạn") return "nearly-expired";
+    return "";
+  };
+
+  const statusClassMap: Record<string, string> = {
+    "Còn hạn": "status-ok",
+    "Gần hết hạn": "status-warning",
+    "Hết hạn": "status-expired",
+  };
+
+  const parseDate = (dateStr: string) => {
+    if (!dateStr) return new Date(0);
+    if (dateStr.includes("/")) {
+      const [day, month, year] = dateStr.split("/").map(Number);
+      return new Date(year, month - 1, day);
+    } else if (dateStr.includes("-")) {
+      return new Date(dateStr);
+    }
+    return new Date(dateStr);
+  };
+
+  // Mapping trạng thái backend sang frontend
+  const statusMap: Record<string, string> = {
+    COLLECTED: "Còn hạn",
+    SEPARATED: "Đã tách",
+    USED: "Đã sử dụng",
+    EXPIRED: "Hết hạn",
+    NEARLY_EXPIRED: "Gần hết hạn"
+  };
+  const statusOptions = [
+    { value: "COLLECTED", label: "Còn hạn" },
+    { value: "SEPARATED", label: "Đã tách" },
+    { value: "USED", label: "Đã sử dụng" },
+    { value: "EXPIRED", label: "Hết hạn" },
+    { value: "NEARLY_EXPIRED", label: "Gần hết hạn" }
+  ];
+
+  const sortFunction = (a: BloodUnit, b: BloodUnit) => {
+    const dateA = sortBy === "entry" ? a.entryDate : a.expiryDate;
+    const dateB = sortBy === "entry" ? b.entryDate : b.expiryDate;
+    const d1 = parseDate(dateA);
+    const d2 = parseDate(dateB);
+    return d1.getTime() - d2.getTime();
+  };
+
+  const filteredUnits = bloodUnits
+    .filter((unit) => (unit.group || "").toLowerCase().includes(searchTerm.toLowerCase()))
+    .filter((unit) => (filterGroup ? unit.group === filterGroup : true))
+    .filter((unit) => (filterStatus ? statusMap[unit.status || 'COLLECTED'] === filterStatus : true))
+    .sort(sortBy ? sortFunction : undefined);
+
+  const bloodGroupStats = bloodUnits.reduce<Record<string, number>>(
+    (acc, unit) => {
+      acc[unit.group] = (acc[unit.group] || 0) + unit.quantity;
+      return acc;
+    },
+    {}
+  );
+
+  const bloodOrder = ["A+", "B+", "AB+", "O+", "A-", "B-", "AB-", "O-"];
+  const chartData = Object.entries(bloodGroupStats)
+    .map(([group, quantity]) => ({ group, quantity }))
+    .sort((a, b) => bloodOrder.indexOf(a.group) - bloodOrder.indexOf(b.group));
+
+  const statusStats = bloodUnits.reduce<Record<string, number>>((acc, unit) => {
+    const status = getStatusLabel(unit.expiryDate);
+    acc[status] = (acc[status] || 0) + unit.quantity;
+    return acc;
+  }, {});
+
+  const chartDataByStatus = Object.entries(statusStats).map(
+    ([status, quantity]) => ({ status, quantity })
+  );
+
+  // Tab filter cho 4 trạng thái + tất cả
+  const requestTabs = [
+    { key: "ALL", label: "Tất cả" },
+    { key: "PENDING", label: "Chờ duyệt" },
+    { key: "APPROVED", label: "Đã duyệt" },
+    { key: "REJECTED", label: "Đã từ chối" },
+    { key: "COMPLETED", label: "Đã hoàn tất" }
+  ];
+
+  // Lọc và phân trang
+  const filteredRequests = requestTab === "ALL" ? bloodRequests : bloodRequests.filter(r => r.status === requestTab);
+  const pagedRequests = filteredRequests.slice((page-1)*PAGE_SIZE, page*PAGE_SIZE);
+  const totalPages = Math.ceil(filteredRequests.length / PAGE_SIZE);
+
+  // Fetch blood requests khi vào tab 'requests'
+  useEffect(() => {
+    if (view === "requests") {
+      setLoadingRequests(true);
+      const token = localStorage.getItem("token");
+      fetch("http://localhost:8080/api/blood-requests/all", {
+        headers: { Authorization: `Bearer ${token}` }
+      })
+        .then(res => res.json())
+        .then(data => {
+          // Map dữ liệu từ API về đúng format FE
+          const mapped = data.map((item: any) => ({
+            id: item.id,
+            requestDate: item.requestDate || (item.createdAt ? item.createdAt.split('T')[0] : ""),
+            patientName: item.patientName || (item.pendingPatientRequest ? item.pendingPatientRequest.fullName : ""),
+            bloodType: item.bloodType + (item.rhType === "POSITIVE" ? "+" : item.rhType === "NEGATIVE" ? "-" : ""),
+            requiredVolume: item.requiredVolume || 0,
+            status: item.status,
+            hospitalName: item.hospitalName || "",
+            phone: item.phone || (item.pendingPatientRequest ? item.pendingPatientRequest.phone : ""),
+            gender: item.gender || (item.pendingPatientRequest ? item.pendingPatientRequest.gender : ""),
+            medicalCondition: item.medicalCondition || "",
+            address: item.address || (item.pendingPatientRequest ? item.pendingPatientRequest.address : ""),
+            createdAt: item.createdAt || "",
+            fullName: item.fullName || (item.pendingPatientRequest ? item.pendingPatientRequest.fullName : ""),
+            rhType: item.rhType || ""
+          }));
+          setBloodRequests(mapped);
+          setLoadingRequests(false);
+        })
+        .catch(() => setLoadingRequests(false));
+    }
+    // eslint-disable-next-line
+  }, [view]);
+
+  // Fetch component requests khi vào tab 'componentRequests'
+  useEffect(() => {
+    if (view === "componentRequests") {
+      setLoadingComponentRequests(true);
+      const token = localStorage.getItem("token");
+      fetch("http://localhost:8080/api/blood-requests/component/all", {
+        headers: { Authorization: `Bearer ${token}` }
+      })
+        .then(res => res.json())
+        .then(data => {
+          // Map dữ liệu từ API về đúng format FE
+          const mapped = data.map((item: any) => ({
+            id: item.id,
+            requestDate: item.requestDate || (item.createdAt ? item.createdAt.split('T')[0] : ""),
+            patientName: item.patientName || (item.pendingPatientRequest ? item.pendingPatientRequest.fullName : ""),
+            bloodType: item.bloodType + (item.rhType === "POSITIVE" ? "+" : item.rhType === "NEGATIVE" ? "-" : ""),
+            redCellQuantity: item.redCellQuantity || 0,
+            plasmaQuantity: item.plasmaQuantity || 0,
+            plateletQuantity: item.plateletQuantity || 0,
+            status: item.status,
+            hospitalName: item.hospitalName || "",
+            phone: item.phone || (item.pendingPatientRequest ? item.pendingPatientRequest.phone : ""),
+            gender: item.gender || (item.pendingPatientRequest ? item.pendingPatientRequest.gender : ""),
+            medicalCondition: item.medicalCondition || "",
+            address: item.address || (item.pendingPatientRequest ? item.pendingPatientRequest.address : "")
+          }));
+          setComponentRequests(mapped);
+          setLoadingComponentRequests(false);
+        })
+        .catch(() => setLoadingComponentRequests(false));
+    }
+    // eslint-disable-next-line
+  }, [view]);
+
+  // ====== API thao tác yêu cầu whole blood ======
+  const approveWholeRequest = async (id: number) => {
+    const token = localStorage.getItem("token");
+    try {
+      const res = await fetch(`http://localhost:8080/api/blood-requests/${id}/approve`, {
+        method: "PUT",
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      if (!res.ok) throw new Error("Lỗi duyệt yêu cầu");
+      alert("Duyệt thành công!");
+      setLoadingRequests(true);
+      await fetchBloodUnits();
+      setLoadingRequests(false);
+    } catch (err) {
+      alert("Duyệt thất bại!");
+    }
+  };
+  const rejectWholeRequest = async (id: number) => {
+    const reason = window.prompt("Nhập lý do từ chối:");
+    if (!reason) return;
+    const token = localStorage.getItem("token");
+    try {
+      const res = await fetch(`http://localhost:8080/api/blood-requests/whole-requests/${id}/reject?reason=${encodeURIComponent(reason)}`, {
+        method: "PUT",
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      if (!res.ok) throw new Error("Lỗi từ chối yêu cầu");
+      alert("Từ chối thành công!");
+      setLoadingRequests(true);
+      await fetchBloodUnits();
+      setLoadingRequests(false);
+    } catch (err) {
+      alert("Từ chối thất bại!");
+    }
+  };
+  const completeWholeRequest = async (id: number) => {
+    const token = localStorage.getItem("token");
+    try {
+      const res = await fetch(`http://localhost:8080/api/blood-requests/whole-requests/${id}/complete`, {
+        method: "PUT",
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      if (!res.ok) throw new Error("Lỗi hoàn tất yêu cầu");
+      alert("Hoàn tất thành công!");
+      setLoadingRequests(true);
+      await fetchBloodUnits();
+      setLoadingRequests(false);
+    } catch (err) {
+      alert("Hoàn tất thất bại!");
+    }
+  };
+
+  // ====== API thao tác yêu cầu máu thành phần ======
+  const approveComponentRequest = async (id: number) => {
+    const token = localStorage.getItem("token");
+    try {
+      const res = await fetch(`http://localhost:8080/api/blood-requests/component/${id}/approve`, {
+        method: "PUT",
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      if (!res.ok) throw new Error("Lỗi duyệt yêu cầu thành phần");
+      alert("Duyệt thành công!");
+      setLoadingComponentRequests(true);
+      // reload
+      const res2 = await fetch("http://localhost:8080/api/blood-requests/component/all", { headers: { Authorization: `Bearer ${token}` } });
+      setComponentRequests(await res2.json());
+      setLoadingComponentRequests(false);
+    } catch (err) {
+      alert("Duyệt thất bại!");
+    }
+  };
+  const rejectComponentRequest = async (id: number) => {
+    const reason = window.prompt("Nhập lý do từ chối:");
+    if (!reason) return;
+    const token = localStorage.getItem("token");
+    try {
+      const res = await fetch(`http://localhost:8080/api/blood-requests/component/${id}/reject?reason=${encodeURIComponent(reason)}`, {
+        method: "PUT",
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      if (!res.ok) throw new Error("Lỗi từ chối yêu cầu thành phần");
+      alert("Từ chối thành công!");
+      setLoadingComponentRequests(true);
+      const res2 = await fetch("http://localhost:8080/api/blood-requests/component/all", { headers: { Authorization: `Bearer ${token}` } });
+      setComponentRequests(await res2.json());
+      setLoadingComponentRequests(false);
+    } catch (err) {
+      alert("Từ chối thất bại!");
+    }
+  };
+  const completeComponentRequest = async (id: number) => {
+    const token = localStorage.getItem("token");
+    try {
+      const res = await fetch(`http://localhost:8080/api/blood-requests/component/${id}/complete`, {
+        method: "PUT",
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      if (!res.ok) throw new Error("Lỗi hoàn tất yêu cầu thành phần");
+      alert("Hoàn tất thành công!");
+      setLoadingComponentRequests(true);
+      const res2 = await fetch("http://localhost:8080/api/blood-requests/component/all", { headers: { Authorization: `Bearer ${token}` } });
+      setComponentRequests(await res2.json());
+      setLoadingComponentRequests(false);
+    } catch (err) {
+      alert("Hoàn tất thất bại!");
+    }
+  };
+
+  // Mở modal xác nhận xóa
+  const handleDeleteClick = (id: number) => {
+    setSelectedUnitId(id);
+    setShowDeleteModal(true);
+  };
+  // Mở modal xác nhận cập nhật
+  const handleEditClick = (id: number) => {
+    setSelectedUnitId(id);
+    setShowEditModal(true);
+    setSelectedStatus("");
+  };
+
+  // Xác nhận xóa
+  const confirmDelete = async () => {
+    if (!selectedUnitId) return;
+    const token = localStorage.getItem("token");
+    try {
+      const res = await fetch(`http://localhost:8080/api/blood/units/${selectedUnitId}`, {
+        method: "DELETE",
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (!res.ok) throw new Error("Lỗi khi xóa túi máu");
+      fetchBloodUnits();
+      setShowDeleteModal(false);
+      setSelectedUnitId(null);
+    } catch (err) {
+      alert("Xóa túi máu thất bại!");
+      setShowDeleteModal(false);
+      setSelectedUnitId(null);
+    }
+  };
+
+  // Xác nhận cập nhật trạng thái
+  const confirmEdit = async () => {
+    if (!selectedUnitId || !selectedStatus) return;
+    const token = localStorage.getItem("token");
+    try {
+      const res = await fetch(`http://localhost:8080/api/blood/units/${selectedUnitId}/status`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ status: selectedStatus }),
+      });
+      if (!res.ok) throw new Error("Lỗi khi cập nhật trạng thái túi máu");
+      await fetchBloodUnits();
+      setShowEditModal(false);
+      setSelectedUnitId(null);
+      setSelectedStatus("");
+      setFilterStatus(""); // Reset filterStatus để luôn hiển thị lại danh sách máu mới nhất
+    } catch (err) {
+      alert("Cập nhật trạng thái thất bại!");
+      setShowEditModal(false);
+      setSelectedUnitId(null);
+      setSelectedStatus("");
+    }
+  };
+
+  // ========== Giao diện chính ==========
   return (
     <div>
-      <Header />
+      {/* ========== Header ========= */}
+      <header className="manager-header">
+        <div className="manager-logo">
+          <Link to="/">
+            <img src={logoBlood} alt="Logo" className="logo-img" />
+          </Link>
+        </div>
+        <div className="manager-greeting">
+          Xin chào,{" "}
+          <span className="manager-name">{user?.fullName || "Quản lí kho máu"}</span>
+        </div>
+        <button
+          className="manager-logout-btn"
+          onClick={() => {
+            localStorage.removeItem("token"); 
+            alert("Đăng xuất thành công!");
+            navigate("/login"); 
+          }}
+        >
+          Đăng xuất
+        </button>
+      </header>
 
-      <div className="user-dashboard">
-        <div className="user-topbar"></div>
+      {/* ========== Layout có sidebar và nội dung ========= */}
+      <div className="manager-layout">
+        <div className="sidebar">
+          <div className="sidebar-title">Quản lý hệ thống</div>
+          <ul className="sidebar-menu">
+            <li className={view === "dashboard" ? "active" : ""}>
+              <button
+                className="menu-item"
+                onClick={() => setView("dashboard")}
+              >
+                Kho máu
+              </button>
+            </li>
+            <li className={view === "add" ? "active" : ""}>
+              <button className="menu-item" onClick={() => setView("add")}>
+                Thêm máu
+              </button>
+            </li>
+            <li className={view === "stats" ? "active" : ""}>
+              <button className="menu-item" onClick={() => setView("stats")}>
+                Thống kê kho máu
+              </button>
+            </li>
+            <li className={view === "requests" ? "active" : ""}>
+              <button className="menu-item" onClick={() => setView("requests")}>Yêu cầu giao nhận máu toàn phần</button>
+            </li>
+            <li className={view === "componentRequests" ? "active" : ""}>
+              <button className="menu-item" onClick={() => setView("componentRequests")}>Yêu cầu giao nhận máu thành phần</button>
+            </li>
+          </ul>
+        </div>
 
-        <main className="dashboard-content">
-          <div className="first-panel">
-            <div className="user-card">
-              <img src={avatarImg} alt="User" />
-              <h2>{user?.fullName || "Tên người dùng"}</h2>
-              <div className="user-actions">
-                <span className="user-role">Người dùng</span>
-                <button className="edit-profile-btn" onClick={() => navigate('/edit')}>
-                  ✏️ Chỉnh sửa hồ sơ
-                </button>
+        {/* === Nội dung chính theo từng chế độ xem === */}
+        <div className="manager-container">
+          {/* --- Trang danh sách máu --- */}
+          {view === "dashboard" && (
+            <>
+              <h2>Quản lý kho máu</h2>
+              <div className="filter-container">
+                <input
+                  type="text"
+                  placeholder="Tìm nhóm máu..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                />
+                <select
+                  value={filterGroup}
+                  onChange={(e) => setFilterGroup(e.target.value)}
+                >
+                  <option value="">Tất cả nhóm máu</option>
+                  <option value="A+">A+</option>
+                  <option value="A-">A-</option>
+                  <option value="B+">B+</option>
+                  <option value="B-">B-</option>
+                  <option value="AB+">AB+</option>
+                  <option value="AB-">AB-</option>
+                  <option value="O+">O+</option>
+                  <option value="O-">O-</option>
+                </select>
+                <select
+                  value={filterStatus}
+                  onChange={(e) => setFilterStatus(e.target.value)}
+                >
+                  <option value="">Tất cả trạng thái</option>
+                  <option value="Còn hạn">Còn hạn</option>
+                  <option value="Gần hết hạn">Gần hết hạn</option>
+                  <option value="Hết hạn">Hết hạn</option>
+                </select>
+                <select
+                  value={sortBy}
+                  onChange={(e) => setSortBy(e.target.value)}
+                >
+                  <option value="">Sắp xếp theo</option>
+                  <option value="entry">Ngày nhập</option>
+                  <option value="expiry">Hạn sử dụng</option>
+                </select>
               </div>
-            </div>
 
-            <div className="user-info">
-              <table>
-                <h3 className="info-title">Thông tin cá nhân</h3>
-                <tbody>
-                  <tr><td>👤 Họ tên:</td><td>{user?.fullName}</td></tr>
-                  <tr><td>📧 Email:</td><td>{user?.email}</td></tr>
-                  <tr><td>📱 Điện thoại:</td><td>{user?.phone}</td></tr>
-                  <tr><td>🎂 Tuổi:</td><td>{user?.birthDate ? calculateAge(user.birthDate) : '---'}</td></tr>
-                  <tr><td>🩸 Nhóm máu:</td><td>{user?.bloodGroup}</td></tr>
-                  <tr><td>🏡 Địa chỉ:</td><td>{user?.address}</td></tr>
-                  <tr><td>🕒 Ngày hiến gần nhất:</td><td>---</td></tr>
-                </tbody>
-              </table>
-            </div>
-          </div>
-
-          <div className="second-panel">
-            <div className="donation-history">
-              <h4>Lịch sử hiến máu</h4>
-              <table>
+              <table className="blood-table">
                 <thead>
                   <tr>
-                    <th>Ngày</th>
-                    <th>Lượng máu (ml)</th>
+                    <th>ID</th>
+                    <th>Nhóm máu</th>
+                    <th>Số lượng</th>
+                    <th>Ngày nhập</th>
+                    <th>Hạn sử dụng</th>
+                    <th>Trạng thái</th>
+                    <th>Hành động</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {donationHistory.length > 0 ? (
-                    donationHistory.map((item, idx) => (
-                      <tr key={idx}>
-                        <td>{new Date(item.donationDate).toLocaleDateString("vi-VN")}</td>
-                        <td>{item.volume}</td>
-                      </tr>
-                    ))
-                  ) : (
+                  {filteredUnits.length === 0 ? (
                     <tr>
-                      <td colSpan={2}>Không có lịch sử hiến máu.</td>
+                      <td colSpan={7}>Không có dữ liệu</td>
                     </tr>
+                  ) : (
+                    filteredUnits.map((unit, index) => {
+                      const status = getStatusLabel(unit.expiryDate);
+                      return (
+                        <tr
+                          key={unit.id}
+                          className={getRowClass(unit.expiryDate)}
+                        >
+                          <td>{index + 1}</td>
+                          <td>{unit.group}</td>
+                          <td>{unit.quantity}</td>
+                          <td>{unit.entryDate}</td>
+                          <td>{unit.expiryDate}</td>
+                          <td>
+                            <span
+                              className={`status-badge status-${(unit.status || 'collected').toLowerCase()} ${statusClassMap[statusMap[unit.status || 'COLLECTED']]}`}
+                            >
+                              {statusMap[unit.status || 'COLLECTED']}
+                            </span>
+                          </td>
+                          <td className="table-action-cell">
+                            <div className="table-action-buttons">
+                              {/* Nút sửa */}
+                              <button
+                                className="action-button-icon"
+                                onClick={() => handleEditClick(unit.id)}
+                              >
+                                <img src={EditImg} alt="Sửa" />
+                              </button>
+
+                              {/* Nút xoá */}
+                              <button
+                                className="action-button-icon"
+                                onClick={() => handleDeleteClick(unit.id)}
+                              >
+                                <img src={DeleteImg} alt="Xóa" />
+                              </button>
+                            </div>
+                          </td>
+                        </tr>
+                      );
+                    })
                   )}
                 </tbody>
               </table>
-            </div>
-            <div className="calendar-booking">
-              <Calendar />
-            </div>
-          </div>
+            </>
+          )}
 
+          {view === "add" && (
+            <>
+              <h2 className="form-page-title">Thêm đơn vị máu mới</h2>
+              <div className="blood-form">
+                <label>Nhóm máu</label>
+                <div>
+                  <select
+                    name="group"
+                    value={formData.group}
+                    onChange={handleInputChange}
+                  >
+                    <option value="">-- Chọn nhóm máu --</option>
+                    <option value="A+">A+</option>
+                    <option value="B+">B+</option>
+                    <option value="AB+">AB+</option>
+                    <option value="O+">O+</option>
+                    <option value="A-">A-</option>
+                    <option value="B-">B-</option>
+                    <option value="AB-">AB-</option>
+                    <option value="O-">O-</option>
+                  </select>
+                </div>
 
-          {/* Đăng ký hiến máu */}
-          <div className="third-panel">
-            <div className="booking-item">
-              <div className="booking-text">
-                <h4>Đăng ký lịch hẹn</h4>
-                <p>Chọn ngày và giờ phù hợp để được phục vụ nhanh chóng và thuận tiện hơn.</p>
-                <img src={calendarIcon} alt="Đặt lịch" />
-                <button onClick={() => setShowBloodRequestPopup(true)}>Đăng ký</button>
+                <label>Số lượng (đơn vị)</label>
+                <input
+                  type="number"
+                  name="quantity"
+                  placeholder="Nhập số lượng"
+                  value={formData.quantity}
+                  onChange={handleInputChange}
+                />
+
+                <label>Ngày nhập (dd/mm/yyyy)</label>
+                <input
+                  type="text"
+                  name="entryDate"
+                  placeholder="VD: 12/06/2025"
+                  value={formData.entryDate}
+                  onChange={handleInputChange}
+                />
+
+                <label>Hạn sử dụng (dd/mm/yyyy)</label>
+                <input
+                  type="text"
+                  name="expiryDate"
+                  placeholder="VD: 20/06/2025"
+                  value={formData.expiryDate}
+                  onChange={handleInputChange}
+                />
+
+                <button onClick={addBloodUnit}>Thêm đơn vị máu</button>
               </div>
-            </div>
-            {showBloodRequestPopup && (
-              <div className="popup-overlay" onClick={() => setShowBloodRequestPopup(false)}>
-                <div className="popup-content" onClick={(e) => e.stopPropagation()}>
-                  <h3>Bạn muốn thao tác gì?</h3>
-                  <div className="popup-options">
-                    <div className="popup-option" onClick={() => navigate("/booking")}>
-                      <h4>Đăng ký hiến máu</h4>
-                      <p>Chọn lịch và cung cấp thông tin để tham gia hiến máu</p>
+            </>
+          )}
+
+          {view === "stats" && (
+            <>
+              <h2>Thống kê kho máu</h2>
+
+              {/* Biểu đồ theo nhóm máu */}
+              <div style={{ width: "100%", height: 400, marginBottom: 150 }}>
+                <h3>Số lượng theo nhóm máu</h3>
+                <ResponsiveContainer>
+                  <BarChart data={chartData}>
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis dataKey="group" />
+                    <YAxis />
+                    <Tooltip />
+                    <Legend />
+                    <Bar
+                      dataKey="quantity"
+                      fill="#4caf50"
+                      name="Số lượng"
+                      barSize={70}
+                    />
+                  </BarChart>
+                </ResponsiveContainer>
+              </div>
+
+              {/* Biểu đồ theo trạng thái */}
+              <div style={{ width: "100%", height: 400 }}>
+                <h3>Số lượng theo trạng thái</h3>
+                <ResponsiveContainer>
+                  <BarChart data={chartDataByStatus}>
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis dataKey="status" />
+                    <YAxis />
+                    <Tooltip />
+                    <Legend />
+                    <Bar
+                      dataKey="quantity"
+                      name="Số lượng"
+                      barSize={100} // 👈 Kích thước cột
+                    >
+                      {chartDataByStatus.map((entry, index) => {
+                        let fillColor = "#ccc";
+                        if (entry.status === "Còn hạn") fillColor = "#4caf50";
+                        else if (entry.status === "Gần hết hạn")
+                          fillColor = "#ff9800";
+                        else if (entry.status === "Hết hạn")
+                          fillColor = "#f44336";
+                        return <Cell key={`cell-${index}`} fill={fillColor} />;
+                      })}
+                    </Bar>
+                  </BarChart>
+                </ResponsiveContainer>
+              </div>
+            </>
+          )}
+
+          {/* --- Trang yêu cầu cần máu toàn phần --- */}
+          {view === "requests" && (
+            <>
+              <h2>Yêu cầu giao nhận máu toàn phần</h2>
+              <div style={{display:'flex', justifyContent:'center', gap:12, marginBottom:18}}>
+                {requestTabs.map(tab => (
+                  <button
+                    key={tab.key}
+                    className={requestTab === tab.key ? "tab-btn active" : "tab-btn"}
+                    onClick={()=>{setRequestTab(tab.key); setPage(1);}}
+                  >
+                    {tab.label}
+                  </button>
+                ))}
+              </div>
+              {loadingRequests ? (
+                <div style={{textAlign:'center', margin:'32px 0'}}>Đang tải dữ liệu...</div>
+              ) : (
+                <>
+                  <table className="registration-table">
+                    <thead>
+                      <tr>
+                        <th>Ngày yêu cầu</th>
+                        <th>Bệnh nhân</th>
+                        <th>Nhóm máu</th>
+                        <th>Thể tích (ml)</th>
+                        <th>Trạng thái</th>
+                        <th>Hành động</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {pagedRequests.length === 0 ? (
+                        <tr><td colSpan={6}>Không có dữ liệu</td></tr>
+                      ) : (
+                        pagedRequests.map((req) => (
+                          <tr key={req.id}>
+                            <td>{req.requestDate || req.createdAt || ""}</td>
+                            <td>{req.patientName || req.fullName || ""}</td>
+                            <td>{req.bloodType ? (req.bloodType + (req.rhType === 'POSITIVE' ? '+' : req.rhType === 'NEGATIVE' ? '-' : '')) : ''}</td>
+                            <td>{req.requiredVolume}</td>
+                            <td>
+                              {req.status === 'PENDING' && <span className="status-pending">CHỜ DUYỆT</span>}
+                              {req.status === 'APPROVED' && <span className="status-approved">ĐÃ DUYỆT</span>}
+                              {req.status === 'REJECTED' && <span style={{color:'#b22b2b', fontWeight:'bold'}}>ĐÃ TỪ CHỐI</span>}
+                              {req.status === 'COMPLETED' && <span style={{color:'#43a047', fontWeight:'bold'}}>ĐÃ HOÀN TẤT</span>}
+                            </td>
+                            <td className="table-action-cell" style={{display:'flex', justifyContent:'flex-end', alignItems:'center', gap:6}}>
+                              <button className="action-button" style={{display: req.status === 'PENDING' ? 'inline-block' : 'none', width:110, padding:'6px 0', flexShrink:0}} onClick={() => approveWholeRequest(req.id)}>Duyệt</button>
+                              <button className="action-button" style={{display: req.status === 'PENDING' ? 'inline-block' : 'none', width:110, padding:'6px 0', flexShrink:0}} onClick={() => rejectWholeRequest(req.id)}>Từ chối</button>
+                              <button className="action-button" style={{display: req.status === 'READY' ? 'inline-block' : 'none', width:110, padding:'6px 0', flexShrink:0}} onClick={() => completeWholeRequest(req.id)}>Hoàn tất</button>
+                              <button className="cancel-button" style={{fontWeight:500, padding:'6px 18px', flex:'0 0 auto'}} onClick={()=>{setSelectedRequest(req); setShowDetail(true);}}>Xem chi tiết</button>
+                            </td>
+                          </tr>
+                        ))
+                      )}
+                    </tbody>
+                  </table>
+                  {/* Phân trang */}
+                  {totalPages > 1 && (
+                    <div style={{ display: 'flex', justifyContent: 'center', margin: '18px 0' }}>
+                      <button onClick={() => setPage(page - 1)} disabled={page === 1} style={{ marginRight: 8 }}>&lt;</button>
+                      {Array.from({ length: totalPages }, (_, i) => i + 1).map(p => (
+                        <button key={p} onClick={() => setPage(p)} className={p === page ? 'tab-btn active' : 'tab-btn'} style={{ margin: '0 2px', minWidth: 36 }}>{p}</button>
+                      ))}
+                      <button onClick={() => setPage(page + 1)} disabled={page === totalPages} style={{ marginLeft: 8 }}>&gt;</button>
                     </div>
-                    <div className="popup-option" onClick={() => navigate("/create-blood-request")}>
-                      <h4>Tạo yêu cầu máu</h4>
-                      <p>Gửi thông tin bệnh nhân cần truyền máu</p>
+                  )}
+                </>
+              )}
+              {/* Popup chi tiết */}
+              {showDetail && selectedRequest && (
+                <div className="popup-overlay">
+                  <div className="popup-content" style={{maxWidth:500}}>
+                    <h3>Chi tiết yêu cầu nhận máu</h3>
+                    <div style={{marginBottom:10}}><b>Ngày yêu cầu:</b> {selectedRequest.requestDate || selectedRequest.createdAt || ""}</div>
+                    <div style={{marginBottom:10}}><b>Bệnh nhân:</b> {selectedRequest.patientName || selectedRequest.fullName || ""}</div>
+                    <div style={{marginBottom:10}}><b>Nhóm máu:</b> {selectedRequest.bloodType ? (selectedRequest.bloodType + (selectedRequest.rhType === 'POSITIVE' ? '+' : selectedRequest.rhType === 'NEGATIVE' ? '-' : '')) : ''}</div>
+                    <div style={{marginBottom:10}}><b>Thể tích:</b> {selectedRequest.requiredVolume} ml</div>
+                    <div style={{marginBottom:10}}><b>Trạng thái:</b> {selectedRequest.status === 'PENDING' ? 'Chờ duyệt' : selectedRequest.status === 'APPROVED' ? 'Đã duyệt' : selectedRequest.status === 'REJECTED' ? 'Đã từ chối' : 'Đã hoàn tất'}</div>
+                    <div style={{marginBottom:10}}><b>Bệnh viện:</b> {selectedRequest.hospitalName}</div>
+                    <div style={{marginBottom:10}}><b>Số điện thoại:</b> {selectedRequest.phone}</div>
+                    <div style={{marginBottom:10}}><b>Giới tính:</b> {selectedRequest.gender === 'MALE' ? 'Nam' : selectedRequest.gender === 'FEMALE' ? 'Nữ' : 'Khác'}</div>
+                    <div style={{marginBottom:10}}><b>Tình trạng bệnh:</b> {selectedRequest.medicalCondition}</div>
+                    <div style={{marginBottom:10}}><b>Địa chỉ:</b> {selectedRequest.address}</div>
+                    <div style={{display:'flex', justifyContent:'flex-end', marginTop:18}}>
+                      <button onClick={()=>setShowDetail(false)} style={{padding:'8px 18px', borderRadius:6, border:'none', background:'#eee', color:'#333', cursor:'pointer'}}>Đóng</button>
                     </div>
                   </div>
-                  <button className="popup-close" onClick={() => setShowBloodRequestPopup(false)}>Đóng</button>
                 </div>
+              )}
+            </>
+          )}
+          {/* --- Trang yêu cầu cần máu thành phần --- */}
+          {view === "componentRequests" && (
+            <>
+              <h2>Yêu cầu giao nhận máu thành phần</h2>
+              <div style={{display:'flex', justifyContent:'center', gap:12, marginBottom:18}}>
+                {requestTabs.map(tab => (
+                  <button
+                    key={tab.key}
+                    className={componentRequestTab === tab.key ? "tab-btn active" : "tab-btn"}
+                    onClick={()=>{setComponentRequestTab(tab.key); setComponentPage(1);}}
+                  >
+                    {tab.label}
+                  </button>
+                ))}
               </div>
-            )}
-
-            {/* Xem các loại đơn */}
-            <div className="booking-item">
-              <div className="booking-text">
-                <h4>Xem đơn đã gửi</h4>
-                <p>Chức năng mới đang được cập nhật và sẽ ra mắt trong thời gian tới.</p>
-                <img src={orderIcon} alt="Xem đơn đã gửi" />
-                <button onClick={() => setShowPopup(true)}>Xem thông tin đã gửi</button>
-              </div>
-            </div>
-            {showPopup && (
-              <div className="popup-overlay" onClick={() => setShowPopup(false)}>
-                <div className="popup-content" onClick={(e) => e.stopPropagation()}>
-                  <h3>Bạn muốn xem thông tin nào?</h3>
-                  <div className="popup-options">
-                    <div className="popup-option" onClick={() => navigate("/my-registrations")}>
-                      <img src={clipboard_listIcon} alt="Đơn đã đăng ký" />
-                      <h4>Đơn đã đăng ký</h4>
-                      <p>Xem các đơn hiến máu hoặc khám sàng lọc bạn đã gửi.</p>
+              {loadingComponentRequests ? (
+                <div style={{textAlign:'center', margin:'32px 0'}}>Đang tải dữ liệu...</div>
+              ) : (
+                <>
+                  <table className="registration-table">
+                    <thead>
+                      <tr>
+                        <th>Ngày yêu cầu</th>
+                        <th>Bệnh nhân</th>
+                        <th>Nhóm máu</th>
+                        <th>Hồng cầu (ml)</th>
+                        <th>Huyết tương (ml)</th>
+                        <th>Tiểu cầu (ml)</th>
+                        <th>Trạng thái</th>
+                        <th>Hành động</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {pagedComponentRequests.length === 0 ? (
+                        <tr><td colSpan={8}>Không có dữ liệu</td></tr>
+                      ) : (
+                        pagedComponentRequests.map((req) => (
+                          <tr key={req.id}>
+                            <td>{req.requestDate}</td>
+                            <td>{req.patientName}</td>
+                            <td>{req.bloodType}</td>
+                            <td>{req.redCellQuantity}</td>
+                            <td>{req.plasmaQuantity}</td>
+                            <td>{req.plateletQuantity}</td>
+                            <td>
+                              {req.status === 'PENDING' && <span className="status-pending">CHỜ DUYỆT</span>}
+                              {req.status === 'APPROVED' && <span className="status-approved">ĐÃ DUYỆT</span>}
+                              {req.status === 'REJECTED' && <span style={{color:'#b22b2b', fontWeight:'bold'}}>ĐÃ TỪ CHỐI</span>}
+                              {req.status === 'COMPLETED' && <span style={{color:'#43a047', fontWeight:'bold'}}>ĐÃ HOÀN TẤT</span>}
+                            </td>
+                            <td className="table-action-cell" style={{display:'flex', justifyContent:'flex-end', alignItems:'center', gap:6}}>
+                              <button className="action-button" style={{display: req.status === 'PENDING' ? 'inline-block' : 'none', width:110, padding:'6px 0', flexShrink:0}} onClick={() => approveComponentRequest(req.id)}>Duyệt</button>
+                              <button className="action-button" style={{display: req.status === 'PENDING' ? 'inline-block' : 'none', width:110, padding:'6px 0', flexShrink:0}} onClick={() => rejectComponentRequest(req.id)}>Từ chối</button>
+                              <button className="action-button" style={{display: req.status === 'READY' ? 'inline-block' : 'none', width:110, padding:'6px 0', flexShrink:0}} onClick={() => completeComponentRequest(req.id)}>Hoàn tất</button>
+                              <button className="cancel-button" style={{fontWeight:500, padding:'6px 18px', flex:'0 0 auto'}} onClick={()=>{setSelectedComponentRequest(req); setShowComponentDetail(true);}}>Xem chi tiết</button>
+                            </td>
+                          </tr>
+                        ))
+                      )}
+                    </tbody>
+                  </table>
+                  {/* Phân trang */}
+                  {totalComponentPages > 1 && (
+                    <div style={{ display: 'flex', justifyContent: 'center', margin: '18px 0' }}>
+                      <button onClick={() => setComponentPage(componentPage - 1)} disabled={componentPage === 1} style={{ marginRight: 8 }}>&lt;</button>
+                      {Array.from({ length: totalComponentPages }, (_, i) => i + 1).map(p => (
+                        <button key={p} onClick={() => setComponentPage(p)} className={p === componentPage ? 'tab-btn active' : 'tab-btn'} style={{ margin: '0 2px', minWidth: 36 }}>{p}</button>
+                      ))}
+                      <button onClick={() => setComponentPage(componentPage + 1)} disabled={componentPage === totalComponentPages} style={{ marginLeft: 8 }}>&gt;</button>
                     </div>
-                    <div className="popup-option" onClick={() => navigate("/blood-request-history")}>
-                      <img src={blood_request_historyIcon} alt="Lịch sử yêu cầu máu" />
-                      <h4>Lịch sử yêu cầu máu</h4>
-                      <p>Xem lại các yêu cầu máu toàn phần bạn đã gửi.</p>
+                  )}
+                </>
+              )}
+              {/* Popup chi tiết */}
+              {showComponentDetail && selectedComponentRequest && (
+                <div className="popup-overlay">
+                  <div className="popup-content" style={{maxWidth:500}}>
+                    <h3>Chi tiết yêu cầu nhận máu thành phần</h3>
+                    <div style={{marginBottom:10}}><b>Ngày yêu cầu:</b> {selectedComponentRequest.requestDate}</div>
+                    <div style={{marginBottom:10}}><b>Bệnh nhân:</b> {selectedComponentRequest.patientName}</div>
+                    <div style={{marginBottom:10}}><b>Nhóm máu:</b> {selectedComponentRequest.bloodType}</div>
+                    <div style={{marginBottom:10}}><b>Hồng cầu:</b> {selectedComponentRequest.redCellQuantity} ml</div>
+                    <div style={{marginBottom:10}}><b>Huyết tương:</b> {selectedComponentRequest.plasmaQuantity} ml</div>
+                    <div style={{marginBottom:10}}><b>Tiểu cầu:</b> {selectedComponentRequest.plateletQuantity} ml</div>
+                    <div style={{marginBottom:10}}><b>Trạng thái:</b> {selectedComponentRequest.status === 'PENDING' ? 'Chờ duyệt' : selectedComponentRequest.status === 'APPROVED' ? 'Đã duyệt' : selectedComponentRequest.status === 'REJECTED' ? 'Đã từ chối' : 'Đã hoàn tất'}</div>
+                    <div style={{marginBottom:10}}><b>Bệnh viện:</b> {selectedComponentRequest.hospitalName}</div>
+                    <div style={{marginBottom:10}}><b>Số điện thoại:</b> {selectedComponentRequest.phone}</div>
+                    <div style={{marginBottom:10}}><b>Giới tính:</b> {selectedComponentRequest.gender === 'MALE' ? 'Nam' : selectedComponentRequest.gender === 'FEMALE' ? 'Nữ' : 'Khác'}</div>
+                    <div style={{marginBottom:10}}><b>Tình trạng bệnh:</b> {selectedComponentRequest.medicalCondition}</div>
+                    <div style={{marginBottom:10}}><b>Địa chỉ:</b> {selectedComponentRequest.address}</div>
+                    <div style={{display:'flex', justifyContent:'flex-end', marginTop:18}}>
+                      <button onClick={()=>setShowComponentDetail(false)} style={{padding:'8px 18px', borderRadius:6, border:'none', background:'#eee', color:'#333', cursor:'pointer'}}>Đóng</button>
                     </div>
                   </div>
-                  <button className="popup-close" onClick={() => setShowPopup(false)}>Đóng</button>
                 </div>
-              </div>
-            )}
-
-            <div className="booking-item">
-              <div className="booking-text">
-                <h4>Thông báo</h4>
-                <p>Nhấn vào đây để xem thông báo mới về xét nghiệm, kết quả khám sàng lọc, người cần máu và các cập nhật khác.</p>
-                <img src={notificationIcon} alt="Thông báo" />
-                <button onClick={() => setShowNotificationPopup(true)}>Xem ngay</button>
-              </div>
-            </div>
-
-          </div>
-        </main>
+              )}
+            </>
+          )}
+        </div>
       </div>
 
-      {showNotificationPopup && (
-        <div className="popup-overlay">
-          <div className="popup-content">
-            <h2>🔔 Tất cả thông báo 🔔</h2>
-            <div className="noti-grid noti-list-scroll">
-              {notifications.length > 0 ? (
-                notifications.map((noti) => (
-                  <div key={noti.id} className="noti-card">
-                    <h3>{noti.title}</h3>
-                    <p><strong>Nội dung:</strong> {noti.content}</p>
-                    <p><strong>Loại:</strong> {noti.type}</p>
-                    <p><strong>Ngày:</strong> {new Date(noti.createdAt).toLocaleString("vi-VN")}</p>
-                  </div>
-                ))
-              ) : (
-                <p>   Không có thông báo nào.</p>
-              )}
-              <div className="noti-card">
-                <h3>🧪 Kết quả xét nghiệm máu</h3>
-                {bloodTest ? (
-                  <>
-                    <p><strong>Kết quả:</strong> {bloodTest.result}</p>
-                    <p><strong>Ngày xét nghiệm:</strong> {bloodTest.testDate}</p>
-                    <p><strong>Ghi chú:</strong> {bloodTest.note}</p>
-                  </>
-                ) : (
-                  <p>📭 Không có kết quả xét nghiệm máu.</p>
-                )}
-              </div>
+      {/* Modal xác nhận xóa */}
+      {showDeleteModal && (
+        <div className="modal-overlay">
+          <div className="modal-content">
+            <h3>Xác nhận xóa túi máu</h3>
+            {(() => {
+              const unit = bloodUnits.find(u => u.id === selectedUnitId);
+              return unit ? (
+                <div style={{textAlign: 'left', marginBottom: 16}}>
+                  <div><strong>ID:</strong> {unit.id}</div>
+                  <div><strong>Nhóm máu:</strong> {unit.group}</div>
+                  <div><strong>Ngày nhập:</strong> {unit.entryDate}</div>
+                  <div><strong>Hạn sử dụng:</strong> {unit.expiryDate}</div>
+                  <div><strong>Trạng thái hiện tại:</strong> {statusMap[unit.status || 'COLLECTED']}</div>
+                </div>
+              ) : null;
+            })()}
+            <p>Bạn có chắc chắn muốn <span style={{color:'#FF204E', fontWeight:'bold'}}>xóa</span> túi máu này không?</p>
+            <div className="modal-actions">
+              <button onClick={confirmDelete} className="modal-confirm">Xóa</button>
+              <button onClick={() => setShowDeleteModal(false)} className="modal-cancel">Hủy</button>
             </div>
-            <button className="close-btn" onClick={() => setShowNotificationPopup(false)}>Đóng</button>
+          </div>
+        </div>
+      )}
+      {/* Modal xác nhận cập nhật trạng thái */}
+      {showEditModal && (
+        <div className="modal-overlay">
+          <div className="modal-content">
+            <h3>Cập nhật trạng thái túi máu</h3>
+            {(() => {
+              const unit = bloodUnits.find(u => u.id === selectedUnitId);
+              return unit ? (
+                <div style={{textAlign: 'left', marginBottom: 16}}>
+                  <div><strong>ID:</strong> {unit.id}</div>
+                  <div><strong>Nhóm máu:</strong> {unit.group}</div>
+                  <div><strong>Ngày nhập:</strong> {unit.entryDate}</div>
+                  <div><strong>Hạn sử dụng:</strong> {unit.expiryDate}</div>
+                  <div><strong>Trạng thái hiện tại:</strong> {statusMap[unit.status || 'COLLECTED']}</div>
+                </div>
+              ) : null;
+            })()}
+            <select
+              value={selectedStatus}
+              onChange={e => setSelectedStatus(e.target.value)}
+            >
+              <option value="">-- Chọn trạng thái mới --</option>
+              {statusOptions.map(opt => (
+                <option key={opt.value} value={opt.value}>{opt.label}</option>
+              ))}
+            </select>
+            {selectedStatus && (
+              <p style={{marginTop: 10}}>
+                Bạn có chắc chắn muốn chuyển trạng thái túi máu <strong>{selectedUnitId}</strong> sang <strong>{statusMap[selectedStatus]}</strong> không?
+              </p>
+            )}
+            <div className="modal-actions">
+              <button onClick={confirmEdit} className="modal-confirm" disabled={!selectedStatus}>Cập nhật</button>
+              <button onClick={() => setShowEditModal(false)} className="modal-cancel">Hủy</button>
+            </div>
           </div>
         </div>
       )}
@@ -365,4 +1369,4 @@ const User = () => {
   );
 };
 
-export default User;
+export default Manager;

@@ -260,6 +260,20 @@ public class RegisterService {
         registerRepository.save(register);
     }
 
+    public List<RegisterResponse> getRegistersByAccount(Account account) {
+        User user = userRepository.findByAccount(account)
+                .orElseThrow(() -> new BadRequestException("Không tìm thấy user cho account này!"));
+        List<Register> registers = registerRepository.findByUser(user);
+        return registers.stream().map(this::toRegisterResponse).collect(Collectors.toList());
+    }
+
+    public List<RegisterResponse> getPendingRegistersByAccount(Account account) {
+        User user = userRepository.findByAccount(account)
+                .orElseThrow(() -> new BadRequestException("Không tìm thấy user cho account này!"));
+        List<Register> registers = registerRepository.findByUserAndStatus(user, RegisterStatus.PENDING);
+        return registers.stream().map(this::toRegisterResponse).collect(Collectors.toList());
+    }
+
 
 }
 

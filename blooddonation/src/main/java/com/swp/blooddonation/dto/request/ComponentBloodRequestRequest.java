@@ -7,6 +7,7 @@ import com.swp.blooddonation.enums.RhType;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.Valid;
 import lombok.Data;
 
 import java.time.LocalDate;
@@ -26,7 +27,8 @@ public class ComponentBloodRequestRequest {
     @NotBlank
     private String phone;
 
-    @NotBlank
+    @Valid
+    @NotNull
     private AddressDTO patientAddress;
 
     @NotNull

@@ -59,3 +59,101 @@
   max-width: 400px;
   width: 100%;
 }
+
+/* Căn giữa tiêu đề */
+.registration-wrapper h2 {
+  text-align: center;
+  font-size: 2.2rem;
+  margin: 32px 0 24px 0;
+  font-weight: bold;
+  color: #b22b2b;
+}
+
+/* Bảng đăng ký */
+.registration-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 0 auto 32px auto;
+  background: #fff;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.registration-table th, .registration-table td {
+  padding: 12px 18px;
+  text-align: center;
+  border-bottom: 1px solid #eee;
+  font-size: 1rem;
+}
+
+.registration-table th {
+  background: #f8f8f8;
+  font-weight: 600;
+  color: #b22b2b;
+  font-size: 1.08rem;
+}
+
+.registration-table tr:last-child td {
+  border-bottom: none;
+}
+
+.registration-table td {
+  color: #222;
+}
+
+/* Nút quay lại */
+.back-button {
+  margin-bottom: 18px;
+}
+
+.tab-btn {
+  background: #f8f8f8;
+  color: #b22b2b;
+  border: 1px solid #b22b2b;
+  border-radius: 6px 6px 0 0;
+  padding: 10px 28px;
+  font-size: 1.05rem;
+  font-weight: 500;
+  cursor: pointer;
+  outline: none;
+  transition: background 0.2s, color 0.2s;
+}
+.tab-btn.active {
+  background: #b22b2b;
+  color: #fff;
+  border-bottom: 2px solid #fff;
+  z-index: 2;
+}
+
+.status-pending {
+  color: #2196F3 !important;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  background: none !important;
+  background-color: transparent !important;
+  font-family: 'Poppins', Arial, Tahoma, sans-serif;
+  font-weight: bold;
+  font-size: 1.15rem;
+}
+
+.status-approved {
+  color: #43a047 !important;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  background: none !important;
+  background-color: transparent !important;
+  font-family: 'Poppins', Arial, Tahoma, sans-serif;
+  font-weight: bold;
+  font-size: 1.15rem;
+}
+
+@media (max-width: 700px) {
+  .registration-table th, .registration-table td {
+    padding: 8px 6px;
+    font-size: 0.95rem;
+  }
+  .registration-wrapper h2 {
+    font-size: 1.3rem;
+  }
+}
