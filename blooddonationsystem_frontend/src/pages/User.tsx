@@ -4,7 +4,7 @@ import Calendar from './Calendar';
 import './components/User.css';
 import Header from '../layouts/header-footer/Header';
 import avatarImg from './images/User/Avatar.png';
-import calendarIcon from './images/User/Calendar.png';
+import calendarIcon from './images/User/calendar.png';
 import notificationIcon from './images/User/notifications.png';
 import orderIcon from './images/User/order.png';
 
@@ -22,7 +22,7 @@ interface UserData {
 
 interface DonationHistoryItem {
   id: number;
-  donation_date: string;
+  donationDate: string;
   location: string;
   notes: string;
   volume: number;
@@ -233,7 +233,7 @@ const User = () => {
                   {donationHistory.length > 0 ? (
                     donationHistory.map((item, idx) => (
                       <tr key={idx}>
-                        <td>{new Date(item.donation_date).toLocaleDateString("vi-VN")}</td>
+                        <td>{new Date(item.donationDate).toLocaleDateString("vi-VN")}</td>
                         <td>{item.volume}</td>
                       </tr>
                     ))
@@ -297,7 +297,7 @@ const User = () => {
                   </div>
                 ))
               ) : (
-                <p>📭 Không có thông báo nào.</p>
+                <p>   Không có thông báo nào.</p>
               )}
               <div className="noti-card">
                 <h3>🧪 Kết quả xét nghiệm máu</h3>
