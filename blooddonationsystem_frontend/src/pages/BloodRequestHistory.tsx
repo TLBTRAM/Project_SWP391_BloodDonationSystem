@@ -152,6 +152,9 @@ const BloodRequestHistory = () => {
             </tbody>
           </table>
         )}
+        <button className="back-btn" onClick={() => navigate("/user")}>
+          ← Quay lại trang chính
+        </button>
       </div>
       <Footer />
     </>

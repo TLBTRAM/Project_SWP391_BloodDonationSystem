@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import "./components/CreateBloodRequest.css";
 
 const CreateBloodRequest = () => {
@@ -19,7 +20,7 @@ const CreateBloodRequest = () => {
   });
 
   const [message, setMessage] = useState("");
-
+  const navigate = useNavigate();
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
@@ -141,6 +142,9 @@ const CreateBloodRequest = () => {
         </fieldset>
 
         <button type="submit">Gửi yêu cầu</button>
+        <button className="back-btn" onClick={() => navigate("/user")}>
+          ← Quay lại trang chính
+        </button>
       </form>
 
       {message && <p className="response-message">{message}</p>}

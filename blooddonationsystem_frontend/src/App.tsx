@@ -74,6 +74,7 @@ function App() {
 
 				<Route path="/create-blood-request" element={<CreateBloodRequestpage />} />
 				<Route path="/blood-request-history" element={<BloodRequestHistorypage />} />
+				<Route path="/create-blood-request" element={<CreateBloodRequestpage />} />
 
 
 				{/* Tài khoản người nhân viên y tế */}
