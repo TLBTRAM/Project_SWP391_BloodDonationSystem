@@ -56,6 +56,7 @@ const User = () => {
     return age;
   };
   const [showPopup, setShowPopup] = useState(false);
+  const [showBloodRequestPopup, setShowBloodRequestPopup] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [user, setUser] = useState<UserData | null>(null);
   const [showNotificationPopup, setShowNotificationPopup] = useState(false);
@@ -250,16 +251,37 @@ const User = () => {
             </div>
           </div>
 
+
+          {/* Đăng ký hiến máu */}
           <div className="third-panel">
             <div className="booking-item">
               <div className="booking-text">
                 <h4>Đăng ký lịch hẹn</h4>
                 <p>Chọn ngày và giờ phù hợp để được phục vụ nhanh chóng và thuận tiện hơn.</p>
                 <img src={calendarIcon} alt="Đặt lịch" />
-                <button onClick={() => navigate('/booking')}>Đăng ký</button>
+                <button onClick={() => setShowBloodRequestPopup(true)}>Đăng ký</button>
               </div>
             </div>
+            {showBloodRequestPopup && (
+              <div className="popup-overlay" onClick={() => setShowBloodRequestPopup(false)}>
+                <div className="popup-content" onClick={(e) => e.stopPropagation()}>
+                  <h3>Bạn muốn thao tác gì?</h3>
+                  <div className="popup-options">
+                    <div className="popup-option" onClick={() => navigate("/booking")}>
+                      <h4>Đăng ký hiến máu</h4>
+                      <p>Chọn lịch và cung cấp thông tin để tham gia hiến máu</p>
+                    </div>
+                    <div className="popup-option" onClick={() => navigate("/create-blood-request")}>
+                      <h4>Tạo yêu cầu máu</h4>
+                      <p>Gửi thông tin bệnh nhân cần truyền máu</p>
+                    </div>
+                  </div>
+                  <button className="popup-close" onClick={() => setShowBloodRequestPopup(false)}>Đóng</button>
+                </div>
+              </div>
+            )}
 
+            {/* Xem các loại đơn */}
             <div className="booking-item">
               <div className="booking-text">
                 <h4>Xem đơn đã gửi</h4>
