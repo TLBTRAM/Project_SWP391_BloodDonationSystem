@@ -24,60 +24,6 @@ body {
   z-index: 10;
 }
 
-.user-avatar-status {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  position: relative;
-  z-index: 20;
-  cursor: pointer;
-  background: #fff;
-  padding: 10px 15px;
-  border-radius: 30px;
-  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
-  transition: all 0.3s ease;
-}
-
-.user-avatar-status:hover {
-  transform: scale(1.02);
-}
-
-.avatar {
-  width: 36px;
-  height: 36px;
-  border-radius: 50%;
-}
-
-.user-fullname {
-  font-weight: 600;
-  font-size: 16px;
-  color: #333;
-}
-
-.dropdown {
-  position: absolute;
-  top: 110%;
-  right: 0;
-  background: white;
-  border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-  overflow: hidden;
-  z-index: 999;
-}
-
-.dropdown button {
-  padding: 12px 20px;
-  background: none;
-  border: none;
-  font-size: 14px;
-  cursor: pointer;
-  transition: background 0.2s;
-  color: #333;
-}
-
-.dropdown button:hover {
-  background-color: #f0f0f0;
-}
 
 .dashboard-content {
   display: flex;

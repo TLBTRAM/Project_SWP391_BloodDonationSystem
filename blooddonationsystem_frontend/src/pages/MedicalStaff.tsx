@@ -207,42 +207,99 @@ const MedicalStaff = () => {
     };
 
     return (
-      <div style={{padding:32}}>
-        <h2 style={{color:'#ED232B', marginBottom:24}}>Lấy máu</h2>
+      <div style={{padding:32, background:'#f8fafd', minHeight: '100vh'}}>
+        <h2 style={{color:'#ED232B', marginBottom:24, fontSize:'2rem', textAlign:'center'}}>Lấy máu</h2>
         {loading ? <div>Đang tải dữ liệu...</div> : error ? <div style={{color:'#dc2626'}}>{error}</div> : (
-          <ul style={{listStyle:'none', padding:0}}>
+          <div style={{maxWidth: 900, margin: '0 auto'}}>
             {completedTests.length === 0 ? (
-              <li>Không có xét nghiệm nào đã hoàn thành.</li>
+              <div style={{textAlign:'center', color:'#888', fontSize:'1.1rem'}}>Không có xét nghiệm nào đã hoàn thành.</div>
             ) : (
               completedTests.map((item, idx) => (
-                <li key={item.id || idx} style={{marginBottom:16, border:'1px solid #e5e7eb', borderRadius:10, padding:16, background:'#fff'}}>
-                  <div><b>Người hiến:</b> {item.customerName || '---'}</div>
-                  <div><b>Ngày xét nghiệm:</b> {item.testDate || '---'}</div>
-                  <div><b>Kết quả:</b> {item.result || '---'}</div>
-                  <div><b>Nhóm máu:</b> {item.bloodType || '---'} {item.rhType || ''}</div>
-                  <div style={{marginTop:8}}>
-                    <label><b>Thể tích (ml):</b> </label>
+                <div key={item.id || idx} style={{
+                  marginBottom: 28,
+                  border:'none',
+                  borderRadius:18,
+                  padding:'28px 36px',
+                  background:'#fff',
+                  boxShadow:'0 4px 24px rgba(200,0,0,0.10)',
+                  display:'flex',
+                  alignItems:'center',
+                  justifyContent:'space-between',
+                  transition:'box-shadow 0.2s, background 0.2s',
+                }}
+                onMouseOver={e => e.currentTarget.style.boxShadow = '0 8px 32px rgba(200,0,0,0.16)'}
+                onMouseOut={e => e.currentTarget.style.boxShadow = '0 4px 24px rgba(200,0,0,0.10)'}
+                >
+                  <div style={{flex:1, fontSize:'1.08rem', display:'flex', flexDirection:'column', gap:'8px'}}>
+                    <div style={{display:'flex', gap:'32px'}}>
+                      <span style={{flex:1}}><b style={{color:'#b22b2b'}}>Người hiến:</b> {item.customerName || '---'}</span>
+                      <span style={{flex:1}}><b style={{color:'#b22b2b'}}>Ngày xét nghiệm:</b> {item.testDate || '---'}</span>
+                    </div>
+                    <div style={{display:'flex', gap:'32px'}}>
+                      <span style={{flex:1}}><b style={{color:'#b22b2b'}}>Kết quả:</b> {item.result || '---'}</span>
+                      <span style={{flex:1}}><b style={{color:'#b22b2b'}}>Nhóm máu:</b> {item.bloodType || '---'} {item.rhType === 'POSITIVE' ? '+' : item.rhType === 'NEGATIVE' ? '-' : ''}</span>
+                    </div>
+                  </div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '16px', width: 340, maxWidth: 400 }}>
                     <input
                       type="text"
                       value={volumeMap[item.id] || ""}
-                      onChange={e => handleVolumeChange(item.id, e.target.value)}
-                      style={{width:100, marginRight:12, padding:4, borderRadius:6, border:'1px solid #ccc'}}
+                      onChange={e => {
+                        let val = e.target.value.replace(/[^0-9]/g, "");
+                        if (val === "" || Number(val) <= 1000) {
+                          handleVolumeChange(item.id, val);
+                        }
+                      }}
+                      style={{
+                        flex: 1,
+                        height: 48,
+                        borderRadius: 14,
+                        border: '2px solid #b22b2b',
+                        fontSize: '1.12rem',
+                        transition: 'border 0.2s',
+                        outline: 'none',
+                        boxSizing: 'border-box',
+                        background: '#fff',
+                        textAlign: 'center',
+                        padding: 0,
+                        margin: 0,
+                        display: 'block',
+                      }}
                       placeholder="Nhập ml"
+                      onFocus={e => e.currentTarget.style.border = '2.5px solid #43a047'}
+                      onBlur={e => e.currentTarget.style.border = '2px solid #b22b2b'}
                     />
                     <button
-                      style={{background:'#16a34a', color:'#fff', border:'none', borderRadius:6, padding:'6px 16px', fontWeight:600, cursor:'pointer'}}
+                      style={{
+                        flex: 1,
+                        height: 48,
+                        borderRadius: 14,
+                        background: '#43a047',
+                        color: '#fff',
+                        border: 'none',
+                        fontWeight: 700,
+                        fontSize: '1.12rem',
+                        cursor: 'pointer',
+                        boxShadow: '0 2px 8px rgba(67,160,71,0.08)',
+                        transition: 'background 0.2s, box-shadow 0.2s',
+                        display: 'block',
+                        padding: 0,
+                        margin: 0,
+                      }}
+                      onMouseOver={e => e.currentTarget.style.background = '#388e3c'}
+                      onMouseOut={e => e.currentTarget.style.background = '#43a047'}
                       onClick={() => handleCollect(item.id, item.bloodType, item.rhType)}
                       disabled={collectingId === item.id}
                     >
                       Hoàn thành
                     </button>
                   </div>
-                </li>
+                </div>
               ))
             )}
-          </ul>
+            {collectMsg && <div style={{marginTop:18, textAlign:'center', color: collectMsg.includes('thành công') ? '#16a34a' : '#dc2626', fontWeight:600, fontSize:'1.08rem'}}>{collectMsg}</div>}
+          </div>
         )}
-        {collectMsg && <div style={{marginTop:16, color: collectMsg.includes('thành công') ? '#16a34a' : '#dc2626', fontWeight:600}}>{collectMsg}</div>}
       </div>
     );
   };

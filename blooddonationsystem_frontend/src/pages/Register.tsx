@@ -29,7 +29,6 @@ const Register: React.FC = () => {
   const [gender, setGender] = useState("");
   const [phone, setPhone] = useState("");
   const [email, setEmail] = useState("");
-  const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
@@ -77,7 +76,6 @@ const Register: React.FC = () => {
     if (!email.trim()) newErrors.email = "Vui lòng nhập email.";
     else if (!/\S+@\S+\.\S+/.test(email))
       newErrors.email = "Email không hợp lệ.";
-    if (!username.trim()) newErrors.username = "Vui lòng nhập tên người dùng.";
     if (!password || password.length < 6)
       newErrors.password = "Mật khẩu phải từ 6 ký tự.";
     if (!confirmPassword) newErrors.confirmPassword = "Vui lòng nhập lại mật khẩu.";
@@ -97,7 +95,6 @@ const Register: React.FC = () => {
       gender,
       phone,
       email,
-      username,
       password,
       address: {
         street,
@@ -351,21 +348,6 @@ const Register: React.FC = () => {
                   placeholder="Nhập số nhà, tên đường"
                 />
               </div>
-            </div>
-
-
-            <div className="form-group">
-              <label className="form-label">Tên người dùng</label>
-              <input
-                type="text"
-                className="input-text"
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
-                placeholder="Nhập tên người dùng"
-              />
-              {errors.username && (
-                <div className="error-text">{errors.username}</div>
-              )}
             </div>
 
             <div className="form-group">
