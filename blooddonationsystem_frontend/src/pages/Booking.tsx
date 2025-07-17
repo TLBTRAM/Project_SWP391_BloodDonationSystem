@@ -1,7 +1,7 @@
 
 import React, { useEffect, useState } from "react";
 import "./components/Booking.css";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Header from "../layouts/header-footer/Header";
 import Footer from "../layouts/header-footer/Footer";
 import axios from "axios";
@@ -44,6 +44,8 @@ const Booking = () => {
     phone: "",
     email: ""
   });
+
+  const navigate = useNavigate();
 
   useEffect(() => {
     console.log("Booking component mounted ✅");
@@ -204,6 +206,16 @@ const Booking = () => {
         {submitted ? (
           <div className="success-message">
             ✅ Bạn đã đăng ký thành công! Chúng tôi sẽ liên hệ để xác nhận lịch khám.
+            <div style={{marginTop: 24, textAlign: 'center'}}>
+              <button
+                style={{
+                  background: '#b22b2b', color: '#fff', border: 'none', borderRadius: 6, padding: '10px 28px', fontWeight: 600, fontSize: 16, cursor: 'pointer', marginTop: 8
+                }}
+                onClick={() => navigate('/user')}
+              >
+                Trở về trang cá nhân
+              </button>
+            </div>
           </div>
         ) : (
           <form className="booking-form" onSubmit={handleSubmit}>
