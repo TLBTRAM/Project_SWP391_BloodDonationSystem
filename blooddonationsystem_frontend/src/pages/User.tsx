@@ -519,74 +519,28 @@ const User = () => {
                 </tbody>
               </table>
               {/* Pagination */}
-              {donationHistory.length > PAGE_SIZE && (
+              {donationHistory.length > 0 && (
                 <div style={{ display: 'flex', justifyContent: 'center', margin: '12px 0' }}>
                   <button
+                    className="pagination-btn"
                     onClick={() => setPage(page - 1)}
                     disabled={page === 1}
-                    style={{
-                      marginRight: 8,
-                      fontSize: 20,
-                      borderRadius: 6,
-                      width: 36,
-                      height: 36,
-                      border: '1px solid #b22b2b',
-                      background: page === 1 ? '#eee' : '#fff',
-                      color: '#b22b2b',
-                      cursor: page === 1 ? 'not-allowed' : 'pointer',
-                      transition: 'background 0.2s',
-                      boxShadow: page === 1 ? 'none' : '0 1px 4px #eee',
-                    }}
-                    onMouseOver={e => { if(page !== 1) e.currentTarget.style.background = '#ffeaea'; }}
-                    onMouseOut={e => { if(page !== 1) e.currentTarget.style.background = '#fff'; }}
                   >
                     {'\u25C0'}
                   </button>
                   {Array.from({ length: Math.ceil(donationHistory.length / PAGE_SIZE) }, (_, i) => i + 1).map(p => (
                     <button
                       key={p}
+                      className={`pagination-btn${p === page ? ' active' : ''}`}
                       onClick={() => setPage(p)}
-                      className={p === page ? 'tab-btn active' : 'tab-btn'}
-                      style={{
-                        margin: '0 2px',
-                        width: 36,
-                        height: 36,
-                        borderRadius: 6,
-                        background: p === page ? '#b22b2b' : '#fff',
-                        color: p === page ? '#fff' : '#b22b2b',
-                        border: '1px solid #b22b2b',
-                        fontWeight: 500,
-                        cursor: 'pointer',
-                        fontSize: 16,
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        transition: 'background 0.2s',
-                      }}
-                      onMouseOver={e => { if(p !== page) e.currentTarget.style.background = '#ffeaea'; }}
-                      onMouseOut={e => { if(p !== page) e.currentTarget.style.background = '#fff'; }}
                     >
                       {p}
                     </button>
                   ))}
                   <button
+                    className="pagination-btn"
                     onClick={() => setPage(page + 1)}
                     disabled={page === Math.ceil(donationHistory.length / PAGE_SIZE)}
-                    style={{
-                      marginLeft: 8,
-                      fontSize: 20,
-                      borderRadius: 6,
-                      width: 36,
-                      height: 36,
-                      border: '1px solid #b22b2b',
-                      background: page === Math.ceil(donationHistory.length / PAGE_SIZE) ? '#eee' : '#fff',
-                      color: '#b22b2b',
-                      cursor: page === Math.ceil(donationHistory.length / PAGE_SIZE) ? 'not-allowed' : 'pointer',
-                      transition: 'background 0.2s',
-                      boxShadow: page === Math.ceil(donationHistory.length / PAGE_SIZE) ? 'none' : '0 1px 4px #eee',
-                    }}
-                    onMouseOver={e => { if(page !== Math.ceil(donationHistory.length / PAGE_SIZE)) e.currentTarget.style.background = '#ffeaea'; }}
-                    onMouseOut={e => { if(page !== Math.ceil(donationHistory.length / PAGE_SIZE)) e.currentTarget.style.background = '#fff'; }}
                   >
                     {'\u25B6'}
                   </button>
