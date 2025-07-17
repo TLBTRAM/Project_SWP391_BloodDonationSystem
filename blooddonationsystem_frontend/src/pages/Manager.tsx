@@ -3,9 +3,13 @@ import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import logoBlood from "./images/Logo/logo_blood.png";
 import "./components/Manager.css";
+import { useAuth } from "../layouts/header-footer/AuthContext";
 
 import DeleteImg from "./images/Action/bin.png";
 import EditImg from "./images/Action/pen.png";
+
+import WholeBloodRequestList from "./Manager_components/WholeBloodRequestList";
+import ComponentBloodRequestList from "./Manager_components/ComponentBloodRequestList";
 
 import {
   BarChart,
@@ -234,7 +238,7 @@ const Manager: React.FC = () => {
   const [filterStatus, setFilterStatus] = useState("");
   const [sortBy, setSortBy] = useState("");
   const navigate = useNavigate();
-  const [user, setUser] = useState<UserData | null>(null);
+const { user, logout } = useAuth();
 
   const [formData, setFormData] = useState({
     group: "",
@@ -306,7 +310,6 @@ const Manager: React.FC = () => {
         })
         .then((data) => {
           console.log("Manager info from BE:", data);
-          setUser(data);
         })
         .catch((err) => {
           console.error("Lỗi lấy thông tin:", err);
@@ -848,7 +851,7 @@ const Manager: React.FC = () => {
           className="manager-logout-btn"
           onClick={() => {
             localStorage.removeItem("token"); 
-            alert("Đăng xuất thành công!");
+            logout();
             navigate("/login"); 
           }}
         >

@@ -4,7 +4,7 @@ import Calendar from './Calendar';
 import './components/User.css';
 import Header from '../layouts/header-footer/Header';
 import avatarImg from './images/User/Avatar.png';
-import calendarIcon from './images/User/calendar.png';
+import calendarIcon from './images/User/Calendar.png';
 import notificationIcon from './images/User/notifications.png';
 import orderIcon from './images/User/order.png';
 import pcVN from "pc-vn";
