@@ -344,7 +344,7 @@ const MedicalStaff = () => {
                 <div key={item.id || idx} className="collect-history-card">
                   <div><span className="collect-history-label">Người hiến:</span> <span className="collect-history-value">{item.customerName || '---'}</span></div>
                   <div><span className="collect-history-label">Ngày lấy máu:</span> <span className="collect-history-value">{item.collectedDate || '---'}</span></div>
-                  <div><span className="collect-history-label">Nhóm máu:</span> <span className="collect-history-value">{item.bloodType || '---'} {item.rhType || ''}</span></div>
+                  <div><span className="collect-history-label">Nhóm máu:</span> <span className="collect-history-value">{item.bloodType || '---'}{item.rhType === 'POSITIVE' ? ' +' : item.rhType === 'NEGATIVE' ? ' -' : ''}</span></div>
                   <div><span className="collect-history-label">Thể tích:</span> <span className="collect-history-value">{item.totalVolume || '---'} ml</span></div>
                 </div>
               ))
