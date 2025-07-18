@@ -4,7 +4,7 @@ import Calendar from './Calendar';
 import './components/User.css';
 import Header from '../layouts/header-footer/Header';
 import avatarImg from './images/User/Avatar.png';
-import calendarIcon from './images/User/calendar.png';
+import calendarIcon from './images/User/Calendar.png';
 import notificationIcon from './images/User/notifications.png';
 import blood_request_historyIcon from './images/User/blood_request_history.png';
 import orderIcon from './images/User/order.png';
@@ -735,9 +735,9 @@ const User = () => {
       {/* Form yêu cầu nhận máu */}
       {showBloodRequestForm && (
         <div className="popup-overlay">
-          <div className="popup-content" style={{ maxWidth: 600, minWidth: 340, padding: 24 }}>
+          <div className="popup-content" style={{ maxWidth: 800, minWidth: 340, padding: 24 }}>
             <h2 style={{ textAlign: 'center', marginBottom: 12, color: '#b22b2b', fontSize: '1.3rem' }}>Yêu cầu nhận máu</h2>
-            <form onSubmit={handleSubmit} style={{ display: 'flex', flexWrap: 'wrap', gap: 12 }}>
+            <form onSubmit={handleSubmit} style={{ display: 'flex', flexWrap: 'wrap', gap: 50 }}>
               <div style={{ flex: 1, minWidth: 120 }}>
                 <h4 style={{ marginBottom: 6, color: '#b22b2b', fontSize: '1rem' }}>Thông tin bệnh nhân</h4>
                 <div style={{ marginBottom: 8 }}>
@@ -760,43 +760,76 @@ const User = () => {
                     <option value="OTHER">Khác</option>
                   </select>
                 </div>
-                <div style={{ marginBottom: 8 }}>
-                  <label style={{ fontWeight: 500, fontSize: '0.97rem' }}>Địa chỉ (Tỉnh/TP)</label>
-                  <select name="address-provinceId" value={selectedProvince} onChange={handleFormChange} required style={{ width: '100%', padding: 5, borderRadius: 5, border: '1px solid #ccc', marginTop: 2, fontSize: '0.97rem' }}>
-                    <option value="">Chọn tỉnh/thành</option>
-                    {pcVN.getProvinces().map((province: any) => (
-                      <option key={province.code} value={province.code}>{province.name}</option>
-                    ))}
-                  </select>
+                <h4 style={{ marginBottom: 6, color: '#b22b2b', fontSize: '1rem' }}>Địa chỉ bệnh nhân</h4>
+                <div style={{ display: 'flex', gap: 8, marginBottom: 8 }}>
+                  <div style={{ flex: 1 }}>
+                    <label style={{ fontWeight: 500, fontSize: '0.97rem' }}>Tỉnh/TP</label>
+                    <select
+                      name="address-provinceId"
+                      value={selectedProvince}
+                      onChange={handleFormChange}
+                      required
+                      style={{ width: '100%', padding: 5, borderRadius: 5, border: '1px solid #ccc', marginTop: 2, fontSize: '0.97rem' }}
+                    >
+                      <option value="">Chọn tỉnh/thành</option>
+                      {pcVN.getProvinces().map((province: any) => (
+                        <option key={province.code} value={province.code}>{province.name}</option>
+                      ))}
+                    </select>
+                  </div>
+                  <div style={{ flex: 1 }}>
+                    <label style={{ fontWeight: 500, fontSize: '0.97rem' }}>Quận/Huyện</label>
+                    <select
+                      name="address-districtId"
+                      value={selectedDistrict}
+                      onChange={handleFormChange}
+                      required
+                      disabled={!selectedProvince}
+                      style={{ width: '100%', padding: 5, borderRadius: 5, border: '1px solid #ccc', marginTop: 2, fontSize: '0.97rem' }}
+                    >
+                      <option value="">Chọn quận/huyện</option>
+                      {pcVN.getDistrictsByProvinceCode(selectedProvince).map((district: any) => (
+                        <option key={district.code} value={district.code}>{district.name}</option>
+                      ))}
+                    </select>
+                  </div>
                 </div>
-                <div style={{ marginBottom: 8 }}>
-                  <label style={{ fontWeight: 500, fontSize: '0.97rem' }}>Địa chỉ (Quận/Huyện)</label>
-                  <select name="address-districtId" value={selectedDistrict} onChange={handleFormChange} required disabled={!selectedProvince} style={{ width: '100%', padding: 5, borderRadius: 5, border: '1px solid #ccc', marginTop: 2, fontSize: '0.97rem' }}>
-                    <option value="">Chọn quận/huyện</option>
-                    {pcVN.getDistrictsByProvinceCode(selectedProvince).map((district: any) => (
-                      <option key={district.code} value={district.code}>{district.name}</option>
-                    ))}
-                  </select>
+
+                <div style={{ display: 'flex', gap: 8, marginBottom: 8 }}>
+                  <div style={{ flex: 1 }}>
+                    <label style={{ fontWeight: 500, fontSize: '0.97rem' }}>Phường/Xã</label>
+                    <select
+                      name="address-wardId"
+                      value={selectedWard}
+                      onChange={handleFormChange}
+                      required
+                      disabled={!selectedDistrict}
+                      style={{ width: '100%', padding: 5, borderRadius: 5, border: '1px solid #ccc', marginTop: 2, fontSize: '0.97rem' }}
+                    >
+                      <option value="">Chọn phường/xã</option>
+                      {pcVN.getWardsByDistrictCode(selectedDistrict).map((ward: any) => (
+                        <option key={ward.code} value={ward.code}>{ward.name}</option>
+                      ))}
+                    </select>
+                  </div>
+                  <div style={{ flex: 1 }}>
+                    <label style={{ fontWeight: 500, fontSize: '0.97rem' }}>Số nhà, tên đường</label>
+                    <input
+                      name="address-street"
+                      value={form.patientAddress.street}
+                      onChange={handleFormChange}
+                      required
+                      style={{ width: '100%', padding: 5, borderRadius: 5, border: '1px solid #ccc', marginTop: 2, fontSize: '0.97rem' }}
+                    />
+                  </div>
                 </div>
-                <div style={{ marginBottom: 8 }}>
-                  <label style={{ fontWeight: 500, fontSize: '0.97rem' }}>Địa chỉ (Phường/Xã)</label>
-                  <select name="address-wardId" value={selectedWard} onChange={handleFormChange} required disabled={!selectedDistrict} style={{ width: '100%', padding: 5, borderRadius: 5, border: '1px solid #ccc', marginTop: 2, fontSize: '0.97rem' }}>
-                    <option value="">Chọn phường/xã</option>
-                    {pcVN.getWardsByDistrictCode(selectedDistrict).map((ward: any) => (
-                      <option key={ward.code} value={ward.code}>{ward.name}</option>
-                    ))}
-                  </select>
-                </div>
-                <div style={{ marginBottom: 8 }}>
-                  <label style={{ fontWeight: 500, fontSize: '0.97rem' }}>Địa chỉ (Số nhà, tên đường)</label>
-                  <input name="address-street" value={form.patientAddress.street} onChange={handleFormChange} required style={{ width: '100%', padding: 5, borderRadius: 5, border: '1px solid #ccc', marginTop: 2, fontSize: '0.97rem' }} />
-                </div>
+
               </div>
               <div style={{ flex: 1, minWidth: 120 }}>
                 <h4 style={{ marginBottom: 6, color: '#b22b2b', fontSize: '1rem' }}>Thông tin yêu cầu</h4>
                 <div style={{ marginBottom: 8 }}>
                   <label style={{ fontWeight: 500, fontSize: '0.97rem' }}>Nhóm máu</label>
-                  <select name="bloodType" value={form.bloodType} onChange={handleFormChange} style={{ width: '100%', padding: 5, borderRadius: 5, border: '1px solid #ccc', marginTop: 2, fontSize: '0.97rem' }}>
+                  <select name="bloodType" value={form.bloodType} onChange={handleFormChange} style={{ width: '100%', padding: 5, borderRadius: 5, border: '1px solid #ccc', marginTop: 2, fontSize: '0.97rem', marginBottom:0 }}>
                     <option value="A">A</option>
                     <option value="B">B</option>
                     <option value="AB">AB</option>
@@ -805,22 +838,22 @@ const User = () => {
                 </div>
                 <div style={{ marginBottom: 8 }}>
                   <label style={{ fontWeight: 500, fontSize: '0.97rem' }}>Rh</label>
-                  <select name="rhType" value={form.rhType} onChange={handleFormChange} style={{ width: '100%', padding: 5, borderRadius: 5, border: '1px solid #ccc', marginTop: 2, fontSize: '0.97rem' }}>
+                  <select name="rhType" value={form.rhType} onChange={handleFormChange} style={{ width: '100%', padding: 5, borderRadius: 5, border: '1px solid #ccc', marginTop: 2, fontSize: '0.97rem', marginBottom:0 }}>
                     <option value="POSITIVE">Positive (+)</option>
                     <option value="NEGATIVE">Negative (-)</option>
                   </select>
                 </div>
                 <div style={{ marginBottom: 8 }}>
                   <label style={{ fontWeight: 500, fontSize: '0.97rem' }}>Thể tích cần (ml)</label>
-                  <input name="requiredVolume" type="number" value={form.requiredVolume} onChange={handleFormChange} required style={{ width: '100%', padding: 5, borderRadius: 5, border: '1px solid #ccc', marginTop: 2, fontSize: '0.97rem' }} />
+                  <input name="requiredVolume" type="number" value={form.requiredVolume} onChange={handleFormChange} required style={{ width: '100%', padding: 5, borderRadius: 5, border: '1px solid #ccc', marginTop: 2, fontSize: '0.97rem', marginBottom:0 }} />
                 </div>
                 <div style={{ marginBottom: 8 }}>
                   <label style={{ fontWeight: 500, fontSize: '0.97rem' }}>Tên bệnh viện</label>
-                  <input name="hospitalName" value={form.hospitalName} onChange={handleFormChange} required style={{ width: '100%', padding: 5, borderRadius: 5, border: '1px solid #ccc', marginTop: 2, fontSize: '0.97rem' }} />
+                  <input name="hospitalName" value={form.hospitalName} onChange={handleFormChange} required style={{ width: '100%', padding: 5, borderRadius: 5, border: '1px solid #ccc', marginTop: 2, fontSize: '0.97rem', marginBottom:0 }} />
                 </div>
                 <div style={{ marginBottom: 8 }}>
                   <label style={{ fontWeight: 500, fontSize: '0.97rem' }}>Tình trạng bệnh</label>
-                  <input name="medicalCondition" value={form.medicalCondition} onChange={handleFormChange} required style={{ width: '100%', padding: 5, borderRadius: 5, border: '1px solid #ccc', marginTop: 2, fontSize: '0.97rem' }} />
+                  <input name="medicalCondition" value={form.medicalCondition} onChange={handleFormChange} required style={{ width: '100%', padding: 5, borderRadius: 5, border: '1px solid #ccc', marginTop: 2, fontSize: '0.97rem', marginBottom:0 }} />
                 </div>
                 {successMsg && <div style={{ color: 'green', margin: '8px 0', fontSize: '0.97rem' }}>{successMsg}</div>}
                 {errorMsg && <div style={{ color: 'red', margin: '8px 0', fontSize: '0.97rem' }}>{errorMsg}</div>}
@@ -836,9 +869,9 @@ const User = () => {
 
       {showComponentRequestForm && (
         <div className="popup-overlay">
-          <div className="popup-content" style={{ maxWidth: 600, minWidth: 340, padding: 24 }}>
+          <div className="popup-content" style={{ maxWidth: 800, minWidth: 340, padding: 24 }}>
             <h2 style={{ textAlign: 'center', marginBottom: 12, color: '#b22b2b', fontSize: '1.3rem' }}>Yêu cầu nhận máu</h2>
-            <form onSubmit={handleComponentSubmit} style={{ display: 'flex', flexWrap: 'wrap', gap: 12 }}>
+            <form onSubmit={handleComponentSubmit} style={{ display: 'flex', flexWrap: 'wrap', gap: 50 }}>
               <div style={{ flex: 1, minWidth: 120 }}>
                 <h4 style={{ marginBottom: 6, color: '#b22b2b', fontSize: '1rem' }}>Thông tin bệnh nhân</h4>
                 <div style={{ marginBottom: 8 }}>
@@ -861,43 +894,76 @@ const User = () => {
                     <option value="OTHER">Khác</option>
                   </select>
                 </div>
-                <div style={{ marginBottom: 8 }}>
-                  <label style={{ fontWeight: 500, fontSize: '0.97rem' }}>Địa chỉ (Tỉnh/TP)</label>
-                  <select name="address-provinceId" value={componentProvince} onChange={handleComponentChange} required style={{ width: '100%', padding: 5, borderRadius: 5, border: '1px solid #ccc', marginTop: 2, fontSize: '0.97rem' }}>
-                    <option value="">Chọn tỉnh/thành</option>
-                    {pcVN.getProvinces().map((province: any) => (
-                      <option key={province.code} value={province.code}>{province.name}</option>
-                    ))}
-                  </select>
+                <h4 style={{ marginBottom: 6, color: '#b22b2b', fontSize: '1rem' }}>Địa chỉ bệnh nhân</h4>
+                <div style={{ display: 'flex', gap: 8, marginBottom: 8 }}>
+                  <div style={{ flex: 1 }}>
+                    <label style={{ fontWeight: 500, fontSize: '0.97rem' }}>Tỉnh/TP</label>
+                    <select
+                      name="address-provinceId"
+                      value={selectedProvince}
+                      onChange={handleFormChange}
+                      required
+                      style={{ width: '100%', padding: 5, borderRadius: 5, border: '1px solid #ccc', marginTop: 2, fontSize: '0.97rem' }}
+                    >
+                      <option value="">Chọn tỉnh/thành</option>
+                      {pcVN.getProvinces().map((province: any) => (
+                        <option key={province.code} value={province.code}>{province.name}</option>
+                      ))}
+                    </select>
+                  </div>
+                  <div style={{ flex: 1 }}>
+                    <label style={{ fontWeight: 500, fontSize: '0.97rem' }}>Quận/Huyện</label>
+                    <select
+                      name="address-districtId"
+                      value={selectedDistrict}
+                      onChange={handleFormChange}
+                      required
+                      disabled={!selectedProvince}
+                      style={{ width: '100%', padding: 5, borderRadius: 5, border: '1px solid #ccc', marginTop: 2, fontSize: '0.97rem' }}
+                    >
+                      <option value="">Chọn quận/huyện</option>
+                      {pcVN.getDistrictsByProvinceCode(selectedProvince).map((district: any) => (
+                        <option key={district.code} value={district.code}>{district.name}</option>
+                      ))}
+                    </select>
+                  </div>
                 </div>
-                <div style={{ marginBottom: 8 }}>
-                  <label style={{ fontWeight: 500, fontSize: '0.97rem' }}>Địa chỉ (Quận/Huyện)</label>
-                  <select name="address-districtId" value={componentDistrict} onChange={handleComponentChange} required disabled={!componentProvince} style={{ width: '100%', padding: 5, borderRadius: 5, border: '1px solid #ccc', marginTop: 2, fontSize: '0.97rem' }}>
-                    <option value="">Chọn quận/huyện</option>
-                    {pcVN.getDistrictsByProvinceCode(componentProvince).map((district: any) => (
-                      <option key={district.code} value={district.code}>{district.name}</option>
-                    ))}
-                  </select>
+
+                <div style={{ display: 'flex', gap: 8, marginBottom: 8 }}>
+                  <div style={{ flex: 1 }}>
+                    <label style={{ fontWeight: 500, fontSize: '0.97rem' }}>Phường/Xã</label>
+                    <select
+                      name="address-wardId"
+                      value={selectedWard}
+                      onChange={handleFormChange}
+                      required
+                      disabled={!selectedDistrict}
+                      style={{ width: '100%', padding: 5, borderRadius: 5, border: '1px solid #ccc', marginTop: 2, fontSize: '0.97rem' }}
+                    >
+                      <option value="">Chọn phường/xã</option>
+                      {pcVN.getWardsByDistrictCode(selectedDistrict).map((ward: any) => (
+                        <option key={ward.code} value={ward.code}>{ward.name}</option>
+                      ))}
+                    </select>
+                  </div>
+                  <div style={{ flex: 1 }}>
+                    <label style={{ fontWeight: 500, fontSize: '0.97rem' }}>Số nhà, tên đường</label>
+                    <input
+                      name="address-street"
+                      value={form.patientAddress.street}
+                      onChange={handleFormChange}
+                      required
+                      style={{ width: '100%', padding: 5, borderRadius: 5, border: '1px solid #ccc', marginTop: 2, fontSize: '0.97rem' }}
+                    />
+                  </div>
                 </div>
-                <div style={{ marginBottom: 8 }}>
-                  <label style={{ fontWeight: 500, fontSize: '0.97rem' }}>Địa chỉ (Phường/Xã)</label>
-                  <select name="address-wardId" value={componentWard} onChange={handleComponentChange} required disabled={!componentDistrict} style={{ width: '100%', padding: 5, borderRadius: 5, border: '1px solid #ccc', marginTop: 2, fontSize: '0.97rem' }}>
-                    <option value="">Chọn phường/xã</option>
-                    {pcVN.getWardsByDistrictCode(componentDistrict).map((ward: any) => (
-                      <option key={ward.code} value={ward.code}>{ward.name}</option>
-                    ))}
-                  </select>
-                </div>
-                <div style={{ marginBottom: 8 }}>
-                  <label style={{ fontWeight: 500, fontSize: '0.97rem' }}>Địa chỉ (Số nhà, tên đường)</label>
-                  <input name="address-street" value={componentForm.patientAddress.street} onChange={handleComponentChange} required style={{ width: '100%', padding: 5, borderRadius: 5, border: '1px solid #ccc', marginTop: 2, fontSize: '0.97rem' }} />
-                </div>
+
               </div>
               <div style={{ flex: 1, minWidth: 120 }}>
                 <h4 style={{ marginBottom: 6, color: '#b22b2b', fontSize: '1rem' }}>Thông tin yêu cầu</h4>
                 <div style={{ marginBottom: 8 }}>
                   <label style={{ fontWeight: 500, fontSize: '0.97rem' }}>Nhóm máu</label>
-                  <select name="bloodType" value={componentForm.bloodType} onChange={handleComponentChange} style={{ width: '100%', padding: 5, borderRadius: 5, border: '1px solid #ccc', marginTop: 2, fontSize: '0.97rem' }}>
+                  <select name="bloodType" value={componentForm.bloodType} onChange={handleComponentChange} style={{ width: '100%', padding: 5, borderRadius: 5, border: '1px solid #ccc', marginTop: 2, fontSize: '0.97rem', marginBottom:0 }}>
                     <option value="A">A</option>
                     <option value="B">B</option>
                     <option value="AB">AB</option>
@@ -906,30 +972,30 @@ const User = () => {
                 </div>
                 <div style={{ marginBottom: 8 }}>
                   <label style={{ fontWeight: 500, fontSize: '0.97rem' }}>Rh</label>
-                  <select name="rhType" value={componentForm.rhType} onChange={handleComponentChange} style={{ width: '100%', padding: 5, borderRadius: 5, border: '1px solid #ccc', marginTop: 2, fontSize: '0.97rem' }}>
+                  <select name="rhType" value={componentForm.rhType} onChange={handleComponentChange} style={{ width: '100%', padding: 5, borderRadius: 5, border: '1px solid #ccc', marginTop: 2, fontSize: '0.97rem', marginBottom:0 }}>
                     <option value="POSITIVE">Positive (+)</option>
                     <option value="NEGATIVE">Negative (-)</option>
                   </select>
                 </div>
                 <div style={{ marginBottom: 8 }}>
                   <label style={{ fontWeight: 500, fontSize: '0.97rem' }}>Tên bệnh viện</label>
-                  <input name="hospitalName" value={componentForm.hospitalName} onChange={handleComponentChange} required style={{ width: '100%', padding: 5, borderRadius: 5, border: '1px solid #ccc', marginTop: 2, fontSize: '0.97rem' }} />
+                  <input name="hospitalName" value={componentForm.hospitalName} onChange={handleComponentChange} required style={{ width: '100%', padding: 5, borderRadius: 5, border: '1px solid #ccc', marginTop: 2, fontSize: '0.97rem', marginBottom:0 }} />
                 </div>
                 <div style={{ marginBottom: 8 }}>
                   <label style={{ fontWeight: 500, fontSize: '0.97rem' }}>Tình trạng bệnh</label>
-                  <input name="medicalCondition" value={componentForm.medicalCondition} onChange={handleComponentChange} required style={{ width: '100%', padding: 5, borderRadius: 5, border: '1px solid #ccc', marginTop: 2, fontSize: '0.97rem' }} />
+                  <input name="medicalCondition" value={componentForm.medicalCondition} onChange={handleComponentChange} required style={{ width: '100%', padding: 5, borderRadius: 5, border: '1px solid #ccc', marginTop: 2, fontSize: '0.97rem', marginBottom:0 }} />
                 </div>
                 <div style={{ marginBottom: 8 }}>
                   <label style={{ fontWeight: 500, fontSize: '0.97rem' }}>Số lượng Hồng cầu (ml)</label>
-                  <input name="redCellQuantity" type="number" value={componentForm.redCellQuantity} onChange={handleComponentChange} required style={{ width: '100%', padding: 5, borderRadius: 5, border: '1px solid #ccc', marginTop: 2, fontSize: '0.97rem' }} />
+                  <input name="redCellQuantity" type="number" value={componentForm.redCellQuantity} onChange={handleComponentChange} required style={{ width: '100%', padding: 5, borderRadius: 5, border: '1px solid #ccc', marginTop: 2, fontSize: '0.97rem', marginBottom:0 }} />
                 </div>
                 <div style={{ marginBottom: 8 }}>
                   <label style={{ fontWeight: 500, fontSize: '0.97rem' }}>Số lượng Huyết tương (ml)</label>
-                  <input name="plasmaQuantity" type="number" value={componentForm.plasmaQuantity} onChange={handleComponentChange} required style={{ width: '100%', padding: 5, borderRadius: 5, border: '1px solid #ccc', marginTop: 2, fontSize: '0.97rem' }} />
+                  <input name="plasmaQuantity" type="number" value={componentForm.plasmaQuantity} onChange={handleComponentChange} required style={{ width: '100%', padding: 5, borderRadius: 5, border: '1px solid #ccc', marginTop: 2, fontSize: '0.97rem', marginBottom:0 }} />
                 </div>
                 <div style={{ marginBottom: 8 }}>
                   <label style={{ fontWeight: 500, fontSize: '0.97rem' }}>Số lượng Tiểu cầu (ml)</label>
-                  <input name="plateletQuantity" type="number" value={componentForm.plateletQuantity} onChange={handleComponentChange} required style={{ width: '100%', padding: 5, borderRadius: 5, border: '1px solid #ccc', marginTop: 2, fontSize: '0.97rem' }} />
+                  <input name="plateletQuantity" type="number" value={componentForm.plateletQuantity} onChange={handleComponentChange} required style={{ width: '100%', padding: 5, borderRadius: 5, border: '1px solid #ccc', marginTop: 2, fontSize: '0.97rem', marginBottom:0 }} />
                 </div>
                 {componentSuccess && <div style={{ color: 'green', margin: '8px 0', fontSize: '0.97rem' }}>{componentSuccess}</div>}
                 {componentError && <div style={{ color: 'red', margin: '8px 0', fontSize: '0.97rem' }}>{componentError}</div>}
