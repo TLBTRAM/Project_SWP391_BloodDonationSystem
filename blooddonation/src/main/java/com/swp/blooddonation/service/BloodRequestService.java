@@ -384,16 +384,8 @@ public class BloodRequestService {
                     .type(NotificationType.BLOOD_REQUEST)
                     .build());
         } else {
-            request.setStatus(BloodRequestStatus.PENDING);
-            bloodRequestComponentRepository.save(request);
-
-            notificationService.sendNotification(NotificationRequest.builder()
-                    .receiverIds(List.of(request.getRequester().getId()))
-                    .title("Yêu cầu truyền máu được đáp ứng một phần")
-                    .content("Yêu cầu máu cho bệnh nhân " + patient.getFullName()
-                            + " chỉ được đáp ứng một phần. Chi tiết:\n" + resultNote)
-                    .type(NotificationType.BLOOD_REQUEST)
-                    .build());
+            // Bổ sung: Nếu bất kỳ thành phần nào không đủ, trả về lỗi 400
+            throw new BadRequestException("Không đủ thành phần máu trong kho để đáp ứng yêu cầu.\n" + resultNote.toString());
         }
 
         // Cập nhật trạng thái bệnh nhân tạm thời
