@@ -326,6 +326,7 @@ const User = () => {
   // useEffect lấy profile user
   useEffect(() => {
     const token = localStorage.getItem("token");
+    console.log("Token user:", token);
     if (!token) return;
     fetch("http://localhost:8080/api/user/profile", {
       method: "GET",
@@ -997,14 +998,14 @@ const User = () => {
                   <label style={{ fontWeight: 500, fontSize: '0.97rem' }}>Số lượng Tiểu cầu (ml)</label>
                   <input name="plateletQuantity" type="number" value={componentForm.plateletQuantity} onChange={handleComponentChange} required style={{ width: '100%', padding: 5, borderRadius: 5, border: '1px solid #ccc', marginTop: 2, fontSize: '0.97rem', marginBottom:0 }} />
                 </div>
-              </div>
-            </form>
-            {componentSuccess && <div style={{ color: 'green', margin: '8px 0', fontSize: '0.97rem' }}>{componentSuccess}</div>}
+                {componentSuccess && <div style={{ color: 'green', margin: '8px 0', fontSize: '0.97rem' }}>{componentSuccess}</div>}
                 {componentError && <div style={{ color: 'red', margin: '8px 0', fontSize: '0.97rem' }}>{componentError}</div>}
-                <div className="form-action-buttons" style={{ marginTop: 10, display: 'flex', justifyContent: 'center' }}>
+                <div className="form-action-buttons" style={{ marginTop: 10, display: 'flex', justifyContent: 'flex-end' }}>
                   <button type="submit" className="submit-button-user-request" disabled={componentLoading}>{componentLoading ? 'Đang gửi...' : 'Gửi yêu cầu'}</button>
                   <button type="button" className="back-button-user-request" onClick={() => { setShowComponentRequestForm(false); setComponentSuccess(""); setComponentError(""); }}>Đóng</button>
                 </div>
+              </div>
+            </form>
           </div>
         </div>
       )}
