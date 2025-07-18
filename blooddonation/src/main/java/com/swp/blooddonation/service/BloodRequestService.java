@@ -133,6 +133,45 @@ public class BloodRequestService {
                 .build());
     }
 
+    @Transactional
+    public void cancelWholeBloodRequest(Long requestId) {
+        WholeBloodRequest request = wholeBloodRequestRepository.findById(requestId)
+                .orElseThrow(() -> new BadRequestException("Không tìm thấy yêu cầu truyền máu."));
+
+        User currentUser = userService.getCurrentUser();
+        if (!request.getRequester().getId().equals(currentUser.getId())) {
+            throw new BadRequestException("Bạn không có quyền huỷ yêu cầu này.");
+        }
+
+        if (request.getStatus() != BloodRequestStatus.PENDING && request.getStatus() != BloodRequestStatus.READY) {
+            throw new BadRequestException("Chỉ được huỷ yêu cầu đang chờ xử lý hoặc đã sẵn sàng.");
+        }
+
+        // Nếu có túi máu đã được gán thì thu hồi lại
+        List<BloodUnit> assignedUnits = bloodUnitRepository.findByWholeBloodRequest(request);
+        for (BloodUnit unit : assignedUnits) {
+            unit.setWholeBloodRequest(null);
+            unit.setStatus(BloodUnitStatus.COLLECTED);
+            bloodUnitRepository.save(unit);
+        }
+
+        request.setStatus(BloodRequestStatus.CANCELLED);
+        wholeBloodRequestRepository.save(request);
+
+        pendingPatientRequestRepository.findByWholeBloodRequest(request).ifPresent(pending -> {
+            pending.setStatus(BloodRequestStatus.CANCELLED);
+            pendingPatientRequestRepository.save(pending);
+        });
+
+        notificationService.sendNotification(NotificationRequest.builder()
+                .receiverIds(List.of(currentUser.getId()))
+                .title("Yêu cầu truyền máu đã được huỷ")
+                .content("Yêu cầu truyền máu của bạn đã bị huỷ thành công.")
+                .type(NotificationType.BLOOD_REQUEST)
+                .build());
+    }
+
+
 
     @Transactional
     public void rejectWholeBloodRequest(Long requestId, String reason) {
@@ -357,19 +396,19 @@ public class BloodRequestService {
 
         // 1. HỒNG CẦU
         if (request.getRedCellQuantity() > 0) {
-            redCellDone = processComponent(request.getBloodType(), request.getRhType(), ComponentType.RED_CELL,
+            redCellDone = processComponent(request, request.getBloodType(), request.getRhType(), ComponentType.RED_CELL,
                     request.getRedCellQuantity(), resultNote);
         } else redCellDone = true;
 
         // 2. HUYẾT TƯƠNG
         if (request.getPlasmaQuantity() > 0) {
-            plasmaDone = processComponent(request.getBloodType(), request.getRhType(), ComponentType.PLASMA,
+            plasmaDone = processComponent(request, request.getBloodType(), request.getRhType(), ComponentType.PLASMA,
                     request.getPlasmaQuantity(), resultNote);
         } else plasmaDone = true;
 
         // 3. TIỂU CẦU
         if (request.getPlateletQuantity() > 0) {
-            plateletDone = processComponent(request.getBloodType(), request.getRhType(), ComponentType.PLATELET,
+            plateletDone = processComponent(request,request.getBloodType(), request.getRhType(), ComponentType.PLATELET,
                     request.getPlateletQuantity(), resultNote);
         } else plateletDone = true;
 
@@ -396,6 +435,7 @@ public class BloodRequestService {
 
 
     private boolean processComponent(
+            BloodRequestComponent requests,
             BloodType bloodType,
             RhType rhType,
             ComponentType componentType,
@@ -418,6 +458,8 @@ public class BloodRequestService {
 
             accumulated += component.getVolume();
             component.setStatus(ComponentStatus.RESERVED);
+            component.setBloodRequestComponent(requests);
+
             selected.add(component);
             bloodComponentRepository.save(component);
         }
@@ -486,5 +528,74 @@ public class BloodRequestService {
                 .type(NotificationType.BLOOD_REQUEST)
                 .build());
     }
+
+    @Transactional
+    public void cancelRequestComponent(Long requestId) {
+        System.out.println("----- BẮT ĐẦU HUỶ YÊU CẦU TRUYỀN MÁU THÀNH PHẦN -----");
+
+        // Lấy yêu cầu
+        BloodRequestComponent request = bloodRequestComponentRepository.findById(requestId)
+                .orElseThrow(() -> new BadRequestException("Không tìm thấy yêu cầu."));
+
+        System.out.println("ID yêu cầu: " + requestId);
+        System.out.println("Trạng thái yêu cầu: " + request.getStatus());
+
+        // Lấy người dùng hiện tại
+        User currentUser = userService.getCurrentUser();
+        System.out.println("Người dùng hiện tại ID: " + currentUser.getId());
+        System.out.println("Người tạo yêu cầu ID: " + request.getRequester().getId());
+
+        // Chỉ người tạo mới được huỷ
+        if (!request.getRequester().getId().equals(currentUser.getId())) {
+            throw new BadRequestException("Bạn không có quyền huỷ yêu cầu này.");
+        }
+
+        // Chỉ huỷ nếu trạng thái là PENDING hoặc READY
+        if (request.getStatus() != BloodRequestStatus.PENDING &&
+                request.getStatus() != BloodRequestStatus.READY) {
+            throw new BadRequestException("Chỉ được huỷ yêu cầu đang chờ xử lý hoặc đã sẵn sàng.");
+        }
+
+        // Tìm các thành phần máu đã liên kết
+        List<BloodComponent> linkedComponents = bloodComponentRepository
+                .findByBloodRequestComponent(request);
+
+        System.out.println("Số lượng thành phần máu liên kết: " + linkedComponents.size());
+
+        for (BloodComponent component : linkedComponents) {
+            System.out.println("  - [Trước] Component ID: " + component.getId()
+                    + " | Status: " + component.getStatus()
+                    + " | Request ID: " + (component.getBloodRequestComponent() != null ? component.getBloodRequestComponent().getId() : "null"));
+
+            // Cập nhật trạng thái và huỷ liên kết
+            component.setStatus(ComponentStatus.AVAILABLE);
+            component.setBloodRequestComponent(null);
+            bloodComponentRepository.save(component);
+
+            // Kiểm tra lại sau khi save
+            BloodComponent updated = bloodComponentRepository.findById(component.getId()).orElse(null);
+            if (updated != null) {
+                System.out.println("  - [Sau]    Component ID: " + updated.getId()
+                        + " | Status: " + updated.getStatus()
+                        + " | Request ID: " + (updated.getBloodRequestComponent() != null ? updated.getBloodRequestComponent().getId() : "null"));
+            }
+        }
+
+        // Cập nhật trạng thái yêu cầu
+        request.setStatus(BloodRequestStatus.CANCELLED);
+        bloodRequestComponentRepository.save(request);
+        System.out.println("Đã cập nhật trạng thái yêu cầu thành CANCELLED");
+
+        // Gửi thông báo
+        notificationService.sendNotification(NotificationRequest.builder()
+                .receiverIds(List.of(currentUser.getId()))
+                .title("Yêu cầu truyền máu thành phần đã được huỷ")
+                .content("Yêu cầu truyền máu thành phần của bạn đã bị huỷ thành công.")
+                .type(NotificationType.BLOOD_REQUEST)
+                .build());
+
+        System.out.println("----- HUỶ YÊU CẦU THÀNH CÔNG -----");
+    }
+
 
 }

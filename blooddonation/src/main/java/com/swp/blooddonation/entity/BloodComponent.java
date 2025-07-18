@@ -41,4 +41,7 @@ public class BloodComponent {
 
     @ManyToOne
     private Register register; // Liên kết phiên hiến máu
+
+    @ManyToOne
+    private BloodRequestComponent bloodRequestComponent;
 }
