@@ -53,7 +53,7 @@ const Header: React.FC = () => {
 
       <nav className="nav-links">
         <Link to="/">Trang chủ</Link>
-        <a href="#contact">Liên hệ</a>
+        <a href="/contact">Liên hệ</a>
         <a href="#info">Thông tin</a>
         <Link to="/team">Đội ngũ nhân viên y tế</Link>
         {!user && (

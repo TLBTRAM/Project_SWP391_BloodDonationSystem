@@ -1,9 +1,16 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Poppins", sans-serif;
+}
+
 .contact-wrapper {
-  font-family: 'Segoe UI', sans-serif;
   padding: 40px 20px;
   max-width: 1200px;
   margin: auto;
   color: #333;
+  background-color: #fdfdfd;
 }
 
 .contact-hero {
@@ -13,29 +20,34 @@
 
 .contact-hero h1 {
   font-size: 36px;
-  color: #c62828;
+  font-weight: 700;
+  margin-bottom: 20px;
+  color: #1a1a1a;
 }
 
 .contact-hero p {
   font-size: 18px;
-  color: #555;
+  color: #666;
 }
 
 .contact-container {
   display: flex;
   flex-wrap: wrap;
   gap: 40px;
-  margin-bottom: 40px;
+  margin-bottom: 60px;
 }
 
 .contact-info,
 .contact-map {
   flex: 1 1 45%;
+  background-color: #fff;
+  padding: 24px;
+  border-radius: 10px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
 }
 
 .contact-info h2,
-.contact-map h2,
-.contact-form-section h2 {
+.contact-map h2 {
   font-size: 24px;
   margin-bottom: 16px;
   color: #b71c1c;
@@ -49,63 +61,36 @@
 .contact-info li {
   margin-bottom: 12px;
   font-size: 16px;
+  color: #444;
 }
 
-.contact-form-section {
-  background-color: #fdfafa;
-  padding: 30px;
-  border: 1px solid #ddd;
-  border-radius: 8px;
+.contact-socials {
+  margin-top: 24px;
 }
 
-.contact-form {
+.contact-socials h3 {
+  font-size: 20px;
+  margin-bottom: 12px;
+  color: #b71c1c;
+}
+
+.social-icons {
   display: flex;
-  flex-direction: column;
-  gap: 20px;
+  justify-content: space-evenly;
 }
 
-.form-group {
-  display: flex;
-  flex-direction: column;
-}
-
-.form-group label {
-  margin-bottom: 6px;
-  font-weight: 600;
-}
-
-.form-group input,
-.form-group textarea {
-  padding: 10px;
-  border: 1px solid #ccc;
-  border-radius: 6px;
-  font-size: 15px;
-}
-
-.btn-submit {
-  width: fit-content;
-  padding: 10px 20px;
-  background-color: #d32f2f;
-  color: white;
-  border: none;
-  border-radius: 6px;
+.social-icons a {
+  text-decoration: none;
   font-size: 16px;
-  cursor: pointer;
-  align-self: flex-start;
+  color: #c62828;
+  background-color: #fff0f0;
+  padding: 8px 14px;
+  border-radius: 20px;
+  transition: all 0.3s ease;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
-.btn-submit:hover {
-  background-color: #b71c1c;
-}
-
-/* Responsive */
-@media (max-width: 768px) {
-  .contact-container {
-    flex-direction: column;
-  }
-
-  .contact-info,
-  .contact-map {
-    flex: 1 1 100%;
-  }
+.social-icons a:hover {
+  background-color: #c62828;
+  color: white;
 }

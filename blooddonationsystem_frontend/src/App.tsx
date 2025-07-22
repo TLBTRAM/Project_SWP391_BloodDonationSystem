@@ -14,6 +14,7 @@ import ActPage from "./pages/Activities";
 import TypePage from "./pages/BloodTypes";
 import JoinPage from "./pages/Standard";
 import AdvisePage from "./pages/Advise";
+import ContactPage from "./pages/Contact";
 
 // Đăng ký, đăng nhập, reset mật khẩu
 import RegisterPage from "./pages/Register";
@@ -57,6 +58,7 @@ function App() {
 				<Route path="/bloodtype" element={<TypePage />} />
 				<Route path="/standard" element={<JoinPage />} />
 				<Route path="/advise" element={<AdvisePage />} />
+				<Route path="/contact" element={<ContactPage />} />
 
 				{/* Đăng ký, đăng nhập, reset mật khẩu */}
 				<Route path="/register" element={<RegisterPage />} />
