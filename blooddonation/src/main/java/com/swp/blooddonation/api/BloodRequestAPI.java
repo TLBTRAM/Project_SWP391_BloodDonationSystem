@@ -36,6 +36,7 @@ public class BloodRequestAPI {
         return ResponseEntity.ok(result);
     }
 
+    @PreAuthorize("hasRole('CUSTOMER') or hasRole('MEDICALSTAFF')")
     @PostMapping("/blood-requests/component")
     public ResponseEntity<?> requestBloodByComponent(@RequestBody @Valid ComponentBloodRequestRequest dto) {
         bloodRequestService.requestBloodByComponent(dto);

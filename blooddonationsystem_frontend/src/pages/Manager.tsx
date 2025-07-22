@@ -565,7 +565,8 @@ const { user, logout } = useAuth();
       if (!res.ok) throw new Error("Lỗi khi thêm túi máu mới");
       await fetchBloodUnits();
       setFormData({ group: "", quantity: "", entryDate: "", expiryDate: "" });
-      setView("dashboard");
+      // Giữ nguyên tab Thêm máu, không chuyển về dashboard
+      // setView("dashboard"); // XÓA DÒNG NÀY
       alert("Thêm đơn vị máu thành công!");
     } catch (err) {
       alert("Thêm đơn vị máu thất bại!");
@@ -1088,7 +1089,7 @@ const { user, logout } = useAuth();
               </button>
             </li>
             <li className={view === "componentStock" ? "active" : ""}>
-              <button className="menu-item" onClick={() => setView("componentStock")}>Kho máu phân tích</button>
+              <button className="menu-item" onClick={() => setView("componentStock")}>Kho máu phân tách</button>
             </li>
             <li className={view === "add" ? "active" : ""}>
               <button className="menu-item" onClick={() => setView("add")}>
@@ -1644,7 +1645,7 @@ const { user, logout } = useAuth();
           )}
           {view === 'componentStock' && (
             <>
-              <h2>Kho máu phân tích</h2>
+              <h2>Kho máu phân tách</h2>
               <div style={{display:'flex', justifyContent:'center', gap:12, marginBottom:18}}>
                 {componentTabs.map(tab => (
                   <button
