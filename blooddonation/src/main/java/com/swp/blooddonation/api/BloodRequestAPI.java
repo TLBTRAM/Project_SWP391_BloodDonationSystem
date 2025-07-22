@@ -43,6 +43,13 @@ public class BloodRequestAPI {
         return ResponseEntity.ok("Gửi yêu cầu truyền thành phần máu thành công.");
     }
 
+    @PreAuthorize("hasRole('CUSTOMER') or hasRole('MEDICALSTAFF')")
+    @PutMapping("/whole-requests/{id}/cancel")
+    public ResponseEntity<?> cancelWholeRequest(@PathVariable Long id) {
+        bloodRequestService.cancelWholeBloodRequest(id);
+        return ResponseEntity.ok("Đã huỷ yêu cầu truyền máu.");
+    }
+
 
     @PreAuthorize("hasAnyRole('MANAGER', 'MEDICALSTAFF')")
     @PutMapping("/{id}/approve")
@@ -98,6 +105,15 @@ public class BloodRequestAPI {
         List<BloodRequestComponent> requests = bloodRequestComponentRepository.findAll();
         return ResponseEntity.ok(requests);
     }
+
+    @PreAuthorize("hasAnyRole('CUSTOMER', 'MEDICALSTAFF')")
+    @PutMapping("/component/{id}/cancel")
+    public ResponseEntity<?> cancelComponentBloodRequest(@PathVariable Long id) {
+        bloodRequestService.cancelRequestComponent(id);
+        return ResponseEntity.ok("Yêu cầu truyền máu thành phần đã được huỷ.");
+    }
+
+
 
 
 }

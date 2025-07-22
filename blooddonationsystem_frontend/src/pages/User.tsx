@@ -326,6 +326,7 @@ const User = () => {
   // useEffect lấy profile user
   useEffect(() => {
     const token = localStorage.getItem("token");
+    console.log("Token user:", token);
     if (!token) return;
     fetch("http://localhost:8080/api/user/profile", {
       method: "GET",
@@ -634,9 +635,9 @@ const User = () => {
           }} onClick={e => e.stopPropagation()}>
             {/* Header + Tabs */}
             <div style={{ padding: '0 40px', flexShrink: 0 }}>
-              <h2 style={{ fontSize: 40, fontWeight: 800, marginBottom: 12, letterSpacing: 1, display: 'flex', alignItems: 'center', gap: 16 }}>
+              <p style={{ fontSize: 40, fontWeight: 800,marginTop:20, marginBottom: 12, letterSpacing: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 16 }}>
                 <span role="img" aria-label="bell">🔔</span> THÔNG BÁO <span role="img" aria-label="bell">🔔</span>
-              </h2>
+              </p>
               <div className="noti-tabs">
                 <button
                   className={`noti-tab-btn${tabIndex === 0 ? '' : ' inactive'}`}
@@ -858,8 +859,8 @@ const User = () => {
                 {successMsg && <div style={{ color: 'green', margin: '8px 0', fontSize: '0.97rem' }}>{successMsg}</div>}
                 {errorMsg && <div style={{ color: 'red', margin: '8px 0', fontSize: '0.97rem' }}>{errorMsg}</div>}
                 <div className="form-action-buttons">
-                  <button type="submit" className="submit-btn" disabled={loading}>{loading ? 'Đang gửi...' : 'Gửi yêu cầu'}</button>
-                  <button type="button" className="back-button" onClick={() => { setShowBloodRequestForm(false); setSuccessMsg(""); setErrorMsg(""); }}>Đóng</button>
+                  <button type="submit" className="submit-button-user-request" disabled={loading}>{loading ? 'Đang gửi...' : 'Gửi yêu cầu'}</button>
+                  <button type="button" className="back-button-user-request" onClick={() => { setShowBloodRequestForm(false); setSuccessMsg(""); setErrorMsg(""); }}>Đóng</button>
                 </div>
               </div>
             </form>
@@ -999,9 +1000,9 @@ const User = () => {
                 </div>
                 {componentSuccess && <div style={{ color: 'green', margin: '8px 0', fontSize: '0.97rem' }}>{componentSuccess}</div>}
                 {componentError && <div style={{ color: 'red', margin: '8px 0', fontSize: '0.97rem' }}>{componentError}</div>}
-                <div className="form-action-buttons">
-                  <button type="submit" className="submit-btn" disabled={componentLoading}>{componentLoading ? 'Đang gửi...' : 'Gửi yêu cầu'}</button>
-                  <button type="button" className="back-button" onClick={() => { setShowComponentRequestForm(false); setComponentSuccess(""); setComponentError(""); }}>Đóng</button>
+                <div className="form-action-buttons" style={{ marginTop: 10, display: 'flex', justifyContent: 'flex-end' }}>
+                  <button type="submit" className="submit-button-user-request" disabled={componentLoading}>{componentLoading ? 'Đang gửi...' : 'Gửi yêu cầu'}</button>
+                  <button type="button" className="back-button-user-request" onClick={() => { setShowComponentRequestForm(false); setComponentSuccess(""); setComponentError(""); }}>Đóng</button>
                 </div>
               </div>
             </form>

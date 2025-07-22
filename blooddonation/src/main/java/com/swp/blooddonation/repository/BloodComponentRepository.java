@@ -1,6 +1,9 @@
 package com.swp.blooddonation.repository;
 
 import com.swp.blooddonation.entity.BloodComponent;
+import com.swp.blooddonation.entity.BloodRequestComponent;
+import com.swp.blooddonation.entity.User;
+import com.swp.blooddonation.enums.BloodRequestStatus;
 import com.swp.blooddonation.enums.ComponentStatus;
 import com.swp.blooddonation.enums.ComponentType;
 import com.swp.blooddonation.enums.BloodType;
@@ -35,4 +38,5 @@ public interface BloodComponentRepository extends JpaRepository<BloodComponent, 
             ComponentType componentType,
             ComponentStatus status
     );
+    List<BloodComponent> findByBloodRequestComponent(BloodRequestComponent requestComponent);
 }

@@ -1596,10 +1596,86 @@ const { user, logout } = useAuth();
                               {req.status === 'READY' && <span className="status-ready">SẴN SÀNG</span>}
                             </td>
                             <td className="table-action-cell" style={{display:'flex', justifyContent:'flex-end', alignItems:'center', gap:6}}>
-                              <button className="action-button" style={{display: req.status === 'PENDING' ? 'inline-block' : 'none', width:110, padding:'6px 0', flexShrink:0}} onClick={() => approveComponentRequest(req.id)}>Duyệt</button>
-                              <button className="action-button" style={{display: req.status === 'PENDING' ? 'inline-block' : 'none', width:110, padding:'6px 0', flexShrink:0}} onClick={() => rejectComponentRequest(req.id)}>Từ chối</button>
-                              <button className="action-button" style={{display: req.status === 'READY' ? 'inline-block' : 'none', width:110, padding:'6px 0', flexShrink:0, background:'#43a047', color:'#fff', border:'none', borderRadius:6, fontWeight:600, cursor:'pointer', transition:'background 0.2s'}} onClick={() => completeComponentRequest(req.id)}>Hoàn tất</button>
-                              <button className="cancel-button" style={{fontWeight:500, padding:'6px 18px', flex:'0 0 auto'}} onClick={()=>{setSelectedComponentRequest(req); setShowComponentDetail(true);}}>Xem chi tiết</button>
+                              <button
+                                className="action-button"
+                                style={{
+                                  display: req.status === 'PENDING' ? 'inline-block' : 'none',
+                                  width: 110,
+                                  padding: '6px 0',
+                                  flexShrink: 0,
+                                  background: '#43a047', // xanh lá cây
+                                  color: '#fff',
+                                  border: 'none',
+                                  borderRadius: 6,
+                                  fontWeight: 600,
+                                  cursor: 'pointer',
+                                  transition: 'background 0.2s'
+                                }}
+                                onClick={() => approveComponentRequest(req.id)}
+                              >
+                                Duyệt
+                              </button>
+
+                              <button
+                                className="action-button"
+                                style={{
+                                  display: req.status === 'PENDING' ? 'inline-block' : 'none',
+                                  width: 110,
+                                  padding: '6px 0',
+                                  flexShrink: 0,
+                                  background: '#e53935', // đỏ
+                                  color: '#fff',
+                                  border: 'none',
+                                  borderRadius: 6,
+                                  fontWeight: 600,
+                                  cursor: 'pointer',
+                                  transition: 'background 0.2s'
+                                }}
+                                onClick={() => rejectComponentRequest(req.id)}
+                              >
+                                Từ chối
+                              </button>
+
+                              <button
+                                className="action-button"
+                                style={{
+                                  display: req.status === 'READY' ? 'inline-block' : 'none',
+                                  width: 110,
+                                  padding: '6px 0',
+                                  flexShrink: 0,
+                                  background: '#43a047', // xanh lá cây
+                                  color: '#fff',
+                                  border: 'none',
+                                  borderRadius: 6,
+                                  fontWeight: 600,
+                                  cursor: 'pointer',
+                                  transition: 'background 0.2s'
+                                }}
+                                onClick={() => completeComponentRequest(req.id)}
+                              >
+                                Hoàn tất
+                              </button>
+
+                              <button
+                                className="cancel-button"
+                                style={{
+                                  fontWeight: 500,
+                                  padding: '6px 18px',
+                                  flex: '0 0 auto',
+                                  background: '#1976d2', // xanh dương
+                                  color: '#fff',
+                                  border: 'none',
+                                  borderRadius: 6,
+                                  cursor: 'pointer',
+                                  transition: 'background 0.2s'
+                                }}
+                                onClick={() => {
+                                  setSelectedComponentRequest(req);
+                                  setShowComponentDetail(true);
+                                }}
+                              >
+                                Xem chi tiết
+                              </button>
                             </td>
                           </tr>
                         ))
