@@ -39,4 +39,13 @@ public interface BloodComponentRepository extends JpaRepository<BloodComponent, 
             ComponentStatus status
     );
     List<BloodComponent> findByBloodRequestComponent(BloodRequestComponent requestComponent);
+    List<BloodComponent> findByBloodTypeInAndComponentTypeAndStatus(
+            List<BloodType> bloodTypes,
+            ComponentType componentType,
+            ComponentStatus status
+    );
+
+    List<BloodComponent> findByComponentTypeAndStatus(ComponentType componentType, ComponentStatus status);
+
+
 }

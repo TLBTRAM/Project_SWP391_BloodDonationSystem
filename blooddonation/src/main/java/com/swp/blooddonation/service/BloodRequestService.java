@@ -19,6 +19,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -278,11 +279,16 @@ public class BloodRequestService {
         patient.setMedicalCondition(request.getMedicalCondition());
         patientRepository.save(patient);
 
-        // Lấy danh sách túi máu phù hợp
-        List<BloodUnit> availableUnits = bloodUnitRepository.findUsableBloodUnits(
-                request.getBloodType(), request.getRhType());
+        // Lấy tất cả túi máu có sẵn
+        List<BloodUnit> allUsableUnits = bloodUnitRepository.findByStatus(BloodUnitStatus.COLLECTED);
 
-        availableUnits.sort(Comparator.comparing(BloodUnit::getExpirationDate));
+        // Lọc các túi máu tương thích theo bảng truyền máu
+        List<BloodUnit> availableUnits = allUsableUnits.stream()
+                .filter(unit -> isCompatible(
+                        unit.getBloodType(), unit.getRhType(),
+                        request.getBloodType(), request.getRhType()))
+                .sorted(Comparator.comparing(BloodUnit::getExpirationDate))
+                .collect(Collectors.toList());
 
         List<BloodUnit> selectedUnits = new ArrayList<>();
         int accumulated = 0;
@@ -299,7 +305,7 @@ public class BloodRequestService {
         }
 
         if (accumulated >= required) {
-            // Đủ máu: cấp trực tiếp cho yêu cầu chính
+            // Đủ máu: cấp trực tiếp
             request.setPatient(patient);
             request.setStatus(BloodRequestStatus.READY);
             bloodRequestRepository.save(request);
@@ -314,7 +320,7 @@ public class BloodRequestService {
                     .build());
 
         } else {
-            //  Không đủ máu: tạo yêu cầu mới cho phần đủ
+            // Không đủ máu: chia thành phần đủ + phần chờ
             WholeBloodRequest readyPart = new WholeBloodRequest();
             readyPart.setBloodType(request.getBloodType());
             readyPart.setRhType(request.getRhType());
@@ -329,7 +335,6 @@ public class BloodRequestService {
 
             assignBloodUnitsToRequest(selectedUnits, readyPart);
 
-            // Cập nhật lại yêu cầu gốc
             request.setRequiredVolume(required - accumulated);
             request.setStatus(BloodRequestStatus.PENDING);
             bloodRequestRepository.save(request);
@@ -343,11 +348,26 @@ public class BloodRequestService {
                     .build());
         }
 
-        // Đánh dấu đã phê duyệt yêu cầu tạm thời
+        // Cập nhật trạng thái phê duyệt bệnh nhân tạm thời
         pending.setStatus(BloodRequestStatus.APPROVED);
         pendingPatientRequestRepository.save(pending);
     }
 
+    public static boolean isCompatible(BloodType donorType, RhType donorRh,
+                                       BloodType recipientType, RhType recipientRh) {
+        // Rh compatibility: Rh- có thể truyền cho Rh+ hoặc Rh-, Rh+ chỉ truyền cho Rh+
+        if (donorRh == RhType.POSITIVE && recipientRh == RhType.NEGATIVE) {
+            return false;
+        }
+
+        // ABO compatibility
+        return switch (donorType) {
+            case O -> true;
+            case A -> recipientType == BloodType.A || recipientType == BloodType.AB;
+            case B -> recipientType == BloodType.B || recipientType == BloodType.AB;
+            case AB -> recipientType == BloodType.AB;
+        };
+    }
 
     private void assignBloodUnitsToRequest(List<BloodUnit> units, WholeBloodRequest request) {
         for (BloodUnit unit : units) {
@@ -356,7 +376,6 @@ public class BloodRequestService {
             bloodUnitRepository.save(unit);
         }
     }
-
 
 
     @Transactional
@@ -368,11 +387,9 @@ public class BloodRequestService {
             throw new BadRequestException("Yêu cầu đã được xử lý.");
         }
 
-        // Lấy thông tin bệnh nhân tạm thời
         PendingPatientRequest pending = pendingPatientRequestRepository.findByBloodRequestComponent(request)
                 .orElseThrow(() -> new BadRequestException("Không tìm thấy thông tin bệnh nhân."));
 
-        // Tạo bệnh nhân chính thức
         Patient patient = new Patient();
         patient.setFullName(pending.getFullName());
         patient.setDateOfBirth(pending.getDateOfBirth());
@@ -388,30 +405,9 @@ public class BloodRequestService {
 
         request.setPatient(patient);
 
-        // Lưu trạng thái từng loại thành phần
-        boolean redCellDone = false;
-        boolean plasmaDone = false;
-        boolean plateletDone = false;
-
-        StringBuilder resultNote = new StringBuilder();
-
-        // 1. HỒNG CẦU
-        if (request.getRedCellQuantity() > 0) {
-            redCellDone = processComponent(request, request.getBloodType(), request.getRhType(), ComponentType.RED_CELL,
-                    request.getRedCellQuantity(), resultNote);
-        } else redCellDone = true;
-
-        // 2. HUYẾT TƯƠNG
-        if (request.getPlasmaQuantity() > 0) {
-            plasmaDone = processComponent(request, request.getBloodType(), request.getRhType(), ComponentType.PLASMA,
-                    request.getPlasmaQuantity(), resultNote);
-        } else plasmaDone = true;
-
-        // 3. TIỂU CẦU
-        if (request.getPlateletQuantity() > 0) {
-            plateletDone = processComponent(request,request.getBloodType(), request.getRhType(), ComponentType.PLATELET,
-                    request.getPlateletQuantity(), resultNote);
-        } else plateletDone = true;
+        boolean redCellDone = request.getRedCellQuantity() <= 0 || processComponent(request, request.getBloodType(), request.getRhType(), ComponentType.RED_CELL, request.getRedCellQuantity(), new StringBuilder());
+        boolean plasmaDone = request.getPlasmaQuantity() <= 0 || processComponent(request, request.getBloodType(), request.getRhType(), ComponentType.PLASMA, request.getPlasmaQuantity(), new StringBuilder());
+        boolean plateletDone = request.getPlateletQuantity() <= 0 || processComponent(request, request.getBloodType(), request.getRhType(), ComponentType.PLATELET, request.getPlateletQuantity(), new StringBuilder());
 
         if (redCellDone && plasmaDone && plateletDone) {
             request.setStatus(BloodRequestStatus.READY);
@@ -424,30 +420,26 @@ public class BloodRequestService {
                     .type(NotificationType.BLOOD_REQUEST)
                     .build());
         } else {
-            // Bổ sung: Nếu bất kỳ thành phần nào không đủ, trả về lỗi 400
-            throw new BadRequestException("Không đủ thành phần máu trong kho để đáp ứng yêu cầu.\n" + resultNote.toString());
+            throw new BadRequestException("Không đủ thành phần máu trong kho để đáp ứng yêu cầu.");
         }
 
-        // Cập nhật trạng thái bệnh nhân tạm thời
         pending.setStatus(BloodRequestStatus.APPROVED);
         pendingPatientRequestRepository.save(pending);
     }
 
-
-
     private boolean processComponent(
             BloodRequestComponent requests,
-            BloodType bloodType,
-            RhType rhType,
+            BloodType recipientType,
+            RhType recipientRh,
             ComponentType componentType,
             int requiredVolume,
             StringBuilder note
     ) {
         List<BloodComponent> components = bloodComponentRepository
-                .findByBloodTypeAndComponentTypeAndStatus(bloodType, componentType, ComponentStatus.AVAILABLE)
+                .findByComponentTypeAndStatus(componentType, ComponentStatus.AVAILABLE)
                 .stream()
-                .filter(c -> c.getRhType() == rhType)
-                .sorted(Comparator.comparing(BloodComponent::getExpirationDate)) // Ưu tiên gần hết hạn
+                .filter(c -> isCompatibleComponent(c.getBloodType(), c.getRhType(), recipientType, recipientRh, componentType))
+                .sorted(Comparator.comparing(BloodComponent::getExpirationDate))
                 .toList();
 
         int accumulated = 0;
@@ -475,6 +467,42 @@ public class BloodRequestService {
                     .append(requiredVolume - accumulated).append("ml\n");
             return false;
         }
+    }
+
+    public boolean isCompatibleComponent(
+            BloodType donorType, RhType donorRh,
+            BloodType recipientType, RhType recipientRh,
+            ComponentType componentType
+    ) {
+        boolean rhCompatible = !donorRh.equals(RhType.POSITIVE) || recipientRh.equals(RhType.POSITIVE);
+
+        return rhCompatible && switch (componentType) {
+            case RED_CELL -> isRedCellCompatible(donorType, recipientType);
+            case PLASMA -> isPlasmaCompatible(donorType, recipientType);
+            case PLATELET -> isPlateletCompatible(donorType, recipientType);
+        };
+    }
+
+    private boolean isRedCellCompatible(BloodType donor, BloodType recipient) {
+        return switch (donor) {
+            case O -> true;
+            case A -> recipient == BloodType.A || recipient == BloodType.AB;
+            case B -> recipient == BloodType.B || recipient == BloodType.AB;
+            case AB -> recipient == BloodType.AB;
+        };
+    }
+
+    private boolean isPlasmaCompatible(BloodType donor, BloodType recipient) {
+        return switch (donor) {
+            case AB -> true;
+            case A -> recipient == BloodType.A || recipient == BloodType.O;
+            case B -> recipient == BloodType.B || recipient == BloodType.O;
+            case O -> recipient == BloodType.O;
+        };
+    }
+
+    private boolean isPlateletCompatible(BloodType donor, BloodType recipient) {
+        return isRedCellCompatible(donor, recipient);
     }
 
     public List<WholeBloodRequest> getAllBloodRequests() {
