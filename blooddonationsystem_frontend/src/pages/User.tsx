@@ -747,7 +747,7 @@ const User = () => {
                 </div>
                 <div style={{ marginBottom: 8 }}>
                   <label style={{ fontWeight: 500, fontSize: '0.97rem' }}>Ngày sinh</label>
-                  <input name="dateOfBirth" type="date" value={form.dateOfBirth} onChange={handleFormChange} required style={{ width: '100%', padding: 5, borderRadius: 5, border: '1px solid #ccc', marginTop: 2, fontSize: '0.97rem' }} />
+                  <input name="dateOfBirth" type="date" value={form.dateOfBirth} onChange={handleFormChange} required max={new Date().toISOString().split('T')[0]} style={{ width: '100%', padding: 5, borderRadius: 5, border: '1px solid #ccc', marginTop: 2, fontSize: '0.97rem' }} />
                 </div>
                 <div style={{ marginBottom: 8 }}>
                   <label style={{ fontWeight: 500, fontSize: '0.97rem' }}>Số điện thoại</label>
@@ -881,7 +881,7 @@ const User = () => {
                 </div>
                 <div style={{ marginBottom: 8 }}>
                   <label style={{ fontWeight: 500, fontSize: '0.97rem' }}>Ngày sinh</label>
-                  <input name="dateOfBirth" type="date" value={componentForm.dateOfBirth} onChange={handleComponentChange} required style={{ width: '100%', padding: 5, borderRadius: 5, border: '1px solid #ccc', marginTop: 2, fontSize: '0.97rem' }} />
+                  <input name="dateOfBirth" type="date" value={componentForm.dateOfBirth} onChange={handleComponentChange} required max={new Date().toISOString().split('T')[0]} style={{ width: '100%', padding: 5, borderRadius: 5, border: '1px solid #ccc', marginTop: 2, fontSize: '0.97rem' }} />
                 </div>
                 <div style={{ marginBottom: 8 }}>
                   <label style={{ fontWeight: 500, fontSize: '0.97rem' }}>Số điện thoại</label>

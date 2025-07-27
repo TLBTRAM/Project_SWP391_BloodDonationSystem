@@ -95,6 +95,7 @@ const MyRegistrations = () => {
             });
             if (res.ok) {
                 setRegistrations((prev) => prev.filter((r) => r.id !== cancelId));
+                alert("Hủy đơn thành công!")
                 setCancelId(null);
                 setCancelReason("");
             } else {
