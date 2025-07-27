@@ -153,82 +153,7 @@ const initialData: BloodUnit[] = [
   },
 ];
 
-// Dữ liệu mẫu yêu cầu nhận máu
-// const sampleBloodRequests: BloodRequest[] = [
-//   {
-//     id: 1,
-//     requestDate: "2025-07-17",
-//     patientName: "Nguyễn Văn A",
-//     bloodType: "A+",
-//     requiredVolume: 350,
-//     status: "PENDING",
-//     hospitalName: "Bệnh viện Chợ Rẫy",
-//     phone: "0909123456",
-//     gender: "MALE",
-//     medicalCondition: "Thiếu máu cấp",
-//     address: "12 Lê Lợi, Q.1, TP.HCM"
-//   },
-//   {
-//     id: 2,
-//     requestDate: "2025-07-16",
-//     patientName: "Trần Thị B",
-//     bloodType: "O-",
-//     requiredVolume: 450,
-//     status: "APPROVED",
-//     hospitalName: "Bệnh viện 115",
-//     phone: "0912345678",
-//     gender: "FEMALE",
-//     medicalCondition: "Xuất huyết tiêu hóa",
-//     address: "45 Nguyễn Huệ, Q.1, TP.HCM"
-//   },
-//   {
-//     id: 3,
-//     requestDate: "2025-07-15",
-//     patientName: "Lê Văn C",
-//     bloodType: "B+",
-//     requiredVolume: 250,
-//     status: "REJECTED",
-//     hospitalName: "Bệnh viện Nhi Đồng",
-//     phone: "0987654321",
-//     gender: "MALE",
-//     medicalCondition: "Tan máu bẩm sinh",
-//     address: "78 Trần Hưng Đạo, Q.5, TP.HCM"
-//   }
-// ];
 
-// Dữ liệu mẫu yêu cầu nhận máu thành phần
-// const sampleComponentRequests: ComponentBloodRequest[] = [
-//   {
-//     id: 1,
-//     requestDate: "2025-07-17",
-//     patientName: "Nguyễn Văn D",
-//     bloodType: "A+",
-//     redCellQuantity: 250,
-//     plasmaQuantity: 200,
-//     plateletQuantity: 100,
-//     status: "PENDING",
-//     hospitalName: "Bệnh viện Chợ Rẫy",
-//     phone: "0909123456",
-//     gender: "MALE",
-//     medicalCondition: "Thiếu máu mạn",
-//     address: "12 Lê Lợi, Q.1, TP.HCM"
-//   },
-//   {
-//     id: 2,
-//     requestDate: "2025-07-16",
-//     patientName: "Trần Thị E",
-//     bloodType: "O-",
-//     redCellQuantity: 300,
-//     plasmaQuantity: 0,
-//     plateletQuantity: 150,
-//     status: "APPROVED",
-//     hospitalName: "Bệnh viện 115",
-//     phone: "0912345678",
-//     gender: "FEMALE",
-//     medicalCondition: "Xuất huyết",
-//     address: "45 Nguyễn Huệ, Q.1, TP.HCM"
-//   }
-// ];
 
 // ========== Component chính ==========
 const Manager: React.FC = () => {
@@ -565,7 +490,8 @@ const { user, logout } = useAuth();
       if (!res.ok) throw new Error("Lỗi khi thêm túi máu mới");
       await fetchBloodUnits();
       setFormData({ group: "", quantity: "", entryDate: "", expiryDate: "" });
-      setView("dashboard");
+      // Giữ nguyên tab Thêm máu, không chuyển về dashboard
+      // setView("dashboard"); // XÓA DÒNG NÀY
       alert("Thêm đơn vị máu thành công!");
     } catch (err) {
       alert("Thêm đơn vị máu thất bại!");
@@ -1088,7 +1014,7 @@ const { user, logout } = useAuth();
               </button>
             </li>
             <li className={view === "componentStock" ? "active" : ""}>
-              <button className="menu-item" onClick={() => setView("componentStock")}>Kho máu phân tích</button>
+              <button className="menu-item" onClick={() => setView("componentStock")}>Kho máu phân tách</button>
             </li>
             <li className={view === "add" ? "active" : ""}>
               <button className="menu-item" onClick={() => setView("add")}>
@@ -1595,10 +1521,86 @@ const { user, logout } = useAuth();
                               {req.status === 'READY' && <span className="status-ready">SẴN SÀNG</span>}
                             </td>
                             <td className="table-action-cell" style={{display:'flex', justifyContent:'flex-end', alignItems:'center', gap:6}}>
-                              <button className="action-button" style={{display: req.status === 'PENDING' ? 'inline-block' : 'none', width:110, padding:'6px 0', flexShrink:0}} onClick={() => approveComponentRequest(req.id)}>Duyệt</button>
-                              <button className="action-button" style={{display: req.status === 'PENDING' ? 'inline-block' : 'none', width:110, padding:'6px 0', flexShrink:0}} onClick={() => rejectComponentRequest(req.id)}>Từ chối</button>
-                              <button className="action-button" style={{display: req.status === 'READY' ? 'inline-block' : 'none', width:110, padding:'6px 0', flexShrink:0, background:'#43a047', color:'#fff', border:'none', borderRadius:6, fontWeight:600, cursor:'pointer', transition:'background 0.2s'}} onClick={() => completeComponentRequest(req.id)}>Hoàn tất</button>
-                              <button className="cancel-button" style={{fontWeight:500, padding:'6px 18px', flex:'0 0 auto'}} onClick={()=>{setSelectedComponentRequest(req); setShowComponentDetail(true);}}>Xem chi tiết</button>
+                              <button
+                                className="action-button"
+                                style={{
+                                  display: req.status === 'PENDING' ? 'inline-block' : 'none',
+                                  width: 110,
+                                  padding: '6px 0',
+                                  flexShrink: 0,
+                                  background: '#43a047', // xanh lá cây
+                                  color: '#fff',
+                                  border: 'none',
+                                  borderRadius: 6,
+                                  fontWeight: 600,
+                                  cursor: 'pointer',
+                                  transition: 'background 0.2s'
+                                }}
+                                onClick={() => approveComponentRequest(req.id)}
+                              >
+                                Duyệt
+                              </button>
+
+                              <button
+                                className="action-button"
+                                style={{
+                                  display: req.status === 'PENDING' ? 'inline-block' : 'none',
+                                  width: 110,
+                                  padding: '6px 0',
+                                  flexShrink: 0,
+                                  background: '#e53935', // đỏ
+                                  color: '#fff',
+                                  border: 'none',
+                                  borderRadius: 6,
+                                  fontWeight: 600,
+                                  cursor: 'pointer',
+                                  transition: 'background 0.2s'
+                                }}
+                                onClick={() => rejectComponentRequest(req.id)}
+                              >
+                                Từ chối
+                              </button>
+
+                              <button
+                                className="action-button"
+                                style={{
+                                  display: req.status === 'READY' ? 'inline-block' : 'none',
+                                  width: 110,
+                                  padding: '6px 0',
+                                  flexShrink: 0,
+                                  background: '#43a047', // xanh lá cây
+                                  color: '#fff',
+                                  border: 'none',
+                                  borderRadius: 6,
+                                  fontWeight: 600,
+                                  cursor: 'pointer',
+                                  transition: 'background 0.2s'
+                                }}
+                                onClick={() => completeComponentRequest(req.id)}
+                              >
+                                Hoàn tất
+                              </button>
+
+                              <button
+                                className="cancel-button"
+                                style={{
+                                  fontWeight: 500,
+                                  padding: '6px 18px',
+                                  flex: '0 0 auto',
+                                  background: '#1976d2', // xanh dương
+                                  color: '#fff',
+                                  border: 'none',
+                                  borderRadius: 6,
+                                  cursor: 'pointer',
+                                  transition: 'background 0.2s'
+                                }}
+                                onClick={() => {
+                                  setSelectedComponentRequest(req);
+                                  setShowComponentDetail(true);
+                                }}
+                              >
+                                Xem chi tiết
+                              </button>
                             </td>
                           </tr>
                         ))
@@ -1644,7 +1646,7 @@ const { user, logout } = useAuth();
           )}
           {view === 'componentStock' && (
             <>
-              <h2>Kho máu phân tích</h2>
+              <h2>Kho máu phân tách</h2>
               <div style={{display:'flex', justifyContent:'center', gap:12, marginBottom:18}}>
                 {componentTabs.map(tab => (
                   <button

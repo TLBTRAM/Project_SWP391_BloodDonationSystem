@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './components/Edit.css';
 import { useNavigate } from 'react-router-dom';
 
@@ -10,16 +10,51 @@ interface UserInfo {
 }
 
 const Edit: React.FC = () => {
-
   const navigate = useNavigate();
-
-  // Giả sử lấy dữ liệu user từ API hoặc context, mình hardcode tạm
   const [userInfo, setUserInfo] = useState<UserInfo>({
-    name: 'Dinoy Raj K',
-    address: '123 Đường ABC, Quận 1, TP.HCM',
-    phone: '0909123456',
-    email: 'dinoy@example.com',
+    name: '',
+    address: '',
+    phone: '',
+    email: '',
   });
+
+  const [loading, setLoading] = useState<boolean>(true);
+
+  // Load thông tin người dùng hiện tại từ API khi mở trang
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      alert('Bạn chưa đăng nhập.');
+      navigate('/login');
+      return;
+    }
+
+    fetch('/api/account/profile', {
+      headers: {
+        'Authorization': `Bearer ${token}`,
+      },
+    })
+      .then(res => {
+        if (!res.ok) {
+          throw new Error('Không thể lấy thông tin người dùng');
+        }
+        return res.json();
+      })
+      .then(data => {
+        setUserInfo({
+          name: data.name || '',
+          address: data.address || '',
+          phone: data.phone || '',
+          email: data.email || '',
+        });
+        setLoading(false);
+      })
+      .catch(err => {
+        alert('Không thể tải dữ liệu người dùng.');
+        console.error(err);
+        navigate('/user');
+      });
+  }, [navigate]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setUserInfo({
@@ -28,12 +63,41 @@ const Edit: React.FC = () => {
     });
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Gửi data lên API hoặc xử lý lưu info người dùng
-    alert('Thông tin đã được lưu thành công!');
-    // Ví dụ: gọi API ở đây
+    const token = localStorage.getItem('token');
+    if (!token) {
+      alert('Bạn chưa đăng nhập.');
+      navigate('/login');
+      return;
+    }
+
+    try {
+      const response = await fetch('/api/account/update-profile', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
+        },
+        body: JSON.stringify(userInfo),
+      });
+
+      if (response.ok) {
+        alert('Thông tin đã được lưu thành công!');
+        navigate('/user');
+      } else {
+        const errorData = await response.json();
+        alert('Lỗi: ' + (errorData.message || 'Không thể cập nhật thông tin'));
+      }
+    } catch (error) {
+      alert('Lỗi kết nối đến máy chủ!');
+      console.error('Lỗi API:', error);
+    }
   };
+
+  if (loading) {
+    return <div>Đang tải thông tin...</div>;
+  }
 
   return (
     <div className="edit-container">

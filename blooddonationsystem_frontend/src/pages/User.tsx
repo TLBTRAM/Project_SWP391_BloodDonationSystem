@@ -269,7 +269,7 @@ const User = () => {
         plasmaQuantity: Number(componentForm.plasmaQuantity),
         plateletQuantity: Number(componentForm.plateletQuantity)
       };
-      const res = await fetch("http://localhost:8080/api/blood-requests/blood-requests/component", {
+      const res = await fetch("http://localhost:8080/api/blood-requests/component", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -425,8 +425,7 @@ const User = () => {
     // eslint-disable-next-line
   }, [showBloodRequestForm]);
 
-
-
+const notificationCount = notifications.filter(n => !n.isRead).length;
   // Thêm hàm đánh dấu tất cả thông báo là đã đọc
 
   const PAGE_SIZE = 4;
@@ -470,7 +469,7 @@ const User = () => {
               <h2>{user?.fullName || "Tên người dùng"}</h2>
               <div className="user-actions">
                 <span className="user-role">Người dùng</span>
-                <button className="edit-profile-btn" onClick={() => navigate('/edit')}>
+                <button className="edit-profile-btn" onClick={() => navigate('/user-profile')}>
                   ✏️ Chỉnh sửa hồ sơ
                 </button>
               </div>
@@ -556,6 +555,22 @@ const User = () => {
           <div className="third-panel">
             <div className="booking-item">
               <div className="booking-text">
+                <h4>Thông báo</h4>
+                <p>Nhấn vào đây để xem thông báo mới về xét nghiệm, kết quả khám sàng lọc, người cần máu và các cập nhật khác.</p>
+                <div className="icon-wrapper">
+                <img src={notificationIcon} alt="Thông báo" className="icon" />
+                    {notificationCount > 0 && (
+                      <span className="notification-badge">
+                        {notificationCount > 99 ? '99+' : notificationCount + '+'}
+                      </span>
+                    )}
+                </div>
+
+                <button onClick={() => setShowNotificationPopup(true)}>Xem ngay</button>
+              </div>
+            </div>
+            <div className="booking-item">
+              <div className="booking-text">
                 <h4>Đăng ký lịch hẹn</h4>
                 <p>Chọn ngày và giờ phù hợp để được phục vụ nhanh chóng và thuận tiện hơn.</p>
                 <img src={calendarIcon} alt="Đặt lịch" />
@@ -603,16 +618,6 @@ const User = () => {
                 </div>
               </div>
             )}
-
-            <div className="booking-item">
-              <div className="booking-text">
-                <h4>Thông báo</h4>
-                <p>Nhấn vào đây để xem thông báo mới về xét nghiệm, kết quả khám sàng lọc, người cần máu và các cập nhật khác.</p>
-                <img src={notificationIcon} alt="Thông báo" />
-                <button onClick={() => setShowNotificationPopup(true)}>Xem ngay</button>
-              </div>
-            </div>
-
           </div>
         </main>
       </div>
@@ -747,7 +752,7 @@ const User = () => {
                 </div>
                 <div style={{ marginBottom: 8 }}>
                   <label style={{ fontWeight: 500, fontSize: '0.97rem' }}>Ngày sinh</label>
-                  <input name="dateOfBirth" type="date" value={form.dateOfBirth} onChange={handleFormChange} required style={{ width: '100%', padding: 5, borderRadius: 5, border: '1px solid #ccc', marginTop: 2, fontSize: '0.97rem' }} />
+                  <input name="dateOfBirth" type="date" value={form.dateOfBirth} onChange={handleFormChange} required max={new Date().toISOString().split('T')[0]} style={{ width: '100%', padding: 5, borderRadius: 5, border: '1px solid #ccc', marginTop: 2, fontSize: '0.97rem' }} />
                 </div>
                 <div style={{ marginBottom: 8 }}>
                   <label style={{ fontWeight: 500, fontSize: '0.97rem' }}>Số điện thoại</label>
@@ -881,7 +886,7 @@ const User = () => {
                 </div>
                 <div style={{ marginBottom: 8 }}>
                   <label style={{ fontWeight: 500, fontSize: '0.97rem' }}>Ngày sinh</label>
-                  <input name="dateOfBirth" type="date" value={componentForm.dateOfBirth} onChange={handleComponentChange} required style={{ width: '100%', padding: 5, borderRadius: 5, border: '1px solid #ccc', marginTop: 2, fontSize: '0.97rem' }} />
+                  <input name="dateOfBirth" type="date" value={componentForm.dateOfBirth} onChange={handleComponentChange} required max={new Date().toISOString().split('T')[0]} style={{ width: '100%', padding: 5, borderRadius: 5, border: '1px solid #ccc', marginTop: 2, fontSize: '0.97rem' }} />
                 </div>
                 <div style={{ marginBottom: 8 }}>
                   <label style={{ fontWeight: 500, fontSize: '0.97rem' }}>Số điện thoại</label>
@@ -901,8 +906,8 @@ const User = () => {
                     <label style={{ fontWeight: 500, fontSize: '0.97rem' }}>Tỉnh/TP</label>
                     <select
                       name="address-provinceId"
-                      value={selectedProvince}
-                      onChange={handleFormChange}
+                      value={componentForm.patientAddress.provinceId}
+                      onChange={handleComponentChange}
                       required
                       style={{ width: '100%', padding: 5, borderRadius: 5, border: '1px solid #ccc', marginTop: 2, fontSize: '0.97rem' }}
                     >
@@ -916,14 +921,14 @@ const User = () => {
                     <label style={{ fontWeight: 500, fontSize: '0.97rem' }}>Quận/Huyện</label>
                     <select
                       name="address-districtId"
-                      value={selectedDistrict}
-                      onChange={handleFormChange}
+                      value={componentForm.patientAddress.districtId}
+                      onChange={handleComponentChange}
                       required
-                      disabled={!selectedProvince}
+                      disabled={!componentForm.patientAddress.provinceId}
                       style={{ width: '100%', padding: 5, borderRadius: 5, border: '1px solid #ccc', marginTop: 2, fontSize: '0.97rem' }}
                     >
                       <option value="">Chọn quận/huyện</option>
-                      {pcVN.getDistrictsByProvinceCode(selectedProvince).map((district: any) => (
+                      {pcVN.getDistrictsByProvinceCode(componentForm.patientAddress.provinceId).map((district: any) => (
                         <option key={district.code} value={district.code}>{district.name}</option>
                       ))}
                     </select>
@@ -935,14 +940,14 @@ const User = () => {
                     <label style={{ fontWeight: 500, fontSize: '0.97rem' }}>Phường/Xã</label>
                     <select
                       name="address-wardId"
-                      value={selectedWard}
-                      onChange={handleFormChange}
+                      value={componentForm.patientAddress.wardId}
+                      onChange={handleComponentChange}
                       required
-                      disabled={!selectedDistrict}
+                      disabled={!componentForm.patientAddress.districtId}
                       style={{ width: '100%', padding: 5, borderRadius: 5, border: '1px solid #ccc', marginTop: 2, fontSize: '0.97rem' }}
                     >
                       <option value="">Chọn phường/xã</option>
-                      {pcVN.getWardsByDistrictCode(selectedDistrict).map((ward: any) => (
+                      {pcVN.getWardsByDistrictCode(componentForm.patientAddress.districtId).map((ward: any) => (
                         <option key={ward.code} value={ward.code}>{ward.name}</option>
                       ))}
                     </select>
@@ -951,8 +956,8 @@ const User = () => {
                     <label style={{ fontWeight: 500, fontSize: '0.97rem' }}>Số nhà, tên đường</label>
                     <input
                       name="address-street"
-                      value={form.patientAddress.street}
-                      onChange={handleFormChange}
+                      value={componentForm.patientAddress.street}
+                      onChange={handleComponentChange}
                       required
                       style={{ width: '100%', padding: 5, borderRadius: 5, border: '1px solid #ccc', marginTop: 2, fontSize: '0.97rem' }}
                     />

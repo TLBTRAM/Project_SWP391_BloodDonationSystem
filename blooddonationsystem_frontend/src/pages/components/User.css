@@ -194,6 +194,7 @@ body {
   text-align: left;
 }
 
+
 /* Nếu cần, có thể thêm style riêng cho .booking-item h4 để giữ màu mặc định */
 
 .donation-history table {
@@ -599,6 +600,34 @@ body {
 .noti-tab-btn.inactive {
   color: #888;
   border-bottom: 4px solid #eee;
+}
+.icon-wrapper {
+  position: relative;
+  display: inline-block;
+}
+
+.icon-wrapper img {
+  width: 64px;
+  height: 64px;
+  object-fit: contain;
+  margin-right: 15px;
+  border-radius: 12px;
+  background-color: #fce4ec;
+  padding: 8px;
+}
+
+.notification-badge {
+  position: absolute;
+  top: -6px;
+  left: -6px;
+  background-color: red;
+  color: white;
+  font-size: 12px;
+  font-weight: bold;
+  padding: 2px 6px;
+  border-radius: 50%;
+  line-height: 1;
+  box-shadow: 0 0 0 2px white;
 }
 .noti-tab-badge {
   background: #FF204E;

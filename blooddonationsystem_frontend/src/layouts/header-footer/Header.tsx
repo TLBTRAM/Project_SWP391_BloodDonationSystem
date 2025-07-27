@@ -12,6 +12,7 @@ interface UserData {
 const Header: React.FC = () => {
   const navigate = useNavigate();
   const handleProfileNavigate = () => {
+    console.log("User info:", user);
     console.log("Navigating with role:", user?.role);
     switch (user?.role) {
       case 'CUSTOMER':
@@ -53,7 +54,7 @@ const Header: React.FC = () => {
 
       <nav className="nav-links">
         <Link to="/">Trang chủ</Link>
-        <a href="#contact">Liên hệ</a>
+        <a href="/contact">Liên hệ</a>
         <a href="#info">Thông tin</a>
         <Link to="/team">Đội ngũ nhân viên y tế</Link>
         {!user && (
@@ -77,8 +78,6 @@ const Header: React.FC = () => {
           {dropdownOpen && (
             <div className="dropdown-register">
               <button className="dropdown-register-button" onClick={handleProfileNavigate}>👤 Hồ sơ cá nhân</button>
-              <button className="dropdown-register-button" onClick={() => navigate('/settings')}>⚙️ Cài đặt</button>
-              <button className="dropdown-register-button" onClick={() => navigate('/notification')}>📅 Lịch hẹn đã đặt</button>
               <button className="dropdown-register-button" onClick={handleLogout}>🚪 Đăng xuất</button>
             </div>
           )}

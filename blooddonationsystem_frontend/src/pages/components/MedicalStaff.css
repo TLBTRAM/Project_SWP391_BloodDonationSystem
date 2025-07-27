@@ -111,7 +111,7 @@ body {
 .staff-profile {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  gap: 50px;
   background: var(--card-bg);
   padding: 30px 40px;
   border-radius: 20px;
@@ -193,11 +193,29 @@ body {
 /* -----------------------------------------
   5.3 APPOINTMENT LIST
 ------------------------------------------ */
-.appointment-list {
+.blood-donation-rules {
   background: white;
   padding: 28px !important;
   border-radius: 16px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+}
+
+.blood-donation-rules h3 {
+  font-size: 1.4rem;
+  margin-bottom: 12px;
+  color: #d90429;
+}
+
+.blood-donation-rules ul {
+  padding-left: 20px;
+  margin-bottom: 16px;
+}
+
+.blood-donation-rules ul li {
+  margin-bottom: 10px;
+  line-height: 1.6;
+  font-size: 1rem;
+  color: #333;
 }
 
 .appointment-header {

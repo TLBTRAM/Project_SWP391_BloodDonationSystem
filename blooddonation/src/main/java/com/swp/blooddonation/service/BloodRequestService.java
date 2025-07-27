@@ -4,6 +4,7 @@ import com.swp.blooddonation.dto.AddressDTO;
 import com.swp.blooddonation.dto.request.BloodRequestRequest;
 import com.swp.blooddonation.dto.request.ComponentBloodRequestRequest;
 import com.swp.blooddonation.dto.request.NotificationRequest;
+import com.swp.blooddonation.dto.response.BloodRequestComponentResponse;
 import com.swp.blooddonation.entity.*;
 import com.swp.blooddonation.enums.*;
 import com.swp.blooddonation.exception.exceptions.BadRequestException;
@@ -625,5 +626,19 @@ public class BloodRequestService {
         System.out.println("----- HUỶ YÊU CẦU THÀNH CÔNG -----");
     }
 
+    public BloodRequestComponentResponse toComponentResponse(BloodRequestComponent entity) {
+        BloodRequestComponentResponse dto = new BloodRequestComponentResponse();
+        dto.setId(entity.getId());
+        dto.setBloodType(entity.getBloodType());
+        dto.setRhType(entity.getRhType());
+        dto.setHospitalName(entity.getHospitalName());
+        dto.setMedicalCondition(entity.getMedicalCondition());
+        dto.setRequestDate(entity.getRequestDate());
+        dto.setStatus(entity.getStatus());
+        dto.setRedCellQuantity(entity.getRedCellQuantity());
+        dto.setPlasmaQuantity(entity.getPlasmaQuantity());
+        dto.setPlateletQuantity(entity.getPlateletQuantity());
+        return dto;
+    }
 
 }

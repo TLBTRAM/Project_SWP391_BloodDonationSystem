@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import "./AdminNotifications.css";
+import "./components/AdminNotifications.css";
 import DeleteImg from "./images/Action/bin.png";
 
 interface Notification {

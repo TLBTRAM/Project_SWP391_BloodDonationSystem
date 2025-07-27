@@ -6,6 +6,7 @@ import com.swp.blooddonation.entity.WholeBloodRequest;
 import com.swp.blooddonation.service.BloodRequestService;
 import com.swp.blooddonation.entity.BloodRequestComponent;
 import com.swp.blooddonation.repository.BloodRequestComponentRepository;
+import com.swp.blooddonation.dto.response.BloodRequestComponentResponse;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -36,10 +37,12 @@ public class BloodRequestAPI {
         return ResponseEntity.ok(result);
     }
 
-    @PostMapping("/blood-requests/component")
-    public ResponseEntity<?> requestBloodByComponent(@RequestBody @Valid ComponentBloodRequestRequest dto) {
-        bloodRequestService.requestBloodByComponent(dto);
-        return ResponseEntity.ok("Gửi yêu cầu truyền thành phần máu thành công.");
+    @PreAuthorize("hasRole('CUSTOMER') or hasRole('MEDICALSTAFF')")
+    @PostMapping("/component")
+    public ResponseEntity<BloodRequestComponentResponse> requestBloodByComponent(@RequestBody @Valid ComponentBloodRequestRequest dto) {
+        BloodRequestComponent result = bloodRequestService.requestBloodByComponent(dto);
+        BloodRequestComponentResponse response = bloodRequestService.toComponentResponse(result);
+        return ResponseEntity.ok(response);
     }
 
     @PreAuthorize("hasRole('CUSTOMER') or hasRole('MEDICALSTAFF')")

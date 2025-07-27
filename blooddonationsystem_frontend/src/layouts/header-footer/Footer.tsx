@@ -16,9 +16,9 @@ const Footer = () => {
           </div>
           <div className="footer-right">
             <h4>Khác</h4>
-            <p><a href="#">Trang chủ</a></p>
-            <p><a href="#info">Tin tức</a></p>
-            <p><a href="#aboutus">Về chúng tôi</a></p>
+            <p><a href="/">Trang chủ</a></p>
+            <p><a href="/news">Tin tức</a></p>
+            <p><a href="/team">Về chúng tôi</a></p>
           </div>
         </div>
         <div className="footer-bottom">
