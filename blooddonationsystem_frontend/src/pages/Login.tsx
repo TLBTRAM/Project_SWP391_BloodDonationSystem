@@ -23,8 +23,27 @@ function Login() {
   const navigate = useNavigate();
 
   const { login, refetchUser } = useAuth();
+  const validateLoginForm = () => {
+    const newErrors: { [key: string]: string } = {};
+
+    if (!email.trim()) {
+      newErrors.email = "Vui lòng nhập email.";
+    } else if (!/\S+@\S+\.\S+/.test(email)) {
+      newErrors.email = "Email không hợp lệ.";
+    }
+
+    if (!password.trim()) {
+      newErrors.password = "Vui lòng nhập mật khẩu.";
+    }
+
+    // Gộp các lỗi thành chuỗi
+    setError(Object.values(newErrors).join(" "));
+    return Object.keys(newErrors).length === 0;
+  };
   const handleLogin = async (e?: React.FormEvent) => {
     if (e) e.preventDefault();
+    if (!validateLoginForm()) return;
+
     setIsLoading(true);
     setError("");
     try {
