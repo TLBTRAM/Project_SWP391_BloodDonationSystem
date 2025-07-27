@@ -14,8 +14,7 @@ import Header from "../layouts/header-footer/Header";
 import ScheduleSetup from "./MS_components/ScheduleSetup";
 import ScheduleManagement from "./MS_components/ScheduleManagement";
 import DonationSchedule from "./MS_components/DonationSchedule";
-import SendToStorage from "./MS_components/SendToStorage";
-import RequestBlood from "./MS_components/RequestBlood";
+
 
 // Đăng ký locale tiếng Việt cho ReactDatePicker
 registerLocale("vi", vi as unknown as Locale);
@@ -30,8 +29,6 @@ const MedicalStaff = () => {
     | "scheduleManagement"
     | "screening"
     | "donationSchedule"
-    | "sendToStorage"
-    | "requestBlood"
     | "collectBlood"
     | "collectHistory"
   >("medicalDashboard");
@@ -403,22 +400,6 @@ const MedicalStaff = () => {
                 Lịch sử lấy máu
               </button>
             </li>
-            <li className={view === "sendToStorage" ? "active" : ""}>
-              <button
-                className="menu-item"
-                onClick={() => setView("sendToStorage")}
-              >
-                Gửi máu cho kho máu
-              </button>
-            </li>
-            <li className={view === "requestBlood" ? "active" : ""}>
-              <button
-                className="menu-item"
-                onClick={() => setView("requestBlood")}
-              >
-                Tạo yêu cầu nhận máu
-              </button>
-            </li>
           </ul>
         </div>
 
@@ -640,8 +621,6 @@ const MedicalStaff = () => {
               </div>
             </div>
           )}
-          {view === "sendToStorage" && <SendToStorage />}
-          {view === "requestBlood" && <RequestBlood />}
           {view === "collectBlood" && <CollectBlood />}
           {view === "collectHistory" && <CollectBloodHistory />}
         </div>
