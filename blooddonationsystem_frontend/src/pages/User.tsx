@@ -425,8 +425,7 @@ const User = () => {
     // eslint-disable-next-line
   }, [showBloodRequestForm]);
 
-
-
+const notificationCount = notifications.filter(n => !n.isRead).length;
   // Thêm hàm đánh dấu tất cả thông báo là đã đọc
 
   const PAGE_SIZE = 4;
@@ -470,7 +469,7 @@ const User = () => {
               <h2>{user?.fullName || "Tên người dùng"}</h2>
               <div className="user-actions">
                 <span className="user-role">Người dùng</span>
-                <button className="edit-profile-btn" onClick={() => navigate('/edit')}>
+                <button className="edit-profile-btn" onClick={() => navigate('/user-profile')}>
                   ✏️ Chỉnh sửa hồ sơ
                 </button>
               </div>
@@ -556,6 +555,22 @@ const User = () => {
           <div className="third-panel">
             <div className="booking-item">
               <div className="booking-text">
+                <h4>Thông báo</h4>
+                <p>Nhấn vào đây để xem thông báo mới về xét nghiệm, kết quả khám sàng lọc, người cần máu và các cập nhật khác.</p>
+                <div className="icon-wrapper">
+                <img src={notificationIcon} alt="Thông báo" className="icon" />
+                    {notificationCount > 0 && (
+                      <span className="notification-badge">
+                        {notificationCount > 99 ? '99+' : notificationCount + '+'}
+                      </span>
+                    )}
+                </div>
+
+                <button onClick={() => setShowNotificationPopup(true)}>Xem ngay</button>
+              </div>
+            </div>
+            <div className="booking-item">
+              <div className="booking-text">
                 <h4>Đăng ký lịch hẹn</h4>
                 <p>Chọn ngày và giờ phù hợp để được phục vụ nhanh chóng và thuận tiện hơn.</p>
                 <img src={calendarIcon} alt="Đặt lịch" />
@@ -603,16 +618,6 @@ const User = () => {
                 </div>
               </div>
             )}
-
-            <div className="booking-item">
-              <div className="booking-text">
-                <h4>Thông báo</h4>
-                <p>Nhấn vào đây để xem thông báo mới về xét nghiệm, kết quả khám sàng lọc, người cần máu và các cập nhật khác.</p>
-                <img src={notificationIcon} alt="Thông báo" />
-                <button onClick={() => setShowNotificationPopup(true)}>Xem ngay</button>
-              </div>
-            </div>
-
           </div>
         </main>
       </div>

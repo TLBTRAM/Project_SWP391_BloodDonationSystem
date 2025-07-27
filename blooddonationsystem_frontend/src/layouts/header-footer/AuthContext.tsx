@@ -4,7 +4,7 @@ import axios from 'axios';
 interface User {
   fullName: string;
   email?: string;
-  role?: 'CUSTOMER' | 'ADMIN' | 'MANAGER' | 'MEDICALSTAFF'; 
+  role?: 'CUSTOMER' | 'ADMIN' | 'MANAGER' | 'MEDICALSTAFF';
 }
 
 interface AuthContextType {
@@ -25,16 +25,26 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     if (!token) return;
 
     try {
-      const response = await axios.get('http://localhost:8080/api/user/profile', {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      // Gọi đồng thời cả hai API
+      const [userRes, accountRes] = await Promise.all([
+        axios.get('http://localhost:8080/api/user/profile', {
+          headers: { Authorization: `Bearer ${token}` },
+        }),
+        axios.get('http://localhost:8080/api/account/profile', {
+          headers: { Authorization: `Bearer ${token}` },
+        }),
+      ]);
 
-      setUser(response.data); // gán dữ liệu từ BE
-      console.log('✅ User fetched from API:', response.data);
+      const mergedUser: User = {
+        fullName: userRes.data.fullName,
+        email: userRes.data.email,
+        role: accountRes.data.role, // lấy role từ account
+      };
+
+      setUser(mergedUser);
+      console.log('✅ Merged user info:', mergedUser);
     } catch (error) {
-      console.error('❌ Lỗi khi fetch user:', error);
+      console.error('❌ Lỗi khi fetch user/account profile:', error);
       setUser(null);
     }
   };

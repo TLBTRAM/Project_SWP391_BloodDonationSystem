@@ -69,7 +69,7 @@ function App() {
 
 				{/* Tài khoản người dùng*/}
 				<Route path="/user" element={<UserPage />} />
-				<Route path="/edit" element={<EditPage />} />
+				<Route path="/user-profile" element={<EditPage />} />
 
 				<Route path="/booking" element={<BookingPage />} />
 				<Route path="/my-registrations" element={<MyRegistrationspage />} />
