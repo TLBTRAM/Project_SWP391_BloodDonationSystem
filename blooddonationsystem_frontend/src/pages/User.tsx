@@ -4,7 +4,7 @@ import Calendar from './Calendar';
 import './components/User.css';
 import Header from '../layouts/header-footer/Header';
 import avatarImg from './images/User/Avatar.png';
-import calendarIcon from './images/User/Calendar.png';
+import calendarIcon from './images/User/calendar.png';
 import notificationIcon from './images/User/notifications.png';
 import blood_request_historyIcon from './images/User/blood_request_history.png';
 import orderIcon from './images/User/order.png';
@@ -269,7 +269,7 @@ const User = () => {
         plasmaQuantity: Number(componentForm.plasmaQuantity),
         plateletQuantity: Number(componentForm.plateletQuantity)
       };
-      const res = await fetch("http://localhost:8080/api/blood-requests/blood-requests/component", {
+      const res = await fetch("http://localhost:8080/api/blood-requests/component", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -901,8 +901,8 @@ const User = () => {
                     <label style={{ fontWeight: 500, fontSize: '0.97rem' }}>Tỉnh/TP</label>
                     <select
                       name="address-provinceId"
-                      value={selectedProvince}
-                      onChange={handleFormChange}
+                      value={componentForm.patientAddress.provinceId}
+                      onChange={handleComponentChange}
                       required
                       style={{ width: '100%', padding: 5, borderRadius: 5, border: '1px solid #ccc', marginTop: 2, fontSize: '0.97rem' }}
                     >
@@ -916,14 +916,14 @@ const User = () => {
                     <label style={{ fontWeight: 500, fontSize: '0.97rem' }}>Quận/Huyện</label>
                     <select
                       name="address-districtId"
-                      value={selectedDistrict}
-                      onChange={handleFormChange}
+                      value={componentForm.patientAddress.districtId}
+                      onChange={handleComponentChange}
                       required
-                      disabled={!selectedProvince}
+                      disabled={!componentForm.patientAddress.provinceId}
                       style={{ width: '100%', padding: 5, borderRadius: 5, border: '1px solid #ccc', marginTop: 2, fontSize: '0.97rem' }}
                     >
                       <option value="">Chọn quận/huyện</option>
-                      {pcVN.getDistrictsByProvinceCode(selectedProvince).map((district: any) => (
+                      {pcVN.getDistrictsByProvinceCode(componentForm.patientAddress.provinceId).map((district: any) => (
                         <option key={district.code} value={district.code}>{district.name}</option>
                       ))}
                     </select>
@@ -935,14 +935,14 @@ const User = () => {
                     <label style={{ fontWeight: 500, fontSize: '0.97rem' }}>Phường/Xã</label>
                     <select
                       name="address-wardId"
-                      value={selectedWard}
-                      onChange={handleFormChange}
+                      value={componentForm.patientAddress.wardId}
+                      onChange={handleComponentChange}
                       required
-                      disabled={!selectedDistrict}
+                      disabled={!componentForm.patientAddress.districtId}
                       style={{ width: '100%', padding: 5, borderRadius: 5, border: '1px solid #ccc', marginTop: 2, fontSize: '0.97rem' }}
                     >
                       <option value="">Chọn phường/xã</option>
-                      {pcVN.getWardsByDistrictCode(selectedDistrict).map((ward: any) => (
+                      {pcVN.getWardsByDistrictCode(componentForm.patientAddress.districtId).map((ward: any) => (
                         <option key={ward.code} value={ward.code}>{ward.name}</option>
                       ))}
                     </select>
@@ -951,8 +951,8 @@ const User = () => {
                     <label style={{ fontWeight: 500, fontSize: '0.97rem' }}>Số nhà, tên đường</label>
                     <input
                       name="address-street"
-                      value={form.patientAddress.street}
-                      onChange={handleFormChange}
+                      value={componentForm.patientAddress.street}
+                      onChange={handleComponentChange}
                       required
                       style={{ width: '100%', padding: 5, borderRadius: 5, border: '1px solid #ccc', marginTop: 2, fontSize: '0.97rem' }}
                     />
