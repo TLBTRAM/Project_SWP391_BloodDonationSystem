@@ -425,8 +425,7 @@ const User = () => {
     // eslint-disable-next-line
   }, [showBloodRequestForm]);
 
-
-
+const notificationCount = notifications.filter(n => !n.isRead).length;
   // Thêm hàm đánh dấu tất cả thông báo là đã đọc
 
   const PAGE_SIZE = 4;
@@ -558,7 +557,15 @@ const User = () => {
               <div className="booking-text">
                 <h4>Thông báo</h4>
                 <p>Nhấn vào đây để xem thông báo mới về xét nghiệm, kết quả khám sàng lọc, người cần máu và các cập nhật khác.</p>
-                <img src={notificationIcon} alt="Thông báo" />
+                <div className="icon-wrapper">
+                <img src={notificationIcon} alt="Thông báo" className="icon" />
+                    {notificationCount > 0 && (
+                      <span className="notification-badge">
+                        {notificationCount > 99 ? '99+' : notificationCount + '+'}
+                      </span>
+                    )}
+                </div>
+
                 <button onClick={() => setShowNotificationPopup(true)}>Xem ngay</button>
               </div>
             </div>

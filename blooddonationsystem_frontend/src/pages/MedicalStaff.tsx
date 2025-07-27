@@ -56,14 +56,7 @@ const MedicalStaff = () => {
     setFormLocked(selectedDonation?.passed !== undefined);
   }, [selectedDonation]);
 
-  useEffect(() => {
-    const fakeAppointments = [
-      { date: "2025-06-26", time: "09:00", donor: "Nguyễn Võ Sỹ Khim" },
-      { date: "2025-06-26", time: "14:30", donor: "Tester" },
-      { date: "2025-06-26", time: "10:15", donor: "Nguyễn Võ Sỹ Khim" },
-    ];
-    setAppointments(fakeAppointments);
-  }, []);
+
 
   useEffect(() => {
     // ⬅️ thêm: gọi API lấy thông tin nhân viên
@@ -146,7 +139,7 @@ const MedicalStaff = () => {
     const [completedTests, setCompletedTests] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState("");
-    const [volumeMap, setVolumeMap] = useState<{[id: number]: string}>({});
+    const [volumeMap, setVolumeMap] = useState<{ [id: number]: string }>({});
     const [collectingId, setCollectingId] = useState<number | null>(null);
     const [collectMsg, setCollectMsg] = useState<string>("");
 
@@ -207,37 +200,37 @@ const MedicalStaff = () => {
     };
 
     return (
-      <div style={{padding:32, background:'#f8fafd', minHeight: '100vh'}}>
-        <h2 style={{color:'#ED232B', marginBottom:24, fontSize:'2rem', textAlign:'center'}}>Lấy máu</h2>
-        {loading ? <div>Đang tải dữ liệu...</div> : error ? <div style={{color:'#dc2626'}}>{error}</div> : (
-          <div style={{maxWidth: 900, margin: '0 auto'}}>
+      <div style={{ padding: 32, background: '#f8fafd', minHeight: '100vh' }}>
+        <h2 style={{ color: '#ED232B', marginBottom: 24, fontSize: '2rem', textAlign: 'center' }}>Lấy máu</h2>
+        {loading ? <div>Đang tải dữ liệu...</div> : error ? <div style={{ color: '#dc2626' }}>{error}</div> : (
+          <div style={{ maxWidth: 900, margin: '0 auto' }}>
             {completedTests.length === 0 ? (
-              <div style={{textAlign:'center', color:'#888', fontSize:'1.1rem'}}>Không có xét nghiệm nào đã hoàn thành.</div>
+              <div style={{ textAlign: 'center', color: '#888', fontSize: '1.1rem' }}>Không có xét nghiệm nào đã hoàn thành.</div>
             ) : (
               completedTests.map((item, idx) => (
                 <div key={item.id || idx} style={{
                   marginBottom: 28,
-                  border:'none',
-                  borderRadius:18,
-                  padding:'28px 36px',
-                  background:'#fff',
-                  boxShadow:'0 4px 24px rgba(200,0,0,0.10)',
-                  display:'flex',
-                  alignItems:'center',
-                  justifyContent:'space-between',
-                  transition:'box-shadow 0.2s, background 0.2s',
+                  border: 'none',
+                  borderRadius: 18,
+                  padding: '28px 36px',
+                  background: '#fff',
+                  boxShadow: '0 4px 24px rgba(200,0,0,0.10)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  transition: 'box-shadow 0.2s, background 0.2s',
                 }}
-                onMouseOver={e => e.currentTarget.style.boxShadow = '0 8px 32px rgba(200,0,0,0.16)'}
-                onMouseOut={e => e.currentTarget.style.boxShadow = '0 4px 24px rgba(200,0,0,0.10)'}
+                  onMouseOver={e => e.currentTarget.style.boxShadow = '0 8px 32px rgba(200,0,0,0.16)'}
+                  onMouseOut={e => e.currentTarget.style.boxShadow = '0 4px 24px rgba(200,0,0,0.10)'}
                 >
-                  <div style={{flex:1, fontSize:'1.08rem', display:'flex', flexDirection:'column', gap:'8px'}}>
-                    <div style={{display:'flex', gap:'32px'}}>
-                      <span style={{flex:1}}><b style={{color:'#b22b2b'}}>Người hiến:</b> {item.customerName || '---'}</span>
-                      <span style={{flex:1}}><b style={{color:'#b22b2b'}}>Ngày xét nghiệm:</b> {item.testDate || '---'}</span>
+                  <div style={{ flex: 1, fontSize: '1.08rem', display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                    <div style={{ display: 'flex', gap: '32px' }}>
+                      <span style={{ flex: 1 }}><b style={{ color: '#b22b2b' }}>Người hiến:</b> {item.customerName || '---'}</span>
+                      <span style={{ flex: 1 }}><b style={{ color: '#b22b2b' }}>Ngày xét nghiệm:</b> {item.testDate || '---'}</span>
                     </div>
-                    <div style={{display:'flex', gap:'32px'}}>
-                      <span style={{flex:1}}><b style={{color:'#b22b2b'}}>Kết quả:</b> {item.result || '---'}</span>
-                      <span style={{flex:1}}><b style={{color:'#b22b2b'}}>Nhóm máu:</b> {item.bloodType || '---'} {item.rhType === 'POSITIVE' ? '+' : item.rhType === 'NEGATIVE' ? '-' : ''}</span>
+                    <div style={{ display: 'flex', gap: '32px' }}>
+                      <span style={{ flex: 1 }}><b style={{ color: '#b22b2b' }}>Kết quả:</b> {item.result || '---'}</span>
+                      <span style={{ flex: 1 }}><b style={{ color: '#b22b2b' }}>Nhóm máu:</b> {item.bloodType || '---'} {item.rhType === 'POSITIVE' ? '+' : item.rhType === 'NEGATIVE' ? '-' : ''}</span>
                     </div>
                   </div>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '16px', width: 340, maxWidth: 400 }}>
@@ -297,7 +290,7 @@ const MedicalStaff = () => {
                 </div>
               ))
             )}
-            {collectMsg && <div style={{marginTop:18, textAlign:'center', color: collectMsg.includes('thành công') ? '#16a34a' : '#dc2626', fontWeight:600, fontSize:'1.08rem'}}>{collectMsg}</div>}
+            {collectMsg && <div style={{ marginTop: 18, textAlign: 'center', color: collectMsg.includes('thành công') ? '#16a34a' : '#dc2626', fontWeight: 600, fontSize: '1.08rem' }}>{collectMsg}</div>}
           </div>
         )}
       </div>
@@ -333,9 +326,9 @@ const MedicalStaff = () => {
     }, []);
 
     return (
-      <div style={{padding:32}}>
+      <div style={{ padding: 32 }}>
         <div className="collect-history-title">LỊCH SỬ LẤY MÁU</div>
-        {loading ? <div>Đang tải dữ liệu...</div> : error ? <div style={{color:'#dc2626'}}>{error}</div> : (
+        {loading ? <div>Đang tải dữ liệu...</div> : error ? <div style={{ color: '#dc2626' }}>{error}</div> : (
           <div className="collect-history-list">
             {history.length === 0 ? (
               <div>Không có dữ liệu.</div>
@@ -448,62 +441,18 @@ const MedicalStaff = () => {
                   <p>Số điện thoại: {staff?.phone || "---"}</p>
                   <p>Đơn vị: {staff?.address || "Trung tâm hiến máu"}</p>
                 </div>
-                <button className="edit-button">Chỉnh sửa hồ sơ</button>
               </div>
 
               <div className="staff-content">
-                <div className="appointment-list">
-                  <div className="appointment-header">
-                    <h3>
-                      Danh sách đăng ký khám ngày{" "}
-                      {format(selectedDate, "dd/MM/yyyy", {
-                        locale: vi as unknown as Locale,
-                      })}{" "}
-                      ({filteredAppointments.length} lượt)
-                    </h3>
-                    <ReactDatePicker
-                      selected={selectedDate}
-                      onChange={(date: Date | null) => {
-                        if (date) setSelectedDate(date);
-                      }}
-                      dateFormat="dd/MM/yyyy"
-                      locale="vi"
-                      placeholderText="dd/mm/yyyy"
-                      className="input-text date-input"
-                      calendarClassName="custom-datepicker"
-                      maxDate={new Date()}
-                      showMonthDropdown
-                      showYearDropdown
-                      dropdownMode="select"
-                      popperPlacement="bottom"
-                      onKeyDown={(e) => {
-                        const allowedKeys = [
-                          "Backspace",
-                          "Delete",
-                          "Tab",
-                          "ArrowLeft",
-                          "ArrowRight",
-                          "/",
-                        ];
-                        const isNumber = e.key >= "0" && e.key <= "9";
-                        if (!isNumber && !allowedKeys.includes(e.key)) {
-                          e.preventDefault();
-                        }
-                      }}
-                    />
-                  </div>
-
-                  {filteredAppointments.length > 0 ? (
-                    <ul>
-                      {filteredAppointments.map((item, idx) => (
-                        <li key={idx}>
-                          🕒 <b>{item.time}</b> – 👤 <b>{item.donor}</b> ({item.status})
-                        </li>
-                      ))}
-                    </ul>
-                  ) : (
-                    <p>Không có ai đăng ký vào ngày này.</p>
-                  )}
+                <div className="blood-donation-rules">
+                  <h3>🩺 Quy định làm việc – Hiến máu</h3>
+                  <ul>
+                    <li>⏰ Làm việc đúng giờ, mặc đồng phục, đeo bảng tên.</li>
+                    <li>🧼 Rửa tay, dùng vật tư vô trùng, xử lý rác đúng quy định.</li>
+                    <li>🩸 Kiểm tra kỹ người hiến, theo dõi sau khi lấy máu.</li>
+                    <li>🔒 Bảo mật thông tin, ghi hồ sơ đầy đủ, không sửa sai quy trình.</li>
+                    <li>❌ Cấm ép buộc hiến máu, nhận “hoa hồng”, làm giả hồ sơ.</li>
+                  </ul>
                 </div>
                 <div className="calendar">
                   <h3>Hôm nay</h3>
@@ -517,39 +466,39 @@ const MedicalStaff = () => {
           {view === "scheduleSetup" && <ScheduleSetup />}
           {view === "scheduleManagement" && <ScheduleManagement />}
           {view === "donationSchedule" && (
-            <div style={{display:'flex', gap:40, alignItems:'flex-start'}}>
+            <div style={{ display: 'flex', gap: 40, alignItems: 'flex-start' }}>
               {/* Danh sách lịch hiến máu bên trái */}
-              <div style={{flex:1, minWidth:280}}>
-                <h2 style={{color:'#ED232B', marginBottom:24}}>Khám sàng lọc</h2>
-                <ul style={{listStyle:'none', padding:0, margin:0}}>
+              <div style={{ flex: 1, minWidth: 280 }}>
+                <h2 style={{ color: '#ED232B', marginBottom: 24 }}>Khám sàng lọc</h2>
+                <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
                   {donationList.length === 0 ? (
                     <li>Không có lịch hiến máu nào đã được duyệt.</li>
                   ) : (
                     donationList.map((item, idx) => (
-                      <li key={item.id || idx} style={{marginBottom:16}}>
+                      <li key={item.id || idx} style={{ marginBottom: 16 }}>
                         <button
                           style={{
-                            width:'100%',
-                            textAlign:'left',
-                            padding:'14px 18px',
-                            borderRadius:10,
+                            width: '100%',
+                            textAlign: 'left',
+                            padding: '14px 18px',
+                            borderRadius: 10,
                             border: selectedDonation === item ? (item.passed === true ? '2px solid #16a34a' : item.passed === false ? '2px solid #dc2626' : '2px solid #ED232B') : '1.5px solid #e5e7eb',
                             background: selectedDonation === item ? '#fff0f3' : '#fff',
-                            fontWeight:600,
-                            color:'#222',
-                            cursor:'pointer',
-                            boxShadow:'0 2px 8px rgba(237,35,43,0.07)'
+                            fontWeight: 600,
+                            color: '#222',
+                            cursor: 'pointer',
+                            boxShadow: '0 2px 8px rgba(237,35,43,0.07)'
                           }}
                           onClick={() => setSelectedDonation(item)}
                         >
                           <div><b>{item.fullName || '---'}</b></div>
-                          <div style={{fontSize:14, color:'#ED232B'}}>Ngày: {item.registerDate}</div>
+                          <div style={{ fontSize: 14, color: '#ED232B' }}>Ngày: {item.registerDate}</div>
                           {/* Badge điều kiện hiến máu */}
                           {item.passed === true && (
-                            <div style={{marginTop:6, color:'#16a34a', fontWeight:600, fontSize:14}}>Đủ điều kiện hiến máu</div>
+                            <div style={{ marginTop: 6, color: '#16a34a', fontWeight: 600, fontSize: 14 }}>Đủ điều kiện hiến máu</div>
                           )}
                           {item.passed === false && (
-                            <div style={{marginTop:6, color:'#dc2626', fontWeight:600, fontSize:14}}>Không đủ điều kiện hiến máu</div>
+                            <div style={{ marginTop: 6, color: '#dc2626', fontWeight: 600, fontSize: 14 }}>Không đủ điều kiện hiến máu</div>
                           )}
                         </button>
                       </li>
@@ -558,10 +507,10 @@ const MedicalStaff = () => {
                 </ul>
               </div>
               {/* Form nhập kết quả bên phải */}
-              <div style={{flex:1.2, maxWidth:500, background:'#fff', borderRadius:16, boxShadow:'0 2px 12px 0 rgba(237,35,43,0.06)', padding:32, border: selectedDonation?.passed === true ? '2px solid #16a34a' : selectedDonation?.passed === false ? '2px solid #dc2626' : 'none'}}>
-                <h3 style={{marginBottom:24}}>Nhập kết quả xét nghiệm</h3>
+              <div style={{ flex: 1.2, maxWidth: 500, background: '#fff', borderRadius: 16, boxShadow: '0 2px 12px 0 rgba(237,35,43,0.06)', padding: 32, border: selectedDonation?.passed === true ? '2px solid #16a34a' : selectedDonation?.passed === false ? '2px solid #dc2626' : 'none' }}>
+                <h3 style={{ marginBottom: 24 }}>Nhập kết quả xét nghiệm</h3>
                 {selectedDonation ? (
-                  <form style={{display:'flex', flexDirection:'column', gap:16}} onSubmit={async (e) => {
+                  <form style={{ display: 'flex', flexDirection: 'column', gap: 16 }} onSubmit={async (e) => {
                     e.preventDefault();
                     if (!selectedDonation.id) {
                       setToastMsg("Không xác định được ID của lịch hiến máu.");
@@ -602,15 +551,15 @@ const MedicalStaff = () => {
                       setToastMsg("Lưu kết quả thất bại!");
                     }
                   }}>
-                    <div style={{fontWeight:600, marginBottom:8}}>
-                      <span>Người hiến: {selectedDonation.fullName || '---'}</span><br/>
+                    <div style={{ fontWeight: 600, marginBottom: 8 }}>
+                      <span>Người hiến: {selectedDonation.fullName || '---'}</span><br />
                       <span>Ngày: {selectedDonation.registerDate}</span>
                       {/* Badge điều kiện hiến máu trong form */}
                       {selectedDonation?.passed === true && (
-                        <div style={{marginTop:6, color:'#16a34a', fontWeight:600, fontSize:15}}>Đủ điều kiện hiến máu</div>
+                        <div style={{ marginTop: 6, color: '#16a34a', fontWeight: 600, fontSize: 15 }}>Đủ điều kiện hiến máu</div>
                       )}
                       {selectedDonation?.passed === false && (
-                        <div style={{marginTop:6, color:'#dc2626', fontWeight:600, fontSize:15}}>Không đủ điều kiện hiến máu</div>
+                        <div style={{ marginTop: 6, color: '#dc2626', fontWeight: 600, fontSize: 15 }}>Không đủ điều kiện hiến máu</div>
                       )}
                     </div>
                     <label>
@@ -618,7 +567,7 @@ const MedicalStaff = () => {
                       <input
                         type="text"
                         value={testResult.result}
-                        onChange={e => setTestResult({...testResult, result: e.target.value})}
+                        onChange={e => setTestResult({ ...testResult, result: e.target.value })}
                         placeholder="Nhập kết quả xét nghiệm"
                         disabled={formLocked}
                       />
@@ -627,7 +576,7 @@ const MedicalStaff = () => {
                       Đạt yêu cầu:
                       <select
                         value={testResult.passed ? "true" : "false"}
-                        onChange={e => setTestResult({...testResult, passed: e.target.value === "true"})}
+                        onChange={e => setTestResult({ ...testResult, passed: e.target.value === "true" })}
                         disabled={formLocked}
                       >
                         <option value="true">Đạt</option>
@@ -638,7 +587,7 @@ const MedicalStaff = () => {
                       Nhóm máu:
                       <select
                         value={testResult.bloodType}
-                        onChange={e => setTestResult({...testResult, bloodType: e.target.value})}
+                        onChange={e => setTestResult({ ...testResult, bloodType: e.target.value })}
                         disabled={formLocked}
                       >
                         <option value="A">A</option>
@@ -651,7 +600,7 @@ const MedicalStaff = () => {
                       Rh:
                       <select
                         value={testResult.rhType}
-                        onChange={e => setTestResult({...testResult, rhType: e.target.value})}
+                        onChange={e => setTestResult({ ...testResult, rhType: e.target.value })}
                         disabled={formLocked}
                       >
                         <option value="POSITIVE">POSITIVE</option>
@@ -663,7 +612,7 @@ const MedicalStaff = () => {
                       <input
                         type="text"
                         value={testResult.bloodPressure}
-                        onChange={e => setTestResult({...testResult, bloodPressure: e.target.value})}
+                        onChange={e => setTestResult({ ...testResult, bloodPressure: e.target.value })}
                         placeholder="Nhập huyết áp"
                         disabled={formLocked}
                       />
@@ -673,16 +622,16 @@ const MedicalStaff = () => {
                       <input
                         type="text"
                         value={testResult.heartRate}
-                        onChange={e => setTestResult({...testResult, heartRate: e.target.value})}
+                        onChange={e => setTestResult({ ...testResult, heartRate: e.target.value })}
                         placeholder="Nhập nhịp tim"
                         disabled={formLocked}
                       />
                     </label>
-                    <button type="submit" style={{marginTop:12, background:'#ED232B', color:'#fff', border:'none', borderRadius:8, padding:'10px 0', fontWeight:600, fontSize:16}} disabled={formLocked}>
+                    <button type="submit" style={{ marginTop: 12, background: '#ED232B', color: '#fff', border: 'none', borderRadius: 8, padding: '10px 0', fontWeight: 600, fontSize: 16 }} disabled={formLocked}>
                       Lưu kết quả
                     </button>
                     {toastMsg && (
-                      <div style={{marginTop:8, color: toastMsg.includes('thành công') ? '#16a34a' : '#dc2626', fontWeight:600}}>{toastMsg}</div>
+                      <div style={{ marginTop: 8, color: toastMsg.includes('thành công') ? '#16a34a' : '#dc2626', fontWeight: 600 }}>{toastMsg}</div>
                     )}
                   </form>
                 ) : (

@@ -78,8 +78,6 @@ const Header: React.FC = () => {
           {dropdownOpen && (
             <div className="dropdown-register">
               <button className="dropdown-register-button" onClick={handleProfileNavigate}>👤 Hồ sơ cá nhân</button>
-              <button className="dropdown-register-button" onClick={() => navigate('/user-profile')}>⚙️ Cài đặt</button>
-              <button className="dropdown-register-button" onClick={() => navigate('/notification')}>📅 Lịch hẹn đã đặt</button>
               <button className="dropdown-register-button" onClick={handleLogout}>🚪 Đăng xuất</button>
             </div>
           )}
