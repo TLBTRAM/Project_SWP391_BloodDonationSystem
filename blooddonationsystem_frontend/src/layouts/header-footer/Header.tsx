@@ -12,6 +12,7 @@ interface UserData {
 const Header: React.FC = () => {
   const navigate = useNavigate();
   const handleProfileNavigate = () => {
+    console.log("User info:", user);
     console.log("Navigating with role:", user?.role);
     switch (user?.role) {
       case 'CUSTOMER':
