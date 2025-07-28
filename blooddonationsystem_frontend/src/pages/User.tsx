@@ -475,18 +475,105 @@ const notificationCount = notifications.filter(n => !n.isRead).length;
               </div>
             </div>
 
-            <div className="user-info">
-              <table>
-                <h3 className="info-title">Thông tin cá nhân</h3>
-                <tbody>
-                  <tr><td>👤 Họ tên:</td><td>{user?.fullName}</td></tr>
-                  <tr><td>📧 Email:</td><td>{user?.email}</td></tr>
-                  <tr><td>📱 Điện thoại:</td><td>{user?.phone}</td></tr>
-                  <tr><td>🎂 Tuổi:</td><td>{user?.birthDate ? calculateAge(user.birthDate) : '---'}</td></tr>
-                  <tr><td>🩸 Nhóm máu:</td><td>{user?.bloodGroup}</td></tr>
-                  <tr><td>🏡 Địa chỉ:</td><td>{user?.address}</td></tr>
-                </tbody>
-              </table>
+            <div className="user-info" style={{
+              background: '#ffffff',
+              borderRadius: '12px',
+              padding: '20px',
+              boxShadow: '0 4px 20px rgba(0,0,0,0.08)',
+              border: '1px solid #f0f0f0'
+            }}>
+              <h3 style={{
+                margin: '0 0 16px 0',
+                color: '#b22b2b',
+                fontSize: '18px',
+                fontWeight: '600',
+                textAlign: 'left',
+                borderBottom: '1px solid #e0e0e0',
+                paddingBottom: '8px'
+              }}>Thông tin cá nhân</h3>
+              
+              <div style={{
+                display: 'flex',
+                flexDirection: 'column',
+                gap: '12px'
+              }}>
+                <div style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  padding: '10px 0',
+                  borderBottom: '1px solid #f5f5f5'
+                }}>
+                  <span style={{fontSize: '16px', marginRight: '12px', width: '20px'}}>👤</span>
+                  <div style={{flex: 1}}>
+                    <div style={{fontSize: '13px', color: '#888', marginBottom: '2px'}}>Họ tên</div>
+                    <div style={{fontSize: '15px', fontWeight: '500', color: '#333'}}>{user?.fullName || 'Chưa có thông tin'}</div>
+                  </div>
+                </div>
+                
+                <div style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  padding: '10px 0',
+                  borderBottom: '1px solid #f5f5f5'
+                }}>
+                  <span style={{fontSize: '16px', marginRight: '12px', width: '20px'}}>📧</span>
+                  <div style={{flex: 1}}>
+                    <div style={{fontSize: '13px', color: '#888', marginBottom: '2px'}}>Email</div>
+                    <div style={{fontSize: '15px', fontWeight: '500', color: '#333'}}>{user?.email || 'Chưa có thông tin'}</div>
+                  </div>
+                </div>
+                
+                <div style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  padding: '10px 0',
+                  borderBottom: '1px solid #f5f5f5'
+                }}>
+                  <span style={{fontSize: '16px', marginRight: '12px', width: '20px'}}>📱</span>
+                  <div style={{flex: 1}}>
+                    <div style={{fontSize: '13px', color: '#888', marginBottom: '2px'}}>Điện thoại</div>
+                    <div style={{fontSize: '15px', fontWeight: '500', color: '#333'}}>{user?.phone || 'Chưa có thông tin'}</div>
+                  </div>
+                </div>
+                
+                <div style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  padding: '10px 0',
+                  borderBottom: '1px solid #f5f5f5'
+                }}>
+                  <span style={{fontSize: '16px', marginRight: '12px', width: '20px'}}>🎂</span>
+                  <div style={{flex: 1}}>
+                    <div style={{fontSize: '13px', color: '#888', marginBottom: '2px'}}>Tuổi</div>
+                    <div style={{fontSize: '15px', fontWeight: '500', color: '#333'}}>{user?.birthDate ? calculateAge(user.birthDate) : '---'}</div>
+                  </div>
+                </div>
+                
+                <div style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  padding: '10px 0',
+                  borderBottom: '1px solid #f5f5f5'
+                }}>
+                  <span style={{fontSize: '16px', marginRight: '12px', width: '20px'}}>🩸</span>
+                  <div style={{flex: 1}}>
+                    <div style={{fontSize: '13px', color: '#888', marginBottom: '2px'}}>Nhóm máu</div>
+                    <div style={{fontSize: '15px', fontWeight: '500', color: '#333'}}>{user?.bloodGroup || 'Chưa có thông tin'}</div>
+                  </div>
+                </div>
+                
+                <div style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  padding: '10px 0'
+                }}>
+                  <span style={{fontSize: '16px', marginRight: '12px', width: '20px'}}>🏡</span>
+                  <div style={{flex: 1}}>
+                    <div style={{fontSize: '13px', color: '#888', marginBottom: '2px'}}>Địa chỉ</div>
+                    <div style={{fontSize: '15px', fontWeight: '500', color: '#333'}}>{user?.address || 'Chưa có thông tin'}</div>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
 
