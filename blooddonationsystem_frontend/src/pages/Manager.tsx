@@ -209,6 +209,10 @@ const { user, logout } = useAuth();
   // Thêm state cho tab kho máu
   const [bloodUnitTab, setBloodUnitTab] = useState("ALL");
 
+  // State phân trang cho kho máu
+  const [bloodPage, setBloodPage] = useState(1);
+  const BLOOD_PAGE_SIZE = 5;
+
   // Tab trạng thái kho máu
   const bloodUnitTabs = [
     { key: "ALL", label: "Tất cả" },
@@ -607,7 +611,12 @@ const { user, logout } = useAuth();
   const filteredUnits = bloodUnits
     .filter((unit) => (unit.group || "").toLowerCase().includes(searchTerm.toLowerCase()))
     .filter((unit) => (filterGroup ? unit.group === filterGroup : true))
-    .filter((unit) => (filterStatus ? statusMap[unit.status || 'COLLECTED'] === filterStatus : true))
+    .filter((unit) => (filterStatus ? unit.status === filterStatus : true))
+    .filter(unit => bloodUnitTab === "ALL"
+      ? true
+      : bloodUnitTab === "USED"
+        ? unit.status === "USED" || unit.status === "RESERVED"
+        : (unit.status || "COLLECTED") === bloodUnitTab)
     .sort(sortBy ? sortFunction : undefined);
 
   const bloodGroupStats = bloodUnits.reduce<Record<string, number>>(
@@ -642,10 +651,8 @@ const { user, logout } = useAuth();
     { key: "ALL", label: "Tất cả" }
   ];
 
-  // Lọc và phân trang
-  const filteredRequests = requestTab === "ALL" ? bloodRequests : bloodRequests.filter(r => r.status === requestTab);
-  const pagedRequests = filteredRequests.slice((page-1)*PAGE_SIZE, page*PAGE_SIZE);
-  const totalPages = Math.ceil(filteredRequests.length / PAGE_SIZE);
+  // Phân trang cho kho máu
+  const paged = filteredUnits.slice((bloodPage-1)*BLOOD_PAGE_SIZE, bloodPage*BLOOD_PAGE_SIZE);
 
   // FETCH DỮ LIỆU YÊU CẦU MÁU TOÀN PHẦN TỪ BACKEND KHI VÀO TAB 'requests'
   useEffect(() => {
@@ -681,6 +688,11 @@ const { user, logout } = useAuth();
     }
     // eslint-disable-next-line
   }, [view]);
+
+  // Các biến phân trang và filter cho blood requests
+  const filteredBloodRequests = requestTab === "ALL" ? bloodRequests : bloodRequests.filter(r => r.status === requestTab);
+  const pagedRequests = filteredBloodRequests.slice((page-1)*PAGE_SIZE, page*PAGE_SIZE);
+  const totalPages = Math.ceil(filteredBloodRequests.length / PAGE_SIZE);
 
   // FETCH DỮ LIỆU YÊU CẦU MÁU THÀNH PHẦN TỪ BACKEND KHI VÀO TAB 'componentRequests'
   useEffect(() => {
@@ -970,10 +982,6 @@ const { user, logout } = useAuth();
     }
   }, [view]);
 
-  // State phân trang cho kho máu
-  const [bloodPage, setBloodPage] = useState(1);
-  const BLOOD_PAGE_SIZE = 5;
-
   // ========== Giao diện chính ==========
   return (
     <div>
@@ -1106,12 +1114,11 @@ const { user, logout } = useAuth();
                   </tr>
                 </thead>
                 <tbody>
-                  {/* Lọc kho máu theo tab trạng thái */}
-                  {(() => {
-                    const filtered = bloodUnitTab === "ALL" ? filteredUnits : filteredUnits.filter(unit => (unit.status || "COLLECTED") === bloodUnitTab);
-                    const paged = filtered.slice((bloodPage-1)*BLOOD_PAGE_SIZE, bloodPage*BLOOD_PAGE_SIZE);
-                    if (paged.length === 0) return <tr><td colSpan={7}>Không có dữ liệu</td></tr>;
-                    return paged.map((unit, index) => (
+                  {/* Hiển thị dữ liệu kho máu */}
+                  {paged.length === 0 ? (
+                    <tr><td colSpan={7}>Không có dữ liệu</td></tr>
+                  ) : (
+                    paged.map((unit, index) => (
                       <tr key={unit.id} className={getRowClass(unit.expiryDate)}>
                         <td>{unit.id}</td>
                         <td>{unit.group}</td>
@@ -1120,13 +1127,16 @@ const { user, logout } = useAuth();
                         <td>{unit.expiryDate}</td>
                         <td>
                           <span
-                            className={`status-badge status-${(unit.status || 'collected').toLowerCase()} ${statusClassMap[statusMap[unit.status || 'COLLECTED']]}`}
+                            className={`status-badge status-${(unit.status || 'collected').toLowerCase()}`}
                             style={{ cursor: bloodUnitTab === 'COLLECTED' ? 'pointer' : undefined, border: selectedBloodUnitId === unit.id ? '2px solid #1976d2' : undefined }}
                             onClick={() => {
                               if (bloodUnitTab === 'COLLECTED') setSelectedBloodUnitId(unit.id);
                             }}
                           >
-                            {statusMap[unit.status || 'COLLECTED']}
+                            {unit.status === 'COLLECTED' ? 'Đã thu thập' : 
+                             unit.status === 'SEPARATED' ? 'Đã tách' :
+                             unit.status === 'USED' ? 'Đã sử dụng' :
+                             unit.status === 'EXPIRED' ? 'Hết hạn' : 'Đã thu thập'}
                             {bloodUnitTab === 'COLLECTED' && unit.status === 'COLLECTED' && isNearlyExpired(unit.expiryDate) && (
                               <span style={{
                                 background: "#ff9800",
@@ -1178,14 +1188,13 @@ const { user, logout } = useAuth();
                           </div>
                         </td>
                       </tr>
-                    ));
-                  })()}
+                    ))
+                  )}
                 </tbody>
               </table>
               {/* Phân trang cho kho máu */}
               {(() => {
-                const filtered = bloodUnitTab === "ALL" ? filteredUnits : filteredUnits.filter(unit => (unit.status || "COLLECTED") === bloodUnitTab);
-                const totalPages = Math.ceil(filtered.length / BLOOD_PAGE_SIZE);
+                const totalPages = Math.ceil(filteredUnits.length / BLOOD_PAGE_SIZE);
                 if (totalPages <= 1) return null;
                 return (
                   <div style={{ display: 'flex', justifyContent: 'center', margin: '18px 0' }}>
@@ -1694,7 +1703,13 @@ const { user, logout } = useAuth();
                     let filtered = bloodComponents;
                     if (componentTab !== 'ALL') filtered = filtered.filter(c => c.componentType === componentTab);
                     if (componentTypeFilter) filtered = filtered.filter(c => c.componentType === componentTypeFilter);
-                    if (componentStatusFilter) filtered = filtered.filter(c => c.status === componentStatusFilter);
+                    if (componentStatusFilter) {
+                      if (componentStatusFilter === 'USED') {
+                        filtered = filtered.filter(c => c.status === 'USED' || c.status === 'RESERVED');
+                      } else {
+                        filtered = filtered.filter(c => c.status === componentStatusFilter);
+                      }
+                    }
                     if (componentSearch) filtered = filtered.filter(c => (c.bloodType + (c.rhType === 'POSITIVE' ? '+' : c.rhType === 'NEGATIVE' ? '-' : '')).toLowerCase().includes(componentSearch.toLowerCase()));
                     const paged = filtered.slice((componentStockPage-1)*COMPONENT_STOCK_PAGE_SIZE, componentStockPage*COMPONENT_STOCK_PAGE_SIZE);
                     if (paged.length === 0) return <tr><td colSpan={7}>Không có dữ liệu</td></tr>;
@@ -1706,7 +1721,24 @@ const { user, logout } = useAuth();
                         <td>{c.volume}</td>
                         <td>{c.collectedDate}</td>
                         <td>{c.expirationDate}</td>
-                        <td>{c.status === 'AVAILABLE' ? 'Còn hạn' : c.status === 'USED' ? 'Đã sử dụng' : 'Hết hạn'}</td>
+                        <td>
+                          <span className={
+                            c.status === 'AVAILABLE' ? 'status-badge status-available' :
+                            (c.status === 'USED' || c.status === 'RESERVED') ? 'status-badge status-used' :
+                            c.status === 'EXPIRED' ? 'status-badge status-expired' :
+                            'status-badge status-unknown'
+                          }>
+                            {
+                              c.status === 'AVAILABLE'
+                                ? 'Còn hạn'
+                                : (c.status === 'USED' || c.status === 'RESERVED')
+                                  ? 'Đã sử dụng'
+                                  : c.status === 'EXPIRED'
+                                    ? 'Hết hạn'
+                                    : 'Không xác định'
+                            }
+                          </span>
+                        </td>
                       </tr>
                     ));
                   })()}
@@ -1717,7 +1749,13 @@ const { user, logout } = useAuth();
                 let filtered = bloodComponents;
                 if (componentTab !== 'ALL') filtered = filtered.filter(c => c.componentType === componentTab);
                 if (componentTypeFilter) filtered = filtered.filter(c => c.componentType === componentTypeFilter);
-                if (componentStatusFilter) filtered = filtered.filter(c => c.status === componentStatusFilter);
+                if (componentStatusFilter) {
+                  if (componentStatusFilter === 'USED') {
+                    filtered = filtered.filter(c => c.status === 'USED' || c.status === 'RESERVED');
+                  } else {
+                    filtered = filtered.filter(c => c.status === componentStatusFilter);
+                  }
+                }
                 if (componentSearch) filtered = filtered.filter(c => (c.bloodType + (c.rhType === 'POSITIVE' ? '+' : c.rhType === 'NEGATIVE' ? '-' : '')).toLowerCase().includes(componentSearch.toLowerCase()));
                 const totalPages = Math.ceil(filtered.length / COMPONENT_STOCK_PAGE_SIZE);
                 if (totalPages <= 1) return null;
