@@ -7,6 +7,7 @@ import com.swp.blooddonation.service.BloodRequestService;
 import com.swp.blooddonation.entity.BloodRequestComponent;
 import com.swp.blooddonation.repository.BloodRequestComponentRepository;
 import com.swp.blooddonation.dto.response.BloodRequestComponentResponse;
+import com.swp.blooddonation.dto.response.WholeBloodRequestResponse;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -16,6 +17,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @SecurityRequirement(name = "api")
@@ -96,16 +98,22 @@ public class BloodRequestAPI {
 
     @PreAuthorize("hasAnyRole('MANAGER', 'MEDICALSTAFF')")
     @GetMapping("/all")
-    public ResponseEntity<List<WholeBloodRequest>> getAllBloodRequests() {
+    public ResponseEntity<List<WholeBloodRequestResponse>> getAllBloodRequests() {
         List<WholeBloodRequest> requests = bloodRequestService.getAllBloodRequests();
-        return ResponseEntity.ok(requests);
+        List<WholeBloodRequestResponse> responses = requests.stream()
+                .map(bloodRequestService::toWholeBloodRequestResponse)
+                .collect(Collectors.toList());
+        return ResponseEntity.ok(responses);
     }
 
     @PreAuthorize("hasAnyRole('MANAGER', 'MEDICALSTAFF')")
     @GetMapping("/component/all")
-    public ResponseEntity<List<BloodRequestComponent>> getAllComponentBloodRequests() {
+    public ResponseEntity<List<BloodRequestComponentResponse>> getAllComponentBloodRequests() {
         List<BloodRequestComponent> requests = bloodRequestComponentRepository.findAll();
-        return ResponseEntity.ok(requests);
+        List<BloodRequestComponentResponse> responses = requests.stream()
+                .map(bloodRequestService::toComponentResponse)
+                .collect(Collectors.toList());
+        return ResponseEntity.ok(responses);
     }
 
     @PreAuthorize("hasAnyRole('CUSTOMER', 'MEDICALSTAFF')")

@@ -67,6 +67,7 @@ interface ComponentBloodRequest {
   id: number;
   requestDate: string;
   patientName: string;
+  fullName: string;
   bloodType: string;
   redCellQuantity: number;
   plasmaQuantity: number;
@@ -723,17 +724,18 @@ const { user, logout } = useAuth();
           const mapped = data.map((item: any) => ({
             id: item.id,
             requestDate: item.requestDate || item.createdAt || "",
-            patientName: item.patientName || (item.pendingPatientRequest ? item.pendingPatientRequest.fullName : ""),
+            patientName: item.patientName || item.fullName || "",
+            fullName: item.fullName || item.patientName || "",
             bloodType: item.bloodType + (item.rhType === "POSITIVE" ? "+" : item.rhType === "NEGATIVE" ? "-" : ""),
             redCellQuantity: item.redCellQuantity || 0,
             plasmaQuantity: item.plasmaQuantity || 0,
             plateletQuantity: item.plateletQuantity || 0,
             status: item.status,
             hospitalName: item.hospitalName || "",
-            phone: item.phone || (item.pendingPatientRequest ? item.pendingPatientRequest.phone : ""),
-            gender: item.gender || (item.pendingPatientRequest ? item.pendingPatientRequest.gender : ""),
+            phone: item.phone || "",
+            gender: item.gender || "",
             medicalCondition: item.medicalCondition || "",
-            address: item.address || (item.pendingPatientRequest ? item.pendingPatientRequest.address : "")
+            address: item.address || ""
           }));
           setComponentRequests(mapped);
           setLoadingComponentRequests(false);
@@ -1527,12 +1529,12 @@ const { user, logout } = useAuth();
                             fontSize: '15px',
                             fontWeight: '600'
                           }}>{
-                            selectedRequest.status === 'PENDING' ? 'Chờ duyệt' :
-                            selectedRequest.status === 'READY' ? 'Đã duyệt' :
-                            selectedRequest.status === 'REJECTED' ? 'Đã từ chối' :
-                            'Đã hoàn tất'
+                      selectedRequest.status === 'PENDING' ? 'Chờ duyệt' :
+                      selectedRequest.status === 'READY' ? 'Đã duyệt' :
+                      selectedRequest.status === 'REJECTED' ? 'Đã từ chối' :
+                      'Đã hoàn tất'
                           }</span>
-                        </div>
+                    </div>
                         <div style={{marginBottom: '16px'}}>
                           <span style={{fontWeight: '600', color: '#333', display: 'block', marginBottom: '4px'}}>Số điện thoại:</span>
                           <span style={{color: '#666', fontSize: '15px'}}>{selectedRequest.phone || "Chưa có thông tin"}</span>
@@ -1759,10 +1761,10 @@ const { user, logout } = useAuth();
                         <div style={{marginBottom: '16px'}}>
                           <span style={{fontWeight: '600', color: '#333', display: 'block', marginBottom: '4px'}}>Ngày yêu cầu:</span>
                           <span style={{color: '#666', fontSize: '15px'}}>{formatDate(selectedComponentRequest.requestDate)}</span>
-                        </div>
+                    </div>
                         <div style={{marginBottom: '16px'}}>
                           <span style={{fontWeight: '600', color: '#333', display: 'block', marginBottom: '4px'}}>Bệnh nhân:</span>
-                          <span style={{color: '#666', fontSize: '15px'}}>{selectedComponentRequest.patientName || "Chưa có thông tin"}</span>
+                          <span style={{color: '#666', fontSize: '15px'}}>{selectedComponentRequest.patientName || selectedComponentRequest.fullName || "Chưa có thông tin"}</span>
                         </div>
                         <div style={{marginBottom: '16px'}}>
                           <span style={{fontWeight: '600', color: '#333', display: 'block', marginBottom: '4px'}}>Nhóm máu:</span>

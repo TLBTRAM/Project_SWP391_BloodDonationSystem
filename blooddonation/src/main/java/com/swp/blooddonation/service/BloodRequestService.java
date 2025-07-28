@@ -5,6 +5,7 @@ import com.swp.blooddonation.dto.request.BloodRequestRequest;
 import com.swp.blooddonation.dto.request.ComponentBloodRequestRequest;
 import com.swp.blooddonation.dto.request.NotificationRequest;
 import com.swp.blooddonation.dto.response.BloodRequestComponentResponse;
+import com.swp.blooddonation.dto.response.WholeBloodRequestResponse;
 import com.swp.blooddonation.entity.*;
 import com.swp.blooddonation.enums.*;
 import com.swp.blooddonation.exception.exceptions.BadRequestException;
@@ -269,6 +270,8 @@ public class BloodRequestService {
         Patient patient = new Patient();
         patient.setFullName(pending.getFullName());
         patient.setDateOfBirth(pending.getDateOfBirth());
+        patient.setPhone(pending.getPhone());
+        patient.setGender(pending.getGender());
         patient.setStreet(pending.getStreet());
         patient.setWardId(pending.getWardId());
         patient.setDistrictId(pending.getDistrictId());
@@ -393,6 +396,8 @@ public class BloodRequestService {
         Patient patient = new Patient();
         patient.setFullName(pending.getFullName());
         patient.setDateOfBirth(pending.getDateOfBirth());
+        patient.setPhone(pending.getPhone());
+        patient.setGender(pending.getGender());
         patient.setStreet(pending.getStreet());
         patient.setWardId(pending.getWardId());
         patient.setDistrictId(pending.getDistrictId());
@@ -629,6 +634,55 @@ public class BloodRequestService {
     public BloodRequestComponentResponse toComponentResponse(BloodRequestComponent entity) {
         BloodRequestComponentResponse dto = new BloodRequestComponentResponse();
         dto.setId(entity.getId());
+        
+        // Debug log
+        System.out.println("=== DEBUG toComponentResponse ===");
+        System.out.println("Request ID: " + entity.getId());
+        System.out.println("Has Patient: " + (entity.getPatient() != null));
+        if (entity.getPatient() != null) {
+            System.out.println("Patient Phone: " + entity.getPatient().getPhone());
+            System.out.println("Patient Gender: " + entity.getPatient().getGender());
+        }
+        
+        // Lấy thông tin từ pending patient request trước, sau đó fallback về patient
+        String fullName = "Chưa có thông tin";
+        String address = "Chưa có thông tin";
+        String phone = "Chưa có thông tin";
+        String gender = "Chưa có thông tin";
+        
+        // Luôn thử lấy từ PendingPatientRequest trước (vì có đầy đủ thông tin)
+        System.out.println("Thử lấy từ PendingPatientRequest trước");
+        PendingPatientRequest pending = pendingPatientRequestRepository.findByBloodRequestComponent(entity).orElse(null);
+        System.out.println("Found PendingPatientRequest: " + (pending != null));
+        
+        if (pending != null) {
+            System.out.println("Lấy từ PendingPatientRequest");
+            System.out.println("Pending Phone: " + pending.getPhone());
+            System.out.println("Pending Gender: " + pending.getGender());
+            fullName = pending.getFullName();
+            address = pending.getStreet() != null && !pending.getStreet().isEmpty() 
+                ? pending.getStreet() : "Chưa có thông tin";
+            phone = pending.getPhone() != null ? pending.getPhone() : "Chưa có thông tin";
+            gender = pending.getGender() != null ? pending.getGender().name() : "Chưa có thông tin";
+        } else if (entity.getPatient() != null) {
+            // Fallback về Patient nếu không có PendingPatientRequest
+            System.out.println("Fallback về Patient entity");
+            fullName = entity.getPatient().getFullName();
+            address = entity.getPatient().getStreet() != null && !entity.getPatient().getStreet().isEmpty() 
+                ? entity.getPatient().getStreet() : "Chưa có thông tin";
+            phone = entity.getPatient().getPhone() != null ? entity.getPatient().getPhone() : "Chưa có thông tin";
+            gender = entity.getPatient().getGender() != null ? entity.getPatient().getGender().name() : "Chưa có thông tin";
+        }
+        
+        System.out.println("Final Phone: " + phone);
+        System.out.println("Final Gender: " + gender);
+        System.out.println("=== END DEBUG ===");
+        
+        dto.setFullName(fullName);
+        dto.setAddress(address);
+        dto.setPhone(phone);
+        dto.setGender(gender);
+        
         dto.setBloodType(entity.getBloodType());
         dto.setRhType(entity.getRhType());
         dto.setHospitalName(entity.getHospitalName());
@@ -638,6 +692,51 @@ public class BloodRequestService {
         dto.setRedCellQuantity(entity.getRedCellQuantity());
         dto.setPlasmaQuantity(entity.getPlasmaQuantity());
         dto.setPlateletQuantity(entity.getPlateletQuantity());
+        
+        return dto;
+    }
+
+    public WholeBloodRequestResponse toWholeBloodRequestResponse(WholeBloodRequest entity) {
+        WholeBloodRequestResponse dto = new WholeBloodRequestResponse();
+        dto.setId(entity.getId());
+        
+        // Lấy thông tin từ pending patient request trước, sau đó fallback về patient
+        String fullName = "Chưa có thông tin";
+        String address = "Chưa có thông tin";
+        String phone = "Chưa có thông tin";
+        String gender = "Chưa có thông tin";
+        
+        // Luôn thử lấy từ PendingPatientRequest trước (vì có đầy đủ thông tin)
+        PendingPatientRequest pending = pendingPatientRequestRepository.findByWholeBloodRequest(entity).orElse(null);
+        
+        if (pending != null) {
+            fullName = pending.getFullName();
+            address = pending.getStreet() != null && !pending.getStreet().isEmpty() 
+                ? pending.getStreet() : "Chưa có thông tin";
+            phone = pending.getPhone() != null ? pending.getPhone() : "Chưa có thông tin";
+            gender = pending.getGender() != null ? pending.getGender().name() : "Chưa có thông tin";
+        } else if (entity.getPatient() != null) {
+            // Fallback về Patient nếu không có PendingPatientRequest
+            fullName = entity.getPatient().getFullName();
+            address = entity.getPatient().getStreet() != null && !entity.getPatient().getStreet().isEmpty() 
+                ? entity.getPatient().getStreet() : "Chưa có thông tin";
+            phone = entity.getPatient().getPhone() != null ? entity.getPatient().getPhone() : "Chưa có thông tin";
+            gender = entity.getPatient().getGender() != null ? entity.getPatient().getGender().name() : "Chưa có thông tin";
+        }
+        
+        dto.setFullName(fullName);
+        dto.setAddress(address);
+        dto.setPhone(phone);
+        dto.setGender(gender);
+        
+        dto.setBloodType(entity.getBloodType());
+        dto.setRhType(entity.getRhType());
+        dto.setRequiredVolume(entity.getRequiredVolume());
+        dto.setHospitalName(entity.getHospitalName());
+        dto.setMedicalCondition(entity.getMedicalCondition());
+        dto.setRequestDate(entity.getRequestDate());
+        dto.setStatus(entity.getStatus());
+        
         return dto;
     }
 
