@@ -225,6 +225,21 @@ const { user, logout } = useAuth();
   // Thêm state lưu id túi máu được chọn (nếu cần)
   const [selectedBloodUnitId, setSelectedBloodUnitId] = useState<number | null>(null);
 
+  // Hàm format ngày từ ISO string thành dd/mm/yyyy
+  function formatDate(dateString: string): string {
+    if (!dateString) return "";
+    try {
+      const date = new Date(dateString);
+      if (isNaN(date.getTime())) return dateString;
+      const day = date.getDate().toString().padStart(2, '0');
+      const month = (date.getMonth() + 1).toString().padStart(2, '0');
+      const year = date.getFullYear();
+      return `${day}/${month}/${year}`;
+    } catch (error) {
+      return dateString;
+    }
+  }
+
   // Thêm hàm kiểm tra định dạng ngày dd/mm/yyyy
   function isValidDate(dateStr: string): boolean {
     // Kiểm tra đúng định dạng dd/mm/yyyy
@@ -667,7 +682,7 @@ const { user, logout } = useAuth();
           // Map dữ liệu từ API về đúng format FE
           const mapped = data.map((item: any) => ({
             id: item.id,
-            requestDate: item.requestDate || (item.createdAt ? item.createdAt.split('T')[0] : ""),
+            requestDate: item.requestDate || item.createdAt || "",
             patientName: item.patientName || (item.pendingPatientRequest ? item.pendingPatientRequest.fullName : ""),
             bloodType: item.bloodType, // chỉ lấy string gốc
             rhType: item.rhType,       // chỉ lấy string gốc
@@ -707,7 +722,7 @@ const { user, logout } = useAuth();
           // Map dữ liệu từ API về đúng format FE
           const mapped = data.map((item: any) => ({
             id: item.id,
-            requestDate: item.requestDate || (item.createdAt ? item.createdAt.split('T')[0] : ""),
+            requestDate: item.requestDate || item.createdAt || "",
             patientName: item.patientName || (item.pendingPatientRequest ? item.pendingPatientRequest.fullName : ""),
             bloodType: item.bloodType + (item.rhType === "POSITIVE" ? "+" : item.rhType === "NEGATIVE" ? "-" : ""),
             redCellQuantity: item.redCellQuantity || 0,
@@ -1342,7 +1357,7 @@ const { user, logout } = useAuth();
                     <thead>
                       <tr>
                         <th>Ngày yêu cầu</th>
-                        <th>Bệnh nhân</th>
+                        <th>Bệnh viện</th>
                         <th>Nhóm máu</th>
                         <th>Thể tích (ml)</th>
                         <th>Trạng thái</th>
@@ -1355,8 +1370,8 @@ const { user, logout } = useAuth();
                       ) : (
                         pagedRequests.map((req) => (
                           <tr key={req.id}>
-                            <td>{req.requestDate || req.createdAt || ""}</td>
-                            <td>{req.patientName || req.fullName || ""}</td>
+                            <td>{formatDate(req.requestDate || req.createdAt || "")}</td>
+                            <td>{req.hospitalName || ""}</td>
                             <td>{req.bloodType}{req.rhType === 'POSITIVE' ? '+' : req.rhType === 'NEGATIVE' ? '-' : ''}</td>
                             <td>{req.requiredVolume}</td>
                             <td>
@@ -1453,25 +1468,109 @@ const { user, logout } = useAuth();
               {/* Popup chi tiết */}
               {showDetail && selectedRequest && (
                 <div className="popup-overlay">
-                  <div className="popup-content" style={{maxWidth:500}}>
-                    <h3>Chi tiết yêu cầu nhận máu</h3>
-                    <div style={{marginBottom:10}}><b>Ngày yêu cầu:</b> {selectedRequest.requestDate || selectedRequest.createdAt || ""}</div>
-                    <div style={{marginBottom:10}}><b>Bệnh nhân:</b> {selectedRequest.patientName || selectedRequest.fullName || ""}</div>
-                    <div style={{marginBottom:10}}><b>Nhóm máu:</b> {selectedRequest.bloodType}{selectedRequest.rhType === 'POSITIVE' ? '+' : selectedRequest.rhType === 'NEGATIVE' ? '-' : ''}</div>
-                    <div style={{marginBottom:10}}><b>Thể tích:</b> {selectedRequest.requiredVolume} ml</div>
-                    <div style={{marginBottom:10}}><b>Trạng thái:</b> {
-                      selectedRequest.status === 'PENDING' ? 'Chờ duyệt' :
-                      selectedRequest.status === 'READY' ? 'Đã duyệt' :
-                      selectedRequest.status === 'REJECTED' ? 'Đã từ chối' :
-                      'Đã hoàn tất'
-                    }</div>
-                    <div style={{marginBottom:10}}><b>Bệnh viện:</b> {selectedRequest.hospitalName}</div>
-                    <div style={{marginBottom:10}}><b>Số điện thoại:</b> {selectedRequest.phone}</div>
-                    <div style={{marginBottom:10}}><b>Giới tính:</b> {selectedRequest.gender === 'MALE' ? 'Nam' : selectedRequest.gender === 'FEMALE' ? 'Nữ' : 'Khác'}</div>
-                    <div style={{marginBottom:10}}><b>Tình trạng bệnh:</b> {selectedRequest.medicalCondition}</div>
-                    <div style={{marginBottom:10}}><b>Địa chỉ:</b> {selectedRequest.address}</div>
-                    <div style={{display:'flex', justifyContent:'flex-end', marginTop:18}}>
-                      <button onClick={()=>setShowDetail(false)} style={{padding:'8px 18px', borderRadius:6, border:'none', background:'#eee', color:'#333', cursor:'pointer'}}>Đóng</button>
+                  <div className="popup-content" style={{
+                    maxWidth: 600,
+                    minWidth: 400,
+                    padding: '32px',
+                    borderRadius: '12px',
+                    boxShadow: '0 10px 30px rgba(0,0,0,0.3)',
+                    background: 'linear-gradient(135deg, #fff 0%, #f8f9fa 100%)',
+                    border: '1px solid #e0e0e0'
+                  }}>
+                    <h3 style={{
+                      margin: '0 0 24px 0',
+                      color: '#b22b2b',
+                      fontSize: '24px',
+                      fontWeight: '700',
+                      textAlign: 'center',
+                      borderBottom: '2px solid #b22b2b',
+                      paddingBottom: '12px'
+                    }}>Chi tiết yêu cầu nhận máu</h3>
+                    
+                    <div style={{
+                      display: 'grid',
+                      gridTemplateColumns: '1fr 1fr',
+                      gap: '20px',
+                      marginBottom: '24px'
+                    }}>
+                      <div style={{textAlign: 'left'}}>
+                        <div style={{marginBottom: '16px'}}>
+                          <span style={{fontWeight: '600', color: '#333', display: 'block', marginBottom: '4px'}}>Ngày yêu cầu:</span>
+                          <span style={{color: '#666', fontSize: '15px'}}>{formatDate(selectedRequest.requestDate || selectedRequest.createdAt || "")}</span>
+                        </div>
+                        <div style={{marginBottom: '16px'}}>
+                          <span style={{fontWeight: '600', color: '#333', display: 'block', marginBottom: '4px'}}>Bệnh nhân:</span>
+                          <span style={{color: '#666', fontSize: '15px'}}>{selectedRequest.patientName || selectedRequest.fullName || "Chưa có thông tin"}</span>
+                        </div>
+                        <div style={{marginBottom: '16px'}}>
+                          <span style={{fontWeight: '600', color: '#333', display: 'block', marginBottom: '4px'}}>Bệnh viện:</span>
+                          <span style={{color: '#666', fontSize: '15px'}}>{selectedRequest.hospitalName || "Chưa có thông tin"}</span>
+                        </div>
+                        <div style={{marginBottom: '16px'}}>
+                          <span style={{fontWeight: '600', color: '#333', display: 'block', marginBottom: '4px'}}>Nhóm máu:</span>
+                          <span style={{color: '#666', fontSize: '15px'}}>{selectedRequest.bloodType}{selectedRequest.rhType === 'POSITIVE' ? '+' : selectedRequest.rhType === 'NEGATIVE' ? '-' : ''}</span>
+                        </div>
+                        <div style={{marginBottom: '16px'}}>
+                          <span style={{fontWeight: '600', color: '#333', display: 'block', marginBottom: '4px'}}>Thể tích:</span>
+                          <span style={{color: '#666', fontSize: '15px'}}>{selectedRequest.requiredVolume} ml</span>
+                        </div>
+                      </div>
+                      
+                      <div style={{textAlign: 'left'}}>
+                        <div style={{marginBottom: '16px'}}>
+                          <span style={{fontWeight: '600', color: '#333', display: 'block', marginBottom: '4px'}}>Trạng thái:</span>
+                          <span style={{
+                            color: selectedRequest.status === 'PENDING' ? '#ff9800' :
+                                   selectedRequest.status === 'READY' ? '#2196f3' :
+                                   selectedRequest.status === 'REJECTED' ? '#f44336' :
+                                   '#4caf50',
+                            fontSize: '15px',
+                            fontWeight: '600'
+                          }}>{
+                            selectedRequest.status === 'PENDING' ? 'Chờ duyệt' :
+                            selectedRequest.status === 'READY' ? 'Đã duyệt' :
+                            selectedRequest.status === 'REJECTED' ? 'Đã từ chối' :
+                            'Đã hoàn tất'
+                          }</span>
+                        </div>
+                        <div style={{marginBottom: '16px'}}>
+                          <span style={{fontWeight: '600', color: '#333', display: 'block', marginBottom: '4px'}}>Số điện thoại:</span>
+                          <span style={{color: '#666', fontSize: '15px'}}>{selectedRequest.phone || "Chưa có thông tin"}</span>
+                        </div>
+                        <div style={{marginBottom: '16px'}}>
+                          <span style={{fontWeight: '600', color: '#333', display: 'block', marginBottom: '4px'}}>Giới tính:</span>
+                          <span style={{color: '#666', fontSize: '15px'}}>{selectedRequest.gender === 'MALE' ? 'Nam' : selectedRequest.gender === 'FEMALE' ? 'Nữ' : 'Khác'}</span>
+                        </div>
+                        <div style={{marginBottom: '16px'}}>
+                          <span style={{fontWeight: '600', color: '#333', display: 'block', marginBottom: '4px'}}>Tình trạng bệnh:</span>
+                          <span style={{color: '#666', fontSize: '15px'}}>{selectedRequest.medicalCondition || "Chưa có thông tin"}</span>
+                        </div>
+                        <div style={{marginBottom: '16px'}}>
+                          <span style={{fontWeight: '600', color: '#333', display: 'block', marginBottom: '4px'}}>Địa chỉ:</span>
+                          <span style={{color: '#666', fontSize: '15px'}}>{selectedRequest.address || "Chưa có thông tin"}</span>
+                        </div>
+                      </div>
+                    </div>
+                    
+                    <div style={{
+                      display: 'flex',
+                      justifyContent: 'center',
+                      marginTop: '24px',
+                      borderTop: '1px solid #e0e0e0',
+                      paddingTop: '20px'
+                    }}>
+                      <button onClick={()=>setShowDetail(false)} style={{
+                        padding: '12px 32px',
+                        borderRadius: '8px',
+                        border: 'none',
+                        background: 'linear-gradient(135deg, #b22b2b 0%, #d32f2f 100%)',
+                        color: '#fff',
+                        cursor: 'pointer',
+                        fontSize: '16px',
+                        fontWeight: '600',
+                        transition: 'all 0.3s ease',
+                        boxShadow: '0 4px 12px rgba(178, 43, 43, 0.3)'
+                      }}>Đóng</button>
                     </div>
                   </div>
                 </div>
@@ -1501,7 +1600,7 @@ const { user, logout } = useAuth();
                     <thead>
                       <tr>
                         <th>Ngày yêu cầu</th>
-                        <th>Bệnh nhân</th>
+                        <th>Bệnh viện</th>
                         <th>Nhóm máu</th>
                         <th>Hồng cầu (ml)</th>
                         <th>Huyết tương (ml)</th>
@@ -1516,8 +1615,8 @@ const { user, logout } = useAuth();
                       ) : (
                         pagedComponentRequests.map((req) => (
                           <tr key={req.id}>
-                            <td>{req.requestDate}</td>
-                            <td>{req.patientName}</td>
+                            <td>{formatDate(req.requestDate)}</td>
+                            <td>{req.hospitalName}</td>
                             <td>{req.bloodType}</td>
                             <td>{req.redCellQuantity}</td>
                             <td>{req.plasmaQuantity}</td>
@@ -1631,22 +1730,117 @@ const { user, logout } = useAuth();
               {/* Popup chi tiết */}
               {showComponentDetail && selectedComponentRequest && (
                 <div className="popup-overlay">
-                  <div className="popup-content" style={{maxWidth:500}}>
-                    <h3>Chi tiết yêu cầu nhận máu thành phần</h3>
-                    <div style={{marginBottom:10}}><b>Ngày yêu cầu:</b> {selectedComponentRequest.requestDate}</div>
-                    <div style={{marginBottom:10}}><b>Bệnh nhân:</b> {selectedComponentRequest.patientName}</div>
-                    <div style={{marginBottom:10}}><b>Nhóm máu:</b> {selectedComponentRequest.bloodType}</div>
-                    <div style={{marginBottom:10}}><b>Hồng cầu:</b> {selectedComponentRequest.redCellQuantity} ml</div>
-                    <div style={{marginBottom:10}}><b>Huyết tương:</b> {selectedComponentRequest.plasmaQuantity} ml</div>
-                    <div style={{marginBottom:10}}><b>Tiểu cầu:</b> {selectedComponentRequest.plateletQuantity} ml</div>
-                    <div style={{marginBottom:10}}><b>Trạng thái:</b> {selectedComponentRequest.status === 'PENDING' ? 'Chờ duyệt' : selectedComponentRequest.status === 'APPROVED' ? 'Đã duyệt' : selectedComponentRequest.status === 'REJECTED' ? 'Đã từ chối' : 'Đã hoàn tất'}</div>
-                    <div style={{marginBottom:10}}><b>Bệnh viện:</b> {selectedComponentRequest.hospitalName}</div>
-                    <div style={{marginBottom:10}}><b>Số điện thoại:</b> {selectedComponentRequest.phone}</div>
-                    <div style={{marginBottom:10}}><b>Giới tính:</b> {selectedComponentRequest.gender === 'MALE' ? 'Nam' : selectedComponentRequest.gender === 'FEMALE' ? 'Nữ' : 'Khác'}</div>
-                    <div style={{marginBottom:10}}><b>Tình trạng bệnh:</b> {selectedComponentRequest.medicalCondition}</div>
-                    <div style={{marginBottom:10}}><b>Địa chỉ:</b> {selectedComponentRequest.address}</div>
-                    <div style={{display:'flex', justifyContent:'flex-end', marginTop:18}}>
-                      <button onClick={()=>setShowComponentDetail(false)} style={{padding:'8px 18px', borderRadius:6, border:'none', background:'#eee', color:'#333', cursor:'pointer'}}>Đóng</button>
+                  <div className="popup-content" style={{
+                    maxWidth: 600,
+                    minWidth: 400,
+                    padding: '32px',
+                    borderRadius: '12px',
+                    boxShadow: '0 10px 30px rgba(0,0,0,0.3)',
+                    background: 'linear-gradient(135deg, #fff 0%, #f8f9fa 100%)',
+                    border: '1px solid #e0e0e0'
+                  }}>
+                    <h3 style={{
+                      margin: '0 0 24px 0',
+                      color: '#b22b2b',
+                      fontSize: '24px',
+                      fontWeight: '700',
+                      textAlign: 'center',
+                      borderBottom: '2px solid #b22b2b',
+                      paddingBottom: '12px'
+                    }}>Chi tiết yêu cầu nhận máu thành phần</h3>
+                    
+                    <div style={{
+                      display: 'grid',
+                      gridTemplateColumns: '1fr 1fr',
+                      gap: '20px',
+                      marginBottom: '24px'
+                    }}>
+                      <div style={{textAlign: 'left'}}>
+                        <div style={{marginBottom: '16px'}}>
+                          <span style={{fontWeight: '600', color: '#333', display: 'block', marginBottom: '4px'}}>Ngày yêu cầu:</span>
+                          <span style={{color: '#666', fontSize: '15px'}}>{formatDate(selectedComponentRequest.requestDate)}</span>
+                        </div>
+                        <div style={{marginBottom: '16px'}}>
+                          <span style={{fontWeight: '600', color: '#333', display: 'block', marginBottom: '4px'}}>Bệnh nhân:</span>
+                          <span style={{color: '#666', fontSize: '15px'}}>{selectedComponentRequest.patientName || "Chưa có thông tin"}</span>
+                        </div>
+                        <div style={{marginBottom: '16px'}}>
+                          <span style={{fontWeight: '600', color: '#333', display: 'block', marginBottom: '4px'}}>Nhóm máu:</span>
+                          <span style={{color: '#666', fontSize: '15px'}}>{selectedComponentRequest.bloodType}</span>
+                        </div>
+                        <div style={{marginBottom: '16px'}}>
+                          <span style={{fontWeight: '600', color: '#333', display: 'block', marginBottom: '4px'}}>Hồng cầu:</span>
+                          <span style={{color: '#666', fontSize: '15px'}}>{selectedComponentRequest.redCellQuantity} ml</span>
+                        </div>
+                        <div style={{marginBottom: '16px'}}>
+                          <span style={{fontWeight: '600', color: '#333', display: 'block', marginBottom: '4px'}}>Huyết tương:</span>
+                          <span style={{color: '#666', fontSize: '15px'}}>{selectedComponentRequest.plasmaQuantity} ml</span>
+                        </div>
+                        <div style={{marginBottom: '16px'}}>
+                          <span style={{fontWeight: '600', color: '#333', display: 'block', marginBottom: '4px'}}>Tiểu cầu:</span>
+                          <span style={{color: '#666', fontSize: '15px'}}>{selectedComponentRequest.plateletQuantity} ml</span>
+                        </div>
+                      </div>
+                      
+                      <div style={{textAlign: 'left'}}>
+                        <div style={{marginBottom: '16px'}}>
+                          <span style={{fontWeight: '600', color: '#333', display: 'block', marginBottom: '4px'}}>Bệnh viện:</span>
+                          <span style={{color: '#666', fontSize: '15px'}}>{selectedComponentRequest.hospitalName || "Chưa có thông tin"}</span>
+                        </div>
+                        <div style={{marginBottom: '16px'}}>
+                          <span style={{fontWeight: '600', color: '#333', display: 'block', marginBottom: '4px'}}>Trạng thái:</span>
+                          <span style={{
+                            color: selectedComponentRequest.status === 'PENDING' ? '#ff9800' :
+                                   selectedComponentRequest.status === 'APPROVED' ? '#2196f3' :
+                                   selectedComponentRequest.status === 'REJECTED' ? '#f44336' :
+                                   '#4caf50',
+                            fontSize: '15px',
+                            fontWeight: '600'
+                          }}>{
+                            selectedComponentRequest.status === 'PENDING' ? 'Chờ duyệt' :
+                            selectedComponentRequest.status === 'APPROVED' ? 'Đã duyệt' :
+                            selectedComponentRequest.status === 'REJECTED' ? 'Đã từ chối' :
+                            'Đã hoàn tất'
+                          }</span>
+                        </div>
+                        <div style={{marginBottom: '16px'}}>
+                          <span style={{fontWeight: '600', color: '#333', display: 'block', marginBottom: '4px'}}>Số điện thoại:</span>
+                          <span style={{color: '#666', fontSize: '15px'}}>{selectedComponentRequest.phone || "Chưa có thông tin"}</span>
+                        </div>
+                        <div style={{marginBottom: '16px'}}>
+                          <span style={{fontWeight: '600', color: '#333', display: 'block', marginBottom: '4px'}}>Giới tính:</span>
+                          <span style={{color: '#666', fontSize: '15px'}}>{selectedComponentRequest.gender === 'MALE' ? 'Nam' : selectedComponentRequest.gender === 'FEMALE' ? 'Nữ' : 'Khác'}</span>
+                        </div>
+                        <div style={{marginBottom: '16px'}}>
+                          <span style={{fontWeight: '600', color: '#333', display: 'block', marginBottom: '4px'}}>Tình trạng bệnh:</span>
+                          <span style={{color: '#666', fontSize: '15px'}}>{selectedComponentRequest.medicalCondition || "Chưa có thông tin"}</span>
+                        </div>
+                        <div style={{marginBottom: '16px'}}>
+                          <span style={{fontWeight: '600', color: '#333', display: 'block', marginBottom: '4px'}}>Địa chỉ:</span>
+                          <span style={{color: '#666', fontSize: '15px'}}>{selectedComponentRequest.address || "Chưa có thông tin"}</span>
+                        </div>
+                      </div>
+                    </div>
+                    
+                    <div style={{
+                      display: 'flex',
+                      justifyContent: 'center',
+                      marginTop: '24px',
+                      borderTop: '1px solid #e0e0e0',
+                      paddingTop: '20px'
+                    }}>
+                      <button onClick={()=>setShowComponentDetail(false)} style={{
+                        padding: '12px 32px',
+                        borderRadius: '8px',
+                        border: 'none',
+                        background: 'linear-gradient(135deg, #b22b2b 0%, #d32f2f 100%)',
+                        color: '#fff',
+                        cursor: 'pointer',
+                        fontSize: '16px',
+                        fontWeight: '600',
+                        transition: 'all 0.3s ease',
+                        boxShadow: '0 4px 12px rgba(178, 43, 43, 0.3)'
+                      }}>Đóng</button>
                     </div>
                   </div>
                 </div>
