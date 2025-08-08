@@ -4,22 +4,20 @@ import com.swp.blooddonation.enums.BloodType;
 import com.swp.blooddonation.enums.RhType;
 import com.swp.blooddonation.enums.BloodRequestStatus;
 import lombok.Data;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 @Data
-public class BloodRequestComponentResponse {
+public class WholeBloodRequestResponse {
     private Long id;
     private String fullName;
     private String address;
     private BloodType bloodType;
     private RhType rhType;
+    private int requiredVolume;
     private String hospitalName;
     private String medicalCondition;
-    private LocalDateTime requestDate;
+    private LocalDate requestDate;
     private BloodRequestStatus status;
-    private int redCellQuantity;
-    private int plasmaQuantity;
-    private int plateletQuantity;
     private String phone;
     private String gender;
 } 

@@ -2,6 +2,7 @@ package com.swp.blooddonation.entity;
 
 import com.swp.blooddonation.enums.BloodType;
 import com.swp.blooddonation.enums.RhType;
+import com.swp.blooddonation.enums.Gender;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -19,6 +20,7 @@ public class Patient {
 
     private String fullName;
     private LocalDate dateOfBirth;
+    private String phone;
     private String street;
     private Long wardId;
     private Long districtId;
@@ -28,6 +30,9 @@ public class Patient {
     private BloodType bloodType; // optional
     @Enumerated(EnumType.STRING)
     private RhType rhType;
+    
+    @Enumerated(EnumType.STRING)
+    private Gender gender;
 
     private String hospitalName;
     private String medicalCondition;
