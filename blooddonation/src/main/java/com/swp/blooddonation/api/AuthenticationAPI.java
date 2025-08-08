@@ -1,68 +1,64 @@
 package com.swp.blooddonation.api;
 
-import com.swp.blooddonation.dto.*;
 import com.swp.blooddonation.dto.request.LoginRequest;
 import com.swp.blooddonation.dto.request.RegisRequest;
 import com.swp.blooddonation.dto.request.ResetPasswordRequest;
 import com.swp.blooddonation.dto.response.AccountResponse;
-import com.swp.blooddonation.dto.response.RegisterAccountResponse;
-import com.swp.blooddonation.dto.response.RegisterResponse;
 import com.swp.blooddonation.service.AuthenticationService;
-import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
+import java.util.Map;
 
 @RestController
-@CrossOrigin("*")
-//@CrossOrigin(origins = "http://localhost:3000")
 @RequestMapping("/api/auth")
+@RequiredArgsConstructor
+@Tag(name = "Authentication", description = "Authentication management APIs")
+@CrossOrigin("*")
 public class AuthenticationAPI {
 
-    @Autowired
-    AuthenticationService authenticationService;
+    private final AuthenticationService authenticationService;
 
     @PostMapping("/register")
-    public ResponseEntity register(@Valid @RequestBody RegisRequest regisRequest){
-        // nhờ thằng AuthenticationService => tạo dùm account
-        RegisterAccountResponse registerAccountResponse = authenticationService.register(regisRequest);
-        return  ResponseEntity.ok(registerAccountResponse);
+    @Operation(summary = "Register new user", description = "Register a new user account")
+    public ResponseEntity<String> register(@RequestBody RegisRequest request) {
+        authenticationService.register(request);
+        return ResponseEntity.ok("Đăng ký thành công!");
     }
 
-
     @PostMapping("/login")
-    public ResponseEntity login(@Valid @RequestBody LoginRequest loginRequest) {
-         AccountResponse account = authenticationService.login(loginRequest);
-        return ResponseEntity.ok(account);
+    @Operation(summary = "User login", description = "Authenticate user with email and password")
+    public ResponseEntity<AccountResponse> login(@RequestBody LoginRequest request) {
+        AccountResponse response = authenticationService.login(request);
+        return ResponseEntity.ok(response);
+    }
+
+    @PostMapping("/google")
+    @Operation(summary = "Google OAuth login", description = "Authenticate user with Google OAuth")
+    public ResponseEntity<AccountResponse> googleLogin(@RequestBody Map<String, String> googleUser) {
+        String email = googleUser.get("email");
+        String fullName = googleUser.get("fullName");
+        String googleId = googleUser.get("googleId");
+        String picture = googleUser.get("picture");
+        
+        AccountResponse response = authenticationService.googleLogin(email, fullName, googleId, picture);
+        return ResponseEntity.ok(response);
     }
 
     @PostMapping("/send-reset-code")
-    public ResponseEntity sendResetCode(@RequestParam String email) {
+    @Operation(summary = "Send reset password email", description = "Send OTP to user's email for password reset")
+    public ResponseEntity<String> sendResetCode(@RequestParam String email) {
         authenticationService.sendResetCode(email);
         return ResponseEntity.ok("Mã xác minh đã được gửi về email.");
     }
 
     @PostMapping("/reset-password")
-    public ResponseEntity resetPassword(@Valid @RequestBody ResetPasswordRequest resetPasswordRequest) {
-        authenticationService.resetPassword(resetPasswordRequest);
-//        return ResponseEntity.ok("Đặt lại mật khẩu thành công.");
-        return ResponseEntity.ok("Đặt lại mật khẩu thành công.");
+    @Operation(summary = "Reset password", description = "Reset password with new password")
+    public ResponseEntity<String> resetPassword(@RequestBody ResetPasswordRequest request) {
+        authenticationService.resetPassword(request);
+        return ResponseEntity.ok("Đặt lại mật khẩu thành công!");
     }
-//    @PostMapping("/change-password")
-//    public ResponseEntity changePassword(@Valid @RequestBody ChangePassswordRequest changePassswordRequest) {
-//        User user = authenticationService.changePassword(changePassswordRequest);
-//        return ResponseEntity.ok(user);
-//    }
-
-
-    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
-    @GetMapping("/medical-staff")
-    public ResponseEntity getMedicalStaff() {
-         List<MedicalStaffDTO> medicalStaffDTO = authenticationService.getMedicalStaff();
-        return ResponseEntity.ok(medicalStaffDTO);
-    }
-
 }

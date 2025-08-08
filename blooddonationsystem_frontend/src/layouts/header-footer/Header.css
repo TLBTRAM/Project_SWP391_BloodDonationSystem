@@ -12,20 +12,28 @@ header {
   justify-content: space-between;
   align-items: center;
   padding: 20px 10%;
-  background: #fff;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
   position: relative;
   z-index: 10;
+  border-bottom: 1px solid rgba(255, 32, 78, 0.1);
 }
 
 /* Logo */
 .logo {
   display: flex;
   align-items: center;
+  transition: transform 0.3s ease;
+  cursor: pointer;
+}
+
+.logo:hover {
+  transform: scale(1.02);
 }
 
 .logo img {
   height: 70px;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
 }
 
 /* Navigation links */
@@ -41,27 +49,69 @@ header {
   color: #334155;
   text-decoration: none;
   font-weight: 500;
-  transition: color 0.3s;
+  font-size: 16px;
+  transition: all 0.2s ease;
+  position: relative;
+  padding: 8px 0;
+  cursor: pointer;
+}
+
+.nav-links a::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background: linear-gradient(90deg, #ff204e, #ff4757);
+  transition: width 0.3s ease;
+  pointer-events: none;
 }
 
 .nav-links a:hover {
   color: #ff204e;
+  transform: translateY(-1px);
+}
+
+.nav-links a:hover::after {
+  width: 100%;
 }
 
 /* Nút đăng nhập */
 .btn-login {
-  background-color: #ff204e;
+  background: linear-gradient(135deg, #ff204e 0%, #ff4757 100%);
   color: white;
-  padding: 10px 20px;
+  padding: 12px 24px;
   border: none;
-  border-radius: 8px;
-  font-weight: bold;
+  border-radius: 25px;
+  font-weight: 600;
+  font-size: 14px;
   cursor: pointer;
-  transition: background-color 0.3s;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 15px rgba(255, 32, 78, 0.3);
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-login::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: left 0.5s;
+  pointer-events: none;
 }
 
 .btn-login:hover {
-  background-color: #d91b41;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(255, 32, 78, 0.4);
+}
+
+.btn-login:hover::before {
+  left: 100%;
 }
 
 /* Auth-buttons container */
@@ -71,30 +121,62 @@ header {
   gap: 16px;
 }
 
+/* User section container */
+.user-section {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
 /* Avatar + tên người dùng */
 .user-avatar-status {
   display: flex;
   align-items: center;
-  position: relative;
   cursor: pointer;
   width: 220px;
-  padding: 10px 15px;
-  background-color: #f9fafb;
+  padding: 12px 18px;
+  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
   border-radius: 50px;
-  border: 1px solid #e2e8f0;
-  transition: background-color 0.2s;
+  border: 2px solid transparent;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  position: relative;
+  overflow: hidden;
+}
+
+.user-avatar-status::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, rgba(255, 32, 78, 0.1) 0%, rgba(255, 71, 87, 0.1) 100%);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
 }
 
 .user-avatar-status:hover {
-  background-color: #f1f5f9;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  border-color: rgba(255, 32, 78, 0.3);
+}
+
+.user-avatar-status:hover::before {
+  opacity: 1;
 }
 
 .user-avatar-status .avatar {
-  width: 36px;
-  height: 36px;
+  width: 40px;
+  height: 40px;
   border-radius: 50%;
   object-fit: cover;
-  margin-right: 10px;
+  margin-right: 12px;
+  border: 2px solid #fff;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  position: relative;
+  z-index: 1;
 }
 
 .user-avatar-status .user-fullname {
@@ -105,20 +187,60 @@ header {
   overflow: hidden;
   text-overflow: ellipsis;
   flex: 1;
+  position: relative;
+  z-index: 1;
 }
 
-/* Dropdown menu */
+/* Nút đăng xuất */
+.btn-logout {
+  background: linear-gradient(135deg, #ff4757 0%, #ff3742 100%);
+  color: white;
+  padding: 12px 24px;
+  border: none;
+  border-radius: 25px;
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 15px rgba(255, 71, 87, 0.3);
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-logout::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: left 0.5s;
+  pointer-events: none;
+}
+
+.btn-logout:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(255, 71, 87, 0.4);
+}
+
+.btn-logout:hover::before {
+  left: 100%;
+}
+
+/* Dropdown menu - giữ lại để tránh lỗi CSS nếu có component khác sử dụng */
 .dropdown-register {
   position: absolute;
   top: 115%;
   right: 0;
   width: 220px;
-  background-color: white;
-  border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+  border-radius: 16px;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
   overflow: hidden;
   z-index: 999;
-  animation: fadeIn 0.2s ease-in-out;
+  animation: fadeIn 0.3s ease-in-out;
+  border: 1px solid rgba(255, 32, 78, 0.1);
 }
 
 .dropdown-register-button {
@@ -126,14 +248,63 @@ header {
   width: 100%;
   background: none;
   border: none;
-  padding: 12px 16px;
+  padding: 14px 18px;
   text-align: left;
   font-size: 14px;
   color: #334155;
   cursor: pointer;
-  transition: background 0.2s;
+  transition: all 0.2s ease;
+  font-weight: 500;
 }
 
 .dropdown-register-button:hover {
-  background-color: #f1f5f9;
+  background: linear-gradient(135deg, rgba(255, 32, 78, 0.1) 0%, rgba(255, 71, 87, 0.1) 100%);
+  color: #ff204e;
+  transform: translateX(5px);
+}
+
+/* Animation */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-15px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  header {
+    padding: 15px 5%;
+    flex-direction: column;
+    gap: 15px;
+  }
+
+  .nav-links {
+    gap: 20px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .nav-links a {
+    font-size: 14px;
+  }
+
+  .user-section {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .user-avatar-status {
+    width: 180px;
+    padding: 10px 15px;
+  }
+
+  .btn-login, .btn-logout {
+    padding: 10px 20px;
+    font-size: 13px;
+  }
 }

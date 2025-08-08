@@ -4,7 +4,7 @@ import Calendar from './Calendar';
 import './components/User.css';
 import Header from '../layouts/header-footer/Header';
 import avatarImg from './images/User/Avatar.png';
-import calendarIcon from './images/User/Calendar.png';
+import calendarIcon from './images/User/calendar.png';
 import notificationIcon from './images/User/notifications.png';
 import blood_request_historyIcon from './images/User/blood_request_history.png';
 import orderIcon from './images/User/order.png';
@@ -514,6 +514,12 @@ const notificationCount = notifications.filter(n => !n.isRead).length;
                   ) : (
                     <tr>
                       <td colSpan={2}>Không có lịch sử hiến máu.</td>
+                    </tr>
+                  )}
+                  {donationHistory.length > 0 && (
+                    <tr style={{ fontWeight: 'bold', backgroundColor: '#f8f9fa' }}>
+                      <td>Tổng cộng:</td>
+                      <td>{donationHistory.reduce((sum, item) => sum + item.volume, 0)} ml</td>
                     </tr>
                   )}
                 </tbody>

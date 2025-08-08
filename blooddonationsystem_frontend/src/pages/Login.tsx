@@ -10,6 +10,7 @@ import { Link, useNavigate } from 'react-router-dom';
 
 import Header from '../layouts/header-footer/Header';
 import Footer from '../layouts/header-footer/Footer';
+import GoogleLoginButton from '../components/GoogleLoginButton';
 
 function Login() {
   const [email, setEmail] = useState("");
@@ -105,16 +106,36 @@ function Login() {
         <div className="login-form">
           <h2>Đăng nhập</h2>
           {showSuccess && (
-            <div className="login-success-inline">Đăng nhập thành công! Đang chuyển hướng...</div>
+            <div className="login-success-toast">
+              <div className="success-icon">✓</div>
+              <div className="success-text">
+                <div className="success-title">Đăng nhập thành công!</div>
+                <div className="success-subtitle">Đang chuyển hướng...</div>
+              </div>
+            </div>
           )}
           <form onSubmit={handleLogin}>
             <input type="text" placeholder="Email" required value={email} onChange={(e) => setEmail(e.target.value)} />
             <input type="password" placeholder="Mật khẩu" required value={password} onChange={(e) => setPassword(e.target.value)} />
             <button type="submit" disabled={isLoading || showSuccess}>{isLoading ? "Đang đăng nhập..." : "Đăng nhập"}</button>
             {error && (
-              <div className="login-error-inline">{error}</div>
+              <div className="login-error-toast">
+                <div className="error-icon">⚠</div>
+                <div className="error-text">{error}</div>
+              </div>
             )}
           </form>
+          
+          {/* Divider */}
+          <div className="login-divider">
+            <span>hoặc</span>
+          </div>
+          
+          {/* Google Login Button */}
+          <div className="google-login-section">
+            <GoogleLoginButton />
+          </div>
+          
           <Link to="/forgot" className="forgot">Quên mật khẩu ?</Link>
         </div>
       </main>

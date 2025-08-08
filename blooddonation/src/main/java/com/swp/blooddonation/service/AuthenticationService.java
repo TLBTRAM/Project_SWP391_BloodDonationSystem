@@ -190,6 +190,46 @@ public class AuthenticationService implements UserDetailsService {
         return accountResponse;
     }
 
+    public AccountResponse googleLogin(String email, String fullName, String googleId, String picture) {
+        // Kiểm tra xem email đã tồn tại chưa
+        Account existingAccount = authenticationReponsitory.findAccountByEmail(email);
+        
+        if (existingAccount == null) {
+            // Tạo tài khoản mới cho Google user
+            Account newAccount = new Account();
+            newAccount.setEmail(email);
+            newAccount.setPassword(passwordEncoder.encode(googleId)); // Sử dụng googleId làm password
+            newAccount.setCreatedAt(LocalDateTime.now());
+            newAccount.setEnableStatus(EnableStatus.ENABLE);
+            newAccount.setRole(Role.CUSTOMER);
+            
+            // Lưu account
+            Account savedAccount = authenticationReponsitory.save(newAccount);
+            
+            // Tạo user profile
+            User newUser = new User();
+            newUser.setAccount(savedAccount);
+            newUser.setFullName(fullName);
+            newUser.setEmail(email);
+            newUser.setCreatedAt(LocalDateTime.now());
+            
+            // Lưu user
+            userRepository.save(newUser);
+            
+            // Tạo response
+            AccountResponse accountResponse = modelMapper.map(savedAccount, AccountResponse.class);
+            String token = tokenService.generateToken(savedAccount);
+            accountResponse.setToken(token);
+            return accountResponse;
+        } else {
+            // Tài khoản đã tồn tại, đăng nhập bình thường
+            AccountResponse accountResponse = modelMapper.map(existingAccount, AccountResponse.class);
+            String token = tokenService.generateToken(existingAccount);
+            accountResponse.setToken(token);
+            return accountResponse;
+        }
+    }
+
 
 
 //    public User changePassword(ChangePassswordRequest changePassswordRequest){

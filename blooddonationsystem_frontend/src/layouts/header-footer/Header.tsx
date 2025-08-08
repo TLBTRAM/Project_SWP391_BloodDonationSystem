@@ -11,7 +11,9 @@ interface UserData {
 
 const Header: React.FC = () => {
   const navigate = useNavigate();
-  const handleProfileNavigate = () => {
+  const { user, logout } = useAuth() as { user: UserData | null, logout: () => void };
+  
+  const handleUserClick = () => {
     console.log("User info:", user);
     console.log("Navigating with role:", user?.role);
     switch (user?.role) {
@@ -33,17 +35,9 @@ const Header: React.FC = () => {
     }
   };
 
-  const { user, logout } = useAuth() as { user: UserData | null, logout: () => void };
-  console.log("User info:", user);
-  const [dropdownOpen, setDropdownOpen] = useState(false);
-  const userInfoRef = useRef<HTMLDivElement>(null);
   const handleLogout = () => {
     logout();
     navigate("/login"); // chuyển về trang đăng nhập sau khi logout
-  };
-
-  const toggleDropdown = () => {
-    setDropdownOpen(!dropdownOpen);
   };
   
   return (
@@ -64,23 +58,22 @@ const Header: React.FC = () => {
         )}
       </nav>
 
-      {/* Sửa logic hiển thị: nếu chưa đăng nhập thì chỉ hiện nút đăng nhập, nếu đã đăng nhập thì hiện avatar + tên + menu */}
+      {/* Sửa logic hiển thị: nếu chưa đăng nhập thì chỉ hiện nút đăng nhập, nếu đã đăng nhập thì hiện avatar + tên + nút đăng xuất */}
       {!user ? (
         <div className="auth-buttons">
           <button className="btn-login" onClick={() => navigate("/login")}>Đăng nhập</button>
         </div>
       ) : (
-        <div className="user-avatar-status" ref={userInfoRef} onClick={toggleDropdown}>
-          <img src={avatarImg} alt="Avatar" className="avatar" />
-          <span className="user-fullname">
-            {user.fullName || "Tên người dùng"}
-          </span>
-          {dropdownOpen && (
-            <div className="dropdown-register">
-              <button className="dropdown-register-button" onClick={handleProfileNavigate}>👤 Hồ sơ cá nhân</button>
-              <button className="dropdown-register-button" onClick={handleLogout}>🚪 Đăng xuất</button>
-            </div>
-          )}
+        <div className="user-section">
+          <div className="user-avatar-status" onClick={handleUserClick}>
+            <img src={avatarImg} alt="Avatar" className="avatar" />
+            <span className="user-fullname">
+              {user.fullName || "Tên người dùng"}
+            </span>
+          </div>
+          <button className="btn-logout" onClick={handleLogout}>
+            Đăng xuất
+          </button>
         </div>
       )}
     </header>
