@@ -10,7 +10,7 @@ import { Link, useNavigate } from 'react-router-dom';
 
 import Header from '../layouts/header-footer/Header';
 import Footer from '../layouts/header-footer/Footer';
-import GoogleLoginButton from '../components/GoogleLoginButton';
+
 
 function Login() {
   const [email, setEmail] = useState("");
@@ -126,15 +126,7 @@ function Login() {
             )}
           </form>
           
-          {/* Divider */}
-          <div className="login-divider">
-            <span>hoặc</span>
-          </div>
-          
-          {/* Google Login Button */}
-          <div className="google-login-section">
-            <GoogleLoginButton />
-          </div>
+
           
           <Link to="/forgot" className="forgot">Quên mật khẩu ?</Link>
         </div>

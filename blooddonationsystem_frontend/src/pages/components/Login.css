@@ -169,60 +169,7 @@ body {
   width: 100%;
 }
 
-/* Login divider */
-.login-divider {
-  display: flex;
-  align-items: center;
-  margin: 30px 0;
-  text-align: center;
-  position: relative;
-}
 
-.login-divider::before,
-.login-divider::after {
-  content: '';
-  flex: 1;
-  height: 1px;
-  background: linear-gradient(90deg, transparent, #e0e0e0, transparent);
-}
-
-.login-divider span {
-  padding: 0 20px;
-  color: #6c757d;
-  font-size: 14px;
-  font-weight: 500;
-  background: rgba(255, 255, 255, 0.95);
-  position: relative;
-  z-index: 1;
-}
-
-/* Google login section */
-.google-login-section {
-  margin: 25px 0;
-  display: flex;
-  justify-content: center;
-}
-
-.google-login-container {
-  width: 100%;
-  display: flex;
-  justify-content: center;
-}
-
-/* Google button styling */
-.google-login-container > div {
-  width: 100% !important;
-  max-width: 400px;
-  border-radius: 12px !important;
-  overflow: hidden;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-  transition: all 0.3s ease;
-}
-
-.google-login-container > div:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
-}
 
 .login-error-toast {
   position: fixed;
